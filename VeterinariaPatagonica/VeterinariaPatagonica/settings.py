@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'VeterinariaPatagonica.Apps.GestionDeClientes',
+    'VeterinariaPatagonica.Apps.GestionDeInsumos',
+    'VeterinariaPatagonica.Apps.GestionDeServicio',
 ]
 
 MIDDLEWARE = [
