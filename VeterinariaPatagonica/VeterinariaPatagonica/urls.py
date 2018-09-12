@@ -21,5 +21,5 @@ from VeterinariaPatagonica.Apps.GestionDeClientes import views
 urlpatterns = [
     #path('admin/', admin.site.urls),
     url(r'^$',views.base, name='base'),
-    url(r'GestionDeClientes', views.clientes, name='clientes'),
+    url(r'GestionDeClientes/$', views.clientes, name='clientes'),
 ]
