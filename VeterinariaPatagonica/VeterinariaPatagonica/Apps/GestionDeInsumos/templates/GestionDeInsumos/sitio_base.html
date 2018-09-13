@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    {% block head %}
+    <p>Inicio Encabezado<p>
+      {% block meta %}
+      <p>...meta...<p>
+      {% endblock meta %}
+      <title>Veterinaria Patagónica| {% block title %}{% endblock %}</title>
+      {% block stylesheets %}
+      <p>Vetereniaria Patagónica<p>
+      {% endblock stylesheets %}
+      <p>Fin Encabezado<p>
+    {% endblock head %}
+  </head>
+  <body class="{% block body_class %}nav-md {% endblock body_class %}">
+    {% block body %}
+          {% block sidebar %}
+          {% endblock sidebar %}
+          {% block top_navigation %}
+          {% endblock top_navigation %}
+          {% block content %}
+          <p> Bienvenido a la Página de Inicio de la Veterinaria Patagónica.<br>
+           Ciudad: Trelew. <br>
+           Aquí puede realizarle diversas atenciones a su mascota.<p>
+          {% endblock content %}
+
+          {% block footer %}
+          <p>Para mas información haga click aquí<p>
+          {% endblock footer %}
+
+      {% block javascripts %}
+      {% endblock %}
+    {% endblock body %}
+  </body>
+</html>

@@ -1,0 +1,31 @@
+{% extends "GestionDeClientes/sitio_base.html" %}
+<html lang="es">
+  <head>
+  {% block head %}
+    {% block meta %}
+    {% endblock meta %}
+    <title>Veterinaria Patagónica| {% block title %}{% endblock %}</title>
+    {% block stylesheets %}
+    <p>Vetereniaria Patagónica<p>
+    {% endblock stylesheets %}
+  {% endblock head %}
+</head>
+<body class="{% block body_class %}nav-md {% endblock body_class %}">
+  {% block body %}
+        {% block sidebar %}
+        {% endblock sidebar %}
+        {% block top_navigation %}
+        {% endblock top_navigation %}
+        {% block content %}
+        <p>Sitio para gestionar los insumos de la Veterinaria.<p>
+        {% endblock content %}
+
+        {% block footer %}
+        <p>Para mas información  de los Insumos haga click aquí<p>
+        {% endblock footer %}
+
+    {% block javascripts %}
+    {% endblock %}
+  {% endblock body %}
+</body>
+</html>
