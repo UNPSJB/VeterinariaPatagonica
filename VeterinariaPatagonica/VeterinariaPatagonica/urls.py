@@ -17,14 +17,11 @@ from django.contrib import admin
 from django.urls import path
 
 from django.conf.urls import url
-from VeterinariaPatagonica.Apps.GestionDeClientes import views
-
-#from VeterinariaPatagonica.Apps.GestionDeInsumos import views
+from VeterinariaPatagonica.Apps.GestionDeClientes import views as clientes_views
+from VeterinariaPatagonica.Apps.GestionDeInsumos import views as insumos_views
 
 urlpatterns = [
-    url(r'^$',views.base, name='base'),
     path(r'admin/', admin.site.urls),
-    url(r'GestionDeClientes/$', views.clientes, name='clientes'),
-
-    #url(r'GestionDeInsumos/$', views.insumos, name='insumos'),
+    url(r'GestionDeClientes/$', clientes_views.clientes, name='clientes'),
+    url(r'GestionDeInsumos/$', insumos_views.insumos, name='insumos'),
 ]

@@ -1,4 +1,5 @@
-{% extends "GestionDeClientes/sitio_base.html" %}
+{% extends "sitio_base.html" %}
+{% load static %}
 <html lang="es">
   <head>
   {% block head %}
@@ -25,6 +26,7 @@
         {% endblock footer %}
 
     {% block javascripts %}
+          <script src="{% static 'js/myscript.js' %}" type="text/javascripts"></script>
     {% endblock %}
   {% endblock body %}
 </body>

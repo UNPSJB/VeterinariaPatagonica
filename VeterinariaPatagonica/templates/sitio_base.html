@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css'%}">
+</head>
+
+<body class="{% block body_class %}nav-md {% endblock body_class %}">
+  <div class="container-fluid">
+    <div class="row" style="background-color:red;">
+      <header>
+        <h1>Veterinaria</h1>
+      </header>
+    </div>
+    <div class="row" style="background-color:green;">
+      <nav class="col-3">
+        <ul>
+        {% block sidebar %}
+          <li>uno</li>
+          <li>dos</li>
+          <li>tres</li>
+          {% endblock %}
+        </ul>
+      </nav>
+      <section class="col-7" style="background-color:yellow;">
+  {% block content %}
+  {% endblock %}
+      </section>
+      <nav class="col-2">nav2</nav>
+    </div>
+    <div class="row" style="background-color:blue;">
+      <footer>{% block footer %}{% endblock %}</footer>
+    </div>
+  </div>
+  <script src="{% static 'jquery/jquery-3.3.1.min.js'%}" type="text/javascript"></script>
+  <script src="{% static 'popper/popper.min.js'%}" type="text/javascript"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.js'%}" type="text/javascript"></script>
+  {% block javascripts %}
+  {% endblock %}
+</body>
+
+</html>
