@@ -22,7 +22,7 @@ from VeterinariaPatagonica.Apps.GestionDeServicios import views as servicios_vie
 
 urlpatterns = [
 #    path(r'admin/', admin.site.urls),
-#    url(r'^$', , name='base')
+    #url(r'^$',, name='base')
     url(r'GestionDeServicios/$', servicios_views.servicios, name='servicios'),#Agregamos la direccion url a nuestro alcance.
     url(r'GestionDeClientes/$', clientes_views.clientes, name='clientes'),
     url(r'GestionDeInsumos/$', insumos_views.insumos, name='insumos'),

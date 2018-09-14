@@ -19,17 +19,21 @@
       <nav class="col-3">
         <ul>
         {% block sidebar %}
-          <li><a href="http://127.0.0.1:8000/GestionDeClientes" target="_blank">Clientes</a></li>
-          <li><a href="http://127.0.0.1:8000/GestionDeInsumos" target="_blank">Insumos</a></li>
-          <li><a href="http://127.0.0.1:8000/GestionDeServicios" target="_blank">Servicios</a></li>
+          <li><a class="nav-link active" href="http://127.0.0.1:8000/GestionDeClientes">Clientes</a></li>
+          <li><a class="nav-link active" href="http://127.0.0.1:8000/GestionDeInsumos">Insumos</a></li>
+          <li><a class="nav-link active" href="http://127.0.0.1:8000/GestionDeServicios">Servicios</a></li>
           <li>cuatro</li>
           <li>cinco</li>
           {% endblock %}
         </ul>
       </nav>
       <section class="col-7" style="background-color:lightgreen;">
-  {% block content %}
-  {% endblock %}
+        <a class="btn btn-primary" href="http://127.0.0.1:8000/GestionDeClientes" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color : blue;">Clientes</a>
+        <a class="btn btn-primary" href="http://127.0.0.1:8000/GestionDeInsumos" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color : red;">Insumos</a>
+        <a class="btn btn-primary" href="http://127.0.0.1:8000/GestionDeServicios" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color : violet;">Servicios</a>
+
+        {% block content %}
+        {% endblock %}
       </section>
       <nav class="col-2">nav2</nav>
     </div>
