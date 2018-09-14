@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'VeterinariaPatagonica.Apps.GestionDeClientes',
     'VeterinariaPatagonica.Apps.GestionDeInsumos',
-    'VeterinariaPatagonica.Apps.GestionDeServicio',
+    'VeterinariaPatagonica.Apps.GestionDeServicios',
 ]
 
 MIDDLEWARE = [
