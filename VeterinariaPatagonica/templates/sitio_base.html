@@ -28,9 +28,9 @@
         </ul>
       </nav>
       <section class="col-7" style="background-color:lightgreen;">
-        <a class="btn btn-primary" href="http://127.0.0.1:8000/GestionDeClientes" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color : blue;">Clientes</a>
-        <a class="btn btn-primary" href="http://127.0.0.1:8000/GestionDeInsumos" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color : red;">Insumos</a>
-        <a class="btn btn-primary" href="http://127.0.0.1:8000/GestionDeServicios" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color : violet;">Servicios</a>
+        <a class="btn btn-primary" href="{% url "clientes" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_clientes.jpg);">Clientes</a>
+        <a class="btn btn-primary" href="{% url "insumos" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_insumos.jpg);">Insumos</a>
+        <a class="btn btn-primary" href="{% url "servicios" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_servicios.jpg);">Servicios</a>
 
         {% block content %}
         {% endblock %}
