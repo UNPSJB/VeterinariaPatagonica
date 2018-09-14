@@ -9,22 +9,25 @@
 
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
   <div class="container-fluid">
-    <div class="row" style="background-color:red;">
+    <div class="row" style="height: 100px; background-color: green;">
       <header>
         <h1>Veterinaria</h1>
       </header>
     </div>
-    <div class="row" style="background-color:green;">
+
+    <div class="row" style="height: 500px; background-color: lightblue;">
       <nav class="col-3">
         <ul>
         {% block sidebar %}
-          <li>uno</li>
-          <li>dos</li>
+          <li><a href="http://127.0.0.1:8000/GestionDeClientes" target="_blank">Clientes</a></li>
+          <li><a href="http://127.0.0.1:8000/GestionDeInsumos" target="_blank">Insumos</a></li>
           <li>tres</li>
+          <li>cuatro</li>
+          <li>cinco</li>
           {% endblock %}
         </ul>
       </nav>
-      <section class="col-7" style="background-color:yellow;">
+      <section class="col-7" style="background-color:lightgreen;">
   {% block content %}
   {% endblock %}
       </section>
