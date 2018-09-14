@@ -25,8 +25,8 @@ urlpatterns = [
 #    path(r'admin/', admin.site.urls),
     #url(r'^$',, name='base')
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
-    url(r'$',views.base),
-    url(r'demo/.+\.html$', views.verdemo),
+    url(r'^$',views.base),
+    url(r'demos/.+\.html$', views.verdemo),
     url(r'GestionDeServicios/$', servicios_views.servicios, name='servicios'),#Agregamos la direccion url a nuestro alcance.
     url(r'GestionDeClientes/$', clientes_views.clientes, name='clientes'),
     url(r'GestionDeInsumos/$', insumos_views.insumos, name='insumos'),

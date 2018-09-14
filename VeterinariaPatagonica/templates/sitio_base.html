@@ -19,9 +19,9 @@
       <nav class="col-3">
         <ul>
         {% block sidebar %}
-          <li><a class="nav-link active" href="http://127.0.0.1:8000/GestionDeClientes">Clientes</a></li>
-          <li><a class="nav-link active" href="http://127.0.0.1:8000/GestionDeInsumos">Insumos</a></li>
-          <li><a class="nav-link active" href="http://127.0.0.1:8000/GestionDeServicios">Servicios</a></li>
+          <li><a class="nav-link active" href="{% url "clientes" %}">Clientes</a></li>
+          <li><a class="nav-link active" href="{% url "insumos" %}">Insumos</a></li>
+          <li><a class="nav-link active" href="{% url "servicios" %}">Servicios</a></li>
           <li>cuatro</li>
           <li>cinco</li>
           {% endblock %}
