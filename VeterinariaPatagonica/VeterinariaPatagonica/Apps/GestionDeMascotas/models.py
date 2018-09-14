@@ -4,8 +4,9 @@ from django.db import models
 
 class Mascota(models.Model):
 
-    patente = models.AutoField(max_length=4)
+    #patente = models.AutoField(max_length=4)
     nombre = models.CharField(max_length=35)
+    #cliente = Cliente.
     fechaNacimiento = models.DateTimeField()
     especie = models.CharField(max_length=40)
     raza = models.CharField(max_length=40)
