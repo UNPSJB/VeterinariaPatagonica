@@ -15,7 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 #from django.urls import path
-from django.conf.urls import url
+from django.conf.urls import url, include
+from . import views
 from VeterinariaPatagonica.Apps.GestionDeClientes import views as clientes_views
 from VeterinariaPatagonica.Apps.GestionDeInsumos import views as insumos_views
 from VeterinariaPatagonica.Apps.GestionDeServicios import views as servicios_views
@@ -23,6 +24,9 @@ from VeterinariaPatagonica.Apps.GestionDeServicios import views as servicios_vie
 urlpatterns = [
 #    path(r'admin/', admin.site.urls),
     #url(r'^$',, name='base')
+    #url(r'test/', include("Apps.GestionDeClientes.urls"))
+    url(r'$',views.base),
+    url(r'demo/.+\.html$', views.verdemo),
     url(r'GestionDeServicios/$', servicios_views.servicios, name='servicios'),#Agregamos la direccion url a nuestro alcance.
     url(r'GestionDeClientes/$', clientes_views.clientes, name='clientes'),
     url(r'GestionDeInsumos/$', insumos_views.insumos, name='insumos'),
