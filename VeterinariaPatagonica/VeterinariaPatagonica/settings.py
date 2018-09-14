@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'VeterinariaPatagonica.Apps.GestionDeClientes',
     'VeterinariaPatagonica.Apps.GestionDeInsumos',
     'VeterinariaPatagonica.Apps.GestionDeServicio',
+    'VeterinariaPatagonica.Apps.GestionDeMascotas',
 ]
 
 MIDDLEWARE = [
