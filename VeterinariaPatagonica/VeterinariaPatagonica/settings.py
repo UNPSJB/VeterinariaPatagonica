@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'VeterinariaPatagonica.Apps.GestionDeClientes',
     'VeterinariaPatagonica.Apps.GestionDeInsumos',
-    'VeterinariaPatagonica.Apps.GestionDeServicio',
     'VeterinariaPatagonica.Apps.GestionDeMascotas',
+    'VeterinariaPatagonica.Apps.GestionDeServicios',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'VeterinariaPatagonica.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ os.path.join(BASE_DIR, "templates") ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -102,6 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+AUTH_PASSWORD_VALIDATORS = []
 
 
 # Internationalization
@@ -122,3 +123,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]

@@ -1,5 +1,4 @@
 {% extends "sitio_base.html" %}
-{% load static %}
 <html lang="es">
   <head>
   {% block head %}
@@ -16,15 +15,14 @@
         {% block top_navigation %}
         {% endblock top_navigation %}
         {% block content %}
-        <p>Sitio para gestionar los clientes de la Veterinaria.<p>
+        <p>Sitio para gestionar los insumos de la Veterinaria.<p>
         {% endblock content %}
 
         {% block footer %}
-        <p>Para mas información  de los Clientes haga click aquí<p>
+        <p>Para mas información  de los Insumos haga click aquí<p>
         {% endblock footer %}
 
     {% block javascripts %}
-          <script src="{% static 'js/myscript.js' %}" type="text/javascripts"></script>
     {% endblock %}
   {% endblock body %}
 </body>
