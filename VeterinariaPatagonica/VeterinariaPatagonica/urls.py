@@ -13,12 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.urls import path, include
 from django.contrib import admin
-#from django.urls import path
-from django.conf.urls import url, include
+from django.conf.urls import url
+#from django.conf.urls import url, include
 from . import views
 from VeterinariaPatagonica.Apps.GestionDeClientes import views as clientes_views
-from VeterinariaPatagonica.Apps.GestionDeInsumos import views as insumos_views
+#from VeterinariaPatagonica.Apps.GestionDeInsumos import views as insumos_views
 from VeterinariaPatagonica.Apps.GestionDeServicios import views as servicios_views
 
 urlpatterns = [
@@ -28,6 +29,7 @@ urlpatterns = [
     url(r'^$',views.base),
     url(r'demos/.+\.html$', views.verdemo),
     url(r'GestionDeServicios/$', servicios_views.servicios, name='servicios'),#Agregamos la direccion url a nuestro alcance.
-    url(r'GestionDeClientes/$', clientes_views.clientes, name='clientes'),
-    url(r'GestionDeInsumos/$', insumos_views.insumos, name='insumos'),
+    url(r'GestionDeClientes/$', clientes_views.clientes, name= 'clientes'),
+    #path(r'GestionDeClientes/', include('VeterinariaPatagonica.Apps.GestionDeClientes.urls', namespace= 'clientes')),
+    path(r'GestionDeInsumos/',include('VeterinariaPatagonica.Apps.GestionDeInsumos.urls', namespace='insumos')),
 ]

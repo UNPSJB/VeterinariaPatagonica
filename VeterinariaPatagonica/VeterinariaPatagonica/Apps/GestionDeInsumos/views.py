@@ -6,3 +6,8 @@ def insumos(request):
     context = {}
     template = loader.get_template('GestionDeInsumos/GestionDeInsumos.html')
     return HttpResponse(template.render(context, request))
+
+def alta(request):
+    context = {}
+    template = loader.get_template('demos/altainsumo.html')
+    return HttpResponse(template.render(context,request))

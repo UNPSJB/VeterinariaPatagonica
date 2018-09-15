@@ -2,18 +2,21 @@
 <html lang="es">
   <head>
   {% block head %}
-    {% block meta %}
-    {% endblock meta %}
     <title>Veterinaria Patagónica| {% block title %}{% endblock %}</title>
     {% block stylesheets %}
     <p>Vetereniaria Patagónica<p>
     {% endblock stylesheets %}
   {% endblock head %}
 </head>
+
+{% block sidebar %}
+  <li><a class="nav-link active" href="{% url "clientes" %}">Clientes</a></li>
+  <li><a class="nav-link active" href="{% url "insumos:insumo" %}">Insumos</a></li>
+  <li><a class="nav-link active" href="{% url "servicios" %}">Servicios</a></li>
+{% endblock %}
+
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
   {% block body %}
-        {% block top_navigation %}
-        {% endblock top_navigation %}
         {% block content %}
         <p>Sitio para gestionar los insumos de la Veterinaria.<p>
         {% endblock content %}
