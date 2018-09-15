@@ -1,8 +1,9 @@
 from django.conf.urls import url
-from . import views
+from . import views as insumos_views
+from VeterinariaPatagonica import views
 
 app_name = "insumos"
 urlpatterns = [
-    url(r'$',views.insumos, name="insumo"),
-    url(r'alta/$',views.alta, name="alta"),
+    url(r'$',insumos_views.insumos, name="insumo"),
+    url(r'altainsumo.html/$',views.verdemo, name="alta"),
 ]

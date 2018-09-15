@@ -20,7 +20,7 @@
         <ul>
         {% block sidebar %}
           <li><a class="nav-link active" href="{% url "clientes" %}">Clientes</a></li>
-          <li><a class="nav-link active" href="{% url "insumos" %}">Insumos</a></li>
+          <li><a class="nav-link active" href="{% url "insumos:insumo" %}">Insumos</a></li>
           <li><a class="nav-link active" href="{% url "servicios" %}">Servicios</a></li>
           <li>cuatro</li>
           <li>cinco</li>
@@ -29,7 +29,7 @@
       </nav>
       <section class="col-7" style="background-color:lightgreen;">
         <a class="btn btn-primary" href="{% url "clientes" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_clientes.jpg);">Clientes</a>
-        <a class="btn btn-primary" href="{% url "insumos" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_insumos.jpg);">Insumos</a>
+        <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_insumos.jpg);">Insumos</a>
         <a class="btn btn-primary" href="{% url "servicios" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_servicios.jpg);">Servicios</a>
 
         {% block content %}
