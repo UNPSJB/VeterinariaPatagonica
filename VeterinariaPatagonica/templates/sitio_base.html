@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css'%}">
 </head>
 
+
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
   <div class="container-fluid">
     <div class="row" style="height: 100px; background-color: green;">
@@ -19,21 +20,21 @@
       <nav class="col-3">
         <ul>
         {% block sidebar %}
-          <li><a class="nav-link active" href="{% url "clientes" %}">Clientes</a></li>
+          <li><a class="nav-link active" href="{% url "clientes:cliente" %}">Clientes</a></li>
           <li><a class="nav-link active" href="{% url "insumos:insumo" %}">Insumos</a></li>
-          <li><a class="nav-link active" href="{% url "servicios" %}">Servicios</a></li>
-          <li>cuatro</li>
-          <li>cinco</li>
+          <li><a class="nav-link active" href="{% url "servicios:servicio" %}">Servicios</a></li>
           {% endblock %}
         </ul>
       </nav>
       <section class="col-7" style="background-color:lightgreen;">
-        <a class="btn btn-primary" href="{% url "clientes" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_clientes.jpg);">Clientes</a>
-        <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_insumos.jpg);">Insumos</a>
-        <a class="btn btn-primary" href="{% url "servicios" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_servicios.jpg);">Servicios</a>
+
+        <a class="btn btn-primary" href="{% url "clientes:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: blue;">Clientes</a>
+        <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: red;">Insumos</a>
+        <a class="btn btn-primary" href="{% url "servicios:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: silver;">Servicios</a>
 
         {% block content %}
         {% endblock %}
+
       </section>
       <nav class="col-2">nav2</nav>
     </div>

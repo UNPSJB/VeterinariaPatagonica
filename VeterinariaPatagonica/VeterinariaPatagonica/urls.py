@@ -18,7 +18,7 @@ from django.urls import path, include
 from django.conf.urls import url
 #from django.conf.urls import url, include
 from . import views
-from VeterinariaPatagonica.Apps.GestionDeClientes import views as clientes_views
+#from VeterinariaPatagonica.Apps.GestionDeClientes import views as clientes_views
 #from VeterinariaPatagonica.Apps.GestionDeInsumos import views as insumos_views
 from VeterinariaPatagonica.Apps.GestionDeServicios import views as servicios_views
 
@@ -27,9 +27,12 @@ urlpatterns = [
     #url(r'^$',, name='base')
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
     url(r'^$',views.base),
-    url(r'demos/.+\.html$', views.verdemo),
+#    url(r'demos/.+\.html$', views.verdemo),
+    #url(r'.+\html/',views.verdemo),
     url(r'GestionDeServicios/$', servicios_views.servicios, name='servicios'),#Agregamos la direccion url a nuestro alcance.
-    url(r'GestionDeClientes/$', clientes_views.clientes, name= 'clientes'),
-    #path(r'GestionDeClientes/', include('VeterinariaPatagonica.Apps.GestionDeClientes.urls', namespace= 'clientes')),
+    #url(r'GestionDeClientes/$', clientes_views.clientes, name= 'clientes'),
+    path(r'GestionDeServicios/', include('VeterinariaPatagonica.Apps.GestionDeServicios.urls', namespace= 'servicios')),
+    path(r'GestionDeClientes/', include('VeterinariaPatagonica.Apps.GestionDeClientes.urls', namespace= 'clientes')),
+    #url(r'GestionDeInsumos/$',insumos_views.insumos , name='insumos'),
     path(r'GestionDeInsumos/',include('VeterinariaPatagonica.Apps.GestionDeInsumos.urls', namespace='insumos')),
 ]

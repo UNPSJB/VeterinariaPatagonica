@@ -1,39 +1,12 @@
 {% extends "sitio_base.html" %}
 {% load static %}
 <html lang="es">
-  <head>
-  {% block head %}
-    <title>Veterinaria Patagónica| {% block title %}{% endblock %}</title>
-    <h1>Vetereniaria Patagónica<h1>
-  {% endblock head %}
-</head>
+
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
-
-      <div class="row" style="height: 500px; background-color: lightblue;">
-        <nav class="col-3">
-          <ul>
-          {% block sidebar %}
-            <li><a class="nav-link active" href="{% url "clientes" %}">Clientes</a></li>
-            <li><a class="nav-link active" href="{% url "insumos" %}">Insumos</a></li>
-            <li><a class="nav-link active" href="{% url "servicios" %}">Servicios</a></li>
-            <li>cuatro</li>
-            <li>cinco</li>
-
-            {% endblock %}
-          </ul>
-        </nav>
-        <section class="col-7" style="background-color:lightgreen;">
-          <a class="btn btn-primary" href="{% url "clientes" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_clientes.jpg);">Clientes</a> 
-          <a class="btn btn-primary" href="{% url "insumos" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_insumos.jpg);">Insumos</a>
-          <a class="btn btn-primary" href="{% url "servicios" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-image: url(imagenes/imagen_boton_servicios.jpg);">Servicios</a>
 
           {% block content %}
           <p>Sitio para gestionar los clientes de la Veterinaria.<p>
           {% endblock %}
-        </section>
-        <nav class="col-2">nav2</nav>
-      </div>
-      <div class="row" style="background-color:blue;">
 
   {% block body %}
         {% block footer %}
