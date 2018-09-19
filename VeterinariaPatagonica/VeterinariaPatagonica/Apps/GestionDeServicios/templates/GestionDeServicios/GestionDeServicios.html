@@ -1,26 +1,14 @@
 {% extends "sitio_base.html" %}
 <html lang="es">
-  <head>
-  {% block head %}
-    {% block meta %}
-    {% endblock meta %}
-    <title>Veterinaria Patagónica| {% block title %}{% endblock %}</title>
-    {% block stylesheets %}
-    <p>Vetereniaria Patagónica<p>
-    {% endblock stylesheets %}
-  {% endblock head %}
-</head>
+
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
-  {% block body %}
-          {% block content %}
+      {% block content %}
         <p>Sitio para gestionar los servicios de la Veterinaria.<p>
-        {% endblock content %}
+      {% endblock content %}
 
-        {% block footer %}
-        
+      {% block footer %}
+
         <p>Para mas información  de los Servicios haga click aquí<p>
-        {% endblock footer %}
-
-  {% endblock body %}
+      {% endblock footer %}
 </body>
 </html>
