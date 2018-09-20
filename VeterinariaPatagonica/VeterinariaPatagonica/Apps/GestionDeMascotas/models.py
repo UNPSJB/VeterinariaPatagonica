@@ -5,7 +5,6 @@ from VeterinariaPatagonica.Apps.GestionDeClientes.models import *
 # Create your models here.
 
 class Mascota(models.Model):
-
     patente = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=35)
     cliente = models.ForeignKey(Cliente, null=False, blank=False, on_delete=models.CASCADE)
