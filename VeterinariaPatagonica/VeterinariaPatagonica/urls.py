@@ -23,7 +23,7 @@ from VeterinariaPatagonica.Apps.GestionDeClientes import views as clientes_views
 from VeterinariaPatagonica.Apps.GestionDeServicios import views as servicios_views
 
 urlpatterns = [
-#    path(r'admin/', admin.site.urls),
+    #path(r'admin/', admin.site.urls),
     #url(r'^$',, name='base')
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
     url(r'^$',views.base),
@@ -32,4 +32,5 @@ urlpatterns = [
     url(r'GestionDeClientes/$', clientes_views.clientes, name= 'clientes'),
     #path(r'GestionDeClientes/', include('VeterinariaPatagonica.Apps.GestionDeClientes.urls', namespace= 'clientes')),
     path(r'GestionDeInsumos/',include('VeterinariaPatagonica.Apps.GestionDeInsumos.urls', namespace='insumos')),
+    #<!-- HOLA -->
 ]
