@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+{% extends "sitio_base.html" %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body class="{% block body_class %}nav-md {% endblock body_class %}">
+        {% block content %}
+      <p>Sitio para gestionar las mascotas de la Veterinaria.<p>
+        {% endblock content %}
+
+        {% block footer %}
+        <p>Para mas información  de los Mascotas haga click aquí<p>
+        {% endblock footer %}
+</body>
+</html>
