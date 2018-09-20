@@ -31,8 +31,9 @@
         <a class="btn btn-primary" href="{% url "clientes:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: blue;">Clientes</a>
         <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: red;">Insumos</a>
         <a class="btn btn-primary" href="{% url "servicios:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: silver;">Servicios</a>
-        <div>
+        <div class="row">
         {% block content %}
+        <h1>Dashboard Principal</h1>
         {% endblock %}
         </div>
       </section>

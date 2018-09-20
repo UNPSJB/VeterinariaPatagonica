@@ -1,13 +1,8 @@
 {% extends "sitio_base.html" %}
-<html lang="es">
-
-<body class="{% block body_class %}nav-md {% endblock body_class %}">
-        {% block content %}
-      <p>Sitio para gestionar los insumos de la Veterinaria.<p>
-        {% endblock content %}
-
-        {% block footer %}
-        <p>Para mas información  de los Insumos haga click aquí<p>
-        {% endblock footer %}
-</body>
-</html>
+{% load static %}
+{% block content %}
+  <p>Sitio para gestionar los insumos de la Veterinaria.<p>
+{% endblock content %}
+{% block footer %}
+  <p>Para mas información  de los Insumos haga click aquí<p>
+{% endblock footer %}

@@ -1,19 +1,8 @@
 {% extends "sitio_base.html" %}
 {% load static %}
-<html lang="es">
-
-<body class="{% block body_class %}nav-md {% endblock body_class %}">
-
-
-        {% block content %}
-          <p>Sitio para gestionar los clientes de la Veterinaria.<p>
-        {% endblock %}
-        {% block footer %}
-        <p>Para mas información  de los Clientes haga click aquí<p>
-        {% endblock footer %}
-
-    {% block javascripts %}
-          <script src="{% static 'js/myscript.js' %}" type="text/javascripts"></script>
-    {% endblock %}
-</body>
-</html>
+{% block content %}
+  <p>Sitio para gestionar los clientes de la Veterinaria.<p>
+{% endblock %}
+{% block footer %}
+  <p>Para mas información  de los Clientes haga click aquí<p>
+{% endblock footer %}

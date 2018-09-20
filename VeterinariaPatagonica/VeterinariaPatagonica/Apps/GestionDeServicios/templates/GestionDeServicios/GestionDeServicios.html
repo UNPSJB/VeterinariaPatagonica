@@ -1,14 +1,9 @@
 {% extends "sitio_base.html" %}
-<html lang="es">
+{% load static %}
+{% block content %}
+  <p>Sitio para gestionar los servicios de la Veterinaria.<p>
+{% endblock content %}
 
-<body class="{% block body_class %}nav-md {% endblock body_class %}">
-      {% block content %}
-        <p>Sitio para gestionar los servicios de la Veterinaria.<p>
-      {% endblock content %}
-
-      {% block footer %}
-
-        <p>Para mas información  de los Servicios haga click aquí<p>
-      {% endblock footer %}
-</body>
-</html>
+{% block footer %}
+  <p>Para mas información  de los Servicios haga click aquí<p>
+{% endblock footer %}
