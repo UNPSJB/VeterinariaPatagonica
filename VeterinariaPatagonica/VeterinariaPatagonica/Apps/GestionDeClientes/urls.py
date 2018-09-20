@@ -1,9 +1,10 @@
 from django.conf.urls import url
-from . import views
+from . import views as clientes_views
+from VeterinariaPatagonica import views
 
-
-app_name = "clientes"
+app_name = 'clientes'
 urlpatterns = [
-    url(r'$',views.clientes, name="cliente"),
-    url(r'alta/$',views.alta, name="alta")
+    url(r'$',clientes_views.clientes, name="cliente"),
+    url(r'altacliente.html/$',views.verdemo, name="alta"),
+    #url(r'altacliente.html/$',clientes_views.alta, name='alta'),
 ]
