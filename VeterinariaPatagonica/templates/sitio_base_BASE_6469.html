@@ -24,7 +24,6 @@
           <li><a class="nav-link active" href="{% url "clientes:cliente" %}">Clientes</a></li>
           <li><a class="nav-link active" href="{% url "insumos:insumo" %}">Insumos</a></li>
           <li><a class="nav-link active" href="{% url "servicios:servicio" %}">Servicios</a></li>
-          <li><a class="nav-link active" href="{% url "mascotas:mascota" %}">Mascotas</a></li>
           {% endblock %}
         </ul>
       </nav>
@@ -32,14 +31,8 @@
         <a class="btn btn-primary" href="{% url "clientes:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: blue;">Clientes</a>
         <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: red;">Insumos</a>
         <a class="btn btn-primary" href="{% url "servicios:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: silver;">Servicios</a>
-<<<<<<< HEAD
-        <div class="row">
-=======
-        <a class="btn btn-primary" href="{% url "mascotas:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: orange;">Mascotas</a>
         <div>
->>>>>>> refs/remotes/origin/master
         {% block content %}
-        <h1>Dashboard Principal</h1>
         {% endblock %}
         </div>
       </section>
