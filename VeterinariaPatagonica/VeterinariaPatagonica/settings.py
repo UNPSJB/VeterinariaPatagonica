@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'VeterinariaPatagonica.Apps.GestionDeClientes',
-    'VeterinariaPatagonica.Apps.GestionDeInsumos',
-    'VeterinariaPatagonica.Apps.GestionDeMascotas',
-    'VeterinariaPatagonica.Apps.GestionDeServicios',
+    'Apps.GestionDeClientes',
+    'Apps.GestionDeInsumos',
+    'Apps.GestionDeMascotas',
+    'Apps.GestionDeServicios',
 ]
 
 MIDDLEWARE = [

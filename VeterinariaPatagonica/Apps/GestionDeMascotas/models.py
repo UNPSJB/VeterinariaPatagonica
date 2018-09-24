@@ -1,13 +1,13 @@
 from django.db import models
 
-from VeterinariaPatagonica.Apps.GestionDeClientes.models import *
+from Apps.GestionDeClientes import models as gcmodels
 
 # Create your models here.
 
 class Mascota(models.Model):
     patente = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=35)
-    cliente = models.ForeignKey(Cliente, null=False, blank=False, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(gcmodels.Cliente, null=False, blank=False, on_delete=models.CASCADE)
     fechaNacimiento = models.DateTimeField()
     especie = models.CharField(max_length=40)
     raza = models.CharField(max_length=40)

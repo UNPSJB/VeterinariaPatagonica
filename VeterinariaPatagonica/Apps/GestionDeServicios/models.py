@@ -1,5 +1,5 @@
 from django.db import models
-from VeterinariaPatagonica.Apps.GestionDeInsumos.models import Insumo
+from Apps.GestionDeInsumos.models import Insumo
 from django.views.generic.list import ListView
 
 # Create your models here.
