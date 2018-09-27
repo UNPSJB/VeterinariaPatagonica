@@ -4,7 +4,6 @@
 
 <head>
     <title>Veterinaria Patagonica</title>
-
     <!-- Bootstrap -->
     <link href="{% static 'gentelella/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
     <!-- Font Awesome -->
@@ -32,6 +31,24 @@
       <header>
         <h1>Veterinaria</h1>
         <!--Button Base-->
+      <nav>
+        <div class="nav toggle">
+          <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+        </div>
+      </nav>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="">
+          <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Menu De Usuario
+            <span class=" fa fa-angle-down"></span>
+          </a>
+          <ul class="dropdown-menu dropdown-usermenu pull-right">
+            <li><a href="javascript:;">Ayuda</a></li>
+            <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a></li>
+          </ul>
+        </li>
+      </ul>
+
       </header>
     </div>
 {%block body%}<!--¿¿Esta bien este body?? ¿o está de más?-->
@@ -39,10 +56,8 @@
 
 <!--      <nav class="col-3"> -->
 
-
 	<nav class="col-md-3 left_col">
 		<div class="left_col scroll-view">
-
 
 			<div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
 
@@ -50,8 +65,7 @@
 				<div class="menu_section">
 					<h3>Menu General</h3>
 					<ul class="nav side-menu">
-
-						<li><a href="#"><i class="fa fa-angle-right"></i> Clientes </a>
+            <li><a href="#"><i class="fa fa-angle-right"></i> Clientes </a>
 							<ul class="nav child_menu">
 								<li><a href="{% url 'clientes:cliente' %}">Inicio</a></li>
 								<li><a href="{% url 'clientes:alta' %}">Alta</a></li>
@@ -82,7 +96,7 @@
 								<li><a href="#">Baja</a></li>
 								<li><a href="#">Modificacion</a></li>
 							</ul>
-						</li>	
+						</li>
 					</ul>
 				</div>
 			</div>
@@ -107,20 +121,6 @@
 
 	</nav>
 
-
-
-<!--
-        <ul>
-        {% block sidebar %}
-          <li><a class="nav-link active" href="{% url "clientes:cliente" %}">Clientes</a></li>
-          <li><a class="nav-link active" href="{% url "insumos:insumo" %}">Insumos</a></li>
-          <li><a class="nav-link active" href="{% url "servicios:servicio" %}">Servicios</a></li>
-          <li><a class="nav-link active" href="{% url "mascotas:mascota" %}">Mascotas</a></li>
-          {% endblock %}
-        </ul>
-
-      </nav>
--->
       <section class="col-md-7 middle_col">
         <a class="btn btn-primary" href="{% url "clientes:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: blue;">Clientes</a>
         <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: red;">Insumos</a>
