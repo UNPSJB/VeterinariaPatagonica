@@ -1,0 +1,84 @@
+
+
+.tda-secciones {
+  padding: 0px;
+  margin-top: 0px;
+  text-align: right;
+}
+
+.tda-titulo {
+  margin-top: 10px;
+  margin-bottom:3px;
+  font-weight: normal;
+}
+
+.tda-subtitulo {
+  margin: 3px 0px 20px 0px;
+  font-style: italic;
+  color: #555;
+}
+
+.tda-linea-titulo {
+  border-bottom: 1px solid #DDD;
+}
+
+.tda-cuerpo {
+  padding: 0px;
+  margin-top: 5px;
+}
+
+#tda-habilitados-crear {
+  clear: both;  
+  margin-bottom: 10px;
+}
+
+.tda-etiqueta {
+  text-align: left;
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+  padding: 0px;
+}
+
+.tda-aviso-eliminacion {
+  text-align: center;
+  text-weight: bold;
+  margin: 20px 0px 20px 0px;
+}
+
+.tda-item-acciones a {
+  margin: 10px 0px 10px 0px;
+}
+
+.tda-accion-listado {
+  font-size: 110%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.tda-accion-listado:hover {
+  text-decoration: none;
+}
+
+.tda-listado thead {
+  background-color: transparent;
+  color: #2A3F54;
+}
+
+.tda-listado,
+.tda-listado thead,
+.tda-listado thead tr,
+.tda-listado thead tr th,
+.tda-listado tbody,
+.tda-listado tbody tr,
+.tda-listado tbody tr, {
+  border: 0px solid #FFF;
+}
+
+table.table.tda-listado {
+  border: 0px solid #FFF;
+}
+
+.tda-listado>tbody>tr>td {
+    padding-top: 9px;
+    padding-left: 4px;
+    border-top: 1px solid #DDD !important;
+}

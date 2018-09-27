@@ -1,0 +1,30 @@
+{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+
+{% block titulo %}
+Gestion de Tipos de Atencion | Eliminar Tipo de Atencion
+{% endblock %}
+
+{% block tda-titulo %}
+Eliminar Tipo de Atencion
+{% endblock %}
+
+{% block tda-subtitulo %}
+Elimina permanentemente los datos del tipo de atencion del sistema
+{% endblock %}
+
+{% block tda-contenido %}
+
+<div class="tda-cuerpo">
+
+    <form class="form" action="{% url 'tda-eliminar' id %}" method="post">
+        {% csrf_token %}
+
+		<p class="tda-aviso-eliminacion"> Confirmar eliminacion: </p>
+
+        <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
+
+    </form>
+
+</div>
+
+{% endblock %}

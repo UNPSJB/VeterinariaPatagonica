@@ -1,0 +1,69 @@
+{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+
+{% block titulo %}
+Gestion de Tipos de Atencion | Ver Habilitados
+{% endblock %}
+
+{% block tda-titulo %}
+Tipos de Atencion Habilitados
+{% endblock %}
+
+{% block tda-subtitulo %}
+Actualmente disponibles para ser asignados a practicas
+{% endblock %}
+
+{% block secciones %}
+{% include './secciones_snippet.html' with pagina='ver_habilitados' %}
+{% endblock %}
+
+{% block tda-contenido %}
+
+<!-- Listado -->
+<div class="tda-cuerpo" >
+
+    <p> Los siguientes tipos de servicio estan habilitados.  </p>
+
+    {% if tdas %}
+            <div class="table-responsive" id="tabla">
+                <table class="table tda-listado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-descripcion">Descripcion </th>
+                            <th id="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tda in tdas %}
+                            <tr>
+                                <td>{{ tda.nombre }}</td>
+                                <td>{{ tda.descripcion|truncatechars:40 }}</td>
+                                <td> <p align="center">
+                                            <a  href="{% url 'tda-ver' tda.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-search"> </i>
+                                            </a>
+                                            <a href="{% url 'tda-modificar' tda.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a>
+                                            <a href="{% url 'tda-deshabilitar' tda.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-minus"> </i>
+                                            </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay tipos de atencion habilitados</p>
+
+    {% endif %}
+
+    <a  id="tda-habilitados-crear" class="btn btn-sm btn-default" href="{% url 'tda-crear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}
+
