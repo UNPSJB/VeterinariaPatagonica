@@ -1,0 +1,121 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>
+{% block pagina-titulo %}
+        Veterinaria Patagonica
+{% endblock pagina-titulo %}
+  </title>
+
+{% block pagina-estilos %}
+    <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/fontawesome/css/font-awesome.css' %}" rel="stylesheet">
+    <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
+{% endblock pagina-estilos %}
+</head>
+
+<body>
+<div class="container-fluid" id="el_container_fluid">
+
+
+<!-- Primer fila: Barra de titulo -->
+<div class="row">
+      <header class="col-xs-12" id="sitio-encabezado">
+          <h1><!--<i class="fa fa-paw" ></i>-->Veterinaria Patagonica</h1>
+      </header>
+</div>
+
+
+<!-- Segunda Fila: Menu derecho, izquierdo y seccion general -->
+<div class="row" id="fila_centro" >
+
+  <!-- Menu izquierdo -->
+  <nav class="col-sm-4 col-md-3 sitio-menu" id="sitio_menu_izq">
+
+    <!-- Codigo copiado del template casi sin modificar, habria que ajustarlo linea a linea -->
+    <div class="left_col scroll-view">
+        <div class="clearfix"></div>
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+{% block pagina-menu-izq %}
+{% include './menu-izq_snippet.html' %}
+{% endblock pagina-menu-izq %}
+        </div>
+    </div>
+  </nav>
+
+  <!-- Seccion general -->
+  <div class="col-sm-8 col-md-7" id="sitio_seccion_principal">
+
+    <div class="contenedor">
+{% block pagina-seccion-general %}
+
+        <section>
+          <h3>Titulo</h3>
+            <p> Texto bajo el titulo. <a href="#">Link a ningun lado</a></p>
+            <a class="btn btn-primary cuadradito" href="#" role="button">Clientes</a>
+            <a class="btn btn-primary cuadradito" href="#" role="button">Insumos</a>
+            <a class="btn btn-primary cuadradito" href="#" role="button">Servicios</a>
+        </section>
+
+{% endblock pagina-seccion-general %}
+      </div>
+  </div>
+
+  <!-- Menu derecho -->
+
+  <nav class="col-sm-12 col-md-2 sitio-menu" id="sitio_menu_dch">
+{% block pagina-menu-dch %}
+
+{% comment %}
+{% include './menu-dch_snippet.html' %}
+{% endcomment %}
+
+<div class="panel panel-default">
+    <div class="panel-heading"> <span> Nuevo panel </span><span class="glyphicon glyphicon-chevron-up float-dch"></span></div>
+    <div class="list-group">
+        <a href="#" class="list-group-item">Item</a>
+        <a href="#" class="list-group-item">Item</a>
+        <a href="#" class="list-group-item">Item</a>
+        <a href="#" class="list-group-item">Item</a>
+        <a href="#" class="list-group-item">Item</a>
+    </div>
+</div>
+
+
+{% endblock pagina-menu-dch %}
+  </nav>
+
+</div>
+
+
+<!-- Tercer Fila: Pie de pagina -->
+<div class="row">
+  <footer class="col-xs-12" id="sitio-piedepagina">
+{% block pagina-pie %}
+
+    <p> 2018 Ningun derecho reservado </p>
+
+{% endblock pagina-pie %}
+  </footer>
+</div>
+
+
+</div> <!-- el_container_fluid -->
+
+{% block pagina-javascript %}
+  <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
+  <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
+{% endblock pagina-javascript %}
+
+</body>
+
+</html>
