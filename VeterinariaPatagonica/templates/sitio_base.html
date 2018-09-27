@@ -13,7 +13,7 @@
     <link href="{% static 'gentelella/nprogress/nprogress.css' %}" rel="stylesheet">
     <!-- iCheck -->
     <link href="{% static 'gentelella/iCheck/skins/flat/green.css' %}" rel="stylesheet">
-	
+
     <!-- bootstrap-progressbar -->
     <link href="{% static 'gentelella/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css' %}" rel="stylesheet">
     <!-- JQVMap -->
@@ -50,7 +50,7 @@
 				<div class="menu_section">
 					<h3>Menu General</h3>
 					<ul class="nav side-menu">
-								
+
 						<li><a href="#"><i class="fa fa-angle-right"></i> Clientes </a>
 							<ul class="nav child_menu">
 								<li><a href="{% url 'clientes:cliente' %}">Inicio</a></li>
@@ -59,13 +59,34 @@
 								<li><a href="#">Modificacion</a></li>
 							</ul>
 						</li>
-						<li><a href="{% url 'insumos:insumo' %}"><i class="fa fa-angle-right"></i> Insumos </a></li>
-						<li><a href="{% url 'servicios:servicio' %}"><i class="fa fa-angle-right"></i> Servicios </a></li>
-						<li><a href="{% url 'mascotas:mascota' %}"><i class="fa fa-angle-right"></i> Mascotas </a></li>
+            <li><a href="#"><i class="fa fa-angle-right"></i> Insumos </a>
+							<ul class="nav child_menu">
+								<li><a href="{% url 'insumos:insumo' %}">Inicio</a></li>
+								<li><a href="{% url 'insumos:alta' %}">Alta</a></li>
+								<li><a href="#">Baja</a></li>
+								<li><a href="#">Modificacion</a></li>
+							</ul>
+						</li>
+            <li><a href="#"><i class="fa fa-angle-right"></i> Servicios </a>
+							<ul class="nav child_menu">
+								<li><a href="{% url 'servicios:servicio' %}">Inicio</a></li>
+								<li><a href="{% url 'servicios:alta' %}">Alta</a></li>
+								<li><a href="#">Baja</a></li>
+								<li><a href="#">Modificacion</a></li>
+							</ul>
+						</li>
+            <li><a href="#"><i class="fa fa-angle-right"></i> Mascotas </a>
+							<ul class="nav child_menu">
+								<li><a href="{% url 'mascotas:mascota' %}">Inicio</a></li>
+								<li><a href="{% url 'mascotas:alta' %}">Alta</a></li>
+								<li><a href="#">Baja</a></li>
+								<li><a href="#">Modificacion</a></li>
+							</ul>
+						</li>	
 					</ul>
 				</div>
 			</div>
-			
+
 			<div class="sidebar-footer hidden-small">
 				<a data-toggle="tooltip" data-placement="top" title="Settings">
 					<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -80,10 +101,10 @@
 					<span class="glyphicon glyphicon-off" aria-hidden="true"></span>
 				</a>
 			</div>
-			
+
 
 		</div>
-	
+
 	</nav>
 
 
@@ -108,7 +129,7 @@
         {% block content %}
         <h1>Dashboard Principal</h1>
         {% endblock %}
-       
+
       <footer>{% block footer %}
         <p>Pie de Pagina Principal.</p>
         {% endblock %}
