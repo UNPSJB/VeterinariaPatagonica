@@ -1,27 +1,31 @@
 from django.db import models
-from Apps.GestionDeInsumos.models import Insumo
-from django.views.generic.list import ListView
-
-# Create your models here.
-#class CantidadList(ListView):
-#   cantidadInsumos = models.PositiveSmallIntegerField()
-
-
-class InsumosList(ListView):
-    insumo = models.ForeignKey(Insumo, null=False, blank=False, on_delete=models.CASCADE)
-    cantidadInsumo = models.PositiveSmallIntegerField
+from Apps.GestionDeInsumos import models as imodels
+from decimal import Decimal
 
 class Servicio(models.Model):
-    t_tipo = (('C','Consulta'),('Q','Quirurgica'))
-    tipo = models.CharField(max_length=25, choices=t_tipo, default='Tipo de Práctica aqui')
+    TIPO = (('C','Consulta'), ('Q','Quirurgica'))
+
+    tipo = models.CharField(max_length=1, choices=TIPO, default='Q')
     nombre = models.CharField(max_length=50, null=False, blank=False, help_text='Ingresa el nombre del Servicio')
     descripcion = models.CharField(max_length=200)
-    insumos = InsumosList
-    #cantidadInsumos = CantidadList
-    tiempoEstimado = models.TimeField(auto_now=False, help_text='Tiempo de Duración del Servicio')
-    precioManoDeObra = models.PositiveSmallIntegerField()
-
+    tiempoEstimado = models.PositiveSmallIntegerField(help_text='Tiempo en minutos de Duración del Servicio')
+    precioManoDeObra = models.DecimalField(max_digits = 7, decimal_places = 2)
+    insumos = models.ManyToManyField(imodels.Insumo, 
+        through='ServicioInsumo',
+        through_fields=('servicio', 'insumo'), 
+    )
 
     def __str__(self):
         cadena = 'Nombre de Servicio: {0}, Duración Estimada: {1} Precio: {2}.'
         return cadena.format(self.nombre, self.tiempoEstimado, self.precioManoDeObra)
+
+    def precio(self):
+        insumos = Decimal("0")
+        for sinsumo in self.servicioinsumo_set.all():
+            insumos += sinsumo.insumo.precioEnUnidad(sinsumo.cantidad)
+        return self.precioManoDeObra + insumos
+
+class ServicioInsumo(models.Model):
+    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
+    insumo = models.ForeignKey(imodels.Insumo, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()

@@ -6,6 +6,8 @@ from django.db import models
 #FALTAN LAS VALIDACIONES.
 
 class Cliente (models.Model):
+    TIPODECLIENTE = (('E', 'Especial'), ('C', 'Comun'))
+
     DNI_CUIT = models.CharField(max_length = 14)
     nombres = models.CharField(max_length = 50)
     apellidos = models.CharField(max_length = 50)
@@ -13,8 +15,6 @@ class Cliente (models.Model):
     localidad = models.CharField(max_length = 100)
     telefono = models.CharField(max_length = 30)
     email = models.EmailField(max_length=30)
-    tipoDeCliente = models.CharField(max_length = 7)
-    TIPODECLIENTE = (('E', 'Especial'), ('C', 'Comun'))
     tipoDeCliente = models.CharField(max_length=1, choices=TIPODECLIENTE, default='C')
     descuentoServicio = models.PositiveSmallIntegerField()
     descuentoProducto = models.PositiveSmallIntegerField()

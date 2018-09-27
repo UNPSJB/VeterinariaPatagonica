@@ -1,0 +1,1 @@
+[{"model": "GestionDeInsumos.insumo", "pk": "Nokeador", "fields": {"formaDePresentacion": 5, "precioPorUnidad": "500.00", "rubro": "Sedantes", "baja": false}}, {"model": "GestionDeInsumos.insumo", "pk": "Pipeta", "fields": {"formaDePresentacion": 3, "precioPorUnidad": "20.00", "rubro": "Elementos", "baja": false}}]

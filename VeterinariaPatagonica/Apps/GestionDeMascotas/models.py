@@ -5,7 +5,7 @@ from Apps.GestionDeClientes import models as gcmodels
 # Create your models here.
 
 class Mascota(models.Model):
-    patente = models.AutoField(primary_key=True)
+    patente = models.CharField(max_length=20, unique=True)
     nombre = models.CharField(max_length=35)
     cliente = models.ForeignKey(gcmodels.Cliente, null=False, blank=False, on_delete=models.CASCADE)
     fechaNacimiento = models.DateTimeField()
