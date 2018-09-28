@@ -96,7 +96,7 @@ class CreacionForm(forms.Form):
             'required' : "El tipo de servicio es obligatorio"
         },
         validators = [],
-        choices = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).t_tipo,
+        choices = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO,
     )
 
     lugar = forms.ChoiceField(
@@ -217,6 +217,3 @@ class ModificacionForm(CreacionForm):
         instancia.fin_franja_horaria = self.cleaned_data['fin_franja_horaria']
 
         return instancia
-
-
-
