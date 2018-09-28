@@ -4,43 +4,45 @@
 
               <!--**********************-->
               <ul class="nav side-menu">
-                <li><a href="#"><i class="fa fa-angle-right"></i> Clientes </a>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Clientes </a>
     							<ul class="nav child_menu">
-    								<li><a href="{% url 'clientes:cliente' %}">Inicio</a></li>
-    								<li><a href="{% url 'clientes:alta' %}">Alta</a></li>
-    								<li><a href="#">Baja</a></li>
-    								<li><a href="#">Modificacion</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:cliente' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:alta' %}">Crear Cliente</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Cuenta Corriente</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Pagos</a></li>
     							</ul>
     						</li>
-                <li><a href="#"><i class="fa fa-angle-right"></i> Insumos </a>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Insumos </a>
     							<ul class="nav child_menu">
-    								<li><a href="{% url 'insumos:insumo' %}">Inicio</a></li>
-    								<li><a href="{% url 'insumos:alta' %}">Alta</a></li>
-    								<li><a href="#">Baja</a></li>
-    								<li><a href="#">Modificacion</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'insumos:insumo' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'insumos:alta' %}">Crear Insumo</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>
     							</ul>
     						</li>
-                <li><a href="#"><i class="fa fa-angle-right"></i> Servicios </a>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Servicios </a>
     							<ul class="nav child_menu">
-    								<li><a href="{% url 'servicios:servicio' %}">Inicio</a></li>
-    								<li><a href="{% url 'servicios:alta' %}">Alta</a></li>
-    								<li><a href="#">Baja</a></li>
-    								<li><a href="#">Modificacion</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicio' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:alta' %}">Crear Servicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>
     							</ul>
     						</li>
-                <li><a href="#"><i class="fa fa-angle-right"></i> Mascotas </a>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Mascotas </a>
     							<ul class="nav child_menu">
-    								<li><a href="{% url 'mascotas:mascota' %}">Inicio</a></li>
-    								<li><a href="{% url 'mascotas:alta' %}">Alta</a></li>
-    								<li><a href="#">Baja</a></li>
-    								<li><a href="#">Modificacion</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascota' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:alta' %}">Crear Mascota </a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>
     							</ul>
     						</li>
-    					</ul>
+                <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tda-ver-habilitados' %}">Tipos de Atencion</a>
+                </li>
+              </ul>
 
               <!--**********************-->
 
-
+        <!--
               <ul class="nav side-menu">
                 <li><i class="glyphicon glyphicon-chevron-down"></i><a> Clientes </a>
                   <ul class="nav child_menu">
@@ -54,9 +56,11 @@
                     <li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Cirugia</a></li>
                   </ul>
                 </li>
+
               </ul>
             </div>
-
+        -->
+          <!--
             <div class="menu_section">
               <h3 class="menu-subtitulo">No tan general</h3>
               <ul class="nav side-menu">
@@ -69,3 +73,4 @@
                 </li>
               </ul>
             </div>
+          -->
