@@ -72,7 +72,7 @@ def login(peticion):
     else:
 
         formulario = LoginForm()
-        template = loader.get_template('login.html')
+        template = loader.get_template('registration/login.html')
         contexto['formulario'] = formulario
 
     return HttpResponse(template.render( contexto, peticion) )

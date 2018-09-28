@@ -7,10 +7,16 @@ from . import views
 urlpatterns = [
 
 
-    path('accounts/', include('django.contrib.auth.urls')),
+    #path('accounts/', include('django.contrib.auth.urls')),
 
 
+    path('gestion/tda/', include('Apps.GestionDeTiposDeAtencion.urls')),
 
+    path('index/', views.index),
+    url(r'^$', views.index),
+
+    path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
     path(r'admin/', admin.site.urls),
     #url(r'^$',, name='base')
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
@@ -22,13 +28,7 @@ urlpatterns = [
     path(r'GestionDeInsumos/',include('Apps.GestionDeInsumos.urls', namespace='insumos')),#Definimos que la url "GestionDeInsumos" incluye todas las url que hay en GestionDeInsumos.urls
     path(r'GestionDeMascotas/', include('Apps.GestionDeMascotas.urls', namespace= 'mascotas')),#Definimos que la url "GestionDeMascotas" incluye todas las url que hay en GestionDeMascotas.url
     #path(r'GestionTiposDeAtencion',include('Apps.GestionDeTiposDeAtencion', namespace= 'tiposdeatencion')),
-    
 
-    path('gestion/tda/', include('Apps.GestionDeTiposDeAtencion.urls')),
 
-    path('index/', views.index),
-    url(r'^$', views.index),
 
-    path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
 ]

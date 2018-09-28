@@ -25,7 +25,7 @@ SECRET_KEY = 'ir#-_=fgul8q)n&zc#(%b@a$)ifz^)v-n7k6kbta$otuds&-t3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ 'veterinaria-patagonica.com' ]
+ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1' ]
 
 
 # Application definition
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'VeterinariaPatagonica.urls'
 
 TEMPLATES = [
     {
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        #'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [ os.path.join(BASE_DIR, "templates") ],
         'APP_DIRS': True,
@@ -73,7 +73,7 @@ TEMPLATES = [
     },
 ]
 
-LOGIN_REDIRECT_URL = '/'
+#LOGIN_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'VeterinariaPatagonica.wsgi.application'
 
