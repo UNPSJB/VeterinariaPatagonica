@@ -8,9 +8,12 @@
     <title>Title</title>
 </head>
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
-        {% block content %}
-      <p>Sitio para gestionar las mascotas de la Veterinaria.<p>
-        {% endblock content %}
+        {% block pagina-seccion-general %}
+
+          {{ block.super }}
+          <p>Sitio para gestionar las mascotas de la Veterinaria.<p>
+
+        {% endblock pagina-seccion-general %}
 
         {% block footer %}
         <p>Para más información de las Mascotas haga click aquí<p>

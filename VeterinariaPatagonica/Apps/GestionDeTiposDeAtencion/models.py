@@ -128,7 +128,7 @@ class TipoDeAtencion(models.Model):
         verbose_name='Tipo de servicio',
         help_text='Tipo de servicio',
         max_length=25,
-        choices=apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).t_tipo,
+        choices=apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
             'blank' : "El tipo de servicio es obligatorio"
@@ -194,10 +194,9 @@ class TipoDeAtencion(models.Model):
 
     def tipo_de_servicio_str(self):
 
-        tuplas = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).t_tipo
+        tuplas = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO
         i=0
         while tuplas[i][0] != self.tipo_de_servicio:
             i=i+1
 
         return tuplas[i][1]
-

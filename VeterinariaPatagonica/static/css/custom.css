@@ -491,7 +491,7 @@ body .container.body .right_col {
     background: #D9DEE4
 }
 body {
-    color: #73879C;
+    color: #72849C;
     background: #2A3F54;
     font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
     font-size: 13px;
@@ -4269,7 +4269,7 @@ table thead .checkbox.radio { margin-top:-7px;margin-top:-21px; }
 }
 
 .middle_col {
-    background-color: #779;
+    background-color: #230;
     min-height: 40em;
     padding-left: 0px;
     padding-right: 0px;
