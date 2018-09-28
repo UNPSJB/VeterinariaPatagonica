@@ -25,7 +25,7 @@ SECRET_KEY = 'ir#-_=fgul8q)n&zc#(%b@a$)ifz^)v-n7k6kbta$otuds&-t3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ 'veterinaria-patagonica.com' ]
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'Apps.GestionDeInsumos',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeServicios',
+    'Apps.GestionDeTiposDeAtencion',
 ]
 
 MIDDLEWARE = [
@@ -86,6 +87,17 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'VeterinariaPatagonica.db'),
     }
 }
+"""
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'veterinaria_patagonica_db',
+        'USER': 'veterinaria_patagonica_user',
+        'PASSWORD': 'veterinaria_patagonica',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        'CHARSET': 'UTF-8'
+    }
+"""
 
 
 # Password validation
@@ -130,3 +142,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")
 ]
+
+LOGIN_URL = '/login/'
