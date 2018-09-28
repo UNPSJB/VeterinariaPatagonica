@@ -57,6 +57,7 @@ ROOT_URLCONF = 'VeterinariaPatagonica.urls'
 
 TEMPLATES = [
     {
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [ os.path.join(BASE_DIR, "templates") ],
         'APP_DIRS': True,
@@ -70,6 +71,8 @@ TEMPLATES = [
         },
     },
 ]
+
+LOGIN_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'VeterinariaPatagonica.wsgi.application'
 

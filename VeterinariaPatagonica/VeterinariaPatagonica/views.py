@@ -14,7 +14,7 @@ from django.http import HttpResponse
 
 def base(request):
     return render_to_response('sitio_base.html',request)
-    '''
+'''
 from django.shortcuts import render_to_response
 
 from django.shortcuts import render
