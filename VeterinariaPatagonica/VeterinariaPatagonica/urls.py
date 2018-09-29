@@ -14,7 +14,7 @@ urlpatterns = [
     path('gestion/tda/', include('Apps.GestionDeTiposDeAtencion.urls')),
 
     path('index/', views.index),
-    url(r'^$', views.index, name='index'),
+    url(r'^$', views.base, name='index'),
 
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),

@@ -36,9 +36,6 @@ def base(request):
     template = loader.get_template('sitio_base.html')#Cargo el template del sitio base.
     return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
-
-
-
 def index(request):
     return render_to_response('index.html')
 
