@@ -37,7 +37,7 @@ def base(request):
     return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
 def index(request):
-    return render_to_response('index.html')
+    return render_to_response('sitio_base.html')
 
 
 
@@ -79,4 +79,4 @@ def login(peticion):
 def logout(peticion):
 
     auth_logout(peticion)
-    return HttpResponseRedirect('/index/')
+    return HttpResponseRedirect('/login/')
