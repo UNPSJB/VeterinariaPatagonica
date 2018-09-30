@@ -1,33 +1,33 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/tipoDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Tipo de Atencion
 {% endblock %}
 
-{% block tda-titulo %}
+{% block tipoDeAtencionTitulo %}
 Ver Tipo de Atencion
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block tipoDeAtencionSubtitulo %}
 Muestra datos del tipo de atencion
 {% endblock %}
 
-{% block tda-contenido %}
+{% block tipoDeAtencionContenido %}
 
-    {% include './acciones_snippet.html' with item=tda seccion='ver' %}
+    {% include './accionesSnippet.html' with item=tipoDeAtencion seccion='ver' %}
 
-    <div class="tda-cuerpo">
+    <div class="tipoDeAtencionCuerpo">
 
-        {% if tda %}
+        {% if tipoDeAtencion %}
         <div class="well">
-            <p>Identificador: {{ tda.id }}</p>
-            <p>Nombre: {{ tda.nombre }} ({% if tda.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
-            <p>Descripcion: {{ tda.descripcion }}</p>
-            <p>Lugar de atencion: {{ tda.lugar_str }}</p>
-            <p>Emergencia: {% if tda.emergencia %} Si {% else %} No {% endif %}</p>
-            <p>Tipo de servicio: {{ tda.tipo_de_servicio_str }}</p>
-            <p>Franja horaria: de {{ tda.inicio_franja_horaria }} a {{ tda.fin_franja_horaria }}</p>
-            <p>Recargo: {{ tda.recargo|floatformat:"-2" }}%</p>
+            <p>Identificador: {{ tipoDeAtencion.id }}</p>
+            <p>Nombre: {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+            <p>Descripcion: {{ tipoDeAtencion.descripcion }}</p>
+            <p>Lugar de atencion: {{ tipoDeAtencion.lugar_str }}</p>
+            <p>Emergencia: {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
+            <p>Tipo de servicio: {{ tipoDeAtencion.tipo_de_servicio_str }}</p>
+            <p>Franja horaria: de {{ tipoDeAtencion.inicio_franja_horaria }} a {{ tipoDeAtencion.fin_franja_horaria }}</p>
+            <p>Recargo: {{ tipoDeAtencion.recargo|floatformat:"-2" }}%</p>
         </div>
         {% else %}
 

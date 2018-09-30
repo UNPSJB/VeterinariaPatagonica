@@ -1,0 +1,31 @@
+{% extends 'sitioBase.html' %}
+{% load static %}
+
+{% block paginaEstilos %}
+{{ block.super }}
+    <link href="{% static 'GestionDeTiposDeAtencion/css/tipoDeAtencion.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block paginaSeccionGeneral %}
+
+        <section>
+        {% block secciones %}
+        {% include './seccionesSnippet.html' with pagina='default' %}
+        {% endblock %}
+
+        <h4 class="tipoDeAtencionTitulo">
+            {% block tipoDeAtencionTitulo %}
+            {% endblock %}
+        </h4>
+        <div class="tipoDeAtencionLineaTitulo"></div>
+        <p class="tipoDeAtencionSubtitulo">
+            {% block tipoDeAtencionSubtitulo %}
+            {% endblock %}
+        </p>
+
+        {% block tipoDeAtencionContenido %}
+        {% endblock tipoDeAtencionContenido %}
+        </section>
+
+{% endblock %}

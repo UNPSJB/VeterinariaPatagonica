@@ -1,0 +1,66 @@
+{% extends 'GestionDeInsumos/GestionDeInsumos.html' %}
+
+{% block titulo %}
+Gestion de Insumos | Ver Habilitados
+{% endblock %}
+
+{% block insumoTitulo %}
+Insumos Habilitados
+{% endblock %}
+
+{% block insumoSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block insumoContenido %}
+
+<!-- Listado -->
+<div class="insumoCuerpo" >
+
+    <p> Los siguientes insumos estan habilitados.  </p>
+
+    {% if insumos %}
+            <div class="table-responsive" nombre="tabla">
+                <table class="table insumoListado">
+                    <thead>
+                        <tr>
+                            <th nombre="deshabilitados-nombre">Nombre</th>
+                            <th nombre="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for insumo in insumos %}
+                            <tr>
+                                <td>{{ insumo.nombre }}</td>
+                                <td> <p align="center">
+                                            <a  href="{% url 'insumos:insumoVer' insumo.nombre %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-search"> </i>
+                                            </a>
+                                            <a href="{% url 'insumos:insumoModificar' insumo.nombre %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a>
+                                            <a href="{% url 'insumos:insumoDeshabilitar' insumo.nombre %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-minus"> </i>
+                                            </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay tipos de atencion habilitados</p>
+
+    {% endif %}
+
+    <a  nombre ="insumoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'insumoCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}

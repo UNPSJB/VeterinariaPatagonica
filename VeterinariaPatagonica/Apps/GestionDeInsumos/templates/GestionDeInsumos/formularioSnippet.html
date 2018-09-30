@@ -1,0 +1,29 @@
+{% for campo in campos %}
+
+    <div class="form-group {% if campo.errors %}has-error{% endif %}">
+
+        <div class="insumo-campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
+            {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
+        </div>
+
+{% if  campo.field.widget.input_type == 'checkbox' %}
+
+            <label for="{{ campo.id_for_label }}" class="checkbox-inline insumo-etiqueta">
+                {{ campo.label }}
+                {{ campo }}
+            </label>
+
+
+{% else %}
+
+            <label for="{{ campo.id_for_label }}" class="insumo-etiqueta">
+                {{ campo.label }}
+            </label>
+            {{ campo }}
+
+{% endif %}
+
+        <span class="help-block">{{ campo.help_text }}</span>
+        </div>
+
+{% endfor %}

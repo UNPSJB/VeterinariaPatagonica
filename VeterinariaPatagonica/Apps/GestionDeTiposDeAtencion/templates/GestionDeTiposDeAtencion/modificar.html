@@ -1,27 +1,27 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/tipoDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Modificar Tipo de Atencion
 {% endblock %}
 
-{% block tda-titulo %}
+{% block tipoDeAtencionTitulo %}
 Modificar Tipo de Atencion
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block tipoDeAtencionSubtitulo %}
 Permite cambiar datos relacionados al tipo de atencion
 {% endblock %}
 
-{% block tda-contenido %}
+{% block tipoDeAtencionContenido %}
 
-    {% include './acciones_snippet.html' with item=tda seccion='modificar' %}
+    {% include './accionesSnippet.html' with item=tipoDeAtencion seccion='modificar' %}
 
-    <div class="tda-cuerpo">
-            <form class="form formulario" action="{% url 'tda-modificar' tda.id  %}" method="post">
+    <div class="tipoDeAtencionCuerpo">
+            <form class="form formulario" action="{% url 'tiposDeAtencion:tipoDeAtencionModificar' tipoDeAtencion.id  %}" method="post">
 
                 {% csrf_token %}
 
-                {% include './formulario_snippet.html' with campos=formulario %}
+                {% include './formularioSnippet.html' with campos=formulario %}
 
                 <button type="submit" class="btn btn-sm btn-default">Modificar</button>
 

@@ -1,9 +1,31 @@
-{% extends "sitio_base.html" %}
+{% extends 'sitioBase.html' %}
 {% load static %}
-{% block pagina-seccion-general %}
-  {{block.super}}
-  <p>Sitio para gestionar los insumos de la Veterinaria.<p>
-{% endblock pagina-seccion-general %}
-{% block footer %}
-  <p>Para mas información  de los Insumos haga click aquí<p>
-{% endblock footer %}
+
+{% block paginaEstilos %}
+{{ block.super }}
+    <link href="{% static 'GestionDeInsumos/css/GestionDeInsumos.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block paginaSeccionGeneral %}
+
+        <section>
+        {% block secciones %}
+        {% include './seccionesSnippet.html' with pagina='default' %}
+        {% endblock %}
+
+        <h4 class="insumoTitulo">
+            {% block insumoTitulo %}
+            {% endblock %}
+        </h4>
+        <div class="insumoLineaTitulo"></div>
+        <p class="insumoSubtitulo">
+            {% block insumoSubtitulo %}
+            {% endblock %}
+        </p>
+
+        {% block insumoContenido %}
+        {% endblock insumoContenido %}
+        </section>
+
+{% endblock %}
