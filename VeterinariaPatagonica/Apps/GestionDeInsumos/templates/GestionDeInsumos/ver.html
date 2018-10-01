@@ -1,0 +1,37 @@
+{% extends 'GestionDeInsumos/GestionDeInsumos.html' %}
+
+{% block titulo %}
+Gestion de Insumos | Ver Insumo
+{% endblock %}
+
+{% block insumoTitulo %}
+Ver Insumo
+{% endblock %}
+
+{% block insumoSubtitulo %}
+Muestra datos del insumo
+{% endblock %}
+
+{% block insumoContenido %}
+
+    {% include './accionesSnippet.html' with item=insumo seccion='ver' %}
+
+    <div class="insumoCuerpo">
+
+        {% if insumo %}
+        <div class="well">
+            <p>Nombre: {{ insumo.nombre }} ({% if insumo.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+            <p>Forma De Presentacion: {{ insumo.formaDePresentacion }}</p>
+            <p>Precio Por Unidad: {{ insumo.precioPorUnidad }}</p>
+            <p>Rubro: {{ insumo.rubro }}</p>
+        </div>
+        {% else %}
+
+            <p> El insumo no existe </p>
+
+        {% endif %}
+
+
+    </div>
+
+{% endblock %}

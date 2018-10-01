@@ -9,14 +9,13 @@ from .models import TipoDeAtencion
 from .forms import *
 
 
+def verHabilitados(peticion):
 
-def ver_habilitados(peticion):
+    tiposDeAtencion = TipoDeAtencion.objects.filter(baja=False)
 
-    tdas = TipoDeAtencion.objects.filter(baja=False)
-
-    template = loader.get_template('GestionDeTiposDeAtencion/ver_habilitados.html')
+    template = loader.get_template('GestionDeTiposDeAtencion/verHabilitados.html')
     contexto = {
-        'tdas' : tdas,
+        'tiposDeAtencion' : tiposDeAtencion,
         'usuario' : peticion.user
     }
 
@@ -24,13 +23,13 @@ def ver_habilitados(peticion):
 
 
 
-def ver_deshabilitados(peticion):
+def verDeshabilitados(peticion):
 
-    tdas = TipoDeAtencion.objects.filter(baja=True)
+    tiposDeAtencion = TipoDeAtencion.objects.filter(baja=True)
 
-    template = loader.get_template('GestionDeTiposDeAtencion/ver_deshabilitados.html')
+    template = loader.get_template('GestionDeTiposDeAtencion/verDeshabilitados.html')
     contexto = {
-        'tdas' : tdas,
+        'tiposDeAtencion' : tiposDeAtencion,
         'usuario' : peticion.user
     }
 
@@ -41,13 +40,13 @@ def ver_deshabilitados(peticion):
 def ver(peticion, id):
 
     try:
-        tda = TipoDeAtencion.objects.get(id=id)
+        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404( "No encontrado", "El tipo de atencion con id={} no existe.".format(id) )
 
     template = loader.get_template('GestionDeTiposDeAtencion/ver.html')
     contexto = {
-        'tda' : tda,
+        'tipoDeAtencion' : tipoDeAtencion,
         'usuario' : peticion.user
     }
 
@@ -69,9 +68,9 @@ def crear(peticion):
 
         if formulario.is_valid():
 
-            tda = formulario.crear()
+            tipoDeAtencion = formulario.crear()
 
-            return HttpResponseRedirect( "/gestion/tda/ver/{}".format(tda.id) )
+            return HttpResponseRedirect( "/GestionDeTiposDeAtencion/ver/{}".format(tipoDeAtencion.id) )
         else:
             contexto['formulario'] = formulario
 
@@ -89,20 +88,20 @@ def crear(peticion):
 def modificar(peticion, id):
 
     try:
-        tda = TipoDeAtencion.objects.get(id=id)
+        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
     datos = {
-        'nombre' : tda.nombre,
-        'descripcion' : tda.descripcion,
-        'emergencia' : tda.emergencia,
-        'baja' : tda.baja,
-        'recargo' : tda.recargo,
-        'lugar' : tda.lugar,
-        'tipo_de_servicio' : tda.tipo_de_servicio,
-        'inicio_franja_horaria' : tda.inicio_franja_horaria,
-        'fin_franja_horaria' : tda.fin_franja_horaria
+        'nombre' : tipoDeAtencion.nombre,
+        'descripcion' : tipoDeAtencion.descripcion,
+        'emergencia' : tipoDeAtencion.emergencia,
+        'baja' : tipoDeAtencion.baja,
+        'recargo' : tipoDeAtencion.recargo,
+        'lugar' : tipoDeAtencion.lugar,
+        'tipo_de_servicio' : tipoDeAtencion.tipo_de_servicio,
+        'inicio_franja_horaria' : tipoDeAtencion.inicio_franja_horaria,
+        'fin_franja_horaria' : tipoDeAtencion.fin_franja_horaria
     }
 
     if peticion.method == 'POST':
@@ -112,9 +111,9 @@ def modificar(peticion, id):
         if formulario.is_valid():
 
             if formulario.has_changed():
-                formulario.cargar(tda).save()
+                formulario.cargar(tipoDeAtencion).save()
 
-            return HttpResponseRedirect("/gestion/tda/ver/{}".format(tda.id))
+            return HttpResponseRedirect("/GestionDeTiposDeAtencion/ver/{}".format(tipoDeAtencion.id))
 
     else:
 
@@ -123,7 +122,7 @@ def modificar(peticion, id):
     template = loader.get_template('GestionDeTiposDeAtencion/modificar.html')
     contexto = {
         'formulario':formulario,
-        'tda':tda,
+        'tipoDeAtencion':tipoDeAtencion,
         'usuario' : peticion.user
     }
 
@@ -136,14 +135,14 @@ def modificar(peticion, id):
 def deshabilitar(peticion, id):
 
     try:
-        tda = TipoDeAtencion.objects.get(id=id)
+        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    tda.baja = True
-    tda.save()
+    tipoDeAtencion.baja = True
+    tipoDeAtencion.save()
 
-    return HttpResponseRedirect( "/gestion/tda/ver/{}".format(tda.id) )
+    return HttpResponseRedirect( "/GestionDeTiposDeAtencion/ver/{}".format(tipoDeAtencion.id) )
 
 
 @login_required(redirect_field_name='proxima')
@@ -151,14 +150,14 @@ def deshabilitar(peticion, id):
 def habilitar(peticion, id):
 
     try:
-        tda = TipoDeAtencion.objects.get(id=id)
+        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    tda.baja = False
-    tda.save()
+    tipoDeAtencion.baja = False
+    tipoDeAtencion.save()
 
-    return HttpResponseRedirect( "/gestion/tda/ver/{}".format(tda.id) )
+    return HttpResponseRedirect( "/GestionDeTiposDeAtencion/ver/{}".format(tipoDeAtencion.id) )
 
 
 
@@ -167,14 +166,14 @@ def habilitar(peticion, id):
 def eliminar(peticion, id):
 
     try:
-        tda = TipoDeAtencion.objects.get(id=id)
+        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
     if peticion.method == 'POST':
 
-        tda.delete()
-        return HttpResponseRedirect( "/gestion/tda/" )
+        tipoDeAtencion.delete()
+        return HttpResponseRedirect( "/GestionDeTiposDeAtencion/" )
 
     else:
 
@@ -185,4 +184,3 @@ def eliminar(peticion, id):
         }
 
         return HttpResponse( template.render( contexto, peticion) )
-
