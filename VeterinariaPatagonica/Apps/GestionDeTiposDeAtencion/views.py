@@ -70,7 +70,7 @@ def crear(peticion):
 
             tipoDeAtencion = formulario.crear()
 
-            return HttpResponseRedirect( "/GestionDeTiposDeAtencion/ver/{}".format(tipoDeAtencion.id) )
+            return HttpResponseRedirect( "GestionDeTiposDeAtencion/ver/{}".format(tipoDeAtencion.id) )
         else:
             contexto['formulario'] = formulario
 
@@ -78,7 +78,7 @@ def crear(peticion):
 
         contexto['formulario'] = CreacionForm()
 
-    template = loader.get_template('/GestionDeTiposDeAtencion/crear.html')
+    template = loader.get_template('GestionDeTiposDeAtencion/crear.html')
     return HttpResponse(template.render( contexto, peticion) )
 
 
