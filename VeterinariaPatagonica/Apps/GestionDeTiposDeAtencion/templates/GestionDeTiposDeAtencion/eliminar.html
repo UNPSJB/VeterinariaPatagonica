@@ -1,22 +1,22 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/tipoDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Eliminar Tipo de Atencion
 {% endblock %}
 
-{% block tda-titulo %}
+{% block tipoDeAtencionTitulo %}
 Eliminar Tipo de Atencion
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block tipoDeAtencionSubtitulo %}
 Elimina permanentemente los datos del tipo de atencion del sistema
 {% endblock %}
 
-{% block tda-contenido %}
+{% block tipoDeAtencionContenido %}
 
-<div class="tda-cuerpo">
+<div class="tipoDeAtencionCuerpo">
 
-    <form class="form" action="{% url 'tda-eliminar' id %}" method="post">
+    <form class="form" action="{% url 'tiposDeAtencion:tipoDeAtencionEliminar' id %}" method="post">
         {% csrf_token %}
 
 		<p class="tda-aviso-eliminacion"> Confirmar eliminacion: </p>

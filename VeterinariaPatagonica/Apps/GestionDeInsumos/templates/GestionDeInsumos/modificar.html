@@ -1,0 +1,31 @@
+{% extends 'GestionDeInsumos/GestionDeInsumos.html' %}
+
+{% block titulo %}
+Gestion de Insumos | Modificar Insumo
+{% endblock %}
+
+{% block insumoTitulo %}
+Modificar Insumo
+{% endblock %}
+
+{% block insumoSubtitulo %}
+Permite cambiar datos relacionados al Insumo
+{% endblock %}
+
+{% block insumoContenido %}
+
+    {% include './accionesSnippet.html' with item=insumo seccion='modificar' %}
+
+    <div class="insumoCuerpo">
+            <form class="form formulario" action="{% url 'insumoModificar' insumo.nombre  %}" method="post">
+
+                {% csrf_token %}
+
+                {% include './formularioSnippet.html' with campos=formulario %}
+
+                <button type="submit" class="btn btn-sm btn-default">Modificar</button>
+
+            </form>
+    </div>
+
+{% endblock %}

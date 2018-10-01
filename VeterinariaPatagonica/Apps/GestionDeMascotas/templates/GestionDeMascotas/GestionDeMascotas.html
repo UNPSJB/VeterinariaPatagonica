@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-{% extends "sitio_base.html" %}
+{% extends "sitioBase.html" %}
 
 <html lang="en">
 <head>
@@ -8,15 +8,15 @@
     <title>Title</title>
 </head>
 <body class="{% block body_class %}nav-md {% endblock body_class %}">
-        {% block pagina-seccion-general %}
+        {% block paginaSeccionGeneral %}
 
           {{ block.super }}
           <p>Sitio para gestionar las mascotas de la Veterinaria.<p>
 
-        {% endblock pagina-seccion-general %}
+        {% endblock paginaSeccionGeneral %}
 
         {% block footer %}
-        <p>Para mas información  de los Mascotas haga click aquí<p>
+        <p>Para más información de las Mascotas haga click aquí<p>
         {% endblock footer %}
 </body>
 </html>

@@ -2,13 +2,13 @@
 
     <div class="form-group {% if campo.errors %}has-error{% endif %}">
 
-        <div class="tda-campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
+        <div class="tipoDeAtencion-campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
             {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
         </div>
 
 {% if  campo.field.widget.input_type == 'checkbox' %}
 
-            <label for="{{ campo.id_for_label }}" class="checkbox-inline tda-etiqueta">
+            <label for="{{ campo.id_for_label }}" class="checkbox-inline tipoDeAtencion-etiqueta">
                 {{ campo.label }}
                 {{ campo }}
             </label>
@@ -16,7 +16,7 @@
 
 {% else %}
 
-            <label for="{{ campo.id_for_label }}" class="tda-etiqueta">
+            <label for="{{ campo.id_for_label }}" class="tipoDeAtencion-etiqueta">
                 {{ campo.label }}
             </label>
             {{ campo }}
@@ -27,4 +27,3 @@
         </div>
 
 {% endfor %}
-
