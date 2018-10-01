@@ -78,7 +78,7 @@ def crear(peticion):
 
         contexto['formulario'] = CreacionForm()
 
-    template = loader.get_template('GestionDeTiposDeAtencion/crear.html')
+    template = loader.get_template('/GestionDeTiposDeAtencion/crear.html')
     return HttpResponse(template.render( contexto, peticion) )
 
 

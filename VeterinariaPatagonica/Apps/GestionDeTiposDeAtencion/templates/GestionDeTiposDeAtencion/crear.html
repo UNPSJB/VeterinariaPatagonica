@@ -1,22 +1,22 @@
-{% extends 'GestionDeTiposDeAtencion/tipoDeAtiencion.html' %}
+{% extends 'GestionDeTiposDeAtencion/tipoDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Crear Tipo de Atencion
 {% endblock %}
 
-{% block tipoDeAtiencionTitulo %}
+{% block tipoDeAtencionTitulo %}
 Nuevo Tipo de Atencion
 {% endblock %}
 
-{% block tipoDeAtiencionSubtitulo %}
+{% block tipoDeAtencionSubtitulo %}
 Agrega un tipo de atencion al listado
 {% endblock %}
 
-{% block tipoDeAtiencionContenido %}
+{% block tipoDeAtencionContenido %}
 
-    <div class="tipoDeAtiencionCuerpo">
+    <div class="tipoDeAtencionCuerpo">
 
-        <form class="form formulario" action="{% url 'tiposDeAtencion:tipoDeAtiencionCrear' %}" method="post">
+        <form class="form formulario" action="{% url 'tiposDeAtencion:tipoDeAtencionCrear' %}" method="post">
 
             {% csrf_token %}
 
