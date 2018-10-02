@@ -25,7 +25,9 @@ SECRET_KEY = 'ir#-_=fgul8q)n&zc#(%b@a$)ifz^)v-n7k6kbta$otuds&-t3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1' ]
+
+#ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1',"localhost"]
+
 
 
 # Application definition

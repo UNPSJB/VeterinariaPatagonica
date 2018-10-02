@@ -33,17 +33,17 @@ def base(request):
     #[BUG]no funciona con render_to_response.
     #return render_to_response("sitio_base.html",request)
     context = {}#Defino un contexto.
-    template = loader.get_template('sitio_base.html')#Cargo el template del sitio base.
+    template = loader.get_template('sitioBase.html')#Cargo el template del sitio base.
     return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
 def index(request):
-    return render_to_response('sitio_base.html')
+    return render_to_response('sitioBase.html')
 
 
 
 def login(peticion):
 
-    proxima = peticion.GET.get('proxima', default='/index')
+    proxima = peticion.GET.get('proxima', default='/')
     contexto = {
         'url_proxima':proxima,
         'url_actual':peticion.path

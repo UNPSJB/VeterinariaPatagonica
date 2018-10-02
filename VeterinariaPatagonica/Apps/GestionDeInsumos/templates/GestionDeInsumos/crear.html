@@ -1,0 +1,30 @@
+{% extends 'GestionDeInsumos/GestionDeInsumos.html' %}
+
+{% block titulo %}
+Gestion de Insumo | Crear Insumo
+{% endblock %}
+
+{% block insumoTitulo %}
+Nuevo Insumo
+{% endblock %}
+
+{% block insumoSubtitulo %}
+Agrega un Insumo al listado
+{% endblock %}
+
+{% block insumoContenido %}
+
+    <div class="insumoCuerpo">
+
+        <form class="form formulario" action="{% url 'insumoCrear' %}" method="post">
+
+            {% csrf_token %}
+
+            {% include './formularioSnippet.html' with campos=formulario %}
+
+            <button type="submit" class="btn btn-sm btn-default">Crear</button>
+
+        </form>
+    </div>
+
+{% endblock %}

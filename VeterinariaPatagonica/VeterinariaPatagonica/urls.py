@@ -10,15 +10,12 @@ urlpatterns = [
 
     #path('accounts/', include('django.contrib.auth.urls')),
 
-
-    path('gestion/tda/', include('Apps.GestionDeTiposDeAtencion.urls')),
-
-    path('index/', views.index),
-    url(r'^$', views.base, name='index'),
+    path('GestionDeTiposDeAtencion/', include('Apps.GestionDeTiposDeAtencion.urls')),
+    url(r'^$', views.index, name='index'),
 
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
-    path(r'admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     #url(r'^$',, name='base')
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
     #url(r'.*/login.html', views.login),
