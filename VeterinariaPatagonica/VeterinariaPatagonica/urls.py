@@ -9,8 +9,10 @@ urlpatterns = [
 
 
     #path('accounts/', include('django.contrib.auth.urls')),
+
     path('GestionDeTiposDeAtencion/', include('Apps.GestionDeTiposDeAtencion.urls')),
     url(r'^$', views.index, name='index'),
+
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('admin/', admin.site.urls),

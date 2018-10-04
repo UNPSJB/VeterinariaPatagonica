@@ -1,8 +1,30 @@
-#from django.conf.urls import url
+from django.conf.urls import url
 #from . import views as insumos_views
 #from VeterinariaPatagonica import views
 from django.urls import path
-from . import views
+from . import views as insumos_views
+
+app_name = 'insumos'
+
+urlpatterns = [
+    url(r'^$', insumos_views.insumos, name='insumo'),
+    path('', insumos_views.verHabilitados, name='insumoVerHabilitados'),
+    path('verDeshabilitados/', insumos_views.verDeshabilitados, name='insumoVerDeshabilitados'),
+    path('crear/', insumos_views.crear, name='insumoCrear'),
+    path('ver/<int:nombre>/', insumos_views.ver, name='insumoVer'),
+    path('modificar/<int:nombre>/', insumos_views.modificar, name='insumoModificar'),
+    path('deshabilitar/<int:nombre>/', insumos_views.deshabilitar, name='insumoDeshabilitar'),
+    path('habilitar/<int:nombre>/', insumos_views.habilitar, name='insumoHabilitar'),
+    path('eliminar/<int:nombre>/', insumos_views.eliminar, name='insumoEliminar'),
+    #path('verHabilitados/', views.verHabilitados, name='insumoVerHabilitados'),
+
+]
+
+
+
+
+
+
 '''
 app_name = 'insumos'
 urlpatterns = [
@@ -11,17 +33,3 @@ urlpatterns = [
     #url(r'altainsumo.html/$',views.verdemo, name='alta'),
 ]
 '''
-app_name = 'insumos'
-
-urlpatterns = [
-path('', views.verHabilitados, name='insumoVerHabilitados'),
-path('crear/', views.crear, name='insumoCrear'),
-path('ver/<int:nombre>/', views.ver, name='insumoVer'),
-path('modificar/<int:nombre>/', views.modificar, name='insumoModificar'),
-path('deshabilitar/<int:nombre>/', views.deshabilitar, name='insumoDeshabilitar'),
-path('habilitar/<int:nombre>/', views.habilitar, name='insumoHabilitar'),
-path('eliminar/<int:nombre>/', views.eliminar, name='insumoEliminar'),
-#path('verHabilitados/', views.verHabilitados, name='insumoVerHabilitados'),
-path('verDeshabilitados/', views.verDeshabilitados, name='insumoVerDeshabilitados'),
-
-]

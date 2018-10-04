@@ -10,6 +10,10 @@ from django.shortcuts import render
 
 
 #from django.shortcuts import render_to_response
+def insumos(request):
+    context = {}#Defino un contexto.
+    template = loader.get_template('GestionDeInsumos/GestionDeInsumos.html')#Cargo el template desde la carpeta templates/GestionDeInsumos.
+    return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
 def verHabilitados(request):
     insumos = Insumo.objects.filter(baja=False)
@@ -49,7 +53,7 @@ def crear(request):
         formulario = CreacionForm(request.POST)
         if formulario.is_valid():
             insumo = formulario.crear()
-            return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.nombre) )
+            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.nombre) )
         else:
             context['formulario'] = formulario
     else:
