@@ -53,7 +53,7 @@ def crear(request):
         formulario = CreacionForm(request.POST)
         if formulario.is_valid():
             insumo = formulario.crear()
-            return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.nombre) )
+            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.nombre) )
         else:
             context['formulario'] = formulario
     else:
