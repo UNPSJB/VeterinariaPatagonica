@@ -15,3 +15,4 @@ class Mascota(models.Model):
     def __str__ (self):
         return "{0}, {1}, {2}".format(self.nombre,self.especie,self.raza)
 
+#funcion que cree la pataente y verifique
