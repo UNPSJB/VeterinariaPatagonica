@@ -11,3 +11,27 @@ def alta(request):
     context = {}#Defino el contexto.
     template = loader.get_template('demos/altacliente.html')#Cargo el template desde la carpeta demos.
     return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
+
+def crear(request):
+    pass
+
+def modificar(request):
+    pass
+
+def hablitar(request):
+    pass
+
+def deshablitar(request):
+    pass
+
+def eliminar(request):
+    pass
+
+def ver(request):
+    pass
+
+def verHabilitados(request):
+    pass
+
+def verDeshabilitados(request):
+    pass
