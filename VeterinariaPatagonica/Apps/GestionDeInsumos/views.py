@@ -32,6 +32,7 @@ def verDeshabilitados(request):
     return HttpResponse(template.render( context, request ))
 
 def ver(request, id):
+    #import ipdb; ipdb.set_trace()
     try:
         insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
