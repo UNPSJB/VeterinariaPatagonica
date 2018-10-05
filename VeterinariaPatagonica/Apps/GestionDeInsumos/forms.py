@@ -48,8 +48,7 @@ class CreacionForm(forms.Form):
             RegexValidator(
                 Insumo.REGEX_NOMBRE,
                 message="El nombre debe construirse de numeros, letras, espacios o guiones ('_' y '-')"
-                )
-		]
+                )]
     )
     formaDePresentacion = forms.ChoiceField(
         choices = Insumo.UNIDADES,
@@ -99,7 +98,7 @@ class CreacionForm(forms.Form):
             formaDePresentacion = self.cleaned_data['formaDePresentacion'],
             precioPorUnidad = self.cleaned_data['precioPorUnidad'],
             rubro = self.cleaned_data['rubro']
-		)
+        )
 
         return insumo
 

@@ -6,18 +6,18 @@ Gestion de Insumos | Modificar Insumo
 
 {% block insumoTitulo %}
 Modificar Insumo
-{% endblock %}
+{% endblock insumoTitulo %}
 
 {% block insumoSubtitulo %}
 Permite cambiar datos relacionados al Insumo
-{% endblock %}
+{% endblock insumoSubtitulo %}
 
 {% block insumoContenido %}
 
     {% include './accionesSnippet.html' with item=insumo seccion='modificar' %}
 
     <div class="insumoCuerpo">
-            <form class="form formulario" action="{% url 'insumoModificar' insumo.nombre  %}" method="post">
+            <form class="form formulario" action="{% url 'insumos:insumoModificar' insumo.id  %}" method="post">
 
                 {% csrf_token %}
 
@@ -28,4 +28,4 @@ Permite cambiar datos relacionados al Insumo
             </form>
     </div>
 
-{% endblock %}
+{% endblock insumoContenido %}

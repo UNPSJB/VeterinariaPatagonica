@@ -16,7 +16,7 @@ Agrega un Insumo al listado
 
     <div class="insumoCuerpo">
 
-        <form class="form formulario" action="{% url 'insumoCrear' %}" method="post">
+        <form class="form formulario" action="{% url 'insumos:insumoCrear' %}" method="post">
 
             {% csrf_token %}
 

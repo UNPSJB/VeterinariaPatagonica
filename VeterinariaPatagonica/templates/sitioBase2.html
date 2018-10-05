@@ -63,7 +63,7 @@
                 <li><a href="#"><i class="fa fa-angle-right"></i> Insumos </a>
     							<ul class="nav child_menu">
     								<li><a href="{% url 'insumos:insumo' %}">Inicio</a></li>
-    								<li><a href="{% url 'insumos:alta' %}">Alta</a></li>
+    								<li><a href="{% url 'insumos:insumoCrear' %}">Crear Insumo</a></li>
     								<li><a href="#">Baja</a></li>
     								<li><a href="#">Modificacion</a></li>
     							</ul>
@@ -105,7 +105,7 @@
     	</nav>
         <section class="col-md-7 middle_col">
           <a class="btn btn-primary" href="{% url "clientes:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: blue;">Clientes</a>
-          <a class="btn btn-primary" href="{% url "insumos:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: red;">Insumos</a>
+          <a class="btn btn-primary" href="{% url "insumos:insumoCrear" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: red;">Insumos</a>
           <a class="btn btn-primary" href="{% url "servicios:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: silver;">Servicios</a>
           <a class="btn btn-primary" href="{% url "mascotas:alta" %}" role="button" style="height : 100px; width : 100px; display:table-cell;vertical-align:center; background-color: orange;">Mascotas</a>
           {% block content %}

@@ -11,11 +11,11 @@ urlpatterns = [
     path('', insumos_views.verHabilitados, name='insumoVerHabilitados'),
     path('verDeshabilitados/', insumos_views.verDeshabilitados, name='insumoVerDeshabilitados'),
     path('crear/', insumos_views.crear, name='insumoCrear'),
-    path('ver/<int:nombre>/', insumos_views.ver, name='insumoVer'),
-    path('modificar/<int:nombre>/', insumos_views.modificar, name='insumoModificar'),
-    path('deshabilitar/<int:nombre>/', insumos_views.deshabilitar, name='insumoDeshabilitar'),
-    path('habilitar/<int:nombre>/', insumos_views.habilitar, name='insumoHabilitar'),
-    path('eliminar/<int:nombre>/', insumos_views.eliminar, name='insumoEliminar'),
+    path('ver/<int:id>/', insumos_views.ver, name='insumoVer'),
+    path('modificar/<int:id>/', insumos_views.modificar, name='insumoModificar'),
+    path('deshabilitar/<int:id>/', insumos_views.deshabilitar, name='insumoDeshabilitar'),
+    path('habilitar/<int:id>/', insumos_views.habilitar, name='insumoHabilitar'),
+    path('eliminar/<int:id>/', insumos_views.eliminar, name='insumoEliminar'),
     #path('verHabilitados/', views.verHabilitados, name='insumoVerHabilitados'),
 
 ]

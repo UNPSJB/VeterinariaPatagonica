@@ -16,7 +16,7 @@ Elimina permanentemente los datos del insumo del sistema
 
 <div class="insumoCuerpo">
 
-    <form class="form" action="{% url 'insumoEliminar' nombre %}" method="post">
+    <form class="form" action="{% url 'insumoEliminar' id %}" method="post">
         {% csrf_token %}
 
 		<p class="insumoAvisoEliminacion"> Confirmar eliminacion: </p>
@@ -27,4 +27,4 @@ Elimina permanentemente los datos del insumo del sistema
 
 </div>
 
-{% endblock %}
+{% endblock insumoContenido %}

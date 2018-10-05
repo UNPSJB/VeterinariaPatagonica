@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Insumo',
             fields=[
+                ('id', models.AutoField(editable=False, primary_key=True, serialize=False, unique=True)),
                 ('nombre', models.CharField(max_length=50, primary_key=True, serialize=False)),
                 ('formaDePresentacion', models.PositiveSmallIntegerField(choices=[(1, 'g'), (2, 'cm3'), (3, 'unidad'), (4, 'kg'), (5, 'litro'), (6, 'docena')])),
                 ('precioPorUnidad', models.DecimalField(decimal_places=2, max_digits=7)),

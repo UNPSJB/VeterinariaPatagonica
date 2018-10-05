@@ -24,12 +24,12 @@ Actualmente <strong>no</strong> disponibles
   <p> Los siguientes insumos pueden ser habilitados o eliminados.  </p>
 
     {% if insumos %}
-            <div class="table-responsive" nombre="tabla">
+            <div class="table-responsive" id="tabla">
                 <table class="table insumoListado">
                     <thead>
                         <tr>
-                            <th nombre="deshabilitados-nombre">Nombre</th>
-                            <th nombre="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,16 +38,16 @@ Actualmente <strong>no</strong> disponibles
                                 <td>{{ insumo.nombre }}</td>
                                 <td >
 			<p align="center">
-                                            <a  href="{% url 'insumos:insumoVer' insumo.nombre %}" class="btn btn-xs btn-default">
+                                            <a  href="{% url 'insumos:insumoVer' insumo.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
-                                            <a href="{% url 'insumos:insumoModificar' insumo.nombre %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'insumos:insumoModificar' insumo.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'insumos:insumoHabilitar' insumo.nombre %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'insumos:insumoHabilitar' insumo.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-plus"> </i>
                                             </a>
-                                            <a href="{% url 'insumos:insumoEliminar' insumo.nombre %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'insumos:insumoEliminar' insumo.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
 			</p>

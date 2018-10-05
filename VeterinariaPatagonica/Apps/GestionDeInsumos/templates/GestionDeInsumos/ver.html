@@ -2,15 +2,15 @@
 
 {% block titulo %}
 Gestion de Insumos | Ver Insumo
-{% endblock %}
+{% endblock titulo %}
 
 {% block insumoTitulo %}
 Ver Insumo
-{% endblock %}
+{% endblock insumoTitulo%}
 
 {% block insumoSubtitulo %}
 Muestra datos del insumo
-{% endblock %}
+{% endblock insumoSubtitulo %}
 
 {% block insumoContenido %}
 
@@ -20,6 +20,7 @@ Muestra datos del insumo
 
         {% if insumo %}
         <div class="well">
+            <p>Identificador: {{ insumo.id }}</p>
             <p>Nombre: {{ insumo.nombre }} ({% if insumo.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
             <p>Forma De Presentacion: {{ insumo.formaDePresentacion }}</p>
             <p>Precio Por Unidad: {{ insumo.precioPorUnidad }}</p>
@@ -31,7 +32,6 @@ Muestra datos del insumo
 
         {% endif %}
 
-
     </div>
 
-{% endblock %}
+{% endblock insumoContenido %}

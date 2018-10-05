@@ -3,13 +3,11 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ObjectDoesNotExist
 from django import forms
+
 from .models import Insumo
 from .forms import *
 
-from django.shortcuts import render
 
-
-#from django.shortcuts import render_to_response
 def insumos(request):
     context = {}#Defino un contexto.
     template = loader.get_template('GestionDeInsumos/GestionDeInsumos.html')#Cargo el template desde la carpeta templates/GestionDeInsumos.
@@ -33,11 +31,11 @@ def verDeshabilitados(request):
     }
     return HttpResponse(template.render( context, request ))
 
-def ver(request, nombre):
+def ver(request, id):
     try:
-        insumo = Insumo.objects.get(nombre=nombre)
+        insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
-        raise Http404( "No encontrado", "El insumo con nombre={} no existe.".format(nombre) )
+        raise Http404( "No encontrado", "El insumo con id={} no existe.".format(id) )
     template = loader.get_template('GestionDeInsumos/ver.html')
     context = {
         'insumo' : insumo,
@@ -64,10 +62,10 @@ def crear(request):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeInsumos.change_Insumo', raise_exception=True)
-def modificar(request, nombre):
+def modificar(request, id):
 
     try:
-        insumo = Insumo.objects.get(nombre=nombre)
+        insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
@@ -76,7 +74,7 @@ def modificar(request, nombre):
         'formaDePresentacion' : insumo.formaDePresentacion,
         'precioPorUnidad' : insumo.precioPorUnidad,
         'rubro' : insumo.rubro,
-        'baja' : insumo.baja,
+        'baja' : insumo.baja
     }
 
     if request.method == 'POST':
@@ -88,7 +86,7 @@ def modificar(request, nombre):
             if formulario.has_changed():
                 formulario.cargar(insumo).save()
 
-            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.nombre))
+            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.id))
 
     else:
 
@@ -106,54 +104,54 @@ def modificar(request, nombre):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
-def deshabilitar(request, nombre):
+def deshabilitar(request, id):
 
     try:
-        insumo = Insumo.objects.get(nombre=nombre)
+        insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
     insumo.baja = True
     insumo.save()
 
-    return HttpResponseRedirect( "GestionDeInsumos/ver/{}".format(insumo.nombre) )
+    return HttpResponseRedirect( "GestionDeInsumos/ver/{}".format(insumo.id) )
 
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
-def habilitar(request, nombre):
+def habilitar(request, id):
 
     try:
-        insumo = Insumo.objects.get(nombre=nombre)
+        insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    nombre.baja = False
-    nombre.save()
+    insumo.baja = False
+    insumo.save()
 
-    return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.nombre) )
+    return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.id) )
 
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
-def eliminar(request, nombre):
+def eliminar(request, id):
 
     try:
-        insumo = Insumo.objects.get(nombre=nombre)
+        insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
     if request.method == 'POST':
 
         insumo.delete()
-        return HttpResponseRedirect( "/GestionDeInsumos" )
+        return HttpResponseRedirect( "/GestionDeInsumos/" )
 
     else:
 
         template = loader.get_template('GestionDeInsumos/eliminar.html')
         context = {
             'usuario' : request.user,
-            'nombre' : nombre
+            'id' : id
         }
 
         return HttpResponse( template.render( context, request) )

@@ -57,6 +57,12 @@ class Insumo (models.Model):
         UNIDAD: lambda cantidad: "%s docenas y %s unidades" % (cantidad // 12, cantidad % 12)
     }
 
+    id = models.AutoField(
+        primary_key=True,
+        unique=True,
+        editable=False
+    )
+
     nombre = models.CharField(
         max_length = MAX_NOMBRE,
         unique = True,
@@ -69,16 +75,19 @@ class Insumo (models.Model):
             'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
             'blank' : "El nombre es obligatorio"
             })
+
     formaDePresentacion = models.PositiveSmallIntegerField(
         choices=UNIDADES,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
             'blank' : "La unidad de medida es obligatoria"
         })
+
     precioPorUnidad = models.DecimalField(
         max_digits = MAX_DIGITOS,
         decimal_places = MAX_DECIMALES)
     #Cambiar cuando tengamos la clase Rubro.
+
     rubro = models.CharField(
         help_text="Nombre del rubro al que pertenece",
         max_length = MAX_NOMBRE,
