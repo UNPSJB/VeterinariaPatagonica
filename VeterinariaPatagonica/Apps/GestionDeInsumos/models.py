@@ -57,18 +57,11 @@ class Insumo (models.Model):
         UNIDAD: lambda cantidad: "%s docenas y %s unidades" % (cantidad // 12, cantidad % 12)
     }
 
-    id = models.AutoField(
-        primary_key=True,
-        unique=True,
-        editable=False
-    )
-
     nombre = models.CharField(
         max_length = MAX_NOMBRE,
         unique = True,
         null = False,
         blank = False,
-        primary_key = True,
         validators = [RegexValidator(regex=REGEX_NOMBRE)],
         error_messages = {
             'unique' : "Otro insumo tiene ese nombre",

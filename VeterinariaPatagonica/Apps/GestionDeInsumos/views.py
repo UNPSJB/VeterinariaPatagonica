@@ -46,12 +46,14 @@ def ver(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeInsumos.add_Insumo', raise_exception=True)
 def crear(request):
+    #import ipdb; ipdb.set_trace()
+
     context = {'usuario' : request.user}
     if request.method == 'POST':
         formulario = CreacionForm(request.POST)
         if formulario.is_valid():
             insumo = formulario.crear()
-            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.nombre) )
+            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.id))
         else:
             context['formulario'] = formulario
     else:
