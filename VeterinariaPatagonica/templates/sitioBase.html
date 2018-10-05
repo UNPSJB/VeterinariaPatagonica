@@ -46,12 +46,12 @@
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
                   <li><a href="javascript:;">Ayuda</a></li>
-                  <li><a href="login"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a></li>
+                  <li><a href="{% url "login" %}"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a></li>
                 </ul>
               </li>
             </ul>
           </div>
-          <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url 'index' %}">Veterinaria Patagonica<a></h1>
+          <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagonica<a></h1>
       </header>
 </div>
 <!-- Segunda Fila: Menu derecho, izquierdo y seccion general -->
@@ -76,12 +76,15 @@
                 <section>
                   <h3>Titulo</h3>
                     <p> Texto bajo el titulo. <a href="/">Link al inicio</a></p>
+
                     <a class="btn btn-primary cuadradito" href="{% url "clientes:alta" %}" role="button">Clientes</a>
                     <a class="btn btn-primary cuadradito" href="{% url "insumos:insumoCrear" %}" role="button">Insumos</a>
                     <a class="btn btn-primary cuadradito" href="{% url "servicios:alta" %}" role="button">Servicios</a>
                     <a class="btn btn-primary cuadradito" href="{% url "mascotas:alta" %}" role="button">Mascotas</a>
                     <a class="btn btn-primary cuadradito" href="{% url "tiposDeAtencion:tipoDeAtencionCrear" %}" role="button">Tipo de Atención</a>
+              <!--      {% if perms.GestionDeTiposDeAtencion.add_TipoDeAtencion %} -->
 
+              <!--      {%endif%} -->
                 </section>
 
                 {% endblock paginaSeccionGeneral %}
