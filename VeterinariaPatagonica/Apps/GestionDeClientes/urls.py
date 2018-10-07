@@ -6,16 +6,16 @@ from VeterinariaPatagonica import views
 app_name = 'clientes'
 
 urlpatterns = [
-    url(r'^$', clientes_views.clientes, name="cliente"),
-    path(r'^crear/$', clientes_views.crear, name="clienteCrear"),
-    path(r'^modificar/<int:dniCuit>/$', clientes_views.modificar, name="clienteModificar"),
-    path(r'^habilitar/<int:dniCuit>/$', clientes_views.hablitar, name="clienteHabilitar"),
-    path(r'^deshabilitar/<int:dniCuit>/$', clientes_views.deshablitar, name="clienteDeshabilitar"),
-    path(r'^eliminar/<int:dniCuit>/$', clientes_views.eliminar, name="clienteEliminar"),
-    path(r'^ver/<int:dniCuit>/$', clientes_views.ver, name="clienteVer"),
-    path(r'^verHabilitados/$', clientes_views.verHabilitados, name="clienteVerHabilitados"),
-    path(r'^verDeshabilitados/$', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
-    path(r'^nada/$', clientes_views.verHabilitados, name="clienteVerHabilitados"),
+    #url(r'^$', clientes_views.clientes, name="cliente"),
+    path('crear/', clientes_views.crear, name="clienteCrear"),
+    path('modificar/<int:dniCuit>/', clientes_views.modificar, name="clienteModificar"),
+    path('habilitar/<int:dniCuit>/', clientes_views.hablitar, name="clienteHabilitar"),
+    path('deshabilitar/<int:dniCuit>/', clientes_views.deshablitar, name="clienteDeshabilitar"),
+    path('eliminar/<int:dniCuit>/', clientes_views.eliminar, name="clienteEliminar"),
+    path('ver/<int:dniCuit>/', clientes_views.ver, name="clienteVer"),
+    path('verHabilitados/', clientes_views.verHabilitados, name="clienteVerHabilitados"),
+    path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
+    path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
 ]
 
 
