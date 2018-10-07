@@ -8,13 +8,11 @@
 
 
 {% block paginaSeccionGeneral %}
-        {{ block.super }}
-        <p>Sitio para gestionar los Insumos de la Veterinaria.<p>
 
         <section>
-        <!--{% block secciones %}-->
-        <!--{% include './seccionesSnippet.html' with pagina='default' %}-->
-        <!--{% endblock secciones %}-->
+        {% block secciones %}
+        {% include './seccionesSnippet.html' with pagina='default' %}
+        {% endblock %}
 
         <h4 class="insumoTitulo">
             {% block insumoTitulo %}

@@ -117,7 +117,7 @@ def deshabilitar(request, id):
     insumo.baja = True
     insumo.save()
 
-    return HttpResponseRedirect( "GestionDeInsumos/ver/{}".format(insumo.id) )
+    return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.id) )
 
 
 @login_required(redirect_field_name='proxima')
