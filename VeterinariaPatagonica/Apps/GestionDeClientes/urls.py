@@ -9,18 +9,14 @@ urlpatterns = [
     #url(r'^$', clientes_views.clientes, name="cliente"),
     path('crear/', clientes_views.crear, name="clienteCrear"),
     path('modificar/<int:dniCuit>/', clientes_views.modificar, name="clienteModificar"),
-    path('habilitar/<int:dniCuit>/', clientes_views.hablitar, name="clienteHabilitar"),
-    path('deshabilitar/<int:dniCuit>/', clientes_views.deshablitar, name="clienteDeshabilitar"),
+    path('habilitar/<int:dniCuit>/', clientes_views.habilitar, name="clienteHabilitar"),
+    path('deshabilitar/<int:dniCuit>/', clientes_views.deshabilitar, name="clienteDeshabilitar"),
     path('eliminar/<int:dniCuit>/', clientes_views.eliminar, name="clienteEliminar"),
     path('ver/<int:dniCuit>/', clientes_views.ver, name="clienteVer"),
     path('verHabilitados/', clientes_views.verHabilitados, name="clienteVerHabilitados"),
     path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
     path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
 ]
-
-
-
-
 
 #nuevo
 '''url(r'^$', clientes_views.clientes, name="cliente"),
