@@ -1,31 +1,31 @@
-{% extends 'GestionDeTiposDeAtencion/tipoDeAtencion.html' %}
+{% extends 'GestionDeTiposDeAtencion/tda.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Deshabilitados
 {% endblock %}
 
-{% block tipoDeAtencionTitulo %}
+{% block tda-titulo %}
 Tipos de Atencion Deshabilitados
 {% endblock %}
 
-{% block tipoDeAtencionSubtitulo %}
+{% block tda-subtitulo %}
 Actualmente <strong>no</strong> disponibles para ser asignados a practicas
 {% endblock %}
 
 {% block secciones %}
-{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% include './secciones_snippet.html' with pagina='ver_deshabilitados' %}
 {% endblock %}
 
-{% block tipoDeAtencionContenido %}
+{% block tda-contenido %}
 
 <!-- Listado -->
-<div class="tipoDeAtencionCuerpo" >
+<div class="tda-cuerpo" >
 
   <p> Los siguientes tipos de servicio pueden ser habilitados o eliminados.  </p>
 
     {% if tiposDeAtencion %}
             <div class="table-responsive" id="tabla">
-                <table class="table tipoDeAtencionListado">
+                <table class="table tda-listado">
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
@@ -40,16 +40,16 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                                 <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
                                 <td >
 			<p align="center">
-                                            <a  href="{% url 'tiposDeAtencion:tipoDeAtencionVer' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a  href="{% url 'GestionDeTiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
-                                            <a href="{% url 'tiposDeAtencion:tipoDeAtencionModificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'GestionDeTiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'tiposDeAtencion:tipoDeAtencionHabilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'GestionDeTiposDeAtencion:habilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-plus"> </i>
                                             </a>
-                                            <a href="{% url 'tiposDeAtencion:tipoDeAtencionEliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'GestionDeTiposDeAtencion:eliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
 			</p>
