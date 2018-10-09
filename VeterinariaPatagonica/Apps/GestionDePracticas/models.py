@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from Apps.GestionDeClientes import models as gcmodels
 from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
@@ -38,9 +39,11 @@ class Practica(models.Model):
                 'max_length' : "El nombre puede tener a lo sumo {} caracteres.".format(MAX_NOMBRE),
                 'blank' : "El nombre es obligatorio."
                 })
+    #insumos
+    #servicios
     precio = models.DecimalField(
             max_digits = MAX_DIGITOS,
-            decimal_places = MAX_DECIMALES
+            decimal_places = MAX_DECIMALES,
             error_messages = {
                 'max_digits': "Cantidad de digitos ingresados supera el máximo."
             })
@@ -66,6 +69,19 @@ class Practica(models.Model):
             error_messages = {
             })
 
+    def precioReal(self):
+        total = Decimal("0")
+        for sinsumo in self.insumos.all():
+            total += sinsumo.insumo.precioEnUnidad(sinsumo.cantidad)
+        for servicio in self.servicios.all():
+            total += servicio.precioManoDeObra 
+        return total 
+
+    def precioEstimado(self):
+        total = Decimal("0")
+        for servicio in self.servicios.all():
+            total += servicio.precio()
+        return total 
 
 #-----------Metodos.--------------------
     def estado(self):
@@ -73,10 +89,10 @@ class Practica(models.Model):
             return self.estados.latest().related()
 
     @classmethod
-    def new(cls, tipo):
-        t = cls(tipo=tipo)
+    def new(cls, *args, **kwargs):
+        t = cls(*args, **kwargs)
         t.save()
-        t.hacer(None, observacion="Arranca el permiso")
+        t.hacer("crear")
         return t
 
     def estados_related(self):
@@ -87,26 +103,23 @@ class Practica(models.Model):
         if estado_actual is not None and hasattr(estado_actual, accion):
             metodo = getattr(estado_actual, accion)
             estado_nuevo = metodo(self, *args, **kwargs)
-            if estado_actual is not None:
-                estado_nuevo.save()
         elif estado_actual is None:
-            Creada(permiso=self, *args, **kwargs).save()
+            Creada(practica=self, *args, **kwargs).save()
         else:
-            raise Exception("La accion solicitada no se pudo realizar")
-
-
+            raise Exception("La accion: %s solicitada no se pudo realizar sobre el estado %s" % (accion, estado_actual))
 
 class Estado(models.Model):
     TIPO = 0
     TIPOS = [
         (0, 'estado')
     ]
-    practica = models.ForeignKey(Practica, related_name="estados")
+    marca = models.DateTimeField(auto_now=True)
+    practica = models.ForeignKey(Practica, related_name="estados", on_delete=models.CASCADE)
     tipo = models.PositiveSmallIntegerField(choices=TIPOS)
-    usuario = models.ForeignKey(User, null=True, blank=True)
+    usuario = models.ForeignKey(User, null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
-        get_latest_by = 'tipo'
+        get_latest_by = 'marca'
 
     def save(self, *args, **kwargs):
         if self.pk is None:
@@ -120,64 +133,63 @@ class Estado(models.Model):
     def register(cls, klass):
         cls.TIPOS.append((klass.TIPO, klass.__name__.lower()))
 
-
-
     def cancelar(self):
-        return Cancelada(self)
+        return Cancelada.objects.create(practica=self.practica)
 
+    def __str__(self):
+        return self.__class__.__name__
 
 
 class Creada(Estado):
     TIPO = 1
 
-    def programar(self, practica):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
+    def programar(self, practica, turno):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
         #[TODO]Alguna validacion si se requiere.
-        return Programada(practica = practica)
+        return Programada.objects.create(practica = self.practica, turno=turno)
 
     def presupuestar(self, practica, porcentajeDescuento, diasMantenimiento):
-        if porcentajeDescuento >= 0 :
+        if not (0 <= porcentajeDescuento <= 100):
+            raise Exception("El porcentaje debe ser entre 0 y 100")
+        return Presupuestada.objects.create(practica = practica, porcentajeDescuento=porcentajeDescuento, diasMantenimiento = diasMantenimiento)
 
-            porcentajeDescuento = porcentajeDescuento
-            diasMantenimiento = diasMantenimiento
-            practica.save()
 
-            return Presupuestada(practica = practica)
-        return self
-
-class Programada(Estados):
+class Programada(Estado):
     TIPO = 2
     turno = models.DateTimeField(auto_now = True)
-    motivoReprogramacion = models.CharField(max_length = MAX_NOMBRE)
+    motivoReprogramacion = models.CharField(max_length = Practica.MAX_NOMBRE)
 
-    def reprogramar(self, practica, motivoReprogramacion):
+    def reprogramar(self, practica, turno, motivoReprogramacion):
+        return Programada.objects.create(practica=practica, turno=turno, motivoReprogramacion=motivoReprogramacion)
+
+    def pagar(self, monto):
         pass
 
-    def pagar(self, practica, monto):
+    def realizar(self):
         pass
 
-    def realizar(self, practica):
-        pass
-
-class Presupuestada(Estados):
+class Presupuestada(Estado):
     TIPO = 3
     porcentajeDescuento = models.PositiveSmallIntegerField()
     diasMantenimiento = models.PositiveSmallIntegerField()
     #[TODO]fechaMantenimientoOferta = fechaActual+diasMantenimiento.
 
-def confirmar(self, practica, turno):
-    #[TODO]if fechaActual < fechaMantenimientoOferta: return Programada(self, practica, turno)
-    pass
+    def seniar(self, practica, turno, monto):
+        return Programada.objects.create(practica=practica, turno=turno)
 
-class Cancelada(Estados):
+    def confirmar(self, practica, turno):
+        #[TODO]if fechaActual < fechaMantenimientoOferta: return Programada(self, practica, turno)
+        return Programada.objects.create(practica=practica, turno=turno)
+
+class Cancelada(Estado):
     TIPO = 4
 
-class Realizada(Estados):
+class Realizada(Estado):
     TIPO = 5
 
-    def pagar(self, practica, monto):
+    def pagar(self, monto):
         pass
 
-class Facturada(Estados):
+class Facturada(Estado):
     TIPO = 6
 
 
