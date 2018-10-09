@@ -37,7 +37,7 @@ class CreacionForm(forms.Form):
     nombre = forms.CharField(
         max_length = Insumo.MAX_NOMBRE,
         required = True,
-        label = 'Nombre',
+        label = 'Nombre.',
         widget = forms.TextInput,
         help_text="Nombre del insumo",
         error_messages = {
@@ -51,6 +51,7 @@ class CreacionForm(forms.Form):
                 )]
     )
     formaDePresentacion = forms.ChoiceField(
+        label = 'Forma De Presentación.',
         choices = Insumo.UNIDADES,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
@@ -58,6 +59,7 @@ class CreacionForm(forms.Form):
         }
     )
     precioPorUnidad = forms.DecimalField(
+        label = 'Precio Por Unidad.',
         max_digits = Insumo.MAX_DIGITOS,
         decimal_places = Insumo.MAX_DECIMALES,
         error_messages = {
@@ -65,6 +67,7 @@ class CreacionForm(forms.Form):
         }
     )
     rubro = forms.CharField(
+        label = 'Rubro.',
         help_text="Nombre del rubro al que pertenece",
         max_length = Insumo.MAX_NOMBRE,
         error_messages = {

@@ -32,6 +32,7 @@ def verDeshabilitados(request):
     return HttpResponse(template.render( context, request ))
 
 def ver(request, id):
+    #import ipdb; ipdb.set_trace()
     try:
         insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
@@ -116,7 +117,7 @@ def deshabilitar(request, id):
     insumo.baja = True
     insumo.save()
 
-    return HttpResponseRedirect( "GestionDeInsumos/ver/{}".format(insumo.id) )
+    return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.id) )
 
 
 @login_required(redirect_field_name='proxima')

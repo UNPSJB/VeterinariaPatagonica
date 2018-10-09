@@ -1,4 +1,5 @@
 @media (min-width: 750px) {
+    
     #sitio_seccion_principal {
         min-height: 100px;
     }
@@ -8,20 +9,30 @@
     }
 }
 @media (min-width: 970px) {
+
     #sitio_seccion_principal {
         min-height: 600px;
     }
 
     #fila_centro {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: -moz-box;
         display: flex;
     }
 }
 @media (min-width: 1170px) {
+
     #sitio_seccion_principal {
         min-height: 700px;
     }
 
     #fila_centro {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: -moz-box;
         display: flex;
     }
 }
@@ -37,6 +48,7 @@ body {
 
 input[type=email],
 input[type=password],
+input[type=number],
 input[type=checkbox],
 input[type=radio],
 input[type=text],
@@ -49,12 +61,12 @@ select {
     border: 1px solid #c8c8c8 !important;
 
     color: #555 !important;
-    width: 100%;
     font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
 }
 
 input[type=email]:focus,
 input[type=password]:focus,
+input[type=number]:focus,
 input[type=checkbox]:focus,
 input[type=radio]:focus,
 input[type=text]:focus,
@@ -66,6 +78,15 @@ select:focus {
     border: 1px solid #777 !important;
     outline: none !important;
     background-color: #fff;
+}
+
+input[type=email],
+input[type=password],
+input[type=number],
+input[type=text],
+textarea,
+select {
+    width: 100%;
 }
 
 .btn {
