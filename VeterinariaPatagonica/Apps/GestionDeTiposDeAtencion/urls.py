@@ -14,4 +14,3 @@ urlpatterns = [
     path('deshabilitados/', views.deshabilitados, name='deshabilitados'),
     path('', views.habilitados, name='habilitados'),
 ]
-
