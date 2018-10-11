@@ -4,7 +4,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Cliente
-from .forms import ClienteForm
+from .forms import ClienteFormFactory
 
 def clientes(request):
     context = {}#Defino el contexto.
@@ -13,22 +13,9 @@ def clientes(request):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.add_Cliente', raise_exception=True)
-def crear(request):
-    context = {'usuario' : request.user}
-    if request.method == 'POST':
-        formulario = ClienteForm(request.POST)
-        if formulario.is_valid():
-            cliente = formulario.save()
-            return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
-        else:
-            context['formulario'] = formulario
-    else:
-        context['formulario'] = ClienteForm()
-    template = loader.get_template('GestionDeClientes/formulario.html')
-    return HttpResponse(template.render( context, request) )
-
-def modificar(request, id):
-    cliente = Cliente.objects.get(id=id)
+def modificar(request, id = None):
+    cliente = Cliente.objects.get(id=id) if id is not None else None
+    ClienteForm = ClienteFormFactory(cliente)
     context = {'usuario': request.user}
     if request.method == 'POST':
         formulario = ClienteForm(request.POST, instance=cliente)
