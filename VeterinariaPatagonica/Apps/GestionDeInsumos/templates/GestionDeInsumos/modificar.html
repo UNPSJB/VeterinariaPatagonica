@@ -17,7 +17,7 @@ Permite cambiar datos relacionados al Insumo
     {% include './accionesSnippet.html' with item=insumo seccion='modificar' %}
 
     <div class="insumoCuerpo">
-            <form class="form formulario" action="{% url 'insumos:insumoModificar' insumo.nombre  %}" method="post">
+            <form class="form formulario" action="{% url 'insumos:insumoModificar' item.id  %}" method="post">
 
                 {% csrf_token %}
 
