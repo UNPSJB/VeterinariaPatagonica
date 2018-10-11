@@ -1,0 +1,38 @@
+{% extends 'GestionDeMascotas/mascota.html' %}
+
+{% block titulo %}
+Gestion de mascota | Ver mascota
+{% endblock %}
+
+{% block mascota %}
+Ver mascota
+{% endblock %}
+
+{% block mascotaSubtitulo %}
+Muestra datos del tipo de atencion
+{% endblock %}
+
+{% block mascotaContenido %}
+
+    {% include './accionesSnippet.html' with item=mascota seccion='ver' %}
+
+    <div class="mascotaCuerpo">
+
+        {% if mascota %}
+        <div class="well">
+            <p>Identificador: {{ mascota.id }}</p>
+            <p>Nombre: {{ mascota.nombre }} ({% if mascota.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+
+            <p>Raza: {{ mascota.raza }}</p>
+            <p>Especie: {{ mascota.especie }}</p>
+
+        </div>
+        {% else %}
+
+            <p> La mascota no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock mascota %}
