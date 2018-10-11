@@ -1,6 +1,6 @@
 from django import forms
 from .models import Cliente
-#from localflavor.ar import forms as lforms
+from localflavor.ar import forms as lforms
 
 class ClienteForm(forms.ModelForm):
     class Meta:

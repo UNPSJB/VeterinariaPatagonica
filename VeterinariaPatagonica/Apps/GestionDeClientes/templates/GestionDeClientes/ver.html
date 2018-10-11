@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+
+{% block titulo %}
+Gestion de Clientes | Ver Cliente
+{% endblock %}
+
+{% block clienteTitulo %}
+Ver Cliente
+{% endblock %}
+
+{% block clienteSubtitulo %}
+Muestra datos del cliente
+{% endblock %}
+
+{% block clienteContenido %}
+
+    {% include './accionesSnippet.html' with item=cliente seccion='ver' %}
+
+    <div class="clienteCuerpo">
+
+        {% if cliente %}
+        <div class="well">
+            <p>Identificador: {{ cliente.id }}</p>
+            <p>Nombre: {{ cliente.nombre }} ({% if cliente.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+            <p>Telefono: {{ cliente.telefono }}</p>
+            <p>Direccion: {{ cliente.direccion }}</p>
+        </div>
+        {% else %}
+
+            <p> El cliente no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock clienteContenido %}
+</html>
