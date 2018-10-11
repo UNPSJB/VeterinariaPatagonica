@@ -17,6 +17,10 @@ class Cliente (models.Model):
     MAXCELULAR = 10
     MAXTELEFONO = 7
     TIPODECLIENTE = (('E', 'Especial'), ('C', 'Comun'))
+    LOCALIDADES = [
+        ("Trelew", "Trelew"),
+        ("Rawson", "Rawson")
+    ]
 
     dniCuit = models.CharField(
         help_text= "Dni/Cuit del Cliente",
@@ -24,7 +28,6 @@ class Cliente (models.Model):
         unique= True,
         null= False,
         blank= False,
-        primary_key= True,
         error_messages= {
             'max_length': "El dni/cuit puede tener a lo sumo {} caracteres".format(MAXDNICUIT),
             'unique': "Otro cliente tiene ese dni/cuit",
