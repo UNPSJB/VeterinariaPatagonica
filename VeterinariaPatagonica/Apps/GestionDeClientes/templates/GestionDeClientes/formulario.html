@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
 
 {% block titulo %}
@@ -17,13 +16,11 @@ Agrega un Cliente al listado
 
     <div class="clienteCuerpo">
 
-        <form class="form formulario" action="{% url 'clientes:clienteCrear' %}" method="post">
+        <form class="form-horizontal" action="" method="post">
 
             {% csrf_token %}
 
-            {% include './formularioSnippet.html' with campos=formulario %}
-
-            <button type="submit" class="btn btn-sm btn-default">Crear</button>
+            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
 
         </form>
     </div>

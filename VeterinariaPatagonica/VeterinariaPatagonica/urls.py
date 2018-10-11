@@ -10,7 +10,6 @@ urlpatterns = [
 
     #path('accounts/', include('django.contrib.auth.urls')),
 
-    path('GestionDeTiposDeAtencion/', include('Apps.GestionDeTiposDeAtencion.urls')),
     url(r'^$', views.index, name='index'),
 
     path('login/', views.login, name='login'),
@@ -26,7 +25,5 @@ urlpatterns = [
     path(r'GestionDeMascotas/', include('Apps.GestionDeMascotas.urls', namespace= 'mascotas')),#Definimos que la url "GestionDeMascotas" incluye todas las url que hay en GestionDeMascotas.url
     path(r'GestionDePracticas/', include('Apps.GestionDePracticas.urls', namespace='practicas')),
     #path(r'GestionTiposDeAtencion',include('Apps.GestionDeTiposDeAtencion', namespace= 'tiposdeatencion')),
-
-
-
+    path(r'GestionDeTiposDeAtencion/',include('Apps.GestionDeTiposDeAtencion.urls', namespace= 'tiposdeatencion')),
 ]

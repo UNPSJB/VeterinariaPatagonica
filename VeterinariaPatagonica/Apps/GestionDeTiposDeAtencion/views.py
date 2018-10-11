@@ -79,7 +79,6 @@ def crear(peticion):
     """ Dar de alta un nuevo tipo de atencion """
 
     contexto = {}
-
     if peticion.method == 'POST':
 
         tipoDeAtencion = TipoDeAtencion()

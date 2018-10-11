@@ -18,17 +18,29 @@ def crear(request):
     if request.method == 'POST':
         formulario = ClienteForm(request.POST)
         if formulario.is_valid():
-            cliente = formulario.crear()
+            cliente = formulario.save()
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
             context['formulario'] = formulario
     else:
         context['formulario'] = ClienteForm()
-    template = loader.get_template('GestionDeClientes/crear.html')
+    template = loader.get_template('GestionDeClientes/formulario.html')
     return HttpResponse(template.render( context, request) )
 
-def modificar(request):
-    pass
+def modificar(request, id):
+    cliente = Cliente.objects.get(id=id)
+    context = {'usuario': request.user}
+    if request.method == 'POST':
+        formulario = ClienteForm(request.POST, instance=cliente)
+        if formulario.is_valid():
+            cliente = formulario.save()
+            return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
+        else:
+            context['formulario'] = formulario
+    else:
+        context['formulario'] = ClienteForm(instance=cliente)
+    template = loader.get_template('GestionDeClientes/formulario.html')
+    return HttpResponse(template.render(context, request))
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.delete_Cliente', raise_exception=True)

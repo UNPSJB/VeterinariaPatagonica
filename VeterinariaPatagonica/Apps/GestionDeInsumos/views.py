@@ -59,7 +59,7 @@ def crear(request):
             context['formulario'] = formulario
     else:
         context['formulario'] = CreacionForm()
-    template = loader.get_template('GestionDeInsumos/crear.html')
+    template = loader.get_template('GestionDeInsumos/formulario.html')
     return HttpResponse(template.render( context, request) )
 
 

@@ -1,13 +1,13 @@
-{% extends 'sitio_base.html' %}
+{% extends 'sitioBase.html' %}
 {% load static %}
 
-{% block pagina-estilos %}
+{% block paginaEstilos %}
 {{ block.super }}
     <link href="{% static 'GestionDeTiposDeAtencion/css/tda.css' %}" rel="stylesheet">
 {% endblock %}
 
 
-{% block pagina-seccion-general %}
+{% block paginaSeccionGeneral %}
 
         <section>
         {% block secciones %}

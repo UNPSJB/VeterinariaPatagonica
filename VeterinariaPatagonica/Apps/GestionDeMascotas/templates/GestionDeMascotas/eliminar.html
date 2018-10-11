@@ -1,22 +1,22 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeMascotas/mascota.html' %}
 
 {% block titulo %}
-Gestion de Tipos de Atencion | Eliminar Tipo de Atencion
+Gestion de Mascotas | Eliminar Mascotas
 {% endblock %}
 
-{% block tda-titulo %}
-Eliminar Tipo de Atencion
+{% block mascotaTitulo %}
+Eliminar Mascota
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block mascotaSubtitulo %}
 Elimina permanentemente los datos del tipo de atencion del sistema
 {% endblock %}
 
-{% block tda-contenido %}
+{% block mascotaContenido %}
 
-<div class="tda-cuerpo">
+<div class="mascotaCuerpo">
 
-    <form class="form" action="{% url 'GestionDeTiposDeAtencion:eliminar' tipoDeAtencion.id %}" method="post">
+    <form class="form" action="{% url 'mascota:mascotaEliminar' id %}" method="post">
         {% csrf_token %}
 
 		<p class="tda-aviso-eliminacion"> Confirmar eliminacion: </p>

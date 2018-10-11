@@ -181,10 +181,10 @@ class TipoDeAtencionForm(forms.ModelForm):
 class ModificacionForm(CreacionForm):
     #ModelForm para modificacion de Tipos de Atencion
 
-    baja = forms.BooleanField(
+    baja = formularios.BooleanField(
         required = False,
         label = 'Deshabilitado',
-        widget = forms.CheckboxInput,
+        widget = formularios.CheckboxInput,
         help_text='Deshabilitado',
         error_messages = {},
         validators = [],
