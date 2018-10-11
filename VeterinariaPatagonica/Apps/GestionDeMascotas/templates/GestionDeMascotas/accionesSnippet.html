@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mascota</title>
+</head>
+<body>
+
+</body>
+</html>
+
+{% extends 'GestionDeMascota/mascotas.html' %}
+
+{% block titulo %}
+Gestion de Mascotas | Crear Nueva Mascota
+{% endblock titulo %}
+
+{% block Mascota %}
+Nuevo Tipo de Atencion
+{% endblock Mascota %}
+
+{% block mascotaSubtitulo %}
+Agrega una mascota
+{% endblock mascotaSubtitulo %}
+
+{% block mascotaContenido %}
+
+    <div class="mascotaCuerpo">
+
+        <form class="form formulario" action="{% url 'mascota:mascotaCrear' %}" method="post">
+
+            {% csrf_token %}
+
+            {% include './formularioSnippet.html' with campos=formulario %}
+
+            <button type="submit" class="btn btn-sm btn-default">Crear</button>
+
+        </form>
+    </div>
+
+{% endblock mascotaContenido %}

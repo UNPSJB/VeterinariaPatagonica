@@ -1,6 +1,12 @@
 from django import forms
 from .models import Cliente
-#from localflavor.ar import forms as lforms
+from django.core.validators import RegexValidator
+from localflavor.ar import forms as lforms
+
+
+'''class creacionModelForm(forms.ModelForm):
+    class meta:
+        model = Cliente'''
 
 class ClienteForm(forms.ModelForm):
     class Meta:
