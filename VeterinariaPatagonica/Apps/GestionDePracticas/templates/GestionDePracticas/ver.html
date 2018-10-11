@@ -1,0 +1,34 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+
+{% block titulo %}
+Gestion de Prácticas | Ver Práctica
+{% endblock titulo %}
+
+{% block practicaTitulo %}
+Ver Practica
+{% endblock practicaTitulo%}
+
+{% block practicaSubtitulo %}
+Muestra datos de la práctica
+{% endblock practicaSubtitulo %}
+
+{% block practicaContenido %}
+
+    {% include './accionesSnippet.html' with item=practica seccion='ver' %}
+
+    <div class="practicaCuerpo">
+
+        {% if practica %}
+        <div class="well">
+            <p>Identificador: {{ practica.id }}</p>
+            <p>Nombre: {{ practica.nombre }} </p>
+        </div>
+        {% else %}
+
+            <p> La práctica no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock practicaContenido %}

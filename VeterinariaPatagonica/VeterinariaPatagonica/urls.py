@@ -24,6 +24,7 @@ urlpatterns = [
     path(r'GestionDeClientes/', include('Apps.GestionDeClientes.urls', namespace= 'clientes')),#Definimos que la url "GestionDeClientes" incluye todas las url que hay en GestionDeClientes.urls
     path(r'GestionDeInsumos/',include('Apps.GestionDeInsumos.urls', namespace='insumos')),#Definimos que la url "GestionDeInsumos" incluye todas las url que hay en GestionDeInsumos.urls
     path(r'GestionDeMascotas/', include('Apps.GestionDeMascotas.urls', namespace= 'mascotas')),#Definimos que la url "GestionDeMascotas" incluye todas las url que hay en GestionDeMascotas.url
+    path(r'GestionDePracticas/', include('Apps.GestionDePracticas.urls', namespace='practicas')),
     #path(r'GestionTiposDeAtencion',include('Apps.GestionDeTiposDeAtencion', namespace= 'tiposdeatencion')),
 
 

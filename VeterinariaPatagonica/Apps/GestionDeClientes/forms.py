@@ -1,6 +1,6 @@
 from django import forms
 from .models import Cliente
-from localflavor.ar import forms as lforms
+#from localflavor.ar import forms as lforms #[BUG]Comento esta linea porque hace pinchar en mi compu. [Matias]
 
 class ClienteForm(forms.ModelForm):
     class Meta:
