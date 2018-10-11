@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+
+{% block titulo %}
+Gestion de Clientes | Crear Cliente
+{% endblock %}
+
+{% block clienteTitulo %}
+Nuevo Cliente
+{% endblock %}
+
+{% block clienteSubtitulo %}
+Agrega un Cliente al listado
+{% endblock %}
+
+{% block clienteContenido %}
+
+    <div class="clienteCuerpo">
+
+        <form class="form formulario" action="{% url 'clientes:clienteCrear' %}" method="post">
+
+            {% csrf_token %}
+
+            {% include './formularioSnippet.html' with campos=formulario %}
+
+            <button type="submit" class="btn btn-sm btn-default">Crear</button>
+
+        </form>
+    </div>
+
+{% endblock %}

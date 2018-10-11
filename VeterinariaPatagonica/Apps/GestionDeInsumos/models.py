@@ -57,6 +57,12 @@ class Insumo (models.Model):
         UNIDAD: lambda cantidad: "%s docenas y %s unidades" % (cantidad // 12, cantidad % 12)
     }
 
+    id = models.AutoField(
+        primary_key=True,
+        unique=True,
+        editable=False
+    )
+
     nombre = models.CharField(
         max_length = MAX_NOMBRE,
         unique = True,
@@ -84,8 +90,13 @@ class Insumo (models.Model):
     rubro = models.CharField(
         help_text="Nombre del rubro al que pertenece",
         max_length = MAX_NOMBRE,
-        blank = False)
-    baja = models.BooleanField(default = False)
+        blank = False
+        )
+    baja = models.BooleanField(
+        help_text='Deshabilitado',
+        default=False
+        )
+
 
 
     def __str__(self):

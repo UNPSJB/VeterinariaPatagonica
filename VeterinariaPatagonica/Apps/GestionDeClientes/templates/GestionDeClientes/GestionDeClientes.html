@@ -1,9 +1,36 @@
 {% extends "sitioBase.html" %}
+
 {% load static %}
-{% block paginaSeccionGeneral %}
+
+{% block paginaEstilos %}
   {{ block.super }}
-  <p>Sitio para gestionar los clientes de la Veterinaria.<p>
+  <link rel="stylesheet" href="{% static 'GestionDeClientes/css/GestionDeClientes.css' %}">
+{% endblock paginaEstilos %}
+
+{% block paginaSeccionGeneral %}
+  <section>
+    {% block secciones %}
+      {% include './seccionesSnippet.html' with pagina='default' %}
+    {% endblock %}
+
+    <h4 class="clienteTitulo">
+      {% block clienteTitulo %}
+      {% endblock clienteTitulo %}
+    </h4>
+
+    <div class="clienteLineaTitulo"> </div>
+
+    <p class="clienteSubtitulo">
+      {% block insumoSubtitulo %}
+      {% endblock insumoSubtitulo%}
+    </p>
+
+  {% block insumoContenido %}
+  {% endblock insumoContenido %}
+  </section>
 {% endblock paginaSeccionGeneral %}
+
+
 {% block footer %}
   <p>Para mas información  de los Clientes haga click aquí<p>
 {% endblock footer %}

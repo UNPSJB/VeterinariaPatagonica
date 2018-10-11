@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+
+{% block titulo %}
+Gestion de Clientes | Ver Habilitados
+{% endblock %}
+
+{% block clienteTitulo %}
+Clientes Habilitados
+{% endblock %}
+
+{% block clienteSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block clienteContenido %}
+
+<!-- Listado -->
+<div class="clienteCuerpo" >
+
+    <p> Los siguientes clientes estan habilitados.  </p>
+
+    {% if clientes %}
+            <div class="table-responsive" id="tabla">
+                <table class="table clienteListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                            <tr>
+                                <td>{{ cliente.nombre }}</td>
+                                <td> <p align="center">
+                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-search"> </i>
+                                        </a>
+                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'clientes:clienteDeshabilitar' cliente.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-minus"> </i>
+                                        </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay clientes habilitados</p>
+
+    {% endif %}
+
+    <a  id ="clienteHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'clientes:clienteCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}
+
+</html>

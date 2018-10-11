@@ -26,7 +26,7 @@
 
   <title>
     {% block paginaTitulo %}
-      Veterinaria Patagonica
+        Veterinaria Patagonica
     {% endblock paginaTitulo %}
   </title>
 </head>
@@ -77,11 +77,11 @@
                   <h3>Titulo</h3>
                     <p> Texto bajo el titulo. <a href="/">Link al inicio</a></p>
 
-                    <a class="btn btn-primary cuadradito" href="{% url "clientes:alta" %}" role="button">Clientes</a>
+                    <a class="btn btn-primary cuadradito" href="{% url "clientes:clienteCrear" %}" role="button">Clientes</a>
                     <a class="btn btn-primary cuadradito" href="{% url "insumos:insumoCrear" %}" role="button">Insumos</a>
                     <a class="btn btn-primary cuadradito" href="{% url "servicios:alta" %}" role="button">Servicios</a>
                     <a class="btn btn-primary cuadradito" href="{% url "mascotas:alta" %}" role="button">Mascotas</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "tiposDeAtencion:tipoDeAtencionCrear" %}" role="button">Tipo de Atención</a>
+                    <a class="btn btn-primary cuadradito" href="{% url "GestionDeTiposDeAtencion:crear" %}" role="button">Tipo de Atención</a>
               <!--      {% if perms.GestionDeTiposDeAtencion.add_TipoDeAtencion %} -->
 
               <!--      {%endif%} -->

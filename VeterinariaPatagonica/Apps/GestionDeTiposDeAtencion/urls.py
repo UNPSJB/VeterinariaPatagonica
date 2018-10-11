@@ -1,15 +1,16 @@
 from django.urls import path
 from . import views
 
-app_name = "tiposDeAtencion"
+app_name='GestionDeTiposDeAtencion'
+
 urlpatterns = [
-    path('crear/', views.crear, name='tipoDeAtencionCrear'),
-    path('ver/<int:id>/', views.ver, name='tipoDeAtencionVer'),
-    path('modificar/<int:id>/', views.modificar, name='tipoDeAtencionModificar'),
-    path('deshabilitar/<int:id>/', views.deshabilitar, name='tipoDeAtencionDeshabilitar'),
-    path('habilitar/<int:id>/', views.habilitar, name='tipoDeAtencionHabilitar'),
-    path('eliminar/<int:id>/', views.eliminar, name='tipoDeAtencionEliminar'),
-    path('ver_habilitados/', views.verHabilitados, name='tipoDeAtencionVerHabilitados'),
-    path('ver_deshabilitados/', views.verDeshabilitados, name='tipoDeAtencionVerDeshabilitados'),
-    path('', views.verHabilitados, name='tipoDeAtencionVerHabilitados'),
+    path('crear/', views.crear, name='crear'),
+    path('ver/<int:id>/', views.ver, name='ver'),
+    path('modificar/<int:id>/', views.modificar, name='modificar'),
+    path('deshabilitar/<int:id>/', views.deshabilitar, name='deshabilitar'),
+    path('habilitar/<int:id>/', views.habilitar, name='habilitar'),
+    path('eliminar/<int:id>/', views.eliminar, name='eliminar'),
+    path('habilitados/', views.habilitados, name='habilitados'),
+    path('deshabilitados/', views.deshabilitados, name='deshabilitados'),
+    path('', views.habilitados, name='habilitados'),
 ]
