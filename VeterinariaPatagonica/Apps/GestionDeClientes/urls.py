@@ -7,7 +7,7 @@ app_name = 'clientes'
 
 urlpatterns = [
     #url(r'^$', clientes_views.clientes, name="cliente"),
-    path('crear/', clientes_views.crear, name="clienteCrear"),
+    path('crear/', clientes_views.modificar, name="clienteCrear"),
     path('modificar/<int:id>/', clientes_views.modificar, name="clienteModificar"),
     path('habilitar/<int:id>/', clientes_views.habilitar, name="clienteHabilitar"),
     path('deshabilitar/<int:id>/', clientes_views.deshabilitar, name="clienteDeshabilitar"),
