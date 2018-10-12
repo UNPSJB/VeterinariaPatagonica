@@ -3,18 +3,16 @@ from django.core.validators import RegexValidator
 
 # Create your models here.
 
-
-#FALTAN LAS VALIDACIONES.
-
 class Cliente (models.Model):
 
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
+    REGEX_NUMERO = '^[0-9]{1,12}$'
     MAXDNICUIT = 14
     MAXNOMBRE = 50
     MAXAPELLIDO = 50
     MAXLOCALIDAD = 60
     MAXDIRECCION = 100
-    MAXCELULAR = 10
+    MAXCELULAR = 12
     MAXTELEFONO = 7
     TIPODECLIENTE = (('E', 'Especial'), ('C', 'Comun'))
     LOCALIDADES = [
@@ -92,6 +90,7 @@ class Cliente (models.Model):
         null=True,
         blank=True,
         primary_key=False,
+        validators=[RegexValidator(regex=REGEX_NUMERO)],
         error_messages={
             'max_length': "El celular puede tener a lo sumo {} caracteres".format(MAXCELULAR),
             'unique': "Otro cliente tiene ese celular",
@@ -105,6 +104,7 @@ class Cliente (models.Model):
         null=True,
         blank=True,
         primary_key=False,
+        validators=[RegexValidator(regex=REGEX_NUMERO)],
         error_messages={
             'max_length': "El telefono puede tener a lo sumo {} caracteres".format(MAXTELEFONO),
         }

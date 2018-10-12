@@ -23,9 +23,18 @@ Muestra datos del cliente
         {% if cliente %}
         <div class="well">
             <p>Identificador: {{ cliente.id }}</p>
-            <p>Nombre: {{ cliente.nombre }} ({% if cliente.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
-            <p>Telefono: {{ cliente.telefono }}</p>
+            <p>Tipo De Cliente: {{cliente.tipoDeCliente}} ({% if cliente.baja %}Deshabilitado{% else %}Habilitado{% endif %})</p>
+            <p>Dni/CUIT: {{cliente.dniCuit}}</p>
+            <p>Nombres: {{ cliente.nombres }} </p>
+            <p>Apellidos:{{cliente.apellidos}} </p>
             <p>Direccion: {{ cliente.direccion }}</p>
+            <p>Localidad: {{cliente.localidad}}</p>
+            <p>Celular: {{cliente.celular}}</p>
+            <p>Telefono: {{ cliente.telefono }}</p>
+            <p>Email: {{cliente.email}}</p>
+            <p>Descuento Servicio: {{cliente.descuentoServicio}}</p>
+            <p>Descuento Producto: {{cliente.descuentoProducto}}</p>
+            <p>Cuenta Corriente: {{cliente.cuentaCorriente}}</p>
         </div>
         {% else %}
 
