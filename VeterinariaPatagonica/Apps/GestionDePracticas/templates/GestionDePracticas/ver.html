@@ -1,16 +1,16 @@
 {% extends 'GestionDePracticas/GestionDePracticas.html' %}
 
 {% block titulo %}
-Gestion de Prácticas | Ver Práctica
-{% endblock titulo %}
+Gestión de Prácticas | Ver Prácticas
+{% endblock %}
 
 {% block practicaTitulo %}
-Ver Practica
-{% endblock practicaTitulo%}
+Ver Práctica
+{% endblock %}
 
 {% block practicaSubtitulo %}
 Muestra datos de la práctica
-{% endblock practicaSubtitulo %}
+{% endblock %}
 
 {% block practicaContenido %}
 
@@ -21,7 +21,11 @@ Muestra datos de la práctica
         {% if practica %}
         <div class="well">
             <p>Identificador: {{ practica.id }}</p>
-            <p>Nombre: {{ practica.nombre }} </p>
+            <p>Precio: {{practica.precio}} </p>
+            <p>Cliente: {{ practica.cliente }} </p>
+            <p>Servicios:{{practica.servicios}} </p>
+            <p>Insumos Reales: {{ practica.insumosReales }}</p>
+            <p>Tipo de Atención: {{practica.tipoDeAtencion}}</p>
         </div>
         {% else %}
 
@@ -32,3 +36,4 @@ Muestra datos de la práctica
     </div>
 
 {% endblock practicaContenido %}
+</html>

@@ -17,7 +17,7 @@ Agrega una Práctica al listado
         <form class="form formulario" action="{% url 'practicas:practicaCrear' %}" method="post">
             {% csrf_token %}
             {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
-            <!--{% include './formularioSnippet.html' with campos=formulario %}-->
+            
             <button type="submit" class="btn btn-sm btn-default">Crear</button>
         </form>
     </div>
