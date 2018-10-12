@@ -4,7 +4,7 @@ from Apps.GestionDeClientes import models as gcmodels
 from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
 from Apps.GestionDeMascotas import models as gmmodels
-
+from Apps.GestionDeInsumos import models as gimodels
 
 
 class PracticaBaseManager(models.Manager):
@@ -20,15 +20,17 @@ class PracticaQuerySet(models.QuerySet):
 
 PracticaManager = PracticaBaseManager.from_queryset(PracticaQuerySet)
 
-
-
 class Practica(models.Model):
 #------------Constantes.------------------
     MAX_NOMBRE = 100
     MAX_DIGITOS = 8
     MAX_DECIMALES = 2
-
 #-----------Atributos.--------------
+    id = models.AutoField(
+        primary_key=True,
+        unique=True,
+        editable=False
+    )
     nombre = models.CharField(
             max_length = MAX_NOMBRE,
             unique = True,
@@ -39,14 +41,13 @@ class Practica(models.Model):
                 'max_length' : "El nombre puede tener a lo sumo {} caracteres.".format(MAX_NOMBRE),
                 'blank' : "El nombre es obligatorio."
                 })
-    #insumos
-    #servicios
     precio = models.DecimalField(
             max_digits = MAX_DIGITOS,
             decimal_places = MAX_DECIMALES,
             error_messages = {
                 'max_digits': "Cantidad de digitos ingresados supera el máximo."
             })
+
     cliente = models.ForeignKey(
             gcmodels.Cliente,
             null=False,
@@ -54,13 +55,14 @@ class Practica(models.Model):
             on_delete=models.CASCADE,
             error_messages = {
             })
-    servicio = models.ForeignKey(
-            gsmodels.Servicio,
-            null = False,
-            blank = False,
-            on_delete = models.CASCADE,
-            error_messages = {
-            })
+    servicios = models.ManyToManyField(gsmodels.Servicio,
+        through='PracticaServicio',
+        through_fields=('practica', 'servicio'),
+    )
+    insumosReales = models.ManyToManyField(gimodels.Insumo,
+        through='PracticaInsumo',
+        through_fields=('practica', 'insumo'),
+    )
     tipoDeAtencion = models.ForeignKey(
             gtdamodels.TipoDeAtencion,
             null = False,
@@ -69,19 +71,20 @@ class Practica(models.Model):
             error_messages = {
             })
 
+
     def precioReal(self):
         total = Decimal("0")
         for sinsumo in self.insumos.all():
             total += sinsumo.insumo.precioEnUnidad(sinsumo.cantidad)
         for servicio in self.servicios.all():
-            total += servicio.precioManoDeObra 
-        return total 
+            total += servicio.precioManoDeObra
+        return total
 
     def precioEstimado(self):
         total = Decimal("0")
         for servicio in self.servicios.all():
             total += servicio.precio()
-        return total 
+        return total
 
 #-----------Metodos.--------------------
     def estado(self):
@@ -92,7 +95,9 @@ class Practica(models.Model):
     def new(cls, *args, **kwargs):
         t = cls(*args, **kwargs)
         t.save()
+
         t.hacer("crear")
+
         return t
 
     def estados_related(self):
@@ -108,6 +113,20 @@ class Practica(models.Model):
         else:
             raise Exception("La accion: %s solicitada no se pudo realizar sobre el estado %s" % (accion, estado_actual))
 
+#---------Definicion de la clase necesaria para manejar Servicios ----------
+class PracticaServicio(models.Model):
+
+    practica = models.ForeignKey(Practica, on_delete=models.CASCADE)
+    servicio = models.ForeignKey(gsmodels.Servicio, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+
+#---------Definicion de la clase necesaria para manejar Insumos ----------
+class PracticaInsumo(models.Model):
+    practica = models.ForeignKey(Practica, on_delete=models.CASCADE)
+    insumo = models.ForeignKey(gimodels.Insumo, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField()
+
+#---------Definicion de la superclase de los Estados---------
 class Estado(models.Model):
     TIPO = 0
     TIPOS = [
@@ -139,19 +158,20 @@ class Estado(models.Model):
     def __str__(self):
         return self.__class__.__name__
 
-
+#---------Sección donde definimos cada estado con sus respectivos métodos.----------
 class Creada(Estado):
     TIPO = 1
 
     def programar(self, practica, turno):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
-        #[TODO]Alguna validacion si se requiere.
-        return Programada.objects.create(practica = self.practica, turno=turno)
-
+        if (turno >= datetime.now()):
+            return Programada.objects.create(practica = self.practica, turno=turno)
+        else:
+            #[TODO si no se cumple, throw exception o algo asi]
+            pass
     def presupuestar(self, practica, porcentajeDescuento, diasMantenimiento):
         if not (0 <= porcentajeDescuento <= 100):
             raise Exception("El porcentaje debe ser entre 0 y 100")
         return Presupuestada.objects.create(practica = practica, porcentajeDescuento=porcentajeDescuento, diasMantenimiento = diasMantenimiento)
-
 
 class Programada(Estado):
     TIPO = 2
@@ -162,6 +182,7 @@ class Programada(Estado):
         return Programada.objects.create(practica=practica, turno=turno, motivoReprogramacion=motivoReprogramacion)
 
     def pagar(self, monto):
+
         pass
 
     def realizar(self):

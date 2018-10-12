@@ -1,0 +1,69 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+
+{% block titulo %}
+Gestión de Prácticas | Ver Habilitadas
+{% endblock %}
+
+{% block practicaTitulo %}
+Prácticas Habilitados
+{% endblock %}
+
+{% block practicaSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block practicaoContenido %}
+
+<!-- Listado -->
+<div class="practicaCuerpo" >
+
+    <p> Las siguientes prácticas estan habilitadas.  </p>
+
+    {% if practicas %}
+            <div class="table-responsive" id="tabla">
+                <table class="table practicaListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for practica in practicas %}
+                            <tr>
+                                <td>{{ practica.nombre }}</td>
+                                <td> <p align="center">
+                                            <a  href="{% url 'practicas:practicaVer' practica.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-search"> </i>
+                                            </a>
+                                            <!--href="{% url 'practicas:practicasModificar'-->
+                                            <a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a>
+                                            <!--href="{% url 'practicas:practicasDeshabilitar'-->
+                                            <a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-minus"> </i>
+                                            </a>
+
+                              </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay Practicas habilitadas</p>
+
+    {% endif %}
+    <!--href="{% url 'practicas:practicas:practicaCrear'-->
+    <a  id ="practicaHabilitadasCrear" class="btn btn-sm btn-default" href="{% url 'practicas:practicasVer' %}"> Crear </a>
+
+</div>
+
+{% endblock %}

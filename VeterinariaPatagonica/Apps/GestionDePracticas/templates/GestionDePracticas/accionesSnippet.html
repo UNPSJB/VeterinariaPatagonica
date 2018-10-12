@@ -1,0 +1,21 @@
+
+<div class="practica-item-acciones"><!-- VER SI NO ES "insumoItemAcciones" -->
+
+        {% if seccion != 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'practicas:practicaVer' item.id %}">Ver</a>
+        {% endif %}
+    <!--href="{% url 'practicas:practicas:practicaModificar'-->
+        {% if seccion != 'modificar' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'practicas:practicaModificar' item.id %}">Modificar</a>
+        {% endif %}
+
+        {% if item.baja == False %}
+        <!--href="{% url 'practicas:practicas:practicaDeshabilitar'-->
+            <a  class="btn btn-sm btn-default" href="{% url 'practicas:practicaDeshabilitar' item.id %}">Deshabilitar</a>
+        {% else %}
+
+        <!--href="{% url 'practicas:practicas:practicaHabilitar'-->
+            <a  class="btn btn-sm btn-default" href="{% url 'practicas:practicaHabilitar' item.id %}">Habilitar</a>
+        {% endif %}
+
+</div>
