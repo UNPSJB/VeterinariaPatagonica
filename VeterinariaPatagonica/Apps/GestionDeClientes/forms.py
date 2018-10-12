@@ -1,7 +1,11 @@
 from django import forms
 from .models import Cliente
 from django.core.validators import RegexValidator
+
 #from localflavor.ar import forms as lforms
+
+#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+
 
 
 '''class creacionModelForm(forms.ModelForm):
@@ -15,7 +19,7 @@ class ClienteForm(forms.ModelForm):
         fields = [ 'dniCuit',
                    'nombres', 'apellidos', 'direccion', 'localidad', 'celular', 'telefono', 'email',
                    'tipoDeCliente',
-                   'descuentoServicio', 'descuentoProducto', 'baja']
+                   'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
 
         labels = {
             'dniCuit':'DniCuit',
@@ -43,18 +47,21 @@ class ClienteForm(forms.ModelForm):
             'nombres' : forms.TextInput(),
             'apellidos' : forms.TextInput(),
             'direccion': forms.TextInput(),
-            #'localidad' : forms.ComboField(),
-            'localidad': forms.TextInput(),
+            'localidad' : forms.Select(choices=Cliente.LOCALIDADES),
+            #'localidad': forms.TextInput(),
             'celular': forms.TextInput(),
             'telefono': forms.TextInput(),
             'email': forms.EmailInput(),
         }
 
     def clean_dniCuit(self):
-        dato = self.data["nombres"]
-        lforms.ARDNIField().clean(dato)
-        lforms.ARCUITField().clean(dato)
-        return dato
+        dato = self.data["dniCuit"]
+        try:
+            return lforms.ARDNIField().clean(dato)
+        except forms.ValidationError:
+            pass
+
+        return lforms.ARCUITField().clean(dato)
 
     def clean(self):
         cleaned_data = super().clean()

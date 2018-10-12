@@ -19,140 +19,65 @@ def mascota(request):
     template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')#Cargo el template desde la carpeta templates/GestionDeMascotas
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
-def alta(request):
-    context = {}#Defino un contexto.
-    template = loader.get_template('demos/altamascota.html')#Cargo el template desde la carpeta demos.
-    #template = loader.get_template('demos/altamascota.html')#Cargo el template desde la carpeta demos.
-    return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
-'''
-def alta(request):
-    return render_to_response('VeterinariaPatagonica/templates/demos/altamascota.html',request)
-'''
-
-
-def verHabilitados(peticion):
-
-    mascota = Mascota.objects.filter(baja=False)
-
-    template = loader.get_template('Mascota/verHabilitados.html')
-    contexto = {
-        'mascota' : mascota,
-        'usuario' : peticion.user
-    }
-
-    return HttpResponse(template.render( contexto, peticion ))
-
-
-
-def verDeshabilitados(peticion):
-    mascota = Mascota.objects.filter(baja=True)
-
-    template = loader.get_template('mascota/verDeshabilitados.html')
-    contexto = {
-        'mascota' : mascota,
-        'usuario' : peticion.user
-    }
-
-    return HttpResponse(template.render( contexto, peticion ))
-
-
-
-def ver(peticion, id):
-
-    try:
-        mascota = Mascota.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404( "No encontrado", "la mascota con id={} no existe.".format(id) )
-
-    template = loader.get_template('GestionDeMascotas/ver.html')
-    contexto = {
-        'mascota' : mascota,
-        'usuario' : peticion.user
-    }
-
-    return HttpResponse(template.render( contexto, peticion ))
 
 
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
+def crear(request):
 
+    context = {'usuario' : request.user}
 
-def crear(peticion):
+    if request.method == 'POST':
 
-    contexto = {
-        'usuario' : peticion.user
-    }
-
-    if peticion.method == 'POST':
-
-        formulario = CreacionForm(peticion.POST)
+        formulario = MascotaForm(request.POST)
 
         if formulario.is_valid():
-
-            mascota = formulario.crear()
-
-            return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
+          mascota = formulario.save()
         else:
-            contexto['formulario'] = formulario
+            context ['formulario '] = formulario
 
     else:
-
-        contexto['formulario'] = CreacionForm()
-
-    template = loader.get_template('GestionDeMascotas/crear.html')
-    return HttpResponse(template.render( contexto, peticion) )
-
-
+        context['formulario'] = MascotaForm()
+    template = loader.get_template('GestionDeMAscotas/formulario.html')
+    return HttpResponseRedirect( template.render(context, request) )
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.change_Mascota', raise_exception=True)
+def modificar(request, id):
+    mascota = Mascota.objects.get(id=id)
+    context = {'usuario': request.user}
+    if request.method == 'POST':
+        formulario = MascotaForm(request.POST, instance=mascota)
+        if formulario.is_valid():
+            mascota = formulario.save()
+            return HttpResponseRedirect("/GestionDeMascotas/ver/{}".format(mascota.id))
+        else:
+            context['formulario'] = formulario
+    else:
+        context['formulario'] = MascotaForm(instance=mascota)
+    template = loader.get_template('GestionDeMascotas/formulario.html')
+    return HttpResponse(template.render(context, request))
 
-
-def modificar(peticion, id):
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeClientes.delete_Cliente', raise_exception=True)
+def habilitar(request, id):
 
     try:
-        mascota = Mascota.objects.get(id=id)
+        mascota= Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    datos = {
-        'nombre' : mascota.nombre,
-        'raza' : mascota.raza,
-        'especie': mascota.especie
-    }
+    mascota.baja = False
+    mascota.save()
 
-    if peticion.method == 'POST':
-
-        formulario = ModificacionForm(peticion.POST, initial=datos)
-
-        if formulario.is_valid():
-
-            if formulario.has_changed():
-                formulario.cargar(mascota).save()
-
-            return HttpResponseRedirect("/GestionDeMascotas/ver/{}".format(mascota.id))
-
-    else:
-
-        formulario = ModificacionForm(datos, initial=datos)
-
-    template = loader.get_template('GestionDeMascotas/modificar.html')
-    contexto = {
-        'formulario': formulario,
-        'mascota': mascota,
-        'usuario' : peticion.user
-    }
-
-    return HttpResponse(template.render( contexto, peticion) )
-
+    return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
 
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.delete_Mascotas', raise_exception=True)
-
-def deshabilitar(peticion, id):
+def deshabilitar(request, id):
 
     try:
         mascota = Mascota.objects.get(id=id)
@@ -164,20 +89,6 @@ def deshabilitar(peticion, id):
 
     return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
 
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeMascotas.delete_Mascota', raise_exception=True)
-def habilitar(peticion, id):
-
-    try:
-        mascota = Mascota.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-        mascota.baja = False
-        mascota.save()
-
-    return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
 
 
 
@@ -205,3 +116,38 @@ def eliminar(peticion, id):
         }
 
         return HttpResponse( template.render( contexto, peticion) )
+
+def ver(request, id):
+
+    try:
+        mascota = Mascota.objects.get(id=id)
+    except ObjectDoesNotExist:
+        raise Http404("No encontrado", "La mascota con id={} no existe.".format(id))
+
+
+    template = loader.get_template('GestionDeMascotas/ver.html')
+    contexto = {
+    'cliente': mascota,
+    'usuario': request.user
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
+def verHabilitados(request):
+    mascotas = Mascota.objects.filter(baja=False)
+    template = loader.get_template('GestionDeMascotas/verHabilitados.html')
+    contexto = {
+        'mascotas': mascotas,
+        'usuario': request.user,
+    }
+    return HttpResponse(template.render(contexto, request))
+
+def verDeshabilitados(request):
+    mascotas = Mascota.objects.filter(baja=True)
+    template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
+    contexto = {
+        'mascotas': mascotas,
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))

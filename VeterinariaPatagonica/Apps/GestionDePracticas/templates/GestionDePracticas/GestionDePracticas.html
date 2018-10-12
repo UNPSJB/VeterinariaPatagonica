@@ -1,0 +1,36 @@
+{% extends "sitioBase.html" %}
+
+{% load static %}
+
+{% block paginaEstilos %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'GestionDePracticas/css/GestionDePracticas.css' %}">
+{% endblock paginaEstilos %}
+
+{% block paginaSeccionGeneral %}
+  <section>
+    {% block secciones %}
+      {% include './seccionesSnippet.html' with pagina='default' %}
+    {% endblock %}
+
+    <h4 class="practicaTitulo">
+      {% block practicaTitulo %}
+      {% endblock practicaTitulo %}
+    </h4>
+
+    <div class="practicaLineaTitulo"> </div>
+
+    <p class="practicaSubtitulo">
+      {% block practicaSubtitulo %}
+      {% endblock practicaSubtitulo%}
+    </p>
+
+  {% block practicaContenido %}
+  {% endblock practicaContenido %}
+  </section>
+{% endblock paginaSeccionGeneral %}
+
+
+{% block footer %}
+  <p>Para mas información  de las Practicas haga click aquí<p>
+{% endblock footer %}
