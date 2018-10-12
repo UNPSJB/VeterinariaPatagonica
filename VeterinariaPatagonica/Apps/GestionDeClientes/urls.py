@@ -15,7 +15,7 @@ urlpatterns = [
     path('ver/<int:id>/', clientes_views.ver, name="clienteVer"),
     path('verHabilitados/', clientes_views.verHabilitados, name="clienteVerHabilitados"),
     path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
-    path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
+    #path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
 ]
 
 #nuevo

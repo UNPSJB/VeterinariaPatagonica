@@ -37,19 +37,19 @@ Actualmente <strong>no</strong> disponibles
                     <tbody>
                         {% for cliente in clientes %}
                             <tr>
-                                <td>{{ cliente.nombre }}</td>
+                                <td>{{ cliente.nombres }}</td>
                                 <td >
                                     <p align="center">
-                                        <a  href="{% url 'clientes:clienteVer' insumo.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteModificar' insumo.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteHabilitar' insumo.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-plus"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteEliminar' insumo.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-remove"> </i>
                                         </a>
                                     </p>
