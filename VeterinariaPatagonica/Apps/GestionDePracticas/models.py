@@ -23,6 +23,7 @@ PracticaManager = PracticaBaseManager.from_queryset(PracticaQuerySet)
 class Practica(models.Model):
 #------------Constantes.------------------
     MAX_NOMBRE = 100
+    REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     MAX_DIGITOS = 8
     MAX_DECIMALES = 2
 #-----------Atributos.--------------
@@ -47,7 +48,6 @@ class Practica(models.Model):
             error_messages = {
                 'max_digits': "Cantidad de digitos ingresados supera el máximo."
             })
-
     cliente = models.ForeignKey(
             gcmodels.Cliente,
             null=False,
@@ -60,18 +60,20 @@ class Practica(models.Model):
         through_fields=('practica', 'servicio'),
     )
     insumosReales = models.ManyToManyField(gimodels.Insumo,
+        #verbose = 'Insumos Reales',
         through='PracticaInsumo',
         through_fields=('practica', 'insumo'),
     )
     tipoDeAtencion = models.ForeignKey(
             gtdamodels.TipoDeAtencion,
+        #    verbose = 'Tipo de Atención',
             null = False,
             blank = False,
             on_delete = models.CASCADE,
             error_messages = {
             })
 
-
+#--------------Metodos.--------------------
     def precioReal(self):
         total = Decimal("0")
         for sinsumo in self.insumos.all():
@@ -86,7 +88,6 @@ class Practica(models.Model):
             total += servicio.precio()
         return total
 
-#-----------Metodos.--------------------
     def estado(self):
         if self.estados.exists():
             return self.estados.latest().related()
@@ -95,9 +96,7 @@ class Practica(models.Model):
     def new(cls, *args, **kwargs):
         t = cls(*args, **kwargs)
         t.save()
-
         t.hacer("crear")
-
         return t
 
     def estados_related(self):
@@ -115,7 +114,6 @@ class Practica(models.Model):
 
 #---------Definicion de la clase necesaria para manejar Servicios ----------
 class PracticaServicio(models.Model):
-
     practica = models.ForeignKey(Practica, on_delete=models.CASCADE)
     servicio = models.ForeignKey(gsmodels.Servicio, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
@@ -166,8 +164,9 @@ class Creada(Estado):
         if (turno >= datetime.now()):
             return Programada.objects.create(practica = self.practica, turno=turno)
         else:
-            #[TODO si no se cumple, throw exception o algo asi]
-            pass
+            raise Exception("error: %s es una fecha inválida" % (turno.__str__()));
+            return None
+
     def presupuestar(self, practica, porcentajeDescuento, diasMantenimiento):
         if not (0 <= porcentajeDescuento <= 100):
             raise Exception("El porcentaje debe ser entre 0 y 100")
