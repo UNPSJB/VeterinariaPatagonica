@@ -16,13 +16,10 @@ Actualmente disponibles
 {% include './seccionesSnippet.html' with pagina='verHabilitados' %}
 {% endblock %}
 
-{% block practicaoContenido %}
-
+{% block practicaContenido %}
 <!-- Listado -->
 <div class="practicaCuerpo" >
-
     <p> Las siguientes prácticas estan habilitadas.  </p>
-
     {% if practicas %}
             <div class="table-responsive" id="tabla">
                 <table class="table practicaListado">
@@ -37,6 +34,7 @@ Actualmente disponibles
                             <tr>
                                 <td>{{ practica.nombre }}</td>
                                 <td> <p align="center">
+
                                             <a  href="{% url 'practicas:practicaVer' practica.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
@@ -48,22 +46,15 @@ Actualmente disponibles
                                             <a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
-
                               </p> </td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-
     {% else %}
-
         <p> No hay Practicas habilitadas</p>
-
     {% endif %}
-    <!--href="{% url 'practicas:practicas:practicaCrear'-->
-    <a  id ="practicaHabilitadasCrear" class="btn btn-sm btn-default" href="{% url 'practicas:practicasVer' %}"> Crear </a>
-
+    <a  id ="practicaHabilitadasCrear" class="btn btn-sm btn-default" href="{% url 'practicas:practicaCrear' %}"> Crear </a>
 </div>
-
 {% endblock %}

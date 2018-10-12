@@ -1,7 +1,84 @@
 from django import forms
+from .models import Practica
+from django.core.validators import RegexValidator
+#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+
+
+'''class creacionModelForm(forms.ModelForm):
+    class meta:
+        model = Cliente'''
+
+class PracticaForm(forms.ModelForm):
+    class Meta:
+        model = Practica
+
+        fields = [ 'nombre',
+                    'precio',
+                    'cliente',
+                    'servicios',
+                    'insumosReales',
+                    'tipoDeAtencion',
+                    ]
+
+        labels = {
+            'nombre':'Nombre.',
+            'precio':'Precio.',
+            'cliente':'Cliente.',
+            'servicios':'Servicios',
+            'insumosReales':'Insumos Reales.',
+            'tipoDeAtencion':'Tipo De Atención.',
+            }
+
+        error_messages = {
+            'nombres' : {
+                'max_length': ("Nombres demasiados largos"),
+            },
+            'precio' : {
+                'min_value' : 'Debe ingresar un valor no menor que el 0%'
+            },
+        }
+
+        widgets = {
+            'nombre' : forms.TextInput(),
+            'precio' : forms.TextInput(),
+            'cliente': forms.TextInput(),
+            'servicios' : forms.TextInput(),
+            'insumosReales': forms.TextInput(),
+            'tipoDeAtencion': forms.TextInput(),
+        }
+'''
+    def clean_dniCuit(self):
+        dato = self.data["dniCuit"]
+        try:
+            return lforms.ARDNIField().clean(dato)
+        except forms.ValidationError:
+            pass
+
+        return lforms.ARCUITField().clean(dato)
+
+
+    def clean(self):
+        cleaned_data = super().clean()
+        return cleaned_data
+'''
+
+
+
+
+
+
+
+
+'''
+
+
+
+
+
+from django import forms
 from django.apps import apps
 from django.core.validators import RegexValidator
-from .models import Insumo
+from .models import Practica
 
 
 TIMEINPUT_FMTS = [ "%H:%M" ]
@@ -20,60 +97,46 @@ class TimeTextInput(forms.TextInput):
 
 class CreacionModelForm(forms.ModelForm):
     class Meta:
-        model = Insumo
+        model = Practica
         exclude = [ 'baja' ]
-
 
 class ModificacionModelForm(forms.ModelForm):
     class Meta:
-        model = Insumo
+        model = Practica
         fields = '__all__'
         widgets = {
             'descripcion' : forms.Textarea(attrs={ 'cols':60, 'rows':6 }),#Ver valores.
         }
 
-
 class CreacionForm(forms.Form):
     nombre = forms.CharField(
-        max_length = Insumo.MAX_NOMBRE,
+        max_length = Practica.MAX_NOMBRE,
         required = True,
         label = 'Nombre.',
         widget = forms.TextInput,
         help_text="Nombre del insumo",
         error_messages = {
-            'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(Insumo.MAX_NOMBRE),
+            'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(Practica.MAX_NOMBRE),
             'required' : "El nombre es obligatorio"
         },
         validators = [
             RegexValidator(
-                Insumo.REGEX_NOMBRE,
+                Practica.REGEX_NOMBRE,
                 message="El nombre debe construirse de numeros, letras, espacios o guiones ('_' y '-')"
                 )]
     )
-    formaDePresentacion = forms.ChoiceField(
-        label = 'Forma De Presentación.',
-        choices = Insumo.UNIDADES,
-        error_messages = {
-            'invalid_choice' : "Opcion invalida",
-            'blank' : "La unidad de medida es obligatoria"
-        }
-    )
-    precioPorUnidad = forms.DecimalField(
-        label = 'Precio Por Unidad.',
-        max_digits = Insumo.MAX_DIGITOS,
-        decimal_places = Insumo.MAX_DECIMALES,
-        error_messages = {
-            'max_digits' : "Cantidad de digitos inválida."
-        }
-    )
-    rubro = forms.CharField(
-        label = 'Rubro.',
-        help_text="Nombre del rubro al que pertenece",
-        max_length = Insumo.MAX_NOMBRE,
-        error_messages = {
-            'blank' : "El rubro es obligatorio"
-        }
-    )
+    precio = forms.DecimalField(
+            label = 'Precio Total.',
+            max_digits = Practica.MAX_DIGITOS,
+            decimal_places = Practica.MAX_DECIMALES,
+            error_messages = {
+                'max_digits' : "Cantidad de digitos inválida."
+            })
+    #cliente.
+    #servicios.
+    #insumosReales.
+    #tipoDeAtención.
+
 
     def __init__(self, *args, **kwargs):
 
@@ -126,3 +189,4 @@ class ModificacionForm(CreacionForm):
         instancia.baja = self.cleaned_data['baja']
 
         return instancia
+'''
