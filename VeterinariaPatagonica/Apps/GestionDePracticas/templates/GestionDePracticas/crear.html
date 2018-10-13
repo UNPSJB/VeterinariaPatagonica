@@ -14,11 +14,11 @@ Agrega una Práctica al listado
 
 {% block practicaContenido %}
     <div class="practicaCuerpo">
-        <form class="form formulario" action="{% url 'practicas:practicaCrear' %}" method="post">
+        <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
             {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
-            
-            <button type="submit" class="btn btn-sm btn-default">Crear</button>
+
+            <!--<button type="submit" class="btn btn-sm btn-default">Crear</button>-->
         </form>
     </div>
 {% endblock %}

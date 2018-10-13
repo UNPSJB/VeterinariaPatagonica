@@ -9,7 +9,7 @@ def PracticaFormFactory(practica=None):
         class Meta:
             model = Practica
             fields = [ 'nombre',
-                        #'precio',
+                        'precio',
                         'cliente',
                         'servicios',
                         'insumosReales',
@@ -17,9 +17,9 @@ def PracticaFormFactory(practica=None):
                         ]
             labels = {
                 'nombre':'Nombre.',
-                #'precio':'Precio.',
+                'precio':'Precio.',
                 'cliente':'Cliente.',
-                'servicios':'Servicios',
+                'servicios':'Servicios.',
                 'insumosReales':'Insumos Reales.',
                 'tipoDeAtencion':'Tipo De Atención.',
                 }
@@ -27,13 +27,13 @@ def PracticaFormFactory(practica=None):
                 'nombres' : {
                     'max_length': ("Nombres demasiados largos"),
                 },
-                #'precio' : {
-                #    'min_value' : 'Debe ingresar un valor no menor que el 0%'
-                #},
+                'precio' : {
+                    'min_value' : 'Debe ingresar un valor no menor que el 0%'
+                },
             }
             widgets = {
                 'nombre' : forms.TextInput(),
-                #'precio' : forms.DecimalField(max_digits=6,decimal_places=2),
+                'precio' : forms.NumberInput(),
                 'cliente': forms.Select(choices=gcmodels.Cliente.objects.all()),
                 'servicios' : forms.TextInput(),
                 'insumosReales': forms.TextInput(),
