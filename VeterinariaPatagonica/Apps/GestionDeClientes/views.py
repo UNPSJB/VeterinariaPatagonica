@@ -32,7 +32,6 @@ def modificar(request, id = None):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.delete_Cliente', raise_exception=True)
 def habilitar(request, id):
-
     try:
         cliente = Cliente.objects.get(id=id)
     except ObjectDoesNotExist:

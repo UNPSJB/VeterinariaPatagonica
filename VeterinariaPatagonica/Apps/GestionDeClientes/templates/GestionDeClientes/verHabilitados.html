@@ -1,5 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
 
 {% block titulo %}
@@ -31,7 +29,7 @@ Actualmente disponibles
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-acciones">Direccion</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,7 +40,7 @@ Actualmente disponibles
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteCrear' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
                                         <a href="{% url 'clientes:clienteDeshabilitar' cliente.id %}" class="btn btn-xs btn-default">
@@ -66,5 +64,3 @@ Actualmente disponibles
 </div>
 
 {% endblock %}
-
-</html>

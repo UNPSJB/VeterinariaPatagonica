@@ -33,13 +33,9 @@ class Mascota(models.Model):
         }
     )
 
-
     cliente = models.ForeignKey(gcmodels.Cliente, null=False, blank=False, on_delete=models.CASCADE)
 
-
     fechaNacimiento = models.DateTimeField(),
-
-
 
     especie = models.CharField(
         help_text= "Especie de la Mascota",
@@ -54,7 +50,6 @@ class Mascota(models.Model):
             'blank': "La especie es obligatorio"
         }
     )
-
 
     raza = models.CharField(
         help_text="Especie de la Mascota",

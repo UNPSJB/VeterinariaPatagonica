@@ -1,15 +1,16 @@
+<html lang="en">
 {% extends 'GestionDeMascotas/mascota.html' %}
 
 {% block titulo %}
-Gestion de mascota | Ver mascota
+Gestion de mascota | Ver Mascota
 {% endblock %}
 
-{% block mascota %}
-Ver mascota
+{% block mascotaTitulo %}
+Ver Mascota
 {% endblock %}
 
 {% block mascotaSubtitulo %}
-Muestra datos del tipo de atencion
+Muestra datos de Mascota
 {% endblock %}
 
 {% block mascotaContenido %}
@@ -20,11 +21,12 @@ Muestra datos del tipo de atencion
 
         {% if mascota %}
         <div class="well">
-            <p>Identificador: {{ mascota.id }}</p>
+            <p>Identificador: {{ mascota.patente }}</p>
             <p>Nombre: {{ mascota.nombre }} ({% if mascota.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
 
             <p>Raza: {{ mascota.raza }}</p>
             <p>Especie: {{ mascota.especie }}</p>
+            <p>Cliente: {{ mascota.cliente}}</p>
 
         </div>
         {% else %}
@@ -35,4 +37,4 @@ Muestra datos del tipo de atencion
 
     </div>
 
-{% endblock mascota %}
+{% endblock mascotaContenido %}

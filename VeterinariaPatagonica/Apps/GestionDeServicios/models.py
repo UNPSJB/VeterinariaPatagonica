@@ -6,6 +6,8 @@ class Servicio(models.Model):
     TIPO = (('C','Consulta'), ('Q','Quirurgica'))
     MAXNOMBRE = 50
     MAXDESCRIPCION = 200
+    MAXPRECIO = 7
+    MAXDECIMAL = 2
 
     tipo = models.CharField(
         help_text="Tipo de Servicio (Consulta-Cirugia)",
@@ -55,8 +57,15 @@ class Servicio(models.Model):
     )
 
     precioManoDeObra = models.DecimalField(
-        max_digits = 7,
-        decimal_places = 2)
+        max_digits = MAXPRECIO,
+        decimal_places = MAXDECIMAL,
+        unique=False,
+        null=False,
+        blank=False,
+        error_messages={
+            'blank': "El precio del servicio es obligarotio"
+        }
+    )
 
     insumos = models.ManyToManyField(imodels.Insumo, 
         through='ServicioInsumo',

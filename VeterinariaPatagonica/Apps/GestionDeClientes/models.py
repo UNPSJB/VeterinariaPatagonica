@@ -17,7 +17,10 @@ class Cliente (models.Model):
     TIPODECLIENTE = (('E', 'Especial'), ('C', 'Comun'))
     LOCALIDADES = [
         ("Trelew", "Trelew"),
-        ("Rawson", "Rawson")
+        ("Rawson", "Rawson"),
+        ("Madryn", "Madryn"),
+        ("Gaiman", "Gaiman"),
+        ("Dovalon", "Dovalon")
     ]
 
     dniCuit = models.CharField(

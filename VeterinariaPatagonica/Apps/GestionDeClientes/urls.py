@@ -6,7 +6,8 @@ from VeterinariaPatagonica import views
 app_name = 'clientes'
 
 urlpatterns = [
-    #url(r'^$', clientes_views.clientes, name="cliente"),
+
+    url(r'^$', clientes_views.clientes, name="cliente"),
     path('crear/', clientes_views.modificar, name="clienteCrear"),
     path('modificar/<int:id>/', clientes_views.modificar, name="clienteModificar"),
     path('habilitar/<int:id>/', clientes_views.habilitar, name="clienteHabilitar"),

@@ -1,0 +1,27 @@
+{% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
+
+{% block titulo %}
+Gestion de Mascotas | Crear mascota
+{% endblock %}
+
+{% block mascotaTitulo %}
+Nuevo Mascotas
+{% endblock %}
+
+{% block mascotaSubtitulo %}
+Agrega una Mascota al listado
+{% endblock %}
+
+{% block MascotaContenido %}
+
+    <div class="mascotaCuerpo">
+        <form class="form-horizontal" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+
+        </form>
+    </div>
+
+{% endblock %}

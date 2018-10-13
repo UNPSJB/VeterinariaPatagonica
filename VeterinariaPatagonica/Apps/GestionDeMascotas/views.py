@@ -1,52 +1,25 @@
 from django.shortcuts import render
 from django.template import loader
-from django.http import HttpResponse
-#from django.shortcuts import render_to_response
 
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ObjectDoesNotExist
-from django import forms
-
-#from .models import Mascotas
-from .forms import *
-
-
-
+from django.contrib.auth.decorators import login_required, permission_required
+from .models import Mascota
+from .forms import MascotaFormFactory
 
 def mascota(request):
-    context = {} #Defino un contexto
-    template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')#Cargo el template desde la carpeta templates/GestionDeMascotas
-    return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
-
-
-
-
+    context = {}
+    template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')
+    return HttpResponse(template.render(context, request))
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
-def crear(request):
-
-    context = {'usuario' : request.user}
-
-    if request.method == 'POST':
-
-        formulario = MascotaForm(request.POST)
-
-        if formulario.is_valid():
-          mascota = formulario.save()
-        else:
-            context ['formulario '] = formulario
-
-    else:
-        context['formulario'] = MascotaForm()
-    template = loader.get_template('GestionDeMAscotas/formulario.html')
-    return HttpResponseRedirect( template.render(context, request) )
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeMascotas.change_Mascota', raise_exception=True)
-def modificar(request, id):
-    mascota = Mascota.objects.get(id=id)
+@permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
+def modificar(request, id= None):
+    mascota = Mascota.objects.get(id=id) if id is not None else None
+    MascotaForm = MascotaFormFactory(mascota)
     context = {'usuario': request.user}
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
@@ -94,9 +67,7 @@ def deshabilitar(request, id):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeTiposDeAtencion.delete_TipoDeAtencion', raise_exception=True)
-
 def eliminar(peticion, id):
-
     try:
         mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
