@@ -35,7 +35,7 @@ Actualmente disponibles
                     <tbody>
                         {% for cliente in clientes %}
                             <tr>
-                                <td>{{ cliente.nombre }}</td>
+                                <td> <p>{{ cliente.apellidos }}, {{cliente.nombres }}</p></td>
                                 <td> <p align="center">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
@@ -43,7 +43,7 @@ Actualmente disponibles
                                         <a href="{% url 'clientes:clienteCrear' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteDeshabilitar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteDeshabilitar' cliente.id%}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-minus"> </i>
                                         </a>
                                 </p> </td>

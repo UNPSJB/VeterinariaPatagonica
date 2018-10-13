@@ -1,5 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator
+
 #from localflavor.ar import forms as lforms
 
 from localflavor.ar import forms as lforms
@@ -59,6 +60,7 @@ def MascotaFormFactory(mascota=None):
 
             return lforms.ARCUITField().clean(dato)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        return cleaned_data
+        def clean(self):
+            cleaned_data = super().clean()
+            return cleaned_data
+    return MascotaForm

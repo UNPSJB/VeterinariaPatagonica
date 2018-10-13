@@ -14,9 +14,6 @@ def mascota(request):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
 def modificar(request, id= None):
     mascota = Mascota.objects.get(id=id) if id is not None else None
     MascotaForm = MascotaFormFactory(mascota)

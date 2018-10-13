@@ -40,7 +40,7 @@ def habilitar(request, id):
     cliente.baja = False
     cliente.save()
 
-    return HttpResponseRedirect( "/GestionDeClientes/ver/{}".format(cliente.id) )
+    return HttpResponseRedirect( "/GestionDeClientes/verHabilitados/" )
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeCliente.delete_Cliente', raise_exception=True)
@@ -54,7 +54,7 @@ def deshabilitar(request, id):
     cliente.baja = True
     cliente.save()
 
-    return HttpResponseRedirect( "/GestionDeClientes/ver/{}".format(cliente.id) )
+    return HttpResponseRedirect( "/GestionDeClientes/verDeshabilitados/" )
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.delete_Cliente', raise_exception=True)
