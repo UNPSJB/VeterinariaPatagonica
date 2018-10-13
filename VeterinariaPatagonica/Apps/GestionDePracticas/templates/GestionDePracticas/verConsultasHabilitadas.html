@@ -1,15 +1,15 @@
 {% extends 'GestionDePracticas/GestionDePracticas.html' %}
 
 {% block titulo %}
-Gestión de Prácticas | Ver Habilitadas
+Gestión de Consultas | Ver Consultas
 {% endblock %}
 
 {% block practicaTitulo %}
-Prácticas Habilitados
+<h3>Consultas Almacenadas</h3>
 {% endblock %}
 
 {% block practicaSubtitulo %}
-Actualmente disponibles
+<p>Consultas actualmente disponibles</p>
 {% endblock %}
 
 {% block secciones %}
@@ -19,7 +19,7 @@ Actualmente disponibles
 {% block practicaContenido %}
 <!-- Listado -->
 <div class="practicaCuerpo" >
-    <p> Las siguientes prácticas estan habilitadas.  </p>
+    <p> Se poseen las siguientes consultas almacenadas.  </p>
     {% if practicas %}
             <div class="table-responsive" id="tabla">
                 <table class="table practicaListado">
@@ -34,18 +34,17 @@ Actualmente disponibles
                             <tr>
                                 <td>{{ practica.nombre }}</td>
                                 <td> <p align="center">
-
-                                            <a  href="{% url 'practicas:practicaVer' practica.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-search"> </i>
-                                            </a>
+                                            <!--<a  href="{% url 'practicas:practicaVer' practica.id %}" class="btn btn-xs btn-default">-->
+                                                <!--<i class="glyphicon glyphicon-search"> </i>-->
+                                            <!--</a>-->
                                             <!--href="{% url 'practicas:practicasModificar'-->
-                                            <a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a>
+                                            <!--<a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">-->
+                                                <!--<i class="glyphicon glyphicon-edit"> </i>-->
+                                            <!--</a>-->
                                             <!--href="{% url 'practicas:practicasDeshabilitar'-->
-                                            <a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-minus"> </i>
-                                            </a>
+                                            <!--<a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">-->
+                                                <!--<i class="glyphicon glyphicon-minus"> </i>-->
+                                            <!--</a>-->
                               </p> </td>
                             </tr>
                         {% endfor %}
@@ -53,8 +52,8 @@ Actualmente disponibles
                 </table>
             </div>
     {% else %}
-        <p> No hay Practicas habilitadas</p>
+        <p> No hay consultas cargadas</p>
     {% endif %}
-    <a  id ="practicaHabilitadasCrear" class="btn btn-sm btn-default" href="{% url 'practicas:practicaCrear' %}"> Crear </a>
+    <a  id ="practicaHabilitadasCrear" class="btn btn-sm btn-default" href="{% url 'practicas:practicaCrearConsulta' %}"> Crear </a>
 </div>
 {% endblock %}
