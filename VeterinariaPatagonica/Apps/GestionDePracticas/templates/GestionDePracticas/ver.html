@@ -5,19 +5,16 @@ Gestión de Prácticas | Ver Prácticas
 {% endblock %}
 
 {% block practicaTitulo %}
-Ver Práctica
+<h3>Ver Práctica</h3>
 {% endblock %}
 
 {% block practicaSubtitulo %}
-Muestra datos de la práctica
+<p>Muestra datos de la práctica</p>
 {% endblock %}
 
 {% block practicaContenido %}
-
     {% include './accionesSnippet.html' with item=practica seccion='ver' %}
-
     <div class="practicaCuerpo">
-
         {% if practica %}
         <div class="well">
             <p>Identificador: {{ practica.id }}</p>
@@ -28,12 +25,8 @@ Muestra datos de la práctica
             <p>Tipo de Atención: {{practica.tipoDeAtencion}}</p>
         </div>
         {% else %}
-
             <p> La práctica no existe </p>
-
         {% endif %}
-
     </div>
-
 {% endblock practicaContenido %}
 </html>

@@ -34,10 +34,10 @@ def PracticaFormFactory(practica=None):
             widgets = {
                 'nombre' : forms.TextInput(),
                 'precio' : forms.NumberInput(),
-                'cliente': forms.Select(choices=gcmodels.Cliente.objects.all()),
-                'servicios' : forms.TextInput(),
-                'insumosReales': forms.TextInput(),
-                'tipoDeAtencion': forms.TextInput(),
+                'cliente': forms.Select(attrs={'class':'form-control'}),
+                'servicios' : forms.Select(attrs={'class':'form-control'}),
+                'insumosReales': forms.Select(attrs={'class':'form-control'}),
+                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
             }
 
         def clean(self):
