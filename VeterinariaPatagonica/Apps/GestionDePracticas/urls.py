@@ -9,4 +9,5 @@ urlpatterns = [
     path('crearCirugia/', practicas_views.crearCirugia, name='practicaCrearCirugia'),
     path('crearConsulta/', practicas_views.crearConsulta, name='practicaCrearConsulta'),
     path('ver/<int:id>/', practicas_views.ver, name='practicaVer'),
-    ]
+
+]

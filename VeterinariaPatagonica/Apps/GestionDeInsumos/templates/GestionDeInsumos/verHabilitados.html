@@ -24,34 +24,34 @@ Actualmente disponibles
     <p> Los siguientes insumos estan habilitados.  </p>
 
     {% if insumos %}
-            <div class="table-responsive" id="tabla">
-                <table class="table insumoListado">
-                    <thead>
+        <div class="table-responsive" id="tabla">
+            <table class="table insumoListado">
+                <thead>
+                    <tr>
+                        <th id="deshabilitados-nombre">Nombre</th>
+                        <th id="deshabilitados-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for insumo in insumos %}
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <td> <p> {{ insumo.nombre }} </p></td>
+                            <td> <p align="center">
+                                    <a  href="{% url 'insumos:insumoVer' insumo.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-search"> </i>
+                                    </a>
+                                    <a href="{% url 'insumos:insumoCrear' insumo.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-edit"> </i>
+                                    </a>
+                                    <a href="{% url 'insumos:insumoDeshabilitar' insumo.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-minus"> </i>
+                                    </a>
+                            </p> </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        {% for insumo in insumos %}
-                            <tr>
-                                <td>{{ insumo.nombre }}</td>
-                                <td> <p align="center">
-                                            <a  href="{% url 'insumos:insumoVer' insumo.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-search"> </i>
-                                            </a>
-                                            <a href="{% url 'insumos:insumoModificar' insumo.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a>
-                                            <a href="{% url 'insumos:insumoDeshabilitar' insumo.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-minus"> </i>
-                                            </a>
-                                </p> </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
     {% else %}
 
@@ -63,4 +63,4 @@ Actualmente disponibles
 
 </div>
 
-{% endblock %}
+{% endblock insumoContenido %}

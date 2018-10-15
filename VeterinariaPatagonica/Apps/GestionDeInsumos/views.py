@@ -2,10 +2,8 @@ from django.template import loader
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ObjectDoesNotExist
-from django import forms
-
 from .models import Insumo
-from .forms import *
+from .forms import InsumoFormFactory
 
 
 def insumos(request):
@@ -13,14 +11,34 @@ def insumos(request):
     template = loader.get_template('GestionDeInsumos/GestionDeInsumos.html')#Cargo el template desde la carpeta templates/GestionDeInsumos.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeInsumos.add_Insumo', raise_exception=True)
+def modificar(request, id = None):
+    insumo = Insumo.objects.get(id=id) if id is not None else None
+    InsumoForm = InsumoFormFactory(insumo)
+    context = {'usuario' : request.user}
+
+    if request.method == 'POST':
+        formulario = InsumoForm(request.POST, instance=insumo)
+        if formulario.is_valid():
+            insumo = formulario.save()
+            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.id))
+        else:
+            context['formulario'] = formulario
+    else:
+        context['formulario'] = InsumoForm(instance=insumo)
+    template = loader.get_template('GestionDeInsumos/formulario.html')
+
+    return HttpResponse(template.render( context, request) )
+
 def verHabilitados(request):
     insumos = Insumo.objects.filter(baja=False)
     template = loader.get_template('GestionDeInsumos/verHabilitados.html')
     context = {
-        'insumos' : insumos,
-        'usuario' : request.user
+        'insumos': insumos,
+        'usuario': request.user
     }
-    return HttpResponse(template.render( context, request ))
+    return HttpResponse(template.render(context, request))
 
 def verDeshabilitados(request):
     insumos = Insumo.objects.filter(baja=True)
@@ -36,36 +54,95 @@ def ver(request, id):
     try:
         insumo = Insumo.objects.get(id=id)
     except ObjectDoesNotExist:
-        raise Http404( "No encontrado", "El insumo con id={} no existe.".format(id) )
+        raise Http404( "No encontrado", "El insumo con id={} no existe.".format(id))
+
     template = loader.get_template('GestionDeInsumos/ver.html')
     context = {
-        'insumo' : insumo,
-        'usuario' : request.user
+        'insumo': insumo,
+        'usuario': request.user
     }
-    return HttpResponse(template.render( context, request ))
+    return HttpResponse(template.render(context, request))
+
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.add_Insumo', raise_exception=True)
-def crear(request):
-    #import ipdb; ipdb.set_trace()
+@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
+def deshabilitar(request, id):
 
-    context = {'usuario' : request.user}
+    try:
+        insumo = Insumo.objects.get(id=id)
+    except ObjectDoesNotExist:
+        raise Http404()
+
+    insumo.baja = True
+    insumo.save()
+
+    return HttpResponseRedirect( "/GestionDeInsumos/verDeshabilitados/" )
+
+
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
+def habilitar(request, id):
+    try:
+        insumo = Insumo.objects.get(id=id)
+    except ObjectDoesNotExist:
+        raise Http404()
+
+    insumo.baja = False
+    insumo.save()
+
+    return HttpResponseRedirect( "/GestionDeInsumos/verHabilitados/" )
+
+
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
+def eliminar(request, id):
+
+    try:
+        insumo = Insumo.objects.get(id=id)
+    except ObjectDoesNotExist:
+        raise Http404()
+
     if request.method == 'POST':
-        formulario = CreacionForm(request.POST)
+        insumo.delete()
+        return HttpResponseRedirect( "/GestionDeInsumos/" )
+
+    else:
+        template = loader.get_template('GestionDeInsumos/eliminar.html')
+        context = {
+            'usuario' : request.user,
+            'id' : id
+        }
+
+    return HttpResponse( template.render( context, request) )
+
+
+
+
+
+'''
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeClientes.add_Cliente', raise_exception=True)
+def modificar(request, id = None):
+    cliente = Cliente.objects.get(id=id) if id is not None else None
+    ClienteForm = ClienteFormFactory(cliente)
+    context = {'usuario': request.user}
+    if request.method == 'POST':
+        formulario = ClienteForm(request.POST, instance=cliente)
         if formulario.is_valid():
-            insumo = formulario.crear()
-            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.id))
+            cliente = formulario.save()
+            return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
             context['formulario'] = formulario
     else:
-        context['formulario'] = CreacionForm()
-    template = loader.get_template('GestionDeInsumos/formulario.html')
-    return HttpResponse(template.render( context, request) )
+        context['formulario'] = ClienteForm(instance=cliente)
+    template = loader.get_template('GestionDeClientes/formulario.html')
+    return HttpResponse(template.render(context, request))
+'''
 
-
+'''
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeInsumos.change_Insumo', raise_exception=True)
-def modificar(request, id):
+def modificar(request, id = None):
 
     try:
         insumo = Insumo.objects.get(id=id)
@@ -103,65 +180,7 @@ def modificar(request, id):
     }
 
     return HttpResponse(template.render( context, request) )
-
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
-def deshabilitar(request, id):
-
-    try:
-        insumo = Insumo.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    insumo.baja = True
-    insumo.save()
-
-    return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.id) )
-
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
-def habilitar(request, id):
-
-    try:
-        insumo = Insumo.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    insumo.baja = False
-    insumo.save()
-
-    return HttpResponseRedirect( "/GestionDeInsumos/ver/{}".format(insumo.id) )
-
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
-def eliminar(request, id):
-
-    try:
-        insumo = Insumo.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    if request.method == 'POST':
-
-        insumo.delete()
-        return HttpResponseRedirect( "/GestionDeInsumos/" )
-
-    else:
-
-        template = loader.get_template('GestionDeInsumos/eliminar.html')
-        context = {
-            'usuario' : request.user,
-            'id' : id
-        }
-
-        return HttpResponse( template.render( context, request) )
-
-
-
-
+'''
 
 
 
