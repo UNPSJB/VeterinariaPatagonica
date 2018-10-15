@@ -64,6 +64,7 @@ class Insumo (models.Model):
     )
 
     nombre = models.CharField(
+        help_text="Nombre del Insumo",
         max_length = MAX_NOMBRE,
         unique = True,
         null = False,
@@ -76,6 +77,7 @@ class Insumo (models.Model):
             })
 
     formaDePresentacion = models.PositiveSmallIntegerField(
+        help_text="Forma de Presentacion del Insumo",
         choices=UNIDADES,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
@@ -83,17 +85,18 @@ class Insumo (models.Model):
         })
 
     precioPorUnidad = models.DecimalField(
+        help_text="Precio del Insumo",
         max_digits = MAX_DIGITOS,
         decimal_places = MAX_DECIMALES)
-    #Cambiar cuando tengamos la clase Rubro.
 
+    #Cambiar cuando tengamos la clase Rubro.
     rubro = models.CharField(
         help_text="Nombre del rubro al que pertenece",
         max_length = MAX_NOMBRE,
         blank = False
         )
     baja = models.BooleanField(
-        help_text='Deshabilitado',
+        #help_text='Deshabilitado',
         default=False
         )
 

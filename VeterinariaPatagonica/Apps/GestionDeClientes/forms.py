@@ -1,11 +1,31 @@
 from django import forms
 from .models import Cliente
 from django.core.validators import RegexValidator
+<<<<<<< HEAD
 
 
 #from localflavor.ar import forms as lforms
 
 from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+||||||| merged common ancestors
+<<<<<<< HEAD
+
+#from localflavor.ar import forms as lforms
+
+from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+||||||| merged common ancestors
+from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+=======
+#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+>>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
+#Para que no pinche instalar -> pip install django-localflavor
+
+<<<<<<< HEAD
+=======
+#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+#Para que no pinche instalar -> pip install django-localflavor
+
+>>>>>>> ed7cd11a4423f93d437f6b42be27ba2358ebbee9
 
 
 '''class creacionModelForm(forms.ModelForm):
@@ -13,7 +33,17 @@ from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
         model = Cliente'''
 
 
+<<<<<<< HEAD
 
+||||||| merged common ancestors
+
+||||||| merged common ancestors
+
+
+=======
+>>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
+=======
+>>>>>>> ed7cd11a4423f93d437f6b42be27ba2358ebbee9
 def ClienteFormFactory(cliente=None):
     campos = [ 'nombres',
                'apellidos',
