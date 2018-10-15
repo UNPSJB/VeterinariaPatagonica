@@ -26,6 +26,7 @@ class Practica(models.Model):
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     MAX_DIGITOS = 8
     MAX_DECIMALES = 2
+
 #-----------Atributos.--------------
     id = models.AutoField(
         primary_key=True,

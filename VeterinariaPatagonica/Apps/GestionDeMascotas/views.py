@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from django.template import loader
-
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
@@ -59,9 +58,6 @@ def deshabilitar(request, id):
 
     return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
 
-
-
-
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeTiposDeAtencion.delete_TipoDeAtencion', raise_exception=True)
 def eliminar(peticion, id):
@@ -117,5 +113,4 @@ def verDeshabilitados(request):
         'mascotas': mascotas,
         'usuario': request.user,
     }
-
     return HttpResponse(template.render(contexto, request))

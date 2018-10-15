@@ -1,19 +1,11 @@
 from django import forms
 from .models import Cliente
 from django.core.validators import RegexValidator
-<<<<<<< HEAD
+
 
 #from localflavor.ar import forms as lforms
 
 from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
-||||||| merged common ancestors
-from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
-=======
-#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
->>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
-#Para que no pinche instalar -> pip install django-localflavor
-
-<<<<<<< HEAD
 
 
 '''class creacionModelForm(forms.ModelForm):
@@ -22,11 +14,6 @@ from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
 
 
 
-||||||| merged common ancestors
-
-
-=======
->>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
 def ClienteFormFactory(cliente=None):
     campos = [ 'nombres',
                'apellidos',

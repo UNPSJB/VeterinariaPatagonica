@@ -1,14 +1,14 @@
 from django import forms
+from .models import Mascota
+
 from django.core.validators import RegexValidator
 
 #from localflavor.ar import forms as lforms
 
 from localflavor.ar import forms as lforms
-from django.apps import apps
-from django.core.validators import RegexValidator
-from .models import Mascota
 
-TIMEINPUT_FMTS = [ "%H:%M" ]
+
+#TIMEINPUT_FMTS = [ "%H:%M" ]
 
 
 '''class creacionModelForm(forms.ModelForm):
@@ -30,7 +30,8 @@ def MascotaFormFactory(mascota=None):
             labels = {
                 'patente':'Patente',
                 'nombre':'Nombre',
-                #'fechaDeNacimiento' : 'FechaDeNacimiento',
+                'fechaDeNacimiento' : 'FechaDeNacimiento',
+                'cliente': "Cliente",
                 'raza':'Raza',
                 'especie':'Especie',
                 'baja':'Baja'
@@ -47,6 +48,7 @@ def MascotaFormFactory(mascota=None):
             widgets = {
                 'nombre' : forms.TextInput(),
                 'raza' : forms.TextInput(),
+                'cliente': forms.Select(attrs={'class':'form-control'}),
                 'especie': forms.TextInput(),
 
             }

@@ -17,6 +17,6 @@ urlpatterns = [
     path('verHabilitados/', mascotas_views.verHabilitados, name='mascotaVerHabilitados'),
     path('verDeshabilitados/', mascotas_views.verDeshabilitados, name='mascotaVerDeshabilitados'),
 
-    #path('', mascotas_views.verHabilitados, name='mascotaVerHabilitados'),
+
 
 ]
