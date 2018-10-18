@@ -1,13 +1,26 @@
 from django import forms
 from .models import Cliente
 from django.core.validators import RegexValidator
-#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
 #Para que no pinche instalar -> pip install django-localflavor
 
+'''class creacionModelForm(forms.ModelForm):
+    class meta:
+        model = Cliente'''
+
+
 def ClienteFormFactory(cliente=None):
-    campos = [ 'nombres', 'apellidos', 'direccion', 'localidad', 'celular', 'telefono', 'email',
-        'tipoDeCliente',
-        'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
+    campos = [
+                'tipoDeCliente',
+                'nombres',
+               'apellidos',
+               'direccion',
+               'localidad',
+               'celular',
+               'telefono',
+               'email',
+
+                'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
     if cliente is  None:
         campos.insert(0, 'dniCuit')
 
@@ -60,5 +73,16 @@ def ClienteFormFactory(cliente=None):
         def clean(self):
             cleaned_data = super().clean()
             return cleaned_data
+
+        def __init__(self, *args, **kwargs):
+
+            super().__init__(*args, **kwargs)
+
+            # [TODO] Averiguar una mejor manera de hacer esto:
+            for field in self.fields.values():
+                if not isinstance(field.widget, forms.CheckboxInput):
+                    field.widget.attrs.update({
+                        'class': 'form-control'
+                    })
 
     return ClienteForm

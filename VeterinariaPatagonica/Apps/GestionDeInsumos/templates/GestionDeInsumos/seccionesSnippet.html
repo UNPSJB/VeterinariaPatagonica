@@ -1,8 +1,8 @@
+<!DOCTYPE html>
+<div class="insumoSecciones">
 
-<div class="insumo-secciones">
+        <a id="insumoLinkHabilitados" class="btn btn-sm btn-default {% if pagina == 'insumos:insumoVerHabilitados' %} disabled {% endif %}"  href="{% url 'insumos:insumoVerHabilitados' %}"> Habilitados </a>
 
-        <a id="insumo-link-habilitados" class="btn btn-sm btn-default {% if pagina == 'insumos:insumoVerHabilitados' %} disabled {% endif %}"  href="{% url 'insumos:insumoVerHabilitados' %}"> Habilitados </a>
-
-        <a id="insumo-link-deshabilitados" class="btn btn-sm btn-default {% if pagina == 'insumos:insumoVerDeshabilitados' %} disabled {% endif %}"  href="{% url 'insumos:insumoVerDeshabilitados' %}"> Deshabilitados </a>
+        <a id="insumoLinkDeshabilitados" class="btn btn-sm btn-default {% if pagina == 'insumos:insumoVerDeshabilitados' %} disabled {% endif %}"  href="{% url 'insumos:insumoVerDeshabilitados' %}"> Deshabilitados </a>
 
 </div>

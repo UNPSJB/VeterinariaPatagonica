@@ -1,9 +1,56 @@
 from django import forms
-from django.apps import apps
-from django.core.validators import RegexValidator
 from .models import Insumo
+from django.core.validators import RegexValidator
+#from django.apps import apps
 
+def InsumoFormFactory(insumo=None):
+    campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'rubro' ]
 
+    if insumo is  None:
+        campos.insert(0, 'nombre')
+
+    class InsumoForm(forms.ModelForm):
+        class Meta:
+            model = Insumo
+            fields = campos
+            labels = {
+                'nombre':'Nombre',
+                'formaDePresentacion':'FormaDePresentacion',
+                'precioPorUnidad':'PrecioPorUnidad',
+                'rubro':'Rubro',
+                'baja':'Baja'
+            }
+
+            error_messages = {
+                'nombre' : {
+                    'max_length': ("Nombre demasiados largo"),
+                    'unique': ("Ese nombre ya existe"),
+                }
+            }
+
+            widgets = {
+                'nombre' : forms.TextInput(),
+                'formaDePresentacion' : forms.TextInput(),
+                'precioPorUnidad': forms.TextInput(),
+                'rubro' : forms.TextInput(),
+            }
+
+        def clean_nombre(self):
+            dato = self.data["nombre"]
+            try:
+                return lforms.CharField().clean(dato)
+            except forms.ValidationError:
+                pass
+
+            return lforms.CharField().clean(dato)
+
+        def clean(self):
+            cleaned_data = super().clean()
+            return cleaned_data
+
+    return InsumoForm
+
+'''
 TIMEINPUT_FMTS = [ "%H:%M" ]
 
 
@@ -126,3 +173,4 @@ class ModificacionForm(CreacionForm):
         instancia.baja = self.cleaned_data['baja']
 
         return instancia
+'''

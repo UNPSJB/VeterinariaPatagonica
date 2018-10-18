@@ -1,81 +1,81 @@
-.clienteSecciones {
+.mascotaSecciones {
   padding: 0px;
   margin-top: 0px;
   text-align: right;
 }
 
-.clienteTitulo {
+.mascotaTitulo {
   margin-top: 10px;
   margin-bottom:3px;
   font-weight: normal;
 }
 
-.clienteSubtitulo {
+.mascotaSubtitulo {
   margin: 3px 0px 20px 0px;
   font-style: italic;
   color: #555;
 }
 
-.clienteLineaTitulo {
+.mascotaLineaTitulo {
   border-bottom: 1px solid #DDD;
 }
 
-.clienteCuerpo {
+.mascotaCuerpo {
   padding: 0px;
   margin-top: 5px;
 }
 
-clienteHabilitadosCrear {
+#mascotaHabilitadosCrear {
   clear: both;
   margin-bottom: 10px;
 }
 
-.clienteEtiqueta {
+.mascotaEtiqueta {
   text-align: left;
   font-weight: bold;
   margin: 0px 0px 5px 0px;
   padding: 0px;
 }
 
-.clientes-aviso-eliminacion {
+.mascota-aviso-eliminacion {
   text-align: center;
   text-weight: bold;
   margin: 20px 0px 20px 0px;
 }
 
-.cliente-item-acciones a {
+.mascota-item-acciones a {
   margin: 10px 0px 10px 0px;
 }
 
-.cliente-accion-listado {
+.mascota-accion-listado {
   font-size: 110%;
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
-.cliente-accion-listado:hover {
+.mascota-accion-listado:hover {
   text-decoration: none;
 }
 
-.clienteListado thead {
+.mascotaListado thead {
   background-color: transparent;
   color: #2A3F54;
 }
 
-.clienteListado,
-.clienteListado thead,
-.clienteListado thead tr,
-.clienteListado thead tr th,
-.clienteListado tbody,
-.clienteListado tbody tr,
-.clienteListado tbody tr, {
+.mascota-listado,
+.mascota-listado thead,
+.mascota-listado thead tr,
+.mascota-listado thead tr th,
+.mascota-listado tbody,
+.mascota-listado tbody tr,
+.mascota-listado tbody tr, {
   border: 0px solid #FFF;
 }
 
-table.table.clienteListado {
+table.table.mascotaListado {
   border: 0px solid #FFF;
 }
 
-.clienteListado>tbody>tr>td {
+.mascota-listado>tbody>tr>td {
     padding-top: 9px;
     padding-left: 4px;
     border-top: 1px solid #DDD !important;

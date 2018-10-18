@@ -1,4 +1,4 @@
-{% extends 'GestionDeMascotas/mascota.html' %}
+{% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
 
 {% block titulo %}
 Gestion de Mascotas | Ver Habilitados
@@ -23,7 +23,7 @@ Actualmente disponibles para ser asignados a mascotas
 
     <p> Los siguientes mascotas estan habilitados.  </p>
 
-    {% if mascotas %}
+    {% if mascota %}
             <div class="table-responsive" id="tabla">
                 <table class="table mascotasListado">
                     <thead>
@@ -36,16 +36,15 @@ Actualmente disponibles para ser asignados a mascotas
                     <tbody>
                         {% for mascota in mascota%}
                             <tr>
-                                <td>{{ mascota.nombre }}</td>
-                                <td>{{ mascota.descripcion|truncatechars:40 }}</td>
+                                <td> <p>{{ mascota.nombre }}, {{mascota.cliente }}</p></td>
                                 <td> <p align="center">
-                                            <a  href="{% url 'mascota:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a  href="{% url 'mascota:mascotaVer' mascota.patente %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascota:mascotaModificar' mascota.patente %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascota:mascotaDeshabilitar' mascota.patente %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
                                 </p> </td>
@@ -57,6 +56,6 @@ Actualmente disponibles para ser asignados a mascotas
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}
-    <a  id="mascota-habilitados-crear" class="btn btn-sm btn-default" href="{% url 'mascota:mascotaCrear' %}"> Crear </a>
+    <a  id="mascotaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaCrear' %}"> Crear </a>
 </div>
 {% endblock %}

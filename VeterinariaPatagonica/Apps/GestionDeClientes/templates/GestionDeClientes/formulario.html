@@ -15,11 +15,11 @@ Agrega un Cliente al listado
 {% block clienteContenido %}
 
     <div class="clienteCuerpo">
-        <form class="form-horizontal" action="" method="post">
+        <form class="form-horizontal formulario" action="" method="post">
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Cargar Datos" %}
 
         </form>
     </div>

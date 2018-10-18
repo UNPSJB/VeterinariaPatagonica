@@ -1,41 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Mascota</title>
-</head>
-<body>
 
-</body>
-</html>
+<div class="mascotaItemAcciones">
 
-{% extends 'GestionDeMascota/mascotas.html' %}
+        {% if seccion == 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaVer' item.id %}">Ver</a>
+        {% endif %}
 
-{% block titulo %}
-Gestion de Mascotas | Crear Nueva Mascota
-{% endblock titulo %}
+        {% if seccion != 'modificar' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaModificar' item.id %}">Modificar</a>
+        {% endif %}
 
-{% block Mascota %}
-Nuevo Tipo de Atencion
-{% endblock Mascota %}
+        {% if item.baja == False %}
+            <a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaDeshabilitar' item.id %}">Deshabilitar</a>
+        {% else %}
+            <a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaHabilitar' item.id %}">Habilitar</a>
+        {% endif %}
 
-{% block mascotaSubtitulo %}
-Agrega una mascota
-{% endblock mascotaSubtitulo %}
-
-{% block mascotaContenido %}
-
-    <div class="mascotaCuerpo">
-
-        <form class="form formulario" action="{% url 'mascota:mascotaCrear' %}" method="post">
-
-            {% csrf_token %}
-
-            {% include './formularioSnippet.html' with campos=formulario %}
-
-            <button type="submit" class="btn btn-sm btn-default">Crear</button>
-
-        </form>
-    </div>
-
-{% endblock mascotaContenido %}
+</div>

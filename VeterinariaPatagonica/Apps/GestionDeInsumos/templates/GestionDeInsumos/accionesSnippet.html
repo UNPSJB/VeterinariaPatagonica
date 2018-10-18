@@ -1,18 +1,18 @@
 
-<div class="insumo-item-acciones"><!-- VER SI NO ES "insumoItemAcciones" -->
+<div class="insumoItemAcciones">
 
-        {% if seccion != 'ver' %}
-        <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoVer' insumo.id %}">Ver</a>
+        {% if seccion == 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoVer' item.id %}">Ver</a>
         {% endif %}
 
         {% if seccion != 'modificar' %}
-        <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoModificar' insumo.id %}">Modificar</a>
+        <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoModificar' item.id %}">Modificar</a>
         {% endif %}
 
         {% if item.baja == False %}
-            <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoDeshabilitar' insumo.id %}">Deshabilitar</a>
+            <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoDeshabilitar' item.id %}">Deshabilitar</a>
         {% else %}
-            <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoHabilitar' insumo.id %}">Habilitar</a>
+            <a  class="btn btn-sm btn-default" href="{% url 'insumos:insumoHabilitar' item.id %}">Habilitar</a>
         {% endif %}
 
 </div>

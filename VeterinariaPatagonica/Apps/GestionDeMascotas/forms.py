@@ -1,152 +1,68 @@
 from django import forms
-from django.apps import apps
-from django.core.validators import RegexValidator
 from .models import Mascota
 
-TIMEINPUT_FMTS = [ "%H:%M" ]
+from django.core.validators import RegexValidator
+
+#from localflavor.ar import forms as lforms
+
+from localflavor.ar import forms as lforms
 
 
-
-class TimeTextInput(forms.TextInput):
-
-    def format_value(self, value):
-
-        if value is None:
-            return ''
-
-        try:
-            ret = value.strftime( TIMEINPUT_FMTS[0] )
-        except AttributeError:
-            ret = str(value)
-
-        return ret
+#TIMEINPUT_FMTS = [ "%H:%M" ]
 
 
+'''class creacionModelForm(forms.ModelForm):
+    class meta:
+        model = Mascota'''
 
-class CreacionModelForm(forms.ModelForm):
-
-    class Meta:
-        model = Mascota
-        exclude = [ 'baja' ]
-
-
-
-class ModificacionModelForm(forms.ModelForm):
-
-    class Meta:
-        model = Mascota
-        fields = '__all__'
-        widgets = {
-            'descripcion' : forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
-        }
+def MascotaFormFactory(mascota=None):
+    campos = [ 'nombre',
+               'raza',
+               'especie']
+    if mascota is  None:
+        campos.insert(0, 'patente')
 
 
+    class MascotaForm(forms.ModelForm):
+        class Meta:
+            model = Mascota
+            fields = campos
+            labels = {
+                'patente':'Patente',
+                'nombre':'Nombre',
+                'fechaDeNacimiento' : 'FechaDeNacimiento',
+                'cliente': "Cliente",
+                'raza':'Raza',
+                'especie':'Especie',
+                'baja':'Baja'
+            }
+            error_messages = {
+                'nombre' : {
+                    'max_length': ("Nombre demasiados largos"),
+                },
+                'patente' : {
+                    #'max_length' : ("patente demasiado largo"),
+                    'unique' : ("Esa patente ya existe"),
+                }
+            }
+            widgets = {
+                'nombre' : forms.TextInput(),
+                'raza' : forms.TextInput(),
+                'cliente': forms.Select(attrs={'class':'form-control'}),
+                'especie': forms.TextInput(),
 
-class CreacionForm(forms.Form):
+            }
 
-    nombre = forms.CharField(
-        required = True,
-        label = 'Nombre',
-        widget = forms.TextInput,
-        help_text="Nombre de la mascota",
-        error_messages = {
-            'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(Mascota.MAX_NOMBRE),
-            'min_length' : "El nombre debe tener por lo menos {} caracteres".format(Mascota.MIN_NOMBRE),
-            'required' : "El nombre es obligatorio"
-        },
-        validators = [
-            RegexValidator(
-                Mascota.REGEX_NOMBRE,
-                message="El nombre debe construirse de numeros, letras, espacios y guiones ('_' y '-')"
-            )
-		],
-        max_length = Mascota.MAX_NOMBRE,
-        min_length =  Mascota.MIN_NOMBRE,
-    )
+        def clean_patente(self):
+            dato = self.data["patente"]
+            try:
+                return lforms.ARDNIField().clean(dato)
+            except forms.ValidationError:
+                pass
 
-    raza = forms.CharField(
-        required = False,
-        label = 'Descripcion',
-        widget = forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
-        help_text="Raza de la mascota",
-        error_messages={
-            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(Mascota.MAX_NOMBRE),
-            'min_length': "El nombre debe tener por lo menos {} caracteres".format(Mascota.MIN_NOMBRE),
-            'required': "El nombre es obligatorio"
-        },
-        validators=[
-            RegexValidator(
-                Mascota.REGEX_NOMBRE,
-                message="El nombre debe construirse de numeros, letras, espacios y guiones ('_' y '-')"
-            )
-        ],
-        max_length = Mascota.MAXRAZA,
-        min_length = None,
-    )
-    especie = forms.CharField(
-        required=False,
-        label='Descripcion',
-        widget=forms.Textarea(attrs={'cols': 60, 'rows': 6}),
-        help_text="Especie de la mascota",
-        error_messages={
-            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(Mascota.MAX_NOMBRE),
-            'min_length': "El nombre debe tener por lo menos {} caracteres".format(Mascota.MIN_NOMBRE),
-            'required': "El nombre es obligatorio"
-        },
-        validators=[
-            RegexValidator(
-                Mascota.REGEX_NOMBRE,
-                message="El nombre debe construirse de numeros, letras, espacios y guiones ('_' y '-')"
-            )
-        ],
-        max_length=Mascota.MAXESPECIE,
-        min_length=None,
-    )
+            return lforms.ARCUITField().clean(dato)
 
-
-
-    def __init__(self, *args, **kwargs):
-
-
-        self.field_order = [
-            'nombre',
-            'raza',
-            'especie',
-
-        ]
-        super().__init__(*args, **kwargs)
-
-        for field in self.fields.values():
-            if not isinstance(field.widget, forms.CheckboxInput):
-                field.widget.attrs.update({
-                    'class' : 'form-control'
-                })
-
-
-    def crear(self):
-        mascota = Mascota.objects.create(
-
-            nombre = self.cleaned_data['nombre'],
-            raza = self.cleaned_data['raza'],
-            especie= self.cleaned_data['especie'],
-		)
-        return mascota
-
-
-
-class ModificacionForm(CreacionForm):
-
-    baja = forms.BooleanField(
-        required = False,
-        label = 'Deshabilitado',
-        widget = forms.CheckboxInput,
-        help_text='Habilitar o deshabilitar el tipo de atencion',
-        error_messages = {},
-        validators = [],
-    )
-
-    def cargar(self, instancia):
-
-        instancia.nombre = self.cleaned_data['nombre']
-
-        return instancia
+        def clean(self):
+            cleaned_data = super().clean()
+            return cleaned_data
+    return MascotaForm
