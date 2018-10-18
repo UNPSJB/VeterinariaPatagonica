@@ -1,3 +1,5 @@
+'''
+
 from django import forms
 from .models import Practica
 from django.core.validators import RegexValidator
@@ -25,7 +27,7 @@ def PracticaFormFactory(practica=None):
                 'tipoDeAtencion':'Tipo De Atención.',
                 }
             error_messages = {
-<<<<<<< HEAD
+
                 'nombres' : {
                     'max_length': ("Nombres demasiados largos"),
                 },
@@ -41,15 +43,7 @@ def PracticaFormFactory(practica=None):
                 'insumosReales': forms.Select(attrs={'class':'form-control'}),
                 'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
             }
-||||||| merged common ancestors
-<<<<<<< HEAD
-                'nombres' : {
-                    'max_length': ("Nombres demasiados largos"),
-                },
-                'precio' : {
-                    'min_value' : 'Debe ingresar un valor no menor que el 0%'
-                },
-            }
+
             widgets = {
                 'nombre' : forms.TextInput(),
                 'precio' : forms.NumberInput(),
@@ -58,9 +52,10 @@ def PracticaFormFactory(practica=None):
                 'insumosReales': forms.TextInput(),
                 'tipoDeAtencion': forms.TextInput(),
             }
-||||||| merged common ancestors
-                'max_digits' : "Cantidad de digitos inválida."
-            })
+
+
+#                'max_digits' : "Cantidad de digitos inválida."
+#           })
     #cliente.
     #servicios.
     #insumosReales.
@@ -110,14 +105,14 @@ class ModificacionForm(CreacionForm):
     )
 
     def cargar(self, instancia):
-=======
-                'nombres' : {
-                    'max_length': ("Nombres demasiados largos"),
-                },
-                'precio' : {
-                    'min_value' : 'Debe ingresar un valor no menor que el 0%'
-                },
-            }
+
+#                'nombres' : {
+#                   'max_length': ("Nombres demasiados largos"),
+#               },
+#                'precio' : {
+#                   'min_value' : 'Debe ingresar un valor no menor que el 0%'
+#               },
+#           }
             widgets = {
                 'nombre' : forms.TextInput(),
                 'precio' : forms.NumberInput(),
@@ -126,15 +121,14 @@ class ModificacionForm(CreacionForm):
                 'insumosReales': forms.Select(attrs={'class':'form-control'}),
                 'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
             }
->>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
-=======
-                'nombres' : {
-                    'max_length': ("Nombres demasiados largos"),
-                },
-                'precio' : {
-                    'min_value' : 'Debe ingresar un valor no menor que el 0%'
-                },
-            }
+
+#                'nombres' : {
+#                    'max_length': ("Nombres demasiados largos"),
+#                },
+#               'precio' : {
+#                    'min_value' : 'Debe ingresar un valor no menor que el 0%'
+#                },
+#            }
             widgets = {
                 'nombre': forms.TextInput(),
                 'precio': forms.NumberInput(),
@@ -143,10 +137,11 @@ class ModificacionForm(CreacionForm):
                 'insumosReales': forms.Select(attrs={'class': 'form-control'}),
                 'tipoDeAtencion': forms.Select(attrs={'class': 'form-control'}),
             }
->>>>>>> ed7cd11a4423f93d437f6b42be27ba2358ebbee9
 
         def clean(self):
             cleaned_data = super().clean()
             return cleaned_data
 
     return PracticaForm
+
+'''
