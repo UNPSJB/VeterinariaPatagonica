@@ -1,4 +1,4 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/tiposdeatencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Deshabilitados
@@ -40,16 +40,16 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                                 <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
                                 <td >
 			<p align="center">
-                                            <a  href="{% url 'GestionDeTiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
-                                            <a href="{% url 'GestionDeTiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'GestionDeTiposDeAtencion:habilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'tiposDeAtencion:habilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-plus"> </i>
                                             </a>
-                                            <a href="{% url 'GestionDeTiposDeAtencion:eliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'tiposDeAtencion:eliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
 			</p>

@@ -75,7 +75,7 @@ class TipoDeAtencionForm(forms.ModelForm):
         validators = [],
     )
 
-    tipo_de_servicio = forms.ChoiceField(
+    tipoDeServicio = forms.ChoiceField(
         required = True,
         label = 'Tipo de servicio',
         widget = forms.Select,
@@ -101,7 +101,7 @@ class TipoDeAtencionForm(forms.ModelForm):
         choices = TipoDeAtencion.LUGARES_DE_ATENCION,
     )
 
-    inicio_franja_horaria = forms.TimeField(
+    inicioFranjaHoraria = forms.TimeField(
         required = True,
         label = 'Inicio horario de atencion',
         widget = TimeTextInput,
@@ -114,7 +114,7 @@ class TipoDeAtencionForm(forms.ModelForm):
         input_formats = TIMEINPUT_FMTS,
     )
 
-    fin_franja_horaria = forms.TimeField(
+    finFranjaHoraria = forms.TimeField(
         required = True,
         label = 'Fin horario de atencion',
         widget = TimeTextInput,
@@ -127,18 +127,25 @@ class TipoDeAtencionForm(forms.ModelForm):
         input_formats = TIMEINPUT_FMTS,
     )
 
-    recargo = forms.FloatField(
+    recargo = forms.DecimalField(
         required = True,
         label = 'Recargo',
         widget = forms.NumberInput,
         help_text="Porcentaje de recargo sobre el costo del servicio a aplicar",
         error_messages = {
-            'required' : 'El recargo es obligatorio',
-            'invalid' : 'Debe ingresar un valor entero o decimal, ejemplo: "100" ó "99,9"',
-            'min_value' : 'Debe ingresar un valor no menor que el 0%'
+            "required" : "El recargo es obligatorio",
+            "invalid" : "Debe ingresar un valor entero o decimal, ejemplo: 100 ó 99,9",
+            "min_value" : ("Debe ingresar un valor no menor que {:.%df}" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL)).format(TipoDeAtencion.RECARGO_MIN_VALUE),
+            "max_value" : ("Debe ingresar un valor no mayor que {:.%df}" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL)).format(TipoDeAtencion.RECARGO_MAX_VALUE),
+            "max_digits" : "Debe ingresar a lo sumo %d digitos para la parte entera" % (TipoDeAtencion.RECARGO_PARTE_ENTERA),
+            "max_decimal_places" : "Debe ingresar a lo sumo %d digitos para la parte decimal" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL),
+            "max_whole_digits" : "Debe ingresar a lo sumo %d digitos en total" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL+TipoDeAtencion.RECARGO_PARTE_ENTERA),
         },
+        max_value=TipoDeAtencion.RECARGO_MAX_VALUE,
+        min_value=TipoDeAtencion.RECARGO_MIN_VALUE,
+        max_digits=TipoDeAtencion.RECARGO_PARTE_ENTERA+TipoDeAtencion.RECARGO_PARTE_DECIMAL,
+        decimal_places=TipoDeAtencion.RECARGO_PARTE_DECIMAL,
         validators = [],
-        min_value = 0,
     )
 
 
@@ -147,11 +154,11 @@ class TipoDeAtencionForm(forms.ModelForm):
     field_order = [
         'nombre',
         'descripcion',
-        'tipo_de_servicio',
+        'tipoDeServicio',
         'lugar',
         'emergencia',
-        'inicio_franja_horaria',
-        'fin_franja_horaria',
+        'inicioFranjaHoraria',
+        'finFranjaHoraria',
         'recargo'
     ]
 
@@ -181,10 +188,10 @@ class TipoDeAtencionForm(forms.ModelForm):
 class ModificacionForm(CreacionForm):
     #ModelForm para modificacion de Tipos de Atencion
 
-    baja = formularios.BooleanField(
+    baja = forms.BooleanField(
         required = False,
         label = 'Deshabilitado',
-        widget = formularios.CheckboxInput,
+        widget = forms.CheckboxInput,
         help_text='Deshabilitado',
         error_messages = {},
         validators = [],
