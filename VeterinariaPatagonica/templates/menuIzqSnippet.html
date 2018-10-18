@@ -30,8 +30,8 @@
     						</li>
                 <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Servicios </a>
     							<ul class="nav child_menu">
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicio' %}">Inicio</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:alta' %}">Crear Servicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioVerHabilitados' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioCrear' %}">Crear Servicio</a></li>
     								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>
     								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>
     							</ul>
@@ -44,13 +44,22 @@
     								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>
     							</ul>
                 </li>
+
                 <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Prácticas </a>
     							<ul class="nav child_menu">
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaVerConsultasHabilitadas' %}">Ver Consultas </a></li>
-                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaVerCirugiasHabilitadas' %}">Ver Cirugías </a></li>
-                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaCrearConsulta' %}">Crear Consulta </a></li>
-                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaCrearCirugia' %}">Crear Cirugía </a></li>
-    							</ul>
+                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Ver</a>
+                      <ul class="nav child_menu">
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaVerConsultasHabilitadas' %}">Consultas </a></li>
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaVerCirugiasHabilitadas' %}">Cirugías </a></li>
+                      </ul>
+                    </li>
+                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Crear</a>
+                      <ul class="nav child_menu">
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaCrearConsulta' %}">Consulta </a></li>
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaCrearCirugia' %}">Cirugía </a></li>
+                      </ul>
+                    </li>
+                  </ul>
     						</li>
               </ul>
             </div>

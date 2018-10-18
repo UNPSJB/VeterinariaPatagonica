@@ -1,0 +1,27 @@
+{% extends 'GestionDeServicios/GestionDeServicios.html' %}
+
+{% block titulo %}
+Gestion de Servicio | Crear Servicio
+{% endblock %}
+
+{% block servicioTitulo %}
+Nuevo Servicio
+{% endblock %}
+
+{% block servicioSubtitulo %}
+Agrega un Servicio al listado
+{% endblock %}
+
+{% block servicioContenido %}
+
+    <div class="servicioCuerpo">
+        <form class="form-horizontal" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+
+        </form>
+    </div>
+
+{% endblock %}

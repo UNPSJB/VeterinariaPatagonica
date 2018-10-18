@@ -13,18 +13,12 @@ Elimina permanentemente los datos del insumo del sistema
 {% endblock %}
 
 {% block insumoContenido %}
-
 <div class="insumoCuerpo">
-
     <form class="form" action="{% url 'insumoEliminar' id %}" method="post">
         {% csrf_token %}
-
 		<p class="insumoAvisoEliminacion"> Confirmar eliminacion: </p>
-
         <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
-
     </form>
-
 </div>
 
 {% endblock insumoContenido %}

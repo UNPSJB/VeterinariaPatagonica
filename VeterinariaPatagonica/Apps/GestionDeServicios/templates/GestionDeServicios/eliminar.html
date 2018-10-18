@@ -1,0 +1,23 @@
+{% extends 'GestionDeServicios/GestionDeServicios.html' %}
+
+{% block titulo %}
+Gestion de Servicios| Eliminar Servicio
+{% endblock %}
+
+{% block servicioTitulo %}
+Eliminar Servicio
+{% endblock %}
+
+{% block servicioSubtitulo %}
+Elimina permanentemente los datos del servicio del sistema
+{% endblock %}
+
+{% block servicioContenido %}
+<div class="servicioCuerpo">
+    <form class="form" action="{% url 'servicioEliminar' id %}" method="post">
+        {% csrf_token %}
+		<p class="servicioAvisoEliminacion"> Confirmar eliminacion: </p>
+        <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
+    </form>
+</div>
+{% endblock servicioContenido %}
