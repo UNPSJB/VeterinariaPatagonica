@@ -79,6 +79,7 @@ def crear(peticion):
     """ Dar de alta un nuevo tipo de atencion """
 
     contexto = {}
+
     if peticion.method == 'POST':
 
         tipoDeAtencion = TipoDeAtencion()
@@ -88,7 +89,7 @@ def crear(peticion):
 
             tipoDeAtencion = formulario.save()
 
-            return HttpResponseRedirect( reverse("GestionDeTiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
+            return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
         else:
             contexto['formulario'] = formulario
 
@@ -120,7 +121,7 @@ def modificar(peticion, id):
             if formulario.has_changed():
                 formulario.save()
 
-            return HttpResponseRedirect( reverse("GestionDeTiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
+            return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
 
     else:
 
@@ -149,7 +150,7 @@ def deshabilitar(peticion, id):
     tipoDeAtencion.baja = True
     tipoDeAtencion.save()
 
-    return HttpResponseRedirect( reverse("GestionDeTiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
+    return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
 
 
 @login_required(redirect_field_name='proxima')
@@ -165,7 +166,7 @@ def habilitar(peticion, id):
     tipoDeAtencion.baja = False
     tipoDeAtencion.save()
 
-    return HttpResponseRedirect( reverse("GestionDeTiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
+    return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
 
 
 
@@ -182,7 +183,7 @@ def eliminar(peticion, id):
     if peticion.method == 'POST':
 
         tipoDeAtencion.delete()
-        return HttpResponseRedirect( reverse("GestionDeTiposDeAtencion:deshabilitados") )
+        return HttpResponseRedirect( reverse("tiposDeAtencion:deshabilitados") )
 
     else:
 

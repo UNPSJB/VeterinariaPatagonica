@@ -1,7 +1,8 @@
+from decimal import Decimal
 from django.db import models
 from django.apps import apps
 from datetime import date, timedelta, time, datetime
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator, DecimalValidator
 
 
 
@@ -89,6 +90,11 @@ class TipoDeAtencion(models.Model):
     # Manager para Tipos de Atencion
     objects = TipoDeAtencionManager()
 
+    RECARGO_PARTE_ENTERA = 3
+    RECARGO_PARTE_DECIMAL = 2
+    RECARGO_MIN_VALUE = Decimal(0)
+    RECARGO_MAX_VALUE = Decimal(900.00)
+
     MAX_NOMBRE = 100
     MIN_NOMBRE = 3
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -105,6 +111,7 @@ class TipoDeAtencion(models.Model):
 
     RECARGO_DEFAULT = 0
     LUGAR_DEFAULT = EN_VETERINARIA
+
 
 
     #---------------------- Model Fields ----------------------
@@ -146,15 +153,19 @@ class TipoDeAtencion(models.Model):
         }
     )
 
-    recargo = models.FloatField(
+    recargo = models.DecimalField(
+        max_digits=RECARGO_PARTE_ENTERA+RECARGO_PARTE_DECIMAL,
+        decimal_places=RECARGO_PARTE_DECIMAL,
         default=RECARGO_DEFAULT,
         validators = [
-            MinValueValidator(0, message='El recargo no puede ser menor a 0%')
+            MinValueValidator(RECARGO_MIN_VALUE, message=("El recargo no puede ser menor a {:.%df}" % (RECARGO_PARTE_DECIMAL)).format(RECARGO_MIN_VALUE)),
+            MaxValueValidator(RECARGO_MAX_VALUE, message=("El recargo no puede ser mayor a {:.%df}" % (RECARGO_PARTE_DECIMAL)).format(RECARGO_MAX_VALUE)),
+            DecimalValidator(max_digits=RECARGO_PARTE_ENTERA+RECARGO_PARTE_DECIMAL, decimal_places=RECARGO_PARTE_DECIMAL)
         ]
     )
 
 
-    tipo_de_servicio = models.CharField(
+    tipoDeServicio = models.CharField(
         max_length=25,
         choices=apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO,
         error_messages = {
@@ -163,14 +174,14 @@ class TipoDeAtencion(models.Model):
         }
     )
 
-    inicio_franja_horaria = models.TimeField(
+    inicioFranjaHoraria = models.TimeField(
         error_messages = {
             'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
             'blank' : 'El inicio de horario de atencion es obligatorio'
         }
     )
 
-    fin_franja_horaria = models.TimeField(
+    finFranjaHoraria = models.TimeField(
         error_messages = {
             'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
             'blank' : 'El inicio de horario de atencion es obligatorio'
@@ -195,7 +206,7 @@ class TipoDeAtencion(models.Model):
     def franjaHoraria(self):
         """ FranjaHoraria a partir de inicio y fin """
 
-        return FranjaHoraria(self.inicio_franja_horaria, self.fin_franja_horaria)
+        return FranjaHoraria(self.inicioFranjaHoraria, self.finFranjaHoraria)
 
 
 
@@ -203,8 +214,8 @@ class TipoDeAtencion(models.Model):
     def franjaHoraria(self, franja):
         """ Inicio y fin desde FranjaHoraria """
 
-        self.inicio_franja_horaria = franja.inicio
-        self.fin_franja_horaria = franja.fin
+        self.inicioFranjaHoraria = franja.inicio
+        self.finFranjaHoraria = franja.fin
 
 
 
@@ -225,7 +236,7 @@ class TipoDeAtencion(models.Model):
 
         tuplas = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO
         i=0
-        while tuplas[i][0] != self.tipo_de_servicio:
+        while tuplas[i][0] != self.tipoDeServicio:
             i=i+1
 
         return tuplas[i][1]
