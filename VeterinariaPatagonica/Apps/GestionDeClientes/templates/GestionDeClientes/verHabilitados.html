@@ -28,20 +28,19 @@ Actualmente disponibles
                 <table class="table clienteListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cliente in clientes %}
                             <tr>
                                 <td> <p>{{ cliente.apellidos }}, {{cliente.nombres }}</p></td>
-                                <td> <p align="center">
+                                <td> <p align="justify">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteCrear' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
                                         <a href="{% url 'clientes:clienteDeshabilitar' cliente.id%}" class="btn btn-xs btn-default">
