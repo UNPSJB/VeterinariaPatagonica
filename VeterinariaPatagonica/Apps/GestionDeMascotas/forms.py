@@ -15,10 +15,25 @@ from localflavor.ar import forms as lforms
     class meta:
         model = Mascota'''
 
+cliente = forms.ChoiceField(
+    required=True,
+    label='cliente',
+    widget=forms.Select,
+    help_text='Cliente',
+    error_messages={
+        'invalid_choice': "La opcion no es valida",
+        'required': "el cliente es obligatorio"
+    },
+    validators=[],
+    #choices=apps.get_model('GestionDeClientes', 'cliente', require_ready=False).TIPO,
+)
 def MascotaFormFactory(mascota=None):
-    campos = [ 'nombre',
+    campos = [ 'cliente',
+               #'fechaNacimiento',
+               'nombre',
                'raza',
-               'especie']
+               'especie',
+               ]
     if mascota is  None:
         campos.insert(0, 'patente')
 
@@ -29,11 +44,11 @@ def MascotaFormFactory(mascota=None):
             fields = campos
             labels = {
                 'patente':'Patente',
-                'nombre':'Nombre',
-                'fechaDeNacimiento' : 'FechaDeNacimiento',
                 'cliente': "Cliente",
-                'raza':'Raza',
+                #'fechaNacimiento': 'FechaNacimiento',
+                'nombre':'Nombre',
                 'especie':'Especie',
+                'raza': 'Raza',
                 'baja':'Baja'
             }
             error_messages = {
@@ -41,26 +56,17 @@ def MascotaFormFactory(mascota=None):
                     'max_length': ("Nombre demasiados largos"),
                 },
                 'patente' : {
-                    #'max_length' : ("patente demasiado largo"),
+                    'max_length' : ("patente demasiado largo"),
                     'unique' : ("Esa patente ya existe"),
                 }
             }
             widgets = {
                 'nombre' : forms.TextInput(),
+                'cliente': forms.Select(attrs={'class': 'form-control'}),
+                #'fechaNacimiento': forms.SelectDateWidget,
                 'raza' : forms.TextInput(),
-                'cliente': forms.Select(attrs={'class':'form-control'}),
                 'especie': forms.TextInput(),
-
             }
-
-        def clean_patente(self):
-            dato = self.data["patente"]
-            try:
-                return lforms.ARDNIField().clean(dato)
-            except forms.ValidationError:
-                pass
-
-            return lforms.ARCUITField().clean(dato)
 
         def clean(self):
             cleaned_data = super().clean()
