@@ -1,4 +1,5 @@
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
+{% load static %}
 
 {% block titulo %}
 Gestion de Clientes | Crear Cliente
@@ -19,9 +20,14 @@ Agrega un Cliente al listado
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" %}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2="Guardar y Crear Mascota"%}
 
         </form>
     </div>
 
 {% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static 'js/gestion-clientes.js' %}"></script>
+{% endblock paginaJavascript %}

@@ -19,6 +19,7 @@ def modificar(request, id = None):
     context = {'usuario': request.user}
     if request.method == 'POST':
         formulario = ClienteForm(request.POST, instance=cliente)
+        print(formulario)
         if formulario.is_valid():
             cliente = formulario.save()
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))

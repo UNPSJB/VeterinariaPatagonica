@@ -14,7 +14,7 @@ class Cliente (models.Model):
     MAXDIRECCION = 100
     MAXCELULAR = 12
     MAXTELEFONO = 7
-    TIPODECLIENTE = (('E', 'Especial'), ('C', 'Comun'))
+    TIPODECLIENTE = (('C', 'Comun'), ('E', 'Especial'))
     LOCALIDADES = [
         ("Trelew", "Trelew"),
         ("Rawson", "Rawson"),
@@ -136,12 +136,14 @@ class Cliente (models.Model):
         }
     )
 
-    descuentoServicio = models.PositiveSmallIntegerField()
-    descuentoProducto = models.PositiveSmallIntegerField()
+    descuentoServicio = models.PositiveSmallIntegerField(blank=True, default=0)
+    descuentoProducto = models.PositiveSmallIntegerField(blank=True, default=0)
 
     cuentaCorriente = models.DecimalField(
         max_digits = 6, #Son 6 digitos porque tiene un limite de adeudamiento de $3.000,00.
-        decimal_places = 2
+        decimal_places = 2,
+        default=0.0,
+        blank=True
     )
 
     baja = models.BooleanField(default=False)
