@@ -39,7 +39,7 @@ Actualmente <strong>no</strong> disponibles
                             <tr>
                                 <td>{{ cliente.nombres }}</td>
                                 <td >
-                                    <p align="center">
+                                    <p align="justify">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
@@ -62,7 +62,7 @@ Actualmente <strong>no</strong> disponibles
 
     {% else %}
 
-        <p> No hay clientes habilitados</p>
+        <p> No hay clientes deshabilitados</p>
 
     {% endif %}
 

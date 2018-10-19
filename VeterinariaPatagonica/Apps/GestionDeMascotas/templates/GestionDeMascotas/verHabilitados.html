@@ -29,15 +29,14 @@ Actualmente disponibles
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for mascota in mascotas%}
+                        {% for mascota in mascotas %}
                             <tr>
                                 <td> <p>{{ mascota.nombre }}, {{mascota.especie }}</p></td>
-                                <td> <p align="center">
+                                <td> <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>

@@ -29,17 +29,15 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for mascota in mascota%}
+                        {% for mascota in mascotas%}
                             <tr>
                                 <td>{{ mascota.nombre }}</td>
-                                <td>{{ mascota.descripcion|truncatechars:40 }}</td>
                                 <td >
-			<p align="center">
+			                        <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
@@ -52,7 +50,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
                                             <a href="{% url 'mascotas:mascotaEliminar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
-			</p>
+			                            </p>
                                 </td>
                             </tr>
                         {% endfor %}

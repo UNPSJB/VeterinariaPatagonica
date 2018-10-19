@@ -45,7 +45,7 @@ def MascotaFormFactory(mascota=None):
             labels = {
                 'patente':'Patente',
                 'cliente': "Cliente",
-                #'fechaNacimiento': 'FechaNacimiento',
+                'fechaNacimiento': 'FechaNacimiento',
                 'nombre':'Nombre',
                 'especie':'Especie',
                 'raza': 'Raza',
@@ -63,7 +63,7 @@ def MascotaFormFactory(mascota=None):
             widgets = {
                 'nombre' : forms.TextInput(),
                 'cliente': forms.Select(attrs={'class': 'form-control'}),
-                #'fechaNacimiento': forms.SelectDateWidget,
+                'fechaNacimiento': forms.DateTimeField,
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),
             }

@@ -94,14 +94,13 @@ def ver(request, id):
     'mascota': mascota,
     'usuario': request.user
     }
-
     return HttpResponse(template.render(contexto, request))
 
 def verHabilitados(request):
     mascotas = Mascota.objects.filter(baja=False)
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
     contexto = {
-        'mascota': mascotas,
+        'mascotas': mascotas,
         'usuario': request.user,
     }
     return HttpResponse(template.render(contexto, request))
@@ -110,7 +109,7 @@ def verDeshabilitados(request):
     mascotas = Mascota.objects.filter(baja=True)
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
     contexto = {
-        'mascota': mascotas,
+        'mascotas': mascotas,
         'usuario': request.user,
     }
     return HttpResponse(template.render(contexto, request))

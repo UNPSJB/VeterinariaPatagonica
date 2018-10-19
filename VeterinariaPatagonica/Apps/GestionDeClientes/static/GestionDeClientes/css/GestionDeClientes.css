@@ -25,7 +25,7 @@
   margin-top: 5px;
 }
 
-#clienteHabilitadosCrear {
+clienteHabilitadosCrear {
   clear: both;
   margin-bottom: 10px;
 }
@@ -61,13 +61,13 @@
   color: #2A3F54;
 }
 
-.cliente-listado,
-.cliente-listado thead,
-.cliente-listado thead tr,
-.cliente-listado thead tr th,
-.cliente-listado tbody,
-.cliente-listado tbody tr,
-.cliente-listado tbody tr, {
+.clienteListado,
+.clienteListado thead,
+.clienteListado thead tr,
+.clienteListado thead tr th,
+.clienteListado tbody,
+.clienteListado tbody tr,
+.clienteListado tbody tr, {
   border: 0px solid #FFF;
 }
 
@@ -75,7 +75,7 @@ table.table.clienteListado {
   border: 0px solid #FFF;
 }
 
-.cliente-listado>tbody>tr>td {
+.clienteListado>tbody>tr>td {
     padding-top: 9px;
     padding-left: 4px;
     border-top: 1px solid #DDD !important;
