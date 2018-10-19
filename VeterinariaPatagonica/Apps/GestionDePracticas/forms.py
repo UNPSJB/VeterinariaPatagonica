@@ -1,5 +1,3 @@
-'''
-
 from django import forms
 from .models import Practica
 from django.core.validators import RegexValidator
@@ -35,14 +33,14 @@ def PracticaFormFactory(practica=None):
                     'min_value' : 'Debe ingresar un valor no menor que el 0%'
                 },
             }
-            widgets = {
-                'nombre' : forms.TextInput(),
-                'precio' : forms.NumberInput(),
-                'cliente': forms.Select(attrs={'class':'form-control'}),
-                'servicios' : forms.Select(attrs={'class':'form-control'}),
-                'insumosReales': forms.Select(attrs={'class':'form-control'}),
-                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
-            }
+#            widgets = {
+#                'nombre' : forms.TextInput(),
+#                'precio' : forms.NumberInput(),
+#                'cliente': forms.Select(attrs={'class':'form-control'}),
+#                'servicios' : forms.Select(attrs={'class':'form-control'}),
+#                'insumosReales': forms.Select(attrs={'class':'form-control'}),
+#                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
+#            }
 
             widgets = {
                 'nombre' : forms.TextInput(),
@@ -54,12 +52,9 @@ def PracticaFormFactory(practica=None):
             }
 
 
-#                'max_digits' : "Cantidad de digitos inválida."
-#           })
-    #cliente.
-    #servicios.
-    #insumosReales.
-    #tipoDeAtención.
+#    def clean(self):
+#        cleaned_data = super().clean()
+#    return cleaned_data
 
 
     def __init__(self, *args, **kwargs):
@@ -79,8 +74,9 @@ def PracticaFormFactory(practica=None):
                 field.widget.attrs.update({
                     'class' : 'form-control'
                 })
+    return PracticaForm
 
-
+'''
     def crear(self):
         insumo = Insumo.objects.create(
 
@@ -91,8 +87,8 @@ def PracticaFormFactory(practica=None):
         )
 
         return insumo
-
-
+'''
+'''
 class ModificacionForm(CreacionForm):
 
     baja = forms.BooleanField(
@@ -104,31 +100,18 @@ class ModificacionForm(CreacionForm):
         validators = [],
     )
 
+
     def cargar(self, instancia):
 
-#                'nombres' : {
-#                   'max_length': ("Nombres demasiados largos"),
-#               },
-#                'precio' : {
-#                   'min_value' : 'Debe ingresar un valor no menor que el 0%'
-#               },
-#           }
-            widgets = {
-                'nombre' : forms.TextInput(),
-                'precio' : forms.NumberInput(),
-                'cliente': forms.Select(attrs={'class':'form-control'}),
-                'servicios' : forms.Select(attrs={'class':'form-control'}),
-                'insumosReales': forms.Select(attrs={'class':'form-control'}),
-                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
+#            widgets = {
+#                'nombre' : forms.TextInput(),
+#                'precio' : forms.NumberInput(),
+#                'cliente': forms.Select(attrs={'class':'form-control'}),
+#                'servicios' : forms.Select(attrs={'class':'form-control'}),
+#                'insumosReales': forms.Select(attrs={'class':'form-control'}),
+#                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
             }
 
-#                'nombres' : {
-#                    'max_length': ("Nombres demasiados largos"),
-#                },
-#               'precio' : {
-#                    'min_value' : 'Debe ingresar un valor no menor que el 0%'
-#                },
-#            }
             widgets = {
                 'nombre': forms.TextInput(),
                 'precio': forms.NumberInput(),
@@ -137,11 +120,4 @@ class ModificacionForm(CreacionForm):
                 'insumosReales': forms.Select(attrs={'class': 'form-control'}),
                 'tipoDeAtencion': forms.Select(attrs={'class': 'form-control'}),
             }
-
-        def clean(self):
-            cleaned_data = super().clean()
-            return cleaned_data
-
-    return PracticaForm
-
 '''

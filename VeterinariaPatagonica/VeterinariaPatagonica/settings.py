@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'Apps.GestionDeInsumos',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeServicios',
-    'Apps.GestionDePracticas',
     'Apps.GestionDeTiposDeAtencion',
+    'Apps.GestionDePracticas',
 ]
 
 MIDDLEWARE = [

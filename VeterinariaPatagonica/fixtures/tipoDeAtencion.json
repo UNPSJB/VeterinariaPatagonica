@@ -1,0 +1,2 @@
+[{"model": "GestionTipoDeAtencion.tipoDeAtencion", "pk": 1, "fields": { "nombre":"En granja", "descripcion":"Una granja entre Trelew y Rawson", "emergencia":false, "lugar":"DOM", "recargo":"15.00", "tipoDeServicio":1, "inicioFranjaHoraria":"17:20", "finFranjaHoraria":"18:20" }}]
+[{"model": "GestionTipoDeAtencion.tipoDeAtencion", "pk": 2, "fields": { "nombre":"En Puerto Madryn", "descripcion":"Largo trayecto hasta Puerto Madryn", "emergencia":false, "lugar":"DOM", "recargo":"25.00", "tipoDeServicio":2, "inicioFranjaHoraria":"9:20", "finFranjaHoraria":"12:20" }}]

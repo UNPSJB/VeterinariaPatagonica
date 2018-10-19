@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 
 #from localflavor.ar import forms as lforms
 
-from localflavor.ar import forms as lforms
+#from localflavor.ar import forms as lforms
 
 
 #TIMEINPUT_FMTS = [ "%H:%M" ]
