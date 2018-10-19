@@ -44,8 +44,8 @@ INSTALLED_APPS = [
     'Apps.GestionDeInsumos',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeServicios',
-    'Apps.GestionDeTiposDeAtencion',
     'Apps.GestionDePracticas',
+    'Apps.GestionDeTiposDeAtencion',
 ]
 
 MIDDLEWARE = [
@@ -57,6 +57,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
 
 ROOT_URLCONF = 'VeterinariaPatagonica.urls'
 

@@ -1,1 +1,0 @@
-[{"model": "GestionDeServicios.servicio", "pk": 1, "fields": {"tipo": "Q", "nombre": "Castracion", "descripcion": "Esterilización de animal", "tiempoEstimado": 120, "precioManoDeObra": "400.50","insumos": 1}}
