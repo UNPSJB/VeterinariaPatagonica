@@ -1,3 +1,4 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 from Apps.GestionDeClientes import models as gcmodels
@@ -5,6 +6,7 @@ from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
 from Apps.GestionDeMascotas import models as gmmodels
 from Apps.GestionDeInsumos import models as gimodels
+
 
 
 class PracticaBaseManager(models.Manager):
@@ -65,6 +67,7 @@ class Practica(models.Model):
         through='PracticaInsumo',
         through_fields=('practica', 'insumo'),
     )
+
     tipoDeAtencion = models.ForeignKey(
             gtdamodels.TipoDeAtencion,
         #    verbose = 'Tipo de Atención',
