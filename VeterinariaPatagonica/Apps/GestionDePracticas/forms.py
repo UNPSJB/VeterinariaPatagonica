@@ -33,6 +33,7 @@ def PracticaFormFactory(practica=None):
                     'min_value' : 'Debe ingresar un valor no menor que el 0%'
                 },
             }
+#[TODO]------ Ver como implementar de esta forma los widgets. Ver ventajas.
 #            widgets = {
 #                'nombre' : forms.TextInput(),
 #                'precio' : forms.NumberInput(),
@@ -51,7 +52,7 @@ def PracticaFormFactory(practica=None):
                 'tipoDeAtencion': forms.TextInput(),
             }
 
-
+#[BUG]-----Comentada porque pincha. no encuentra cleaned_data
 #    def clean(self):
 #        cleaned_data = super().clean()
 #    return cleaned_data
@@ -76,6 +77,9 @@ def PracticaFormFactory(practica=None):
                 })
     return PracticaForm
 
+
+
+#[TODO]----------Comentado porque pincha. ¿Para que es esta sección? ¿Modificar la práctica?- Terminar-.
 '''
     def crear(self):
         insumo = Insumo.objects.create(
