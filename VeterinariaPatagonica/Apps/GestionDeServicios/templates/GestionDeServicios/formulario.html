@@ -1,7 +1,7 @@
 {% extends 'GestionDeServicios/GestionDeServicios.html' %}
 
 {% block titulo %}
-Gestion de Servicio | Crear Servicio
+Gestion de Servicios | Crear Servicios
 {% endblock %}
 
 {% block servicioTitulo %}
@@ -14,9 +14,9 @@ Agrega un Servicio al listado
 
 {% block servicioContenido %}
     <div class="servicioCuerpo">
-        <form class="form-horizontal" action="" method="post">
+        <form class="form-horizontal formulario" action="" method="post">
             {% csrf_token %}
-            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" %}
         </form>
     </div>
 {% endblock %}

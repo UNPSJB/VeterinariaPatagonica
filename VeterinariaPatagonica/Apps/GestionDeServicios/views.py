@@ -1,16 +1,29 @@
 from django.shortcuts import render
 from django.template import loader
 from django.http import Http404, HttpResponse, HttpResponseRedirect
-from django.contrib.auth.decorators import login_required, permission_required
-from django import forms
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.contrib.auth.decorators import login_required, permission_required
 from .models import Servicio
 from .forms import *
+from django import forms
 
-
-
-
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
+def modificar(request, id = None):
+    servicio = Servicio.objects.get(id=id) if id is not None else None
+    ServicioForm = ServicioFormFactory(servicio)
+    context = {'usuario': request.user}
+    if request.method == 'POST':
+        formulario = ServicioForm(request.POST, instance=servicio)
+        if formulario.is_valid():
+            servicio = formulario.save()
+            return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
+        else:
+            context['formulario'] = formulario
+    else:
+        context['formulario'] = ServicioForm(instance=servicio)
+    template = loader.get_template('GestionDeServicios/formulario.html')
+    return HttpResponse(template.render(context, request))
 
 def verHabilitados(request):
     servicio = Servicio.objects.filter(baja=False)
@@ -43,24 +56,6 @@ def ver(request, id):
         'usuario' : request.user
     }
     return HttpResponse(template.render( context, request ))
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
-def crear(request, id = None):
-    servicio = Servicio.objects.get(id=id) if id is not None else None
-    ServicioForm = ServicioFormFactory(servicio)
-    context = {'usuario': request.user}
-    if request.method == 'POST':
-        formulario = ServicioForm(request.POST, instance=servicio)
-        if formulario.is_valid():
-            servicio = formulario.save()
-            return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
-        else:
-            context['formulario'] = formulario
-    else:
-        context['formulario'] = ServicioForm(instance=servicio)
-    template = loader.get_template('GestionDeServicios/crear.html')
-    return HttpResponse(template.render(context, request))
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.delete_Servicio', raise_exception=True)

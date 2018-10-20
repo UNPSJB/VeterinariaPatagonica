@@ -12,24 +12,19 @@
     {% block secciones %}
       {% include './seccionesSnippet.html' with pagina='default' %}
     {% endblock %}
-
     <h4 class="servicioTitulo">
       {% block servicioTitulo %}
       {% endblock servicioTitulo %}
     </h4>
-
     <div class="servicioLineaTitulo"> </div>
-
     <p class="servicioSubtitulo">
       {% block servicioSubtitulo %}
       {% endblock servicioSubtitulo%}
     </p>
-
   {% block servicioContenido %}
   {% endblock servicioContenido %}
   </section>
 {% endblock paginaSeccionGeneral %}
-
 
 {% block footer %}
   <p>Para mas información  de los Servicios haga click aquí<p>

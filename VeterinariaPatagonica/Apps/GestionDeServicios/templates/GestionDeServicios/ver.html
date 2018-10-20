@@ -13,11 +13,8 @@ Muestra datos del servicio
 {% endblock servicioSubtitulo %}
 
 {% block servicioContenido %}
-
     {% include './accionesSnippet.html' with item=servicio seccion='ver' %}
-
     <div class="servicioCuerpo">
-
         {% if servicio %}
         <div class="well">
             <p>Identificador: {{ servicio.id }}</p>
@@ -27,11 +24,7 @@ Muestra datos del servicio
             <p>Precio de Mano de Obra: {{ servicio.precioManoDeObra }}</p>
         </div>
         {% else %}
-
             <p> El servicio no existe </p>
-
         {% endif %}
-
     </div>
-
 {% endblock servicioContenido %}
