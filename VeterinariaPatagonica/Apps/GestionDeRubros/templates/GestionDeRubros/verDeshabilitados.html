@@ -1,14 +1,14 @@
-{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+{% extends 'GestionDeRubros/GestionDeRubros.html' %}
 
 {% block titulo %}
-Gestion de Clientes | Ver Deshabilitados
+Gestion de Rubros | Ver Deshabilitados
 {% endblock %}
 
-{% block clienteTitulo %}
-Clientes Deshabilitados
+{% block rubroTitulo %}
+Rubros Deshabilitados
 {% endblock %}
 
-{% block clienteSubtitulo %}
+{% block rubroSubtitulo %}
 Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
@@ -16,16 +16,16 @@ Actualmente <strong>no</strong> disponibles
 {% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
 {% endblock %}
 
-{% block clienteContenido %}
+{% block rubroContenido %}
 
 <!-- Listado -->
-<div class="clienteCuerpo" >
+<div class="rubroCuerpo" >
 
-  <p> Los siguientes clientes pueden ser habilitados o eliminados.  </p>
+  <p> Los siguientes rubros pueden ser habilitados o eliminados.  </p>
 
-    {% if clientes %}
+    {% if rubros %}
             <div class="table-responsive" id="tabla">
-                <table class="table clienteListado">
+                <table class="table rubroListado">
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
@@ -33,21 +33,21 @@ Actualmente <strong>no</strong> disponibles
                         </tr>
                     </thead>
                     <tbody>
-                        {% for cliente in clientes %}
+                        {% for rubro in rubros %}
                             <tr>
-                                <td>{{ cliente.apellidos }} {{cliente.nombres}}</td>
+                                <td>{{rubro.nombre}}</td>
                                 <td >
                                     <p align="justify">
-                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'rubros:rubroModificar' rubro.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'rubros:rubroHabilitar' rubro.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-plus"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'rubros:rubroEliminar' rubro.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-remove"> </i>
                                         </a>
                                     </p>
@@ -60,10 +60,8 @@ Actualmente <strong>no</strong> disponibles
 
     {% else %}
 
-        <p> No hay clientes deshabilitados</p>
+        <p> No hay rubros deshabilitados</p>
 
     {% endif %}
 
 </div>
-
-{% endblock %}

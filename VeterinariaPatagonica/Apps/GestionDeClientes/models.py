@@ -31,7 +31,7 @@ class Cliente (models.Model):
         blank= False,
         error_messages= {
             'max_length': "El dni/cuit puede tener a lo sumo {} caracteres".format(MAXDNICUIT),
-            'unique': "Otro cliente tiene ese dni/cuit",
+            'unique': "El dni/cuit ingresado ya existe",
             'blank': "El dni/cuit es obligatorio"
         }
     )

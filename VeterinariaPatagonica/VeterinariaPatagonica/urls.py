@@ -20,6 +20,7 @@ urlpatterns = [
     path(r'GestionDeMascotas/', include('Apps.GestionDeMascotas.urls', namespace= 'mascotas')),#Definimos que la url "GestionDeMascotas" incluye todas las url que hay en GestionDeMascotas.url
     path(r'GestionDePracticas/', include('Apps.GestionDePracticas.urls', namespace='practicas')),
     path('gestion/tiposdeatencion/',include('Apps.GestionDeTiposDeAtencion.urls', namespace= 'tiposdeatencion')),
+    path(r'GestionDeRubros/', include('Apps.GestionDeRubros.urls', namespace= 'rubros')),
 ]
 
 """

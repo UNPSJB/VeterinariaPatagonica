@@ -1,0 +1,66 @@
+{% extends 'GestionDeRubros/GestionDeRubros.html' %}
+
+{% block titulo %}
+Gestion de Rubros | Ver Habilitados
+{% endblock %}
+
+{% block rubroTitulo %}
+Rubros Habilitados
+{% endblock %}
+
+{% block rubroSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block rubroContenido %}
+
+<!-- Listado -->
+<div class="rubroCuerpo" >
+
+    <p> Los siguientes rubros estan habilitados.  </p>
+
+    {% if rubros %}
+            <div class="table-responsive" id="tabla">
+                <table class="table rubroListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rubro in rubros %}
+                            <tr>
+                                <td> <p>{{rubro.nombre }}</p></td>
+                                <td> <p align="justify">
+                                        <a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-search"> </i>
+                                        </a>
+                                        <a href="{% url 'rubros:rubroModificar' rubro.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'rubros:rubroDeshabilitar' rubro.id%}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-minus"> </i>
+                                        </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay rubros habilitados</p>
+
+    {% endif %}
+
+    <a  id ="rubroHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'rubros:rubroCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}
