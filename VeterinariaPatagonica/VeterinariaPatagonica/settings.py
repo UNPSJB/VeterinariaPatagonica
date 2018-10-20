@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'Apps.GestionDeServicios',
     'Apps.GestionDePracticas',
     'Apps.GestionDeTiposDeAtencion',
+    'Apps.GestionDeRubros',
 ]
 
 MIDDLEWARE = [
