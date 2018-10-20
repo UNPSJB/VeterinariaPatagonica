@@ -89,6 +89,11 @@ class Insumo (models.Model):
         max_digits = MAX_DIGITOS,
         decimal_places = MAX_DECIMALES)
 
+    precioDeCompra = models.DecimalField(
+        help_text="Precio del Insumo",
+        max_digits = MAX_DIGITOS,
+        decimal_places = MAX_DECIMALES)
+
     #Cambiar cuando tengamos la clase Rubro.
     rubro = models.CharField(
         help_text="Nombre del rubro al que pertenece",

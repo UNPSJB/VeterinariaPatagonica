@@ -51,14 +51,10 @@ def ClienteFormFactory(cliente=None):
             }
 
             widgets = {
-                'nombres' : forms.TextInput(),
-                'apellidos' : forms.TextInput(),
-                'direccion': forms.TextInput(),
                 'localidad' : forms.Select(choices=Cliente.LOCALIDADES),
-                #'localidad': forms.TextInput(),
-                'celular': forms.TextInput(),
-                'telefono': forms.TextInput(),
-                'email': forms.EmailInput(),
+                'descuentoServicio': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0'}),
+                'descuentoProducto': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0'}),
+                'cuentaCorriente': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0.0'})
             }
 
         def clean_dniCuit(self):

@@ -1,1 +1,0 @@
-[{"model": "GestionDeMascotas.mascota", "pk": 1, "fields": {"patente": "12321", "nombre": "Fru Fru", "cliente": 1, "fechaNacimiento": "2018-09-27T10:42:59Z", "especie": "Perro", "raza": "Caniche"}}]

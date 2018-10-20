@@ -33,3 +33,9 @@
 {% block footer %}
   <p>Para mas información  de los Clientes haga click aquí<p>
 {% endblock footer %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
+
+{% endblock paginaJavascript %}

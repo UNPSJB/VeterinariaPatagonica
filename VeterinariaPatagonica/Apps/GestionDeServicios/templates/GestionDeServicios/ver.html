@@ -1,0 +1,37 @@
+{% extends 'GestionDeServicios/GestionDeServicios.html' %}
+
+{% block titulo %}
+Gestion de Servicio | Ver Servicio
+{% endblock titulo %}
+
+{% block servicioTitulo %}
+Ver Insumo
+{% endblock servicioTitulo%}
+
+{% block servicioSubtitulo %}
+Muestra datos del servicio
+{% endblock servicioSubtitulo %}
+
+{% block servicioContenido %}
+
+    {% include './accionesSnippet.html' with item=servicio seccion='ver' %}
+
+    <div class="servicioCuerpo">
+
+        {% if servicio %}
+        <div class="well">
+            <p>Identificador: {{ servicio.id }}</p>
+            <p>tipo: {{ servicio.tipo }}</p>
+            <p>Nombre: {{ servicio.nombre }}</p>
+            <p>Tiempo Estimado: {{ servicio.tiempoEstimado }}</p>
+            <p>Precio de Mano de Obra: {{ servicio.precioManoDeObra }}</p>
+        </div>
+        {% else %}
+
+            <p> El servicio no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock servicioContenido %}

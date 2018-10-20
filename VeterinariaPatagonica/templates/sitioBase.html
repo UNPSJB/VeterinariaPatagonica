@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
 
+<html lang="es">
+
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,9 +19,12 @@
   <!-- Custom Theme Style -->
   <link href="{% static 'css/custom.css' %}" rel="stylesheet">
 
+
   <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
   <link href="{% static 'vendor/fontawesome/css/font-awesome.css' %}" rel="stylesheet">
   <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
+
+
   {% endblock paginaEstilos %}
 
   <title>
@@ -74,18 +79,16 @@
                 <section>
                   <h3>Titulo</h3>
                     <p> Texto bajo el titulo. <a href="/">Link al inicio</a></p>
-
                     <a class="btn btn-primary cuadradito" href="{% url "clientes:clienteCrear" %}" role="button">Clientes</a>
                     <a class="btn btn-primary cuadradito" href="{% url "insumos:insumoCrear" %}" role="button">Insumos</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "servicios:alta" %}" role="button">Servicios</a>
+                    <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button">Servicios</a>
+                    <br>
                     <a class="btn btn-primary cuadradito" href="{% url "mascotas:mascotaCrear" %}" role="button">Mascotas</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "GestionDeTiposDeAtencion:crear" %}" role="button">Tipo de Atención</a>
+                    <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button">Tipo de Atención</a>
                     <a class="btn btn-primary cuadradito" href="{% url "practicas:practicaCrearCirugia" %}" role="button">Cirugía</a>
                     <a class="btn btn-primary cuadradito" href="{% url "practicas:practicaCrearConsulta" %}" role="button">Consulta</a>
-              <!--      {% if perms.GestionDeTiposDeAtencion.add_TipoDeAtencion %} -->
 
-              <!--      {%endif%} -->
-                </section>
+              </section>
 
                 {% endblock paginaSeccionGeneral %}
             </div>
@@ -114,13 +117,14 @@
         <div class="row">
           <footer class="col-xs-12" id="sitio-piedepagina">
         {% block paginaPie %}
-            <p> 2018 Ningun derecho reservado </p>
+            <p> 2018 Ningún derecho reservado </p>
         {% endblock paginaPie %}
           </footer>
         </div>
 </div> <!-- el_container_fluid -->
 
 {% block paginaJavascript %}
+
   <!-- jQuery -->
   <script src="{% static 'gentelella/jquery/dist/jquery.min.js' %}"></script>
   <!-- NProgress -->
@@ -130,7 +134,7 @@
 
   <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
   <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
-  <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
+
 {% endblock paginaJavascript %}
 
 </body>

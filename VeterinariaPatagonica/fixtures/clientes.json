@@ -1,1 +1,0 @@
-[{"model": "GestionDeClientes.cliente", "pk": 1, "fields": {"DNI_CUIT": "123", "nombres": "Pepe", "apellidos": "Pepito", "direccion": "1212", "localidad": "Trelew", "telefono": "21212", "email": "diegomvh@gmail.com", "tipoDeCliente": "E", "descuentoServicio": 10, "descuentoProducto": 10, "cuentaCorriente": "12.40"}}]

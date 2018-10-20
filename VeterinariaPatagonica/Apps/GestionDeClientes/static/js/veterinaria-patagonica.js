@@ -42,6 +42,7 @@
 $(document).ready(function() {
 
     init_sidebar();
+
 });
 
 var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],

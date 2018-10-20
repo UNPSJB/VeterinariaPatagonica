@@ -19,6 +19,21 @@ urlpatterns = [
     path(r'GestionDeInsumos/',include('Apps.GestionDeInsumos.urls', namespace='insumos')),#Definimos que la url "GestionDeInsumos" incluye todas las url que hay en GestionDeInsumos.urls
     path(r'GestionDeMascotas/', include('Apps.GestionDeMascotas.urls', namespace= 'mascotas')),#Definimos que la url "GestionDeMascotas" incluye todas las url que hay en GestionDeMascotas.url
     path(r'GestionDePracticas/', include('Apps.GestionDePracticas.urls', namespace='practicas')),
-    #path(r'GestionTiposDeAtencion',include('Apps.GestionDeTiposDeAtencion', namespace= 'tiposdeatencion')),
-    path(r'GestionDeTiposDeAtencion/',include('Apps.GestionDeTiposDeAtencion.urls', namespace= 'tiposdeatencion')),
+    path('gestion/tiposdeatencion/',include('Apps.GestionDeTiposDeAtencion.urls', namespace= 'tiposdeatencion')),
 ]
+
+"""
+Idea para ordenar las urls de gestion de entidades que representen caracteristicas de la veterinaria (tipos de atencion, servicios, productos, ...)
+
+	gestion/<ENTIDAD>/
+	gestion/<ENTIDAD>/<ID>/
+	gestion/<ENTIDAD>/crear/
+	gestion/<ENTIDAD>/ver/<ID>/
+	gestion/<ENTIDAD>/modificar/<ID>/
+	gestion/<ENTIDAD>/deshabilitar/<ID>/
+	gestion/<ENTIDAD>/habilitar/<ID>/
+	gestion/<ENTIDAD>/eliminar/<ID>/
+	gestion/<ENTIDAD>/habilitados/
+	gestion/<ENTIDAD>/deshabilitados/
+
+"""

@@ -1,0 +1,24 @@
+{% extends 'GestionDeServicios/GestionDeServicios.html' %}
+
+{% block titulo %}
+Gestion de Servicios | Modificar Servicios
+{% endblock %}
+
+{% block servicioTitulo %}
+Modificar Servicio
+{% endblock servicioTitulo %}
+
+{% block servicioSubtitulo %}
+Permite cambiar datos relacionados al Servicio
+{% endblock servicioSubtitulo %}
+
+{% block servicioContenido %}
+    {% include './accionesSnippet.html' with item=servicio seccion='modificar' %}
+    <div class="servicioCuerpo">
+            <form class="form formulario" action="{% url 'servicios:servicioModificar' servicio.id  %}" method="post">
+                {% csrf_token %}
+                {% include './formularioSnippet.html' with campos=formulario %}
+                <button type="submit" class="btn btn-sm btn-default">Modificar</button>
+            </form>
+    </div>
+{% endblock servicioContenido %}

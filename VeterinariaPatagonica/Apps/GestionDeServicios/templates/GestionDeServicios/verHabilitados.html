@@ -1,0 +1,58 @@
+{% extends 'GestionDeServicios/GestionDeServicios.html' %}
+
+{% block titulo %}
+Gestion de Servicios | Ver Habilitados
+{% endblock %}
+
+{% block servicioTitulo %}
+Servicios Habilitados
+{% endblock %}
+
+{% block servicioSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block servicioContenido %}
+
+<!-- Listado -->
+<div class="servicioCuerpo" >
+    <p> Los siguientes servicios estan habilitados.  </p>
+    {% if servicios %}
+            <div class="table-responsive" id="tabla">
+                <table class="table servicioListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for servicio in servicios %}
+                            <tr>
+                                <td><p>{{ servicio.nombre }}</p></td>
+                                <td> <p align="center">
+                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-search"> </i>
+                                            </a>
+                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a>
+                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-minus"> </i>
+                                            </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+    {% else %}
+        <p> No hay Servicios habilitados</p>
+    {% endif %}
+    <a  id ="servicioHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'servicios:servicioCrear' %}"> Crear </a>
+</div>
+{% endblock %}

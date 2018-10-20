@@ -4,10 +4,13 @@ from decimal import Decimal
 
 class Servicio(models.Model):
     TIPO = (('C','Consulta'), ('Q','Quirurgica'))
-    MAXNOMBRE = 50
-    MAXDESCRIPCION = 200
-    MAXPRECIO = 7
-    MAXDECIMAL = 2
+    MAX_NOMBRE = 50
+    MIN_NOMBRE = 2
+    MAX_DESCRIPCION = 200
+    MAX_PRECIO = 7
+    MAX_DECIMAL = 2
+    REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{1,100}$'
+
 
     tipo = models.CharField(
         help_text="Tipo de Servicio (Consulta-Cirugia)",
@@ -24,25 +27,25 @@ class Servicio(models.Model):
 
     nombre = models.CharField(
         help_text='Ingrese el nombre del Servicio',
-        max_length=MAXNOMBRE,
+        max_length=MAX_NOMBRE,
         unique=True,
         null=False,
         blank=False,
         error_messages={
             'blank': "El nombre de servicio es obligarotio",
-            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAXNOMBRE)
+            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE)
         }
 
     )
 
     descripcion = models.CharField(
         help_text='Ingrese la descripcion del Servicio',
-        max_length=MAXDESCRIPCION,
+        max_length=MAX_DESCRIPCION,
         unique=False,
         null=True,
         blank=True,
         error_messages={
-            'max_length': "La descripcion puede tener a lo sumo {} caracteres".format(MAXDESCRIPCION)
+            'max_length': "La descripcion puede tener a lo sumo {} caracteres".format(MAX_DESCRIPCION)
         }
     )
 
@@ -57,8 +60,8 @@ class Servicio(models.Model):
     )
 
     precioManoDeObra = models.DecimalField(
-        max_digits = MAXPRECIO,
-        decimal_places = MAXDECIMAL,
+        max_digits = MAX_PRECIO,
+        decimal_places = MAX_DECIMAL,
         unique=False,
         null=False,
         blank=False,
@@ -67,10 +70,15 @@ class Servicio(models.Model):
         }
     )
 
-    insumos = models.ManyToManyField(imodels.Insumo, 
+    insumos = models.ManyToManyField(imodels.Insumo,
         through='ServicioInsumo',
-        through_fields=('servicio', 'insumo'), 
+        through_fields=('servicio', 'insumo'),
     )
+
+    baja = models.BooleanField(
+        help_text='Deshabilitado',
+        default=False
+        )
 
     def __str__(self):
         cadena = 'Nombre de Servicio: {0}, Duración Estimada: {1} Precio: {2}.'
