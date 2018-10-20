@@ -21,6 +21,7 @@ def ClienteFormFactory(cliente=None):
                'email',
 
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
+
     if cliente is  None:
         campos.insert(0, 'dniCuit')
 
