@@ -1,0 +1,28 @@
+{% extends 'GestionDeRubros/GestionDeRubros.html' %}
+{% load static %}
+
+{% block titulo %}
+Gestion de Rubros | Crear Rubros
+{% endblock %}
+
+{% block rubroTitulo %}
+Nuevo Rubro
+{% endblock %}
+
+{% block rubroSubtitulo %}
+Agrega un Rubro al listado
+{% endblock %}
+
+{% block rubroContenido %}
+
+    <div class="rubroCuerpo">
+        <form class="form-horizontal formulario" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2=""%}
+
+        </form>
+    </div>
+
+{% endblock %}

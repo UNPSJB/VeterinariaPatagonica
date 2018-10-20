@@ -1,0 +1,36 @@
+{% extends 'GestionDeRubros/GestionDeRubros.html' %}
+
+{% block titulo %}
+Gestion de Rubros | Ver Rubro
+{% endblock %}
+
+{% block rubroTitulo %}
+Ver Rubro
+{% endblock %}
+
+{% block rubroSubtitulo %}
+Muestra datos del rubro
+{% endblock %}
+
+{% block rubroContenido %}
+
+    {% include './accionesSnippet.html' with item=rubro seccion='ver' %}
+
+    <div class="rubroCuerpo">
+
+        {% if rubro %}
+        <div class="well">
+            <p>Identificador: {{ rubro.id }}</p>
+            <p>Nombres: {{ rubro.nombre }} </p>
+            <p>Descripcion: {{ rubro.descripcion}}</p>
+
+        </div>
+        {% else %}
+
+            <p> El rubro no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock rubroContenido %}

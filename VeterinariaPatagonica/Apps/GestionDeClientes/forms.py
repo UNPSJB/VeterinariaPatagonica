@@ -23,7 +23,7 @@ def ClienteFormFactory(cliente=None):
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
 
     if cliente is  None:
-        campos.insert(0, 'dniCuit')
+        campos.insert(1, 'dniCuit')
 
     class ClienteForm(forms.ModelForm):
         class Meta:

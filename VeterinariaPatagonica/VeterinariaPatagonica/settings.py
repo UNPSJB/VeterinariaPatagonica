@@ -27,10 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1',"localhost"]
 
-
-#ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1',"localhost"]
-
-
 # Application definition
 
 INSTALLED_APPS = [
