@@ -1,7 +1,7 @@
 from django import forms
 from .models import Cliente
 from django.core.validators import RegexValidator
-#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
 #Para que no pinche instalar -> pip install django-localflavor
 
 '''class creacionModelForm(forms.ModelForm):
@@ -21,6 +21,7 @@ def ClienteFormFactory(cliente=None):
                'email',
 
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
+
     if cliente is  None:
         campos.insert(0, 'dniCuit')
 
@@ -51,14 +52,10 @@ def ClienteFormFactory(cliente=None):
             }
 
             widgets = {
-                'nombres' : forms.TextInput(),
-                'apellidos' : forms.TextInput(),
-                'direccion': forms.TextInput(),
                 'localidad' : forms.Select(choices=Cliente.LOCALIDADES),
-                #'localidad': forms.TextInput(),
-                'celular': forms.TextInput(),
-                'telefono': forms.TextInput(),
-                'email': forms.EmailInput(),
+                'descuentoServicio': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0'}),
+                'descuentoProducto': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0'}),
+                'cuentaCorriente': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0.0'})
             }
 
         def clean_dniCuit(self):
