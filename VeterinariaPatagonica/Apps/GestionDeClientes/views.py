@@ -22,6 +22,7 @@ def modificar(request, id = None):
         print(formulario)
         if formulario.is_valid():
             cliente = formulario.save()
+            #return HttpResponseRedirect("/GestionDeMascotas/crear/{}".format(cliente.id))
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
             context['formulario'] = formulario
