@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Rubro
-from .forms import RubroFormFactory
+from .forms import RubroForm
 
 
 def rubros(request):
@@ -21,7 +21,6 @@ def rubros(request):
 def modificar(request, id = None):
 
     rubro = Rubro.objects.get(id=id) if id is not None else None
-    RubroForm = RubroFormFactory(rubro)
     context = {'usuario': request.user}
     if request.method == 'POST':
         formulario = RubroForm(request.POST, instance=rubro)

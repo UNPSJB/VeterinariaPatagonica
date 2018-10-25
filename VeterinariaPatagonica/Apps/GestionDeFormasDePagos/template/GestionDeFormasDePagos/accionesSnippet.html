@@ -1,0 +1,17 @@
+<div class="formaDePagoItemAcciones">
+
+        {% if seccion == 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'formasDePagos:formaDePagoVer' item.id %}">Ver</a>
+        {% endif %}
+
+        {% if seccion != 'modificar' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'formasDePagos:formaDePagoModificar' item.id %}">Modificar</a>
+        {% endif %}
+
+        {% if item.baja == False %}
+            <a  class="btn btn-sm btn-default" href="{% url 'formasDePagos:formaDePagoDeshabilitar' item.id %}">Deshabilitar</a>
+        {% else %}
+            <a  class="btn btn-sm btn-default" href="{% url 'formasDePagos:formaDePagoHabilitar' item.id %}">Habilitar</a>
+        {% endif %}
+
+</div>

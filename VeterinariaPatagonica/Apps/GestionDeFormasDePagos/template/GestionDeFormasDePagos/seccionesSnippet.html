@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<div class="formaDePagoSecciones">
+
+        <a id="formaDePagoLinkHabilitados" class="btn btn-sm btn-default {% if pagina == 'formasDePagos:formaDePagoVerHabilitados' %} disabled {% endif %}"  href="{% url 'formasDePagos:formaDePagoVerHabilitados' %}"> Habilitados </a>
+
+        <a id="formaDePagoLinkDeshabilitados" class="btn btn-sm btn-default {% if pagina == 'formasDePagos:formaDePagoVerDeshabilitados' %} disabled {% endif %}"  href="{% url 'formasDePagos:formaDePagoVerDeshabilitados' %}"> Deshabilitados </a>
+
+</div>
