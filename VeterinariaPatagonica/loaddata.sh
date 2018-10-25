@@ -1,7 +1,7 @@
 #!/bin/bash
 
 python3 manage.py loaddata ./fixtures/auth.json
-for f in GestionDeInsumos GestionDeClientes \
+for f in GestionDeProductos GestionDeClientes \
 GestionDeMascotas GestionDeTiposDeAtencion \
 GestionDeServicios GestionDePracticas
 do

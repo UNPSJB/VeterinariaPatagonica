@@ -15,7 +15,7 @@ def ServicioFormFactory(servicio=None):
                     'descripcion',
                     'tiempoEstimado',
                     'precioManoDeObra',
-                    'insumos',
+                    'productos',
                     ]
         labels = {
             'tipo':'Tipo.',
@@ -23,7 +23,7 @@ def ServicioFormFactory(servicio=None):
             'descripcion':'Descripcion.',
             'tiempoEstimado':'Tiempo Estimado.',
             'precioManoDeObra':'Precio Mano de Obra.',
-            'insumos':'Insumos.',
+            'productos':'Productos.',
             }
         error_messages = {
             'nombre' : {
@@ -39,7 +39,7 @@ def ServicioFormFactory(servicio=None):
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
             'tiempoEstimado' : forms.NumberInput(),
             'precioManoDeObra': forms.NumberInput(),
-            'insumos': forms.Select(attrs={'class':'form-control'}),
+            'productos': forms.Select(attrs={'class':'form-control'}),
         }
 
     def clean(self):

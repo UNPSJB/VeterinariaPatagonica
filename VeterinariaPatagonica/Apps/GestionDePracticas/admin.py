@@ -9,8 +9,8 @@ class PracticaAdmin(admin.ModelAdmin):
         PracticaServicioInline,
     ]
 
-class PracticaInsumoInlune(admin.TabularInline):
-    model = PracticaInsumo
+class PracticaInsumoInline(admin.TabularInline):
+    model = PracticaProducto
 
 
 admin.site.register(Practica, PracticaAdmin)

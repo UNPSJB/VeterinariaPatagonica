@@ -1,83 +1,83 @@
 
 
-.insumos-secciones {
+.productos-secciones {
   padding: 0px;
   margin-top: 0px;
   text-align: right;
 }
 
-.insumos-titulo {
+.productos-titulo {
   margin-top: 10px;
   margin-bottom:3px;
   font-weight: normal;
 }
 
-.insumos-subtitulo {
+.productos-subtitulo {
   margin: 3px 0px 20px 0px;
   font-style: italic;
   color: #555;
 }
 
-.insumos-linea-titulo {
+.productos-linea-titulo {
   border-bottom: 1px solid #DDD;
 }
 
-.insumos-cuerpo {
+.productos-cuerpo {
   padding: 0px;
   margin-top: 5px;
 }
 
-#insumos-habilitados-crear {
+#productos-habilitados-crear {
   clear: both;
   margin-bottom: 10px;
 }
 
-.insumos-etiqueta {
+.productos-etiqueta {
   text-align: left;
   font-weight: bold;
   margin: 0px 0px 5px 0px;
   padding: 0px;
 }
 
-.insumos-aviso-eliminacion {
+.productos-aviso-eliminacion {
   text-align: center;
   text-weight: bold;
   margin: 20px 0px 20px 0px;
 }
 
-.insumos-item-acciones a {
+.productos-item-acciones a {
   margin: 10px 0px 10px 0px;
 }
 
-.insumos-accion-listado {
+.productos-accion-listado {
   font-size: 110%;
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
-.insumos-accion-listado:hover {
+.productos-accion-listado:hover {
   text-decoration: none;
 }
 
-.insumos-listado thead {
+.productos-listado thead {
   background-color: transparent;
   color: #2A3F54;
 }
 
-.insumos-listado,
-.insumos-listado thead,
-.insumos-listado thead tr,
-.insumos-listado thead tr th,
-.insumos-listado tbody,
-.insumos-listado tbody tr,
-.insumos-listado tbody tr, {
+.productos-listado,
+.productos-listado thead,
+.productos-listado thead tr,
+.productos-listado thead tr th,
+.productos-listado tbody,
+.productos-listado tbody tr,
+.productos-listado tbody tr, {
   border: 0px solid #FFF;
 }
 
-table.table.insumos-listado {
+table.table.productos-listado {
   border: 0px solid #FFF;
 }
 
-.insumos-listado>tbody>tr>td {
+.productos-listado>tbody>tr>td {
     padding-top: 9px;
     padding-left: 4px;
     border-top: 1px solid #DDD !important;

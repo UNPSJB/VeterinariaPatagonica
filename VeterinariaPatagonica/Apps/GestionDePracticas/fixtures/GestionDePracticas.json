@@ -1,1 +1,0 @@
-[{"model": "GestionDePracticas.practica", "pk": 1, "fields": {"nombre": "Vacunar perro", "precio": "300.00", "cliente": 2, "tipoDeAtencion": 3}}, {"model": "GestionDePracticas.practicaservicio", "pk": 1, "fields": {"practica": 1, "servicio": 1, "cantidad": 5}}, {"model": "GestionDePracticas.practicaservicio", "pk": 2, "fields": {"practica": 1, "servicio": 3, "cantidad": 2}}]

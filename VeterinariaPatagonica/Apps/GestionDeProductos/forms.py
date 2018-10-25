@@ -1,17 +1,17 @@
 from django import forms
-from .models import Insumo
+from .models import Producto
 from django.core.validators import RegexValidator
 #from django.apps import apps
 
-def InsumoFormFactory(insumo=None):
+def ProductoFormFactory(producto=None):
     campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'rubro' ]
 
-    if insumo is  None:
+    if producto is  None:
         campos.insert(0, 'nombre')
 
-    class InsumoForm(forms.ModelForm):
+    class ProductoForm(forms.ModelForm):
         class Meta:
-            model = Insumo
+            model = Producto
             fields = campos
             labels = {
                 'nombre':'Nombre',
@@ -48,7 +48,7 @@ def InsumoFormFactory(insumo=None):
             cleaned_data = super().clean()
             return cleaned_data
 
-    return InsumoForm
+    return ProductoForm
 
 '''
 TIMEINPUT_FMTS = [ "%H:%M" ]
