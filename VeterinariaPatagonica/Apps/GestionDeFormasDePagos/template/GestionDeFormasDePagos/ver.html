@@ -1,0 +1,36 @@
+{% extends 'GestionDeFormasDePagos/GestionDeFormasDePagos.html' %}
+
+{% block titulo %}
+Gestion de Formas De Pagos | Ver Forma De Pago
+{% endblock %}
+
+{% block formaDePagoTitulo %}
+Ver Forma De Pago
+{% endblock %}
+
+{% block formaDePagoSubtitulo %}
+Muestra datos del formaDePago
+{% endblock %}
+
+{% block formaDePagoContenido %}
+
+    {% include './accionesSnippet.html' with item=formaDePago seccion='ver' %}
+
+    <div class="formaDePagoCuerpo">
+
+        {% if formaDePago %}
+        <div class="well">
+            <p>Identificador: {{ formaDePago.id }}</p>
+            <p>Nombres: {{ formaDePago.nombre }} </p>
+            <p>Descripcion: {{ formaDePago.descripcion}}</p>
+
+        </div>
+        {% else %}
+
+            <p> El formaDePago no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock formaDePagoContenido %}

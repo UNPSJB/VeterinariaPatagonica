@@ -21,6 +21,7 @@ urlpatterns = [
     path(r'GestionDePracticas/', include('Apps.GestionDePracticas.urls', namespace='practicas')),
     path('gestion/tiposdeatencion/',include('Apps.GestionDeTiposDeAtencion.urls', namespace= 'tiposdeatencion')),
     path(r'GestionDeRubros/', include('Apps.GestionDeRubros.urls', namespace= 'rubros')),
+    path(r'GestionDeFormasDePagos/', include('Apps.GestionDeFormasDePagos.urls', namespace='formasDePagos'))
 ]
 
 """

@@ -1,14 +1,14 @@
-{% extends 'GestionDeRubros/GestionDeRubros.html' %}
+{% extends 'GestionDeFormasDePagos/GestionDeFormasDePagos.html' %}
 
 {% block titulo %}
-Gestion de Rubros | Ver Deshabilitados
+Gestion de Formas De Pagos | Ver Deshabilitados
 {% endblock %}
 
-{% block rubroTitulo %}
-Rubros Deshabilitados
+{% block formaDePagoTitulo %}
+Formas De Pagos Deshabilitados
 {% endblock %}
 
-{% block rubroSubtitulo %}
+{% block formaDePagoSubtitulo %}
 Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
@@ -16,16 +16,16 @@ Actualmente <strong>no</strong> disponibles
 {% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
 {% endblock %}
 
-{% block rubroContenido %}
+{% block formaDePagoContenido %}
 
 <!-- Listado -->
-<div class="rubroCuerpo" >
+<div class="formaDePagoCuerpo" >
 
-  <p> Los siguientes rubros pueden ser habilitados o eliminados.  </p>
+  <p> Los siguientes fromasDePagos pueden ser habilitados o eliminados.  </p>
 
-    {% if rubros %}
+    {% if fromasDePagos %}
             <div class="table-responsive" id="tabla">
-                <table class="table rubroListado">
+                <table class="table formaDePagoListado">
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
@@ -33,21 +33,21 @@ Actualmente <strong>no</strong> disponibles
                         </tr>
                     </thead>
                     <tbody>
-                        {% for rubro in rubros %}
+                        {% for formaDePago in fromasDePagos %}
                             <tr>
-                                <td>{{rubro.nombre}}</td>
+                                <td>{{formaDePago.nombre}}</td>
                                 <td >
                                     <p align="justify">
-                                        <a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'fromasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
-                                        <a href="{% url 'rubros:rubroModificar' rubro.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'fromasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'rubros:rubroHabilitar' rubro.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'fromasDePagos:formaDePagoHabilitar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-plus"> </i>
                                         </a>
-                                        <a href="{% url 'rubros:rubroEliminar' rubro.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'fromasDePagos:formaDePagoEliminar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-remove"> </i>
                                         </a>
                                     </p>
@@ -60,7 +60,7 @@ Actualmente <strong>no</strong> disponibles
 
     {% else %}
 
-        <p> No hay rubros deshabilitados</p>
+        <p> No hay fromas De Pagos deshabilitados</p>
 
     {% endif %}
 
