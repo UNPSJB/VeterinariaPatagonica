@@ -47,14 +47,13 @@ def habilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.delete_Mascotas', raise_exception=True)
 def deshabilitar(request, id):
-
     try:
         mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-        mascota.baja = True
-        mascota.save()
+    mascota.baja = True
+    mascota.save()
 
     return HttpResponseRedirect( "/GestionDeMascotas/verDeshabilitados/" )
 
@@ -74,24 +73,23 @@ def eliminar(request, id):
     else:
 
         template = loader.get_template('GestionDeMascotas/eliminar.html')
-        contexto = {
-            'usuario' : peticion.user,
+        context = {
+            'usuario' : request.user,
             'id' : id
         }
-
-        return HttpResponse( template.render( contexto, request) )
+        return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
 
     try:
-        mascota = Mascota.objects.get(id=id)
+        mascotas = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404("No encontrado", "La mascota con patente={} no existe.".format(id))
 
 
     template = loader.get_template('GestionDeMascotas/ver.html')
     contexto = {
-    'mascota': mascota,
+    'mascota': mascotas,
     'usuario': request.user
     }
     return HttpResponse(template.render(contexto, request))
@@ -113,3 +111,31 @@ def verDeshabilitados(request):
         'usuario': request.user,
     }
     return HttpResponse(template.render(contexto, request))
+
+
+
+def busqueda(request):
+    '''
+    mascotas = Mascota.objects.filter(nombre=nombre)
+    template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
+    contexto = {
+        'mascotas': mascotas,
+        'usuario': request.user,
+    }
+    return HttpResponse(template.render(contexto, request))
+
+    '''
+    mascotas = request.GET.get('mascota', '')
+    mascotas = Mascota.objects.filter(nombre=mascota)
+    return render(request, 'template_busqueda.html', {'mascotas': mascotas})
+
+
+'''from django.db.models import Q
+def busqueda(self):
+   q = request.GET.get('q', '')
+
+   querys = (Q(ciudad__nombre__icontains=q) | Q(ciudad__departamento__nombre__icontains=q))
+   querys |= Q(nombre__icontains=q)
+
+   eventos = Evento.objects.filter(querys)
+   return render(request, 'template_busqueda.html', {'eventos': eventos}) '''

@@ -23,24 +23,26 @@ Actualmente disponibles
 
     <p> Los siguientes mascotas estan habilitados.  </p>
 
+
+
     {% if mascotas %}
             <div class="table-responsive" id="tabla">
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td> <p>{{ mascota.nombre }}, {{mascota.especie }}</p></td>
+                                <td> <p>{{ mascota.cliente }}, {{mascota.especie }}, {{mascota.nombre }} </p></td>
                                 <td> <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
-                                            <a href="{% url 'mascotas:mascotaCrear' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
                                             <a href="{% url 'mascotas:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default">
@@ -52,6 +54,8 @@ Actualmente disponibles
                     </tbody>
                 </table>
             </div>
+    <input name="q" placeholder="ingrese nombre dueño" id="buscador">
+    <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}

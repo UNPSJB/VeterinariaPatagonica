@@ -5,7 +5,7 @@ Gestion de Mascota | Ver Deshabilitados
 {% endblock %}
 
 {% block mascotaTitulo %}
-Tipos de Atencion Deshabilitados
+Mascotas Deshabilitadas
 {% endblock %}
 
 {% block mascotaSubtitulo %}
@@ -33,9 +33,9 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
                         </tr>
                     </thead>
                     <tbody>
-                        {% for mascota in mascotas%}
+                        {% for mascota in mascotas %}
                             <tr>
-                                <td>{{ mascota.nombre }}</td>
+                                <td>{{ mascota.patente }}{{mascota.nombre}}</td>
                                 <td >
 			                        <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
@@ -60,7 +60,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
 
     {% else %}
 
-        <p> No hay mascotas habilitadas</p>
+        <p> No hay mascotas Deshabilitadas</p>
 
     {% endif %}
 

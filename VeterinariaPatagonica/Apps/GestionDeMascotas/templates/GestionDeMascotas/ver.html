@@ -21,11 +21,13 @@ Muestra datos de Mascota
 
         {% if mascota %}
         <div class="well">
+
             <p>Identificador: {{ mascota.id }}</p>
             <p>Patente: {{mascota.patente}} </p>
             <p>Cliente: {{ mascota.cliente}}</p>
             <p>Nombre: {{ mascota.nombre }} ({% if mascota.baja %}Deshabilitado{% else %}Habilitado{% endif %}) </p>
             <p>Especie: {{ mascota.especie }}</p>
+            <p>Fecha de Nacimiento: {{mascota.fechaNacimiento}} </p>
             <p>Raza: {{ mascota.raza }}</p>
         </div>
         {% else %}
