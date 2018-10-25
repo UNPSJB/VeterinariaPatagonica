@@ -1,9 +1,9 @@
 from django import forms
-from .models import Rubro
+from .models import FormaDePago
 
-class RubroForm(forms.ModelForm):
+class FormaDePagoForm(forms.ModelForm):
     class Meta:
-        model = Rubro
+        model = FormaDePago
         fields = {'nombre',
                     'descripcion',
                   }
