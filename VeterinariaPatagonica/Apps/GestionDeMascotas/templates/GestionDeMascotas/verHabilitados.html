@@ -23,6 +23,12 @@ Actualmente disponibles
 
     <p> Los siguientes mascotas estan habilitados.  </p>
 
+    <form action="" method="GET">
+        <input name="nombre" placeholder="nombre">
+        <input name="patente" placeholder="patente">
+        <input name="especie" placeholder="especie">
+        <button type="submit">GO</button>
+    </form>
 
 
     {% if mascotas %}
@@ -54,8 +60,7 @@ Actualmente disponibles
                     </tbody>
                 </table>
             </div>
-    <input name="q" placeholder="ingrese nombre dueño" id="buscador">
-    <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+    <!--agregar boton filtrar-->
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}

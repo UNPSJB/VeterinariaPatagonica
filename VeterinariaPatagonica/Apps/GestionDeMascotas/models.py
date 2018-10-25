@@ -1,12 +1,31 @@
 from django.db import models
 from django.core.validators import RegexValidator
-
+from django.db.models import Q
 
 from Apps.GestionDeClientes import models as gcmodels
 
 # Create your models here.
 
+class BaseMascotaManager(models.Manager):
+    pass
+
+class BajasLogicasQuerySet(models.QuerySet):
+    def habilitados(self):
+        return self.filter(baja=False)
+
+    def deshabilitados(self):
+        return self.filter(baja=True)
+
+MascotaManager = BaseMascotaManager.from_queryset(BajasLogicasQuerySet)
+
 class Mascota(models.Model):
+    MAPPER = {
+        "especie": "especie__icontains",
+        "cliente": "cliente",
+        "nombre": "nombre__icontains",
+        "duenio": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+        "desde": "fecha__gte"
+    }
     MAXPATENTE= 6
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     REGEX_ESPECIE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -66,9 +85,10 @@ class Mascota(models.Model):
         }
     )
     baja = models.BooleanField(default=False)
+    objects = MascotaManager()
 
     def __str__(self):
-        return "{0}, {1}".format(self.nombres, self.apellidos)
+        return "{0}, {1}".format(self.nombre, self.especie)
 
     raza = models.CharField(
         help_text="Especie de la Mascota",

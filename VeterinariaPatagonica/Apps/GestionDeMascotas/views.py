@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
+from django.db.models import Q
 
 def mascota(request):
     context = {}
@@ -94,8 +95,20 @@ def ver(request, id):
     }
     return HttpResponse(template.render(contexto, request))
 
+def paramsToFilter(params, Modelo):
+    mapper = getattr(Modelo, "MAPPER", {})
+    filters = Q()
+    for item in params.items():
+        key = item[0]
+        value = item[1]
+        if key in mapper and value:
+            name = mapper[key]
+            filters &= name(value) if callable(name) else Q(**{name: value})
+    return filters
+
 def verHabilitados(request):
-    mascotas = Mascota.objects.filter(baja=False)
+    mascotas = Mascota.objects.habilitados()
+    mascotas = mascotas.filter(paramsToFilter(request.GET, Mascota))
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
     contexto = {
         'mascotas': mascotas,
@@ -104,7 +117,9 @@ def verHabilitados(request):
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    mascotas = Mascota.objects.filter(baja=True)
+    mascotas = Mascota.objects.deshabilitados()
+    mascotas = mascotas.filter(paramsToFilter(request.GET, Mascota))
+
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
     contexto = {
         'mascotas': mascotas,
