@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeClientes',
     'Apps.GestionDeInsumos',
     'Apps.GestionDeMascotas',
@@ -43,7 +44,6 @@ INSTALLED_APPS = [
     'Apps.GestionDePracticas',
     'Apps.GestionDeTiposDeAtencion',
     'Apps.GestionDeRubros',
-    'Apps.GestionDeFormasDePagos'
 ]
 
 MIDDLEWARE = [
