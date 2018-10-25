@@ -17,7 +17,7 @@ def formasDePagos(request):
 
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeFormasDePagos.add_FormasDePago', raise_exception=True)
+@permission_required('GestionDeFormasDePagos.add_FormaDePago', raise_exception=True)
 def modificar(request, id = None):
 
     formaDePago = FormaDePago.objects.get(id=id) if id is not None else None

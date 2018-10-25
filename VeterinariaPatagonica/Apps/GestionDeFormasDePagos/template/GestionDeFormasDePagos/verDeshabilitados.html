@@ -1,0 +1,69 @@
+{% extends 'GestionDeFormasDePagos/GestionDeFormasDePagos.html' %}
+
+{% block titulo %}
+Gestion de Formas De Pagos | Ver Deshabilitados
+{% endblock %}
+
+{% block formaDePagoTitulo %}
+Formas De Pagos Deshabilitados
+{% endblock %}
+
+{% block formaDePagoSubtitulo %}
+Actualmente <strong>no</strong> disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% endblock %}
+
+{% block formaDePagoContenido %}
+
+<!-- Listado -->
+<div class="formaDePagoCuerpo" >
+
+  <p> Los siguientes fromasDePagos pueden ser habilitados o eliminados.  </p>
+
+    {% if fromasDePagos %}
+            <div class="table-responsive" id="tabla">
+                <table class="table formaDePagoListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for formaDePago in fromasDePagos %}
+                            <tr>
+                                <td>{{formaDePago.nombre}}</td>
+                                <td >
+                                    <p align="justify">
+                                        <a  href="{% url 'fromasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-search"> </i>
+                                        </a>
+                                        <a href="{% url 'fromasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'fromasDePagos:formaDePagoHabilitar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-plus"> </i>
+                                        </a>
+                                        <a href="{% url 'fromasDePagos:formaDePagoEliminar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-remove"> </i>
+                                        </a>
+                                    </p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay fromas De Pagos deshabilitados</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
