@@ -217,27 +217,3 @@ class TipoDeAtencion(models.Model):
         self.inicioFranjaHoraria = franja.inicio
         self.finFranjaHoraria = franja.fin
 
-
-
-    #[TODO] Averiguar/Ponernos de acuerdo en alguna buena manera de obtener los
-    # nombres de los CharFields con choices
-
-    @property
-    def lugarStr(self):
-        """ String para el nombre del lugar de atencion """
-
-        return TipoDeAtencion.LUGAR[self.lugar]
-
-
-
-    @property
-    def tipoDeServicioStr(self):
-        """ String para el tipo de servicio """
-
-        tuplas = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO
-        i=0
-        while tuplas[i][0] != self.tipoDeServicio:
-            i=i+1
-
-        return tuplas[i][1]
-
