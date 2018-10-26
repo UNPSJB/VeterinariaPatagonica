@@ -22,10 +22,12 @@ class Mascota(models.Model):
     MAPPER = {
         "especie": "especie__icontains",
         "cliente": "cliente",
+        "patente": "patente__icontains",
         "nombre": "nombre__icontains",
         "duenio": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
         "desde": "fecha__gte"
     }
+
     MAXPATENTE= 6
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     REGEX_ESPECIE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -66,6 +68,7 @@ class Mascota(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
+        help_text="ingrese cliente",
         error_messages={
         })
 

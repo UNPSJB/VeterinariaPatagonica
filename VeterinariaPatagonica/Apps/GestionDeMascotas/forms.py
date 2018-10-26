@@ -20,7 +20,7 @@ cliente = forms.ChoiceField(
         'required': "el cliente es obligatorio"
     },
     validators=[],
-    #choices=apps.get_model('GestionDeClientes', 'cliente', require_ready=False).TIPO,
+
 )
 def MascotaFormFactory(mascota=None):
     campos = [ 'cliente',

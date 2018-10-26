@@ -23,19 +23,26 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
 
   <p> Los siguientes mascotas  pueden ser habilitados o eliminados.  </p>
 
+    <form action="" method="GET">
+        <input name="nombre" placeholder="nombre">
+        <input name="patente" placeholder="patente">
+        <input name="especie" placeholder="especie">
+        <button type="submit">GO</button>
+    </form>
+
     {% if mascotas %}
             <div class="table-responsive" id="tabla">
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-nombre">Mascotas</th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td>{{ mascota.patente }}{{mascota.nombre}}</td>
+                                <td>{{ mascota.cliente }}, {{mascota.especie }}, {{mascota.nombre }}</td>
                                 <td >
 			                        <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
