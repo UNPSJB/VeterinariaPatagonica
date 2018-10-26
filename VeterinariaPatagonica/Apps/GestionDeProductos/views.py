@@ -2,49 +2,49 @@ from django.template import loader
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Insumo
-from .forms import InsumoFormFactory
+from .models import Producto
+from .forms import ProductoFormFactory
 
 
-def insumos(request):
+def productos(request):
     context = {}#Defino un contexto.
-    template = loader.get_template('GestionDeInsumos/GestionDeInsumos.html')#Cargo el template desde la carpeta templates/GestionDeInsumos.
+    template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.add_Insumo', raise_exception=True)
+@permission_required('GestionDeProductos.add_Insumo', raise_exception=True)
 def modificar(request, id = None):
-    insumo = Insumo.objects.get(id=id) if id is not None else None
-    InsumoForm = InsumoFormFactory(insumo)
+    producto = Producto.objects.get(id=id) if id is not None else None
+    ProductoForm = ProductoFormFactory(producto)
     context = {'usuario' : request.user}
 
     if request.method == 'POST':
-        formulario = InsumoForm(request.POST, instance=insumo)
+        formulario = ProductoForm(request.POST, instance=producto)
         if formulario.is_valid():
-            insumo = formulario.save()
-            return HttpResponseRedirect("/GestionDeInsumos/ver/{}".format(insumo.id))
+            producto = formulario.save()
+            return HttpResponseRedirect("/GestionDeProductos/ver/{}".format(producto.id))
         else:
             context['formulario'] = formulario
     else:
-        context['formulario'] = InsumoForm(instance=insumo)
-    template = loader.get_template('GestionDeInsumos/formulario.html')
+        context['formulario'] = ProductoForm(instance=producto)
+    template = loader.get_template('GestionDeProductos/formulario.html')
 
     return HttpResponse(template.render( context, request) )
 
 def verHabilitados(request):
-    insumos = Insumo.objects.filter(baja=False)
-    template = loader.get_template('GestionDeInsumos/verHabilitados.html')
+    producto = Producto.objects.filter(baja=False)
+    template = loader.get_template('GestionDeProductos/verHabilitados.html')
     context = {
-        'insumos': insumos,
+        'producto': producto,
         'usuario': request.user
     }
     return HttpResponse(template.render(context, request))
 
 def verDeshabilitados(request):
-    insumos = Insumo.objects.filter(baja=True)
-    template = loader.get_template('GestionDeInsumos/verDeshabilitados.html')
+    producto = Producto.objects.filter(baja=True)
+    template = loader.get_template('GestionDeProductos/verDeshabilitados.html')
     context = {
-        'insumos' : insumos,
+        'producto' : producto,
         'usuario' : request.user
     }
     return HttpResponse(template.render( context, request ))
@@ -52,62 +52,62 @@ def verDeshabilitados(request):
 def ver(request, id):
     #import ipdb; ipdb.set_trace()
     try:
-        insumo = Insumo.objects.get(id=id)
+        producto = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
-        raise Http404( "No encontrado", "El insumo con id={} no existe.".format(id))
+        raise Http404( "No encontrado", "El Producto con id={} no existe.".format(id))
 
-    template = loader.get_template('GestionDeInsumos/ver.html')
+    template = loader.get_template('GestionDeProductos/ver.html')
     context = {
-        'insumo': insumo,
+        'producto': producto,
         'usuario': request.user
     }
     return HttpResponse(template.render(context, request))
 
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
+@permission_required('GestionDeProductos.delete_Producto', raise_exception=True)
 def deshabilitar(request, id):
 
     try:
-        insumo = Insumo.objects.get(id=id)
+        producto = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    insumo.baja = True
-    insumo.save()
+    producto.baja = True
+    producto.save()
 
-    return HttpResponseRedirect( "/GestionDeInsumos/verDeshabilitados/" )
+    return HttpResponseRedirect( "/GestionDeProductos/verDeshabilitados/" )
 
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
+@permission_required('GestionDeProductos.delete_Producto', raise_exception=True)
 def habilitar(request, id):
     try:
-        insumo = Insumo.objects.get(id=id)
+        producto = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    insumo.baja = False
-    insumo.save()
+    producto.baja = False
+    producto.save()
 
-    return HttpResponseRedirect( "/GestionDeInsumos/verHabilitados/" )
+    return HttpResponseRedirect( "/GestionDeProductos/verHabilitados/" )
 
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeInsumos.delete_Insumo', raise_exception=True)
+@permission_required('GestionDeProductos.delete_Producto', raise_exception=True)
 def eliminar(request, id):
 
     try:
-        insumo = Insumo.objects.get(id=id)
+        producto = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
     if request.method == 'POST':
-        insumo.delete()
-        return HttpResponseRedirect( "/GestionDeInsumos/" )
+        producto.delete()
+        return HttpResponseRedirect( "/GestionDeProductos/" )
 
     else:
-        template = loader.get_template('GestionDeInsumos/eliminar.html')
+        template = loader.get_template('GestionDeProductos/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
@@ -122,7 +122,7 @@ def eliminar(request, id):
 '''
 def insumos(request):
     context = {}#Defino un contexto.
-    template = loader.get_template('GestionDeInsumos/GestionDeInsumos.html')#Cargo el template desde la carpeta templates/GestionDeInsumos.
+    template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 '''
 

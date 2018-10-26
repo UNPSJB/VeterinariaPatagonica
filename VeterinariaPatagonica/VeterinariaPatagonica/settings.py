@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeClientes',
-    'Apps.GestionDeInsumos',
+    'Apps.GestionDeProductos',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeServicios',
     'Apps.GestionDePracticas',

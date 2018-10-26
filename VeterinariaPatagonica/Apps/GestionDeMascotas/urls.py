@@ -16,6 +16,7 @@ urlpatterns = [
     path('ver/<int:id>/', mascotas_views.ver, name="mascotaVer"),
     path('verHabilitados/', mascotas_views.verHabilitados, name='mascotaVerHabilitados'),
     path('verDeshabilitados/', mascotas_views.verDeshabilitados, name='mascotaVerDeshabilitados'),
+    path('busqueda/<int:id>/', mascotas_views.busqueda, name='mascotaBusqueda'),
 
 
 

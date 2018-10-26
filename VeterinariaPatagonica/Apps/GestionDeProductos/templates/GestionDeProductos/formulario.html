@@ -1,0 +1,27 @@
+{% extends 'GestionDeProductos/GestionDeProductos.html' %}
+
+{% block titulo %}
+Gestion de Productos | Crear Producto
+{% endblock titulo %}
+
+{% block productoTitulo %}
+Nuevo Producto
+{% endblock productoTitulo %}
+
+{% block productoSubtitulo %}
+Agrega un Producto al listado
+{% endblock productoSubtitulo %}
+
+{% block productoContenido %}
+
+    <div class="productoCuerpo">
+        <form class="form-horizontal" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+
+        </form>
+    </div>
+
+{% endblock productoContenido %}

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 {% load static %}
+
 <html lang="es">
 
-<head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -80,7 +80,7 @@
                   <h3>Titulo</h3>
                     <p> Texto bajo el titulo. <a href="/">Link al inicio</a></p>
                     <a class="btn btn-primary cuadradito" href="{% url "clientes:clienteCrear" %}" role="button">Clientes</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "insumos:insumoCrear" %}" role="button">Insumos</a>
+                    <a class="btn btn-primary cuadradito" href="{% url "productos:productoCrear" %}" role="button">Productos</a>
                     <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button">Servicios</a>
                     <br>
                     <a class="btn btn-primary cuadradito" href="{% url "mascotas:mascotaCrear" %}" role="button">Mascotas</a>
@@ -97,7 +97,7 @@
               <nav class="col-sm-12 col-md-2 sitio-menu" id="sitio_menu_dch">
                   {% block paginaMenuDch %}
                   {% comment %}
-                  {% include './menuDchSnippet.html' %}
+                  <!--{% include './menuDchSnippet.html' %}-->
                   {% endcomment %}
 
                   <div class="panel panel-default">

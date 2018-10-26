@@ -1,5 +1,5 @@
 from django.db import models
-from Apps.GestionDeInsumos import models as imodels
+from Apps.GestionDeProductos import models as pmodels
 from decimal import Decimal
 
 class Servicio(models.Model):
@@ -70,9 +70,9 @@ class Servicio(models.Model):
         }
     )
 
-    insumos = models.ManyToManyField(imodels.Insumo,
-        through='ServicioInsumo',
-        through_fields=('servicio', 'insumo'),
+    productos = models.ManyToManyField(pmodels.Producto,
+        through='ServicioProducto',
+        through_fields=('servicio', 'producto'),
     )
 
     baja = models.BooleanField(
@@ -85,12 +85,12 @@ class Servicio(models.Model):
         return cadena.format(self.nombre, self.tiempoEstimado, self.precioManoDeObra)
 
     def precio(self):
-        insumos = Decimal("0")
-        for sinsumo in self.servicioinsumo_set.all():
-            insumos += sinsumo.insumo.precioEnUnidad(sinsumo.cantidad)
-        return self.precioManoDeObra + insumos
+        productos = Decimal("0")
+        for sproducto in self.servicioproducto_set.all():
+            productos += sproducto.producto.precioEnUnidad(sproducto.cantidad)
+        return self.precioManoDeObra + productos
 
-class ServicioInsumo(models.Model):
+class ServicioProducto(models.Model):
     servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
-    insumo = models.ForeignKey(imodels.Insumo, on_delete=models.CASCADE)
+    producto = models.ForeignKey(pmodels.Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()

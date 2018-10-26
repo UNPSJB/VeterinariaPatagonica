@@ -5,13 +5,12 @@ from datetime import date, timedelta, time, datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
 # Create your models here.
 
-class Insumo (models.Model):
+class Producto (models.Model):
 
     MAX_NOMBRE = 50
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     MAX_DIGITOS = 7
     MAX_DECIMALES = 2
-
 
 
 
@@ -64,20 +63,20 @@ class Insumo (models.Model):
     )
 
     nombre = models.CharField(
-        help_text="Nombre del Insumo",
+        help_text="Nombre del Producto",
         max_length = MAX_NOMBRE,
         unique = True,
         null = False,
         blank = False,
         validators = [RegexValidator(regex=REGEX_NOMBRE)],
         error_messages = {
-            'unique' : "Otro insumo tiene ese nombre",
+            'unique' : "Otro Producto tiene ese nombre",
             'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
             'blank' : "El nombre es obligatorio"
             })
 
     formaDePresentacion = models.PositiveSmallIntegerField(
-        help_text="Forma de Presentacion del Insumo",
+        help_text="Forma de Presentacion del Producto",
         choices=UNIDADES,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
@@ -85,12 +84,12 @@ class Insumo (models.Model):
         })
 
     precioPorUnidad = models.DecimalField(
-        help_text="Precio del Insumo",
+        help_text="Precio del Producto",
         max_digits = MAX_DIGITOS,
         decimal_places = MAX_DECIMALES)
 
     precioDeCompra = models.DecimalField(
-        help_text="Precio del Insumo",
+        help_text="Precio del Producto",
         max_digits = MAX_DIGITOS,
         decimal_places = MAX_DECIMALES)
 
@@ -100,6 +99,7 @@ class Insumo (models.Model):
         max_length = MAX_NOMBRE,
         blank = False
         )
+
     baja = models.BooleanField(
         #help_text='Deshabilitado',
         default=False
@@ -109,8 +109,8 @@ class Insumo (models.Model):
 
     def __str__(self):
         fp = self.formaDePresentacion
-        unidad = list(filter(lambda t: fp in t, Insumo.TUPLAS)).pop()
-        return "Insumo: {0} Unidad: {1} Precio: {2}".format(self.nombre, Insumo.UNIDADES_DICT[unidad[0]], self.precioPorUnidad)
+        unidad = list(filter(lambda t: fp in t, Producto.TUPLAS)).pop()
+        return "Producto: {0} Unidad: {1} Precio: {2}".format(self.nombre, Producto.UNIDADES_DICT[unidad[0]], self.precioPorUnidad)
 
     def precioEnUnidad(self, cantidad):
-        return Insumo.CONVERT[self.formaDePresentacion](self.precioPorUnidad) * cantidad
+        return Producto.CONVERT[self.formaDePresentacion](self.precioPorUnidad) * cantidad

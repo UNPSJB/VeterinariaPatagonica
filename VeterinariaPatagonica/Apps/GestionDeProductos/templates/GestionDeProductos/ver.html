@@ -1,0 +1,37 @@
+{% extends 'GestionDeProductos/GestionDeProductos.html' %}
+
+{% block titulo %}
+Gestion de Productos | Ver Producto
+{% endblock titulo %}
+
+{% block productoTitulo %}
+Ver Producto
+{% endblock productoTitulo %}
+
+{% block productoSubtitulo %}
+Muestra datos del producto
+{% endblock productoSubtitulo %}
+
+{% block productoContenido %}
+
+    {% include './accionesSnippet.html' with item=producto seccion='ver' %}
+
+    <div class="productoCuerpo">
+
+        {% if producto %}
+        <div class="well">
+            <p>Identificador: {{ producto.id }}</p>
+            <p>Nombre: {{ producto.nombre }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+            <p>Forma De Presentacion: {{ producto.formaDePresentacion }}</p>
+            <p>Precio Por Unidad: {{ producto.precioPorUnidad }}</p>
+            <p>Rubro: {{ producto.rubro }}</p>
+        </div>
+        {% else %}
+
+            <p> El producto no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock productoContenido %}

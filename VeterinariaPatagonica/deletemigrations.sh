@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for f in GestionDeInsumos GestionDeClientes \
+for f in GestionDeProductos GestionDeClientes \
 GestionDeMascotas GestionDePracticas \
 GestionDeServicios GestionDeTiposDeAtencion
 do

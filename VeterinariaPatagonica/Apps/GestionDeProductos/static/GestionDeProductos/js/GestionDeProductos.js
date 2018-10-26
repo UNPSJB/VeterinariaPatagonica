@@ -2,7 +2,7 @@
 
 $(document).ready( function(){
 
-		$('.insumos-form-linkinfo').each(
+		$('.productos-form-linkinfo').each(
 
 			function(i,x){
 
