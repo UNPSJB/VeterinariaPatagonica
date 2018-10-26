@@ -76,7 +76,7 @@ def ProductoFormFactory(producto=None):
                     field.widget.attrs.update({
                         'class': 'form-control'
                     })
-                    
+
     return ProductoForm
 
 '''
