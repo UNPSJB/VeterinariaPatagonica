@@ -65,7 +65,7 @@ class Mascota(models.Model):
         error_messages={
         })
 
-    fechaNacimiento = models.DateTimeField(auto_now=True),
+    fechaNacimiento = models.DateTimeField(blank=False)
 
     especie = models.CharField(
         help_text= "Especie de la Mascota",

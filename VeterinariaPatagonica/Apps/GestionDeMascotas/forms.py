@@ -24,7 +24,7 @@ cliente = forms.ChoiceField(
 )
 def MascotaFormFactory(mascota=None):
     campos = [ 'cliente',
-               #'fechaNacimiento',
+               'fechaNacimiento',
                'nombre',
                'raza',
                'especie',
@@ -34,6 +34,7 @@ def MascotaFormFactory(mascota=None):
 
 
     class MascotaForm(forms.ModelForm):
+        print(dir(Mascota))
         class Meta:
             model = Mascota
             fields = campos
@@ -58,7 +59,7 @@ def MascotaFormFactory(mascota=None):
             widgets = {
                 'nombre' : forms.TextInput(),
                 'cliente': forms.Select(attrs={'class': 'form-control'}),
-                'fechaNacimiento': forms.DateTimeField,
+                'fechaNacimiento': forms.DateTimeInput(),
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),
             }
