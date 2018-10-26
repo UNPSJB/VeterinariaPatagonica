@@ -3,9 +3,21 @@ from .models import Producto
 
 from django.core.validators import RegexValidator
 
+rubro = forms.ChoiceField(
+    required=True,
+    label='rubro',
+    widget=forms.Select,
+    help_text='Rubro',
+    error_messages={
+        'invalid_choice': "La opcion no es valida",
+        'required': "el rubro es obligatorio"
+    },
+    validators=[],
+
+)
 
 def ProductoFormFactory(producto=None):
-    campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro' ]
+    campos = [ 'nombre', 'marca', 'stock', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro', 'descripcion' ]
 
     if producto is  None:
         campos.insert(0, 'nombre')
@@ -16,10 +28,13 @@ def ProductoFormFactory(producto=None):
             fields = campos
             labels = {
                 'nombre':'Nombre',
+                'marca': 'Marca',
+                'stock': 'Stock',
                 'formaDePresentacion':'FormaDePresentacion',
                 'precioPorUnidad':'PrecioPorUnidad',
                 'precioDeCompra' : 'PrecioDeCompra',
                 'rubro':'Rubro',
+                'descripcion':'Descripcion',
                 'baja':'Baja'
             }
 
@@ -35,7 +50,7 @@ def ProductoFormFactory(producto=None):
                 'formaDePresentacion' : forms.Select(choices=Producto.UNIDADES),
                 'precioPorUnidad': forms.TextInput(),
                 'precioDeCompra': forms.TextInput(),
-                'rubro' : forms.TextInput(),
+                'rubro' : forms.Select(attrs={'class': 'form-control'}),
             }
 
         def clean_nombre(self):
@@ -51,6 +66,17 @@ def ProductoFormFactory(producto=None):
             cleaned_data = super().clean()
             return cleaned_data
 
+        def __init__(self, *args, **kwargs):
+
+            super().__init__(*args, **kwargs)
+
+            # [TODO] Averiguar una mejor manera de hacer esto:
+            for field in self.fields.values():
+                if not isinstance(field.widget, forms.CheckboxInput):
+                    field.widget.attrs.update({
+                        'class': 'form-control'
+                    })
+                    
     return ProductoForm
 
 '''
