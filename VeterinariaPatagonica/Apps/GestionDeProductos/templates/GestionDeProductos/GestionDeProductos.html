@@ -1,11 +1,10 @@
 {% extends "sitioBase.html" %}
-
 {% load static %}
 
 {% block paginaEstilos %}
     {{ block.super }}
-    <link href="{% static 'GestionDeProductos/css/GestionDeProductos.css' %}" rel="stylesheet">
-{% endblock paginaEstilos%}
+        <link rel="stylesheet" href="{% static 'GestionDeProductos/css/GestionDeProductos.css' %}" >
+{% endblock paginaEstilos %}
 
 {% block paginaSeccionGeneral %}
     <section>
@@ -18,11 +17,11 @@
             {% endblock productoTitulo %}
         </h4>
 
-        <div class="productoLineaTitulo"></div>
+        <div class="productoLineaTitulo"> </div>
 
         <p class="productoSubtitulo">
             {% block productoSubtitulo %}
-            {% endblock productoSubtitulo%}
+            {% endblock productoSubtitulo %}
         </p>
 
     {% block productoContenido %}

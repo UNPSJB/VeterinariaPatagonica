@@ -23,7 +23,7 @@ Actualmente disponibles
 
     <p> Los siguientes formasDePago estan habilitados.  </p>
 
-    {% if formasDePago %}
+    {% if formasDePagos %}
             <div class="table-responsive" id="tabla">
                 <table class="table formaDePagoListado">
                     <thead>
@@ -33,17 +33,17 @@ Actualmente disponibles
                         </tr>
                     </thead>
                     <tbody>
-                        {% for formaDePago in formasDePago %}
+                        {% for formaDePago in formasDePagos %}
                             <tr>
                                 <td> <p>{{formaDePago.nombre }}</p></td>
                                 <td> <p align="justify">
-                                        <a  href="{% url 'formasDePago:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'formasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-search"> </i>
                                         </a>
-                                        <a href="{% url 'formasDePago:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'formasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'formasDePago:formaDePagoDeshabilitar' formaDePago.id%}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'formasDePagos:formaDePagoDeshabilitar' formaDePago.id%}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-minus"> </i>
                                         </a>
                                 </p> </td>
@@ -59,7 +59,7 @@ Actualmente disponibles
 
     {% endif %}
 
-    <a  id ="formaDePagoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'formasDePago:formaDePagoCrear' %}"> Crear </a>
+    <a  id ="formaDePagoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'formasDePagos:formaDePagoCrear' %}"> Crear </a>
 
 </div>
 

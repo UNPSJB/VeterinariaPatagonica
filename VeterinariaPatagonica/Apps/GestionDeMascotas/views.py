@@ -90,8 +90,8 @@ def ver(request, id):
 
     template = loader.get_template('GestionDeMascotas/ver.html')
     contexto = {
-    'mascota': mascotas,
-    'usuario': request.user
+        'mascota': mascotas,
+        'usuario': request.user
     }
     return HttpResponse(template.render(contexto, request))
 

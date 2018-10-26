@@ -23,9 +23,9 @@ Muestra datos del tipo de atencion
             <p>Identificador: {{ tipoDeAtencion.id }}</p>
             <p>Nombre: {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
             <p>Descripcion: {{ tipoDeAtencion.descripcion }}</p>
-            <p>Lugar de atencion: {{ tipoDeAtencion.lugarStr }}</p>
+            <p>Lugar de atencion: {{ tipoDeAtencion.get_lugar_display }}</p>
             <p>Emergencia: {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
-            <p>Tipo de servicio: {{ tipoDeAtencion.tipoDeServicioStr }}</p>
+            <p>Tipo de servicio: {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
             <p>Franja horaria: de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
             <p>Recargo: {{ tipoDeAtencion.recargo|floatformat:"-2" }}%</p>
         </div>
