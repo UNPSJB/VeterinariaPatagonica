@@ -1,83 +1,81 @@
-
-
-.productos-secciones {
+.productosSecciones {
   padding: 0px;
   margin-top: 0px;
   text-align: right;
 }
 
-.productos-titulo {
+.productoTitulo {
   margin-top: 10px;
   margin-bottom:3px;
   font-weight: normal;
 }
 
-.productos-subtitulo {
+.productoSubtitulo {
   margin: 3px 0px 20px 0px;
   font-style: italic;
   color: #555;
 }
 
-.productos-linea-titulo {
+.productoLineaTitulo {
   border-bottom: 1px solid #DDD;
 }
 
-.productos-cuerpo {
+.productoCuerpo {
   padding: 0px;
   margin-top: 5px;
 }
 
-#productos-habilitados-crear {
+productoHabilitadosCrear {
   clear: both;
   margin-bottom: 10px;
 }
 
-.productos-etiqueta {
+.productosEtiqueta {
   text-align: left;
   font-weight: bold;
   margin: 0px 0px 5px 0px;
   padding: 0px;
 }
 
-.productos-aviso-eliminacion {
+.producto-aviso-eliminacion {
   text-align: center;
   text-weight: bold;
   margin: 20px 0px 20px 0px;
 }
 
-.productos-item-acciones a {
+.producto-item-acciones a {
   margin: 10px 0px 10px 0px;
 }
 
-.productos-accion-listado {
+.producto-accion-listado {
   font-size: 110%;
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
-.productos-accion-listado:hover {
+.producto-accion-listado:hover {
   text-decoration: none;
 }
 
-.productos-listado thead {
+.productoListado thead {
   background-color: transparent;
   color: #2A3F54;
 }
 
-.productos-listado,
-.productos-listado thead,
-.productos-listado thead tr,
-.productos-listado thead tr th,
-.productos-listado tbody,
-.productos-listado tbody tr,
-.productos-listado tbody tr, {
+.productosListado,
+.productoListado thead,
+.productoListado thead tr,
+.productoListado thead tr th,
+.productoListado tbody,
+.productoListado tbody tr,
+.productoListado tbody tr, {
   border: 0px solid #FFF;
 }
 
-table.table.productos-listado {
+table.table.productoListado  {
   border: 0px solid #FFF;
 }
 
-.productos-listado>tbody>tr>td {
+.productoListado>tbody>tr>td {
     padding-top: 9px;
     padding-left: 4px;
     border-top: 1px solid #DDD !important;

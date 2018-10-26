@@ -89,7 +89,7 @@ class Producto (models.Model):
         decimal_places = MAX_DECIMALES)
 
     precioDeCompra = models.DecimalField(
-        help_text="Precio del Producto",
+        help_text="Precio de Compra del Producto",
         max_digits = MAX_DIGITOS,
         decimal_places = MAX_DECIMALES)
 
