@@ -1,9 +1,23 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from VeterinariaPatagonica import tools
 
 # Create your models here.
 
+#Esta clase se comunica con la BD
+class BaseClienteManager(models.Manager):
+    pass
+
+ClienteManager = BaseClienteManager.from_queryset(tools.BajasLogicasQuerySet)
+
 class Cliente (models.Model):
+
+    MAPPER = {
+        "dniCuit": "dniCuit__icontains",
+        "nombres": "nombres__icontains",
+        "apellidos": "apellidos__icontains",
+        #"duenio": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+    }
 
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     REGEX_NUMERO = '^[0-9]{1,12}$'
@@ -147,6 +161,8 @@ class Cliente (models.Model):
     )
 
     baja = models.BooleanField(default=False)
+
+    objects = ClienteManager()
 
     def __str__ (self):
         return "{0}, {1}".format(self.nombres,self.apellidos)

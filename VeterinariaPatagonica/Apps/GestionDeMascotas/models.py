@@ -1,22 +1,15 @@
 from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import Q
-
 from Apps.GestionDeClientes import models as gcmodels
+from VeterinariaPatagonica import tools
 
 # Create your models here.
 
 class BaseMascotaManager(models.Manager):
     pass
 
-class BajasLogicasQuerySet(models.QuerySet):
-    def habilitados(self):
-        return self.filter(baja=False)
-
-    def deshabilitados(self):
-        return self.filter(baja=True)
-
-MascotaManager = BaseMascotaManager.from_queryset(BajasLogicasQuerySet)
+MascotaManager = BaseMascotaManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Mascota(models.Model):
     MAPPER = {
@@ -87,11 +80,6 @@ class Mascota(models.Model):
             'blank': "La especie es obligatorio"
         }
     )
-    baja = models.BooleanField(default=False)
-    objects = MascotaManager()
-
-    def __str__(self):
-        return "{0}, {1}".format(self.nombre, self.especie)
 
     raza = models.CharField(
         help_text="Especie de la Mascota",
@@ -105,3 +93,13 @@ class Mascota(models.Model):
             'max_length': "La especie puede tener a lo sumo {} caracteres".format(MAXESPECIE),
             'blank': "La especie es obligatorio"}
     )
+
+
+    baja = models.BooleanField(default=False)
+
+    objects = MascotaManager()
+
+    def __str__(self):
+        return "{0}, {1}".format(self.nombre, self.especie)
+
+
