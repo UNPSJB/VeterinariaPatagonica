@@ -36,11 +36,11 @@ Actualmente disponibles
                     {% for producto in productos %}
                         <tr>
                             <td> <p> {{ producto.nombre }} </p></td>
-                            <td> <p align="center">
+                            <td> <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
                                         <i class="glyphicon glyphicon-search"> </i>
                                     </a>
-                                    <a href="{% url 'productos:productoCrear' producto.id %}" class="btn btn-xs btn-default">
+                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default">
                                         <i class="glyphicon glyphicon-edit"> </i>
                                     </a>
                                     <a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default">
@@ -63,4 +63,4 @@ Actualmente disponibles
 
 </div>
 
-{% endblock productoContenido %}
+{% endblock %}

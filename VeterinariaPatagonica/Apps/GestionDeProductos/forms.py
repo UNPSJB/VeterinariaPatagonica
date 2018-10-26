@@ -1,10 +1,11 @@
 from django import forms
 from .models import Producto
+
 from django.core.validators import RegexValidator
-#from django.apps import apps
+
 
 def ProductoFormFactory(producto=None):
-    campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'rubro' ]
+    campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro' ]
 
     if producto is  None:
         campos.insert(0, 'nombre')
@@ -17,6 +18,7 @@ def ProductoFormFactory(producto=None):
                 'nombre':'Nombre',
                 'formaDePresentacion':'FormaDePresentacion',
                 'precioPorUnidad':'PrecioPorUnidad',
+                'precioDeCompra' : 'PrecioDeCompra',
                 'rubro':'Rubro',
                 'baja':'Baja'
             }
@@ -30,19 +32,20 @@ def ProductoFormFactory(producto=None):
 
             widgets = {
                 'nombre' : forms.TextInput(),
-                'formaDePresentacion' : forms.TextInput(),
+                'formaDePresentacion' : forms.Select(choices=Producto.UNIDADES),
                 'precioPorUnidad': forms.TextInput(),
+                'precioDeCompra': forms.TextInput(),
                 'rubro' : forms.TextInput(),
             }
 
         def clean_nombre(self):
             dato = self.data["nombre"]
             try:
-                return lforms.CharField().clean(dato)
+                return forms.CharField().clean(dato)
             except forms.ValidationError:
                 pass
 
-            return lforms.CharField().clean(dato)
+            return forms.CharField().clean(dato)
 
         def clean(self):
             cleaned_data = super().clean()
