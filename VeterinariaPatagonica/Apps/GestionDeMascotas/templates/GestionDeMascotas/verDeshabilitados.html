@@ -42,7 +42,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td>{{ mascota.cliente }}, {{mascota.especie }}, {{mascota.nombre }}</td>
+                                <td>{{ mascota.cliente }}, {{mascota.nombre }}</td>
                                 <td >
 			                        <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">

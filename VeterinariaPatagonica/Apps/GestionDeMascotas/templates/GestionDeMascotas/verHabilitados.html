@@ -27,7 +27,10 @@ Actualmente disponibles
         <input name="nombre" placeholder="nombre">
         <input name="patente" placeholder="patente">
         <input name="especie" placeholder="especie">
-        <button type="submit">GO</button>
+
+        <button type="submit">
+            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+        </button>
     </form>
 
 
@@ -43,10 +46,10 @@ Actualmente disponibles
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td> <p>{{ mascota.cliente }}, {{mascota.especie }}, {{mascota.nombre }} </p></td>
+                                <td> <p>{{ mascota.cliente }}, {{mascota.nombre }} </p></td>
                                 <td> <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-search"> </i>
+                                                <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
                                             <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
