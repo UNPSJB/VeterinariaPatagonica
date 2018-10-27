@@ -23,6 +23,16 @@ Actualmente disponibles
 
     <p> Los siguientes mascotas estan habilitados.  </p>
 
+    <form action="" method="GET">
+        <input name="nombre" placeholder="nombre">
+        <input name="patente" placeholder="patente">
+        <input name="duenio" placeholder="dueño">
+        <input name="especie" placeholder="especie">
+
+        <button type="submit">
+            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+        </button>
+    </form>
 
 
     {% if mascotas %}
@@ -30,17 +40,17 @@ Actualmente disponibles
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-nombre"> Mascotas </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td> <p>{{ mascota.cliente }}, {{mascota.especie }}, {{mascota.nombre }} </p></td>
+                                <td> <p>{{ mascota.cliente }}, {{mascota.nombre }} </p></td>
                                 <td> <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-search"> </i>
+                                                <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
                                             <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
@@ -54,8 +64,7 @@ Actualmente disponibles
                     </tbody>
                 </table>
             </div>
-    <input name="q" placeholder="ingrese nombre dueño" id="buscador">
-    <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+    <!--agregar boton filtrar-->
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}

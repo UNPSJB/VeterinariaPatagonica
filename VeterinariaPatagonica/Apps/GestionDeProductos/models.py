@@ -3,14 +3,17 @@ from django.db import models
 from django.apps import apps
 from datetime import date, timedelta, time, datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+from Apps.GestionDeRubros import models as grmodels
 # Create your models here.
 
 class Producto (models.Model):
 
     MAX_NOMBRE = 50
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
+    REGEX_NUMERO = '^[0-9]{1,12}$'
     MAX_DIGITOS = 7
     MAX_DECIMALES = 2
+    MAXDESCRIPCION= 150
 
 
 
@@ -65,19 +68,45 @@ class Producto (models.Model):
     nombre = models.CharField(
         help_text="Nombre del Producto",
         max_length = MAX_NOMBRE,
-        unique = True,
+        unique = False,
         null = False,
         blank = False,
         validators = [RegexValidator(regex=REGEX_NOMBRE)],
         error_messages = {
-            'unique' : "Otro Producto tiene ese nombre",
             'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
             'blank' : "El nombre es obligatorio"
             })
 
+    marca = models.CharField(
+        help_text="Marca del Producto",
+        max_length = MAX_NOMBRE,
+        unique = False,
+        null = False,
+        blank = False,
+        validators = [RegexValidator(regex=REGEX_NOMBRE)],
+        error_messages = {
+            'max_length' : "La marca puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
+            'blank' : "La marca es obligatoria"
+            })
+
+    stock = models.IntegerField(
+        help_text="Stock del Producto",
+        #max_digits = MAX_DIGITOS,
+        #unique = False,
+        #null = True,
+        #blank = True,
+        #validators = [RegexValidator(regex=REGEX_NUMERO)],
+        #error_messages = {
+            #'max_digits' : "El stock puede tener a lo sumo {} digitos".format(MAX_DIGITOS),
+         #   }
+    )
+
     formaDePresentacion = models.PositiveSmallIntegerField(
         help_text="Forma de Presentacion del Producto",
         choices=UNIDADES,
+        unique=False,
+        null=False,
+        blank=False,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
             'blank' : "La unidad de medida es obligatoria"
@@ -91,14 +120,37 @@ class Producto (models.Model):
     precioDeCompra = models.DecimalField(
         help_text="Precio de Compra del Producto",
         max_digits = MAX_DIGITOS,
+        unique=False,
+        null=False,
+        blank=False,
         decimal_places = MAX_DECIMALES)
 
-    #Cambiar cuando tengamos la clase Rubro.
-    rubro = models.CharField(
+
+    rubro = models.ForeignKey(
+        grmodels.Rubro,
         help_text="Nombre del rubro al que pertenece",
+        unique=False,
+        null=False,
+        blank=False,
+        on_delete=models.CASCADE,
         max_length = MAX_NOMBRE,
-        blank = False
-        )
+        error_messages={
+            'blank': "El rubro es obligatorio"
+        }
+    )
+
+
+    descripcion = models.TextField(
+        help_text="Descripcion del Rubro",
+        max_length=MAXDESCRIPCION,
+        unique=False,
+        null=True,
+        blank=True,
+        primary_key=False,
+        error_messages={
+            'max_length': "La descripcion puede tener a lo sumo {} caracteres".format(MAXDESCRIPCION),
+        }
+    )
 
     baja = models.BooleanField(
         #help_text='Deshabilitado',

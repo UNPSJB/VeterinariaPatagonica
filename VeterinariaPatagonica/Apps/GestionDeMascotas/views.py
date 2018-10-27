@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
+from VeterinariaPatagonica import tools
 
 def mascota(request):
     context = {}
@@ -89,13 +90,16 @@ def ver(request, id):
 
     template = loader.get_template('GestionDeMascotas/ver.html')
     contexto = {
-    'mascota': mascotas,
-    'usuario': request.user
+        'mascota': mascotas,
+        'usuario': request.user
     }
     return HttpResponse(template.render(contexto, request))
 
+
+
 def verHabilitados(request):
-    mascotas = Mascota.objects.filter(baja=False)
+    mascotas = Mascota.objects.habilitados()
+    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
     contexto = {
         'mascotas': mascotas,
@@ -104,38 +108,12 @@ def verHabilitados(request):
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    mascotas = Mascota.objects.filter(baja=True)
+    mascotas = Mascota.objects.deshabilitados()
+    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
+
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
     contexto = {
         'mascotas': mascotas,
         'usuario': request.user,
     }
     return HttpResponse(template.render(contexto, request))
-
-
-
-def busqueda(request):
-    '''
-    mascotas = Mascota.objects.filter(nombre=nombre)
-    template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
-    contexto = {
-        'mascotas': mascotas,
-        'usuario': request.user,
-    }
-    return HttpResponse(template.render(contexto, request))
-
-    '''
-    mascotas = request.GET.get('mascota', '')
-    mascotas = Mascota.objects.filter(nombre=mascota)
-    return render(request, 'template_busqueda.html', {'mascotas': mascotas})
-
-
-'''from django.db.models import Q
-def busqueda(self):
-   q = request.GET.get('q', '')
-
-   querys = (Q(ciudad__nombre__icontains=q) | Q(ciudad__departamento__nombre__icontains=q))
-   querys |= Q(nombre__icontains=q)
-
-   eventos = Evento.objects.filter(querys)
-   return render(request, 'template_busqueda.html', {'eventos': eventos}) '''

@@ -3,11 +3,6 @@ from .models import Mascota
 
 from django.core.validators import RegexValidator
 
-#from localflavor.ar import forms as lforms
-
-#from localflavor.ar import forms as lforms
-
-
 #TIMEINPUT_FMTS = [ "%H:%M" ]
 
 
@@ -25,11 +20,11 @@ cliente = forms.ChoiceField(
         'required': "el cliente es obligatorio"
     },
     validators=[],
-    #choices=apps.get_model('GestionDeClientes', 'cliente', require_ready=False).TIPO,
+
 )
 def MascotaFormFactory(mascota=None):
     campos = [ 'cliente',
-               #'fechaNacimiento',
+               'fechaNacimiento',
                'nombre',
                'raza',
                'especie',
@@ -39,6 +34,7 @@ def MascotaFormFactory(mascota=None):
 
 
     class MascotaForm(forms.ModelForm):
+        print(dir(Mascota))
         class Meta:
             model = Mascota
             fields = campos
@@ -63,7 +59,7 @@ def MascotaFormFactory(mascota=None):
             widgets = {
                 'nombre' : forms.TextInput(),
                 'cliente': forms.Select(attrs={'class': 'form-control'}),
-                'fechaNacimiento': forms.DateTimeField,
+                'fechaNacimiento': forms.DateTimeInput(),
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),
             }
@@ -71,4 +67,16 @@ def MascotaFormFactory(mascota=None):
         def clean(self):
             cleaned_data = super().clean()
             return cleaned_data
+
+        def __init__(self, *args, **kwargs):
+
+            super().__init__(*args, **kwargs)
+
+            # [TODO] Averiguar una mejor manera de hacer esto:
+            for field in self.fields.values():
+                if not isinstance(field.widget, forms.CheckboxInput):
+                    field.widget.attrs.update({
+                        'class': 'form-control'
+                    })
+
     return MascotaForm

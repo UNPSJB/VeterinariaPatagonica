@@ -3,13 +3,27 @@ from .models import Producto
 
 from django.core.validators import RegexValidator
 
+'''
 class creacionModelForm(forms.ModelForm):
     class meta:
         model = Producto
+'''
 
+rubro = forms.ChoiceField(
+    required=True,
+    label='rubro',
+    widget=forms.Select,
+    help_text='Rubro',
+    error_messages={
+        'invalid_choice': "La opcion no es valida",
+        'required': "el rubro es obligatorio"
+    },
+    validators=[],
+
+)
 
 def ProductoFormFactory(producto=None):
-    campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro' ]
+    campos = [ 'nombre', 'marca', 'stock', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro', 'descripcion' ]
 
     if producto is  None:
         campos.insert(1, 'nombre') #0
@@ -20,10 +34,13 @@ def ProductoFormFactory(producto=None):
             fields = campos
             labels = {
                 'nombre':'Nombre',
+                'marca': 'Marca',
+                'stock': 'Stock',
                 'formaDePresentacion':'FormaDePresentacion',
                 'precioPorUnidad':'PrecioPorUnidad',
                 'precioDeCompra' : 'PrecioDeCompra',
                 'rubro':'Rubro',
+                'descripcion':'Descripcion',
                 'baja':'Baja'
             }
 
@@ -39,7 +56,7 @@ def ProductoFormFactory(producto=None):
                 'formaDePresentacion' : forms.Select(choices=Producto.UNIDADES),
                 'precioPorUnidad': forms.TextInput(),
                 'precioDeCompra': forms.TextInput(),
-                'rubro' : forms.TextInput(),
+                'rubro' : forms.Select(attrs={'class': 'form-control'}),
             }
 
         def clean_nombre(self):

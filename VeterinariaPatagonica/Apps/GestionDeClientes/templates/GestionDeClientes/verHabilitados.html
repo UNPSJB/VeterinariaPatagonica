@@ -23,6 +23,13 @@ Actualmente disponibles
 
     <p> Los siguientes clientes estan habilitados.  </p>
 
+    <form action="" method="GET">
+        <input name="dniCuit" placeholder="Dni/Cuit">
+        <input name="nombres" placeholder="nombres">
+        <input name="apellidos" placeholder="apellidos">
+        <button type="submit">GO</button>
+    </form>
+
     {% if clientes %}
             <div class="table-responsive" id="tabla">
                 <table class="table clienteListado">
@@ -38,7 +45,7 @@ Actualmente disponibles
                                 <td> <p>{{ cliente.apellidos }}, {{cliente.nombres }}</p></td>
                                 <td> <p align="justify">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-search"> </i>
+                                            <i class="glyphicon glyphicon-eye-open"> </i>
                                         </a>
                                         <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
