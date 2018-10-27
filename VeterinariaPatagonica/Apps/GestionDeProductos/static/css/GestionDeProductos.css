@@ -1,4 +1,4 @@
-.productosSecciones {
+.productoSecciones {
   padding: 0px;
   margin-top: 0px;
   text-align: right;
@@ -30,14 +30,14 @@ productoHabilitadosCrear {
   margin-bottom: 10px;
 }
 
-.productosEtiqueta {
+.productoEtiqueta {
   text-align: left;
   font-weight: bold;
   margin: 0px 0px 5px 0px;
   padding: 0px;
 }
 
-.producto-aviso-eliminacion {
+.productos-aviso-eliminacion {
   text-align: center;
   text-weight: bold;
   margin: 20px 0px 20px 0px;
@@ -61,7 +61,7 @@ productoHabilitadosCrear {
   color: #2A3F54;
 }
 
-.productosListado,
+.productoListado,
 .productoListado thead,
 .productoListado thead tr,
 .productoListado thead tr th,

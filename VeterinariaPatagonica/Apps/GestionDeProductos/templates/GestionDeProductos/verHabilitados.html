@@ -2,19 +2,19 @@
 
 {% block titulo %}
 Gestion de Productos | Ver Habilitados
-{% endblock titulo %}
+{% endblock %}
 
 {% block productoTitulo %}
 Productos Habilitados
-{% endblock productoTitulo %}
+{% endblock %}
 
 {% block productoSubtitulo %}
 Actualmente disponibles
-{% endblock productoSubtitulo %}
+{% endblock %}
 
 {% block secciones %}
 {% include './seccionesSnippet.html' with pagina='verHabilitados' %}
-{% endblock secciones %}
+{% endblock %}
 
 {% block productoContenido %}
 
@@ -55,7 +55,7 @@ Actualmente disponibles
 
     {% else %}
 
-        <p> No hay Productos habilitados</p>
+        <p> No hay Productos habilitados </p>
 
     {% endif %}
 

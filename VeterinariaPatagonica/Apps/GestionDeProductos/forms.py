@@ -3,12 +3,16 @@ from .models import Producto
 
 from django.core.validators import RegexValidator
 
+class creacionModelForm(forms.ModelForm):
+    class meta:
+        model = Producto
+
 
 def ProductoFormFactory(producto=None):
     campos = [ 'nombre', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro' ]
 
     if producto is  None:
-        campos.insert(0, 'nombre')
+        campos.insert(1, 'nombre') #0
 
     class ProductoForm(forms.ModelForm):
         class Meta:
@@ -25,7 +29,7 @@ def ProductoFormFactory(producto=None):
 
             error_messages = {
                 'nombre' : {
-                    'max_length': ("Nombre demasiados largo"),
+                    'max_length': ("Nombre demasiado largo"),
                     'unique': ("Ese nombre ya existe"),
                 }
             }
@@ -50,6 +54,17 @@ def ProductoFormFactory(producto=None):
         def clean(self):
             cleaned_data = super().clean()
             return cleaned_data
+
+        def __init__(self, *args, **kwargs):
+
+            super().__init__(*args, **kwargs)
+
+            # [TODO] Averiguar una mejor manera de hacer esto:
+            for field in self.fields.values():
+                if not isinstance(field.widget, forms.CheckboxInput):
+                    field.widget.attrs.update({
+                        'class': 'form-control'
+                    })
 
     return ProductoForm
 

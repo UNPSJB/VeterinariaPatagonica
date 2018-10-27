@@ -9,12 +9,12 @@ Productos Deshabilitados
 {% endblock %}
 
 {% block productoSubtitulo %}
-Actualmente <strong> no </strong> disponibles
-{% endblock productoSubtitulo %}
+Actualmente <strong>no</strong> disponibles
+{% endblock %}
 
 {% block secciones %}
 {% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
-{% endblock secciones %}
+{% endblock %}
 
 {% block productoContenido %}
 
@@ -35,8 +35,9 @@ Actualmente <strong> no </strong> disponibles
                 <tbody>
                     {% for producto in productos %}
                         <tr>
-                            <td> {{ producto.nombre }}</td>
-                            <td> <p align="center">
+                            <td>{{ producto.nombre }}</td>
+                            <td>
+                                <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
                                         <i class="glyphicon glyphicon-search"> </i>
                                     </a>
@@ -49,7 +50,8 @@ Actualmente <strong> no </strong> disponibles
                                     <a href="{% url 'productos:productoEliminar' producto.id %}" class="btn btn-xs btn-default">
                                         <i class="glyphicon glyphicon-remove"> </i>
                                     </a>
-                            </p> </td>
+                                </p>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -58,10 +60,10 @@ Actualmente <strong> no </strong> disponibles
 
     {% else %}
 
-        <p> No hay Productos habilitados </p>
+        <p> No hay Productos deshabilitados </p>
 
     {% endif %}
 
 </div>
 
-{% endblock productoContenido %}
+{% endblock %}

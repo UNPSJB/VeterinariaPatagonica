@@ -2,15 +2,15 @@
 
 {% block titulo %}
 Gestion de Productos | Ver Producto
-{% endblock titulo %}
+{% endblock %}
 
 {% block productoTitulo %}
 Ver Producto
-{% endblock productoTitulo %}
+{% endblock %}
 
 {% block productoSubtitulo %}
 Muestra datos del producto
-{% endblock productoSubtitulo %}
+{% endblock %}
 
 {% block productoContenido %}
 
@@ -20,8 +20,8 @@ Muestra datos del producto
 
         {% if producto %}
         <div class="well">
-            <p>Identificador: {{ producto.id }}</p>
-            <p>Nombre: {{ producto.nombre }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+            <p>Identificador: {{ producto.id }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+            <p>Nombre: {{ producto.nombre }}</p>
             <p>Forma De Presentacion: {{ producto.formaDePresentacion }}</p>
             <p>Precio Por Unidad: {{ producto.precioPorUnidad }}</p>
             <p>Rubro: {{ producto.rubro }}</p>
