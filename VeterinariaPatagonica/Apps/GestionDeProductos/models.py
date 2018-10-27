@@ -1,8 +1,7 @@
 from django.db import models
-
-from django.apps import apps
-from datetime import date, timedelta, time, datetime
-from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator
+#from django.apps import apps
+#from datetime import date, timedelta, time, datetime
+from django.core.validators import RegexValidator #MinValueValidator, #MaxValueValidator
 from Apps.GestionDeRubros import models as grmodels
 # Create your models here.
 

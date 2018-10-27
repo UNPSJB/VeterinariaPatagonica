@@ -1,27 +1,33 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
+{% load static %}
 
 {% block titulo %}
 Gestion de Productos | Crear Producto
-{% endblock titulo %}
+{% endblock %}
 
 {% block productoTitulo %}
 Nuevo Producto
-{% endblock productoTitulo %}
+{% endblock %}
 
 {% block productoSubtitulo %}
 Agrega un Producto al listado
-{% endblock productoSubtitulo %}
+{% endblock %}
 
 {% block productoContenido %}
 
     <div class="productoCuerpo">
-        <form class="form-horizontal" action="" method="post">
+        <form class="form-horizontal formulario" action="" method="post">
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar" %}
 
         </form>
     </div>
 
-{% endblock productoContenido %}
+{% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static 'js/GestionDeProductos.js' %}"></script>
+{% endblock paginaJavascript %}

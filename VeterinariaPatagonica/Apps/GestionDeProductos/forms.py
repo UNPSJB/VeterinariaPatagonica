@@ -3,6 +3,12 @@ from .models import Producto
 
 from django.core.validators import RegexValidator
 
+'''
+class creacionModelForm(forms.ModelForm):
+    class meta:
+        model = Producto
+'''
+
 rubro = forms.ChoiceField(
     required=True,
     label='rubro',
@@ -20,7 +26,7 @@ def ProductoFormFactory(producto=None):
     campos = [ 'nombre', 'marca', 'stock', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro', 'descripcion' ]
 
     if producto is  None:
-        campos.insert(0, 'nombre')
+        campos.insert(1, 'nombre') #0
 
     class ProductoForm(forms.ModelForm):
         class Meta:
@@ -40,7 +46,7 @@ def ProductoFormFactory(producto=None):
 
             error_messages = {
                 'nombre' : {
-                    'max_length': ("Nombre demasiados largo"),
+                    'max_length': ("Nombre demasiado largo"),
                     'unique': ("Ese nombre ya existe"),
                 }
             }
@@ -76,7 +82,7 @@ def ProductoFormFactory(producto=None):
                     field.widget.attrs.update({
                         'class': 'form-control'
                     })
-                    
+
     return ProductoForm
 
 '''

@@ -11,7 +11,7 @@ urlpatterns = [
     path('deshabilitar/<int:id>/', productos_views.deshabilitar, name='productoDeshabilitar'),
     path('eliminar/<int:id>/', productos_views.eliminar, name='productoEliminar'),
     path('ver/<int:id>/', productos_views.ver, name='productoVer'),
-    path('', productos_views.verHabilitados, name='productoVerHabilitados'),
+    path('verHabilitados/', productos_views.verHabilitados, name='productoVerHabilitados'),
     path('verDeshabilitados/', productos_views.verDeshabilitados, name='productoVerDeshabilitados'),
 
 ]
