@@ -10,10 +10,10 @@ from django.core.validators import RegexValidator
     class meta:
         model = Mascota'''
 
-cliente = forms.ChoiceField(
+cliente = forms.DateField(
     required=True,
     label='cliente',
-    widget=forms.Select,
+    widget=forms.CharField,
     help_text='Cliente',
     error_messages={
         'invalid_choice': "La opcion no es valida",
@@ -34,7 +34,7 @@ def MascotaFormFactory(mascota=None):
 
 
     class MascotaForm(forms.ModelForm):
-        print(dir(Mascota))
+
         class Meta:
             model = Mascota
             fields = campos
@@ -59,7 +59,7 @@ def MascotaFormFactory(mascota=None):
             widgets = {
                 'nombre' : forms.TextInput(),
                 'cliente': forms.Select(attrs={'class': 'form-control'}),
-                'fechaNacimiento': forms.DateTimeInput(),
+                'fechaNacimiento': forms.DateInput(),
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),
             }

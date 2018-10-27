@@ -35,7 +35,7 @@ def verHabilitados(request):
     producto = Producto.objects.filter(baja=False)
     template = loader.get_template('GestionDeProductos/verHabilitados.html')
     context = {
-        'producto': producto,
+        'productos': producto,
         'usuario': request.user
     }
     return HttpResponse(template.render(context, request))
@@ -44,7 +44,7 @@ def verDeshabilitados(request):
     producto = Producto.objects.filter(baja=True)
     template = loader.get_template('GestionDeProductos/verDeshabilitados.html')
     context = {
-        'producto' : producto,
+        'productos' : producto,
         'usuario' : request.user
     }
     return HttpResponse(template.render( context, request ))
