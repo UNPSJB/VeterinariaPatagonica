@@ -12,7 +12,7 @@ def productos(request):
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeProductos.add_Insumo', raise_exception=True)
+@permission_required('GestionDeProductos.add_Producto', raise_exception=True)
 def modificar(request, id = None):
     producto = Producto.objects.get(id=id) if id is not None else None
     ProductoForm = ProductoFormFactory(producto)
@@ -29,7 +29,7 @@ def modificar(request, id = None):
         context['formulario'] = ProductoForm(instance=producto)
     template = loader.get_template('GestionDeProductos/formulario.html')
 
-    return HttpResponse(template.render( context, request) )
+    return HttpResponse(template.render( context, request))
 
 def verHabilitados(request):
     producto = Producto.objects.filter(baja=False)
@@ -113,7 +113,7 @@ def eliminar(request, id):
             'id' : id
         }
 
-    return HttpResponse( template.render( context, request) )
+        return HttpResponse( template.render( context, request) )
 
 
 
