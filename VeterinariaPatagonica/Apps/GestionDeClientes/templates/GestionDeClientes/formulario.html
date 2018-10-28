@@ -20,7 +20,13 @@ Agrega un Cliente al listado
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2="Guardar y Crear Mascota"%}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos"%}
+            <div class="col-sm-offset-4 col-sm-8">
+                <button type="submit" class="btn btn-sm btn-default"> 
+                    Guardar Datos y Crear Mascota
+                    <a href="{% url 'mascotas:mascotaCrear' %}"></a>
+                </button>
+            </div>
 
         </form>
     </div>

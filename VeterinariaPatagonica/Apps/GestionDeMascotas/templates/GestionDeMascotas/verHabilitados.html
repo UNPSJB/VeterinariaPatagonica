@@ -9,7 +9,7 @@ Mascotas Habilitadas
 {% endblock %}
 
 {% block mascotaSubtitulo %}
-Actualmente disponibles para ser asignados a mascotas
+Actualmente disponibles
 {% endblock %}
 
 {% block secciones %}
@@ -23,28 +23,39 @@ Actualmente disponibles para ser asignados a mascotas
 
     <p> Los siguientes mascotas estan habilitados.  </p>
 
-    {% if mascota %}
+    <form action="" method="GET">
+        <input name="nombre" placeholder="nombre">
+        <input name="patente" placeholder="patente">
+        <input name="duenio" placeholder="dueño">
+        <input name="especie" placeholder="especie">
+
+        <button type="submit">
+            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+        </button>
+    </form>
+
+
+    {% if mascotas %}
             <div class="table-responsive" id="tabla">
-                <table class="table mascotasListado">
+                <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre"> Mascotas </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for mascota in mascota%}
+                        {% for mascota in mascotas %}
                             <tr>
-                                <td> <p>{{ mascota.nombre }}, {{mascota.cliente }}</p></td>
-                                <td> <p align="center">
-                                            <a  href="{% url 'mascota:mascotaVer' mascota.patente %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-search"> </i>
+                                <td> <p>{{ mascota.cliente }}, {{mascota.nombre }} </p></td>
+                                <td> <p align="justify">
+                                            <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
+                                                <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaModificar' mascota.patente %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaDeshabilitar' mascota.patente %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
                                 </p> </td>
@@ -53,6 +64,7 @@ Actualmente disponibles para ser asignados a mascotas
                     </tbody>
                 </table>
             </div>
+    <!--agregar boton filtrar-->
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}

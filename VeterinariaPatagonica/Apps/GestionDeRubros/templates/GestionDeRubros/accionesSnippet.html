@@ -1,0 +1,17 @@
+<div class="rubroItemAcciones">
+
+        {% if seccion == 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroVer' item.id %}">Ver</a>
+        {% endif %}
+
+        {% if seccion != 'modificar' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroModificar' item.id %}">Modificar</a>
+        {% endif %}
+
+        {% if item.baja == False %}
+            <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroDeshabilitar' item.id %}">Deshabilitar</a>
+        {% else %}
+            <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroHabilitar' item.id %}">Habilitar</a>
+        {% endif %}
+
+</div>

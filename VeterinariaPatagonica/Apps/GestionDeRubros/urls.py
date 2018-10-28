@@ -17,6 +17,5 @@ urlpatterns = [
     path('ver/<int:id>/', rubros_views.ver, name="rubroVer"),
     path('verHabilitados/', rubros_views.verHabilitados, name="rubroVerHabilitados"),
     path('verDeshabilitados/', rubros_views.verDeshabilitados, name="rubroVerDeshabilitados"),
-    #path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
 ]
 

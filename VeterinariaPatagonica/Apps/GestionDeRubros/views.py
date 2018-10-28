@@ -6,19 +6,34 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Rubro
-#from .forms import ClienteFormFactory
+from .forms import RubroForm
 
 
 def rubros(request):
 
-    pass
+    context = {}#Defino el contexto.
+    template = loader.get_template('GestionDeRubros/GestionDeRubros.html')#Cargo el template desde la carpeta templates/GestionDeRubros.
+    return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
-    
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeRubros.add_Rubro', raise_exception=True)
 def modificar(request, id = None):
 
-    pass
+    rubro = Rubro.objects.get(id=id) if id is not None else None
+    context = {'usuario': request.user}
+    if request.method == 'POST':
+        formulario = RubroForm(request.POST, instance=rubro)
+        print(formulario)
+        if formulario.is_valid():
+            rubro = formulario.save()
+            return HttpResponseRedirect("/GestionDeRubros/ver/{}".format(rubro.id))
+        else:
+            context['formulario'] = formulario
+    else:
+        context['formulario'] = RubroForm(instance=rubro)
+    template = loader.get_template('GestionDeRubros/formulario.html')
+    return HttpResponse(template.render(context, request))
 
 
 @login_required(redirect_field_name='proxima')

@@ -1,0 +1,82 @@
+.formaDePagoSecciones {
+  padding: 0px;
+  margin-top: 0px;
+  text-align: right;
+}
+
+.formaDePagoTitulo {
+  margin-top: 10px;
+  margin-bottom:3px;
+  font-weight: normal;
+}
+
+.formaDePagoSubtitulo {
+  margin: 3px 0px 20px 0px;
+  font-style: italic;
+  color: #555;
+}
+
+.formaDePagoLineaTitulo {
+  border-bottom: 1px solid #DDD;
+}
+
+.formaDePagoCuerpo {
+  padding: 0px;
+  margin-top: 5px;
+}
+
+.formaDePagoHabilitadosCrear {
+  clear: both;
+  margin-bottom: 10px;
+}
+
+.formaDePagoEtiqueta {
+  text-align: left;
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+  padding: 0px;
+}
+
+.formaDePago-aviso-eliminacion {
+  text-align: center;
+  text-weight: bold;
+  margin: 20px 0px 20px 0px;
+}
+
+.formaDePago-item-acciones a {
+  margin: 10px 0px 10px 0px;
+}
+
+.formaDePago-accion-listado {
+  font-size: 110%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.formaDePago-accion-listado:hover {
+  text-decoration: none;
+}
+
+.formaDePagoListado thead {
+  background-color: transparent;
+  color: #2A3F54;
+}
+
+.formaDePagoListado,
+.formaDePagoListado thead,
+.formaDePagoListado thead tr,
+.formaDePagoListado thead tr th,
+.formaDePagoListado tbody,
+.formaDePagoListado tbody tr,
+.formaDePagoListado tbody tr, {
+  border: 0px solid #FFF;
+}
+
+table.table.formaDePagoListado {
+  border: 0px solid #FFF;
+}
+
+.formaDePagoListado>tbody>tr>td {
+    padding-top: 9px;
+    padding-left: 4px;
+    border-top: 1px solid #DDD !important;
+}

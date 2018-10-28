@@ -27,10 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1',"localhost"]
 
-
-#ALLOWED_HOSTS = [ 'veterinaria-patagonica.com', '127.0.0.1',"localhost"]
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -40,8 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeClientes',
-    'Apps.GestionDeInsumos',
+    'Apps.GestionDeProductos',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeServicios',
     'Apps.GestionDePracticas',
@@ -132,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = []
 
 LANGUAGE_CODE = 'es-ar'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Argentina/Buenos_Aires'
 
 USE_I18N = True
 

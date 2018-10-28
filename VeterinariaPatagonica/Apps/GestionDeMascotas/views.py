@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
+from VeterinariaPatagonica import tools
 
 def mascota(request):
     context = {}
@@ -30,7 +31,7 @@ def modificar(request, id= None):
     return HttpResponse(template.render(context, request))
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeClientes.delete_Cliente', raise_exception=True)
+@permission_required('GestionDeMascotas.delete_Mascota', raise_exception=True)
 def habilitar(request, id):
 
     try:
@@ -41,32 +42,31 @@ def habilitar(request, id):
     mascota.baja = False
     mascota.save()
 
-    return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
+    return HttpResponseRedirect( "/GestionDeMascotas/verHabilitados/" )
 
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.delete_Mascotas', raise_exception=True)
 def deshabilitar(request, id):
-
     try:
         mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-        mascota.baja = True
-        mascota.save()
+    mascota.baja = True
+    mascota.save()
 
-    return HttpResponseRedirect( "/GestionDeMascotas/ver/{}".format(mascota.id) )
+    return HttpResponseRedirect( "/GestionDeMascotas/verDeshabilitados/" )
 
 @login_required(redirect_field_name='proxima')
-@permission_required('GestionDeTiposDeAtencion.delete_TipoDeAtencion', raise_exception=True)
-def eliminar(peticion, id):
+@permission_required('GestionDeMascotas.delete_Mascota', raise_exception=True)
+def eliminar(request, id):
     try:
         mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
 
-    if peticion.method == 'POST':
+    if request.method == 'POST':
 
         mascota.delete()
         return HttpResponseRedirect( "/GestionDeMascotas/" )
@@ -74,31 +74,32 @@ def eliminar(peticion, id):
     else:
 
         template = loader.get_template('GestionDeMascotas/eliminar.html')
-        contexto = {
-            'usuario' : peticion.user,
+        context = {
+            'usuario' : request.user,
             'id' : id
         }
-
-        return HttpResponse( template.render( contexto, peticion) )
+        return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
 
     try:
-        mascota = Mascota.objects.get(id=id)
+        mascotas = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
-        raise Http404("No encontrado", "La mascota con id={} no existe.".format(id))
+        raise Http404("No encontrado", "La mascota con patente={} no existe.".format(id))
 
 
     template = loader.get_template('GestionDeMascotas/ver.html')
     contexto = {
-    'cliente': mascota,
-    'usuario': request.user
+        'mascota': mascotas,
+        'usuario': request.user
     }
-
     return HttpResponse(template.render(contexto, request))
 
+
+
 def verHabilitados(request):
-    mascotas = Mascota.objects.filter(baja=False)
+    mascotas = Mascota.objects.habilitados()
+    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
     contexto = {
         'mascotas': mascotas,
@@ -107,7 +108,9 @@ def verHabilitados(request):
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    mascotas = Mascota.objects.filter(baja=True)
+    mascotas = Mascota.objects.deshabilitados()
+    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
+
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
     contexto = {
         'mascotas': mascotas,

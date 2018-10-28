@@ -1,0 +1,69 @@
+{% extends 'GestionDeProductos/GestionDeProductos.html' %}
+
+{% block titulo %}
+Gestion de Productos | Ver Deshabilitados
+{% endblock %}
+
+{% block productoTitulo %}
+Productos Deshabilitados
+{% endblock %}
+
+{% block productoSubtitulo %}
+Actualmente <strong>no</strong> disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% endblock %}
+
+{% block productoContenido %}
+
+<!-- Listado -->
+<div class="productoCuerpo" >
+
+  <p> Los siguientes Productos pueden ser habilitados o eliminados.  </p>
+
+    {% if productos %}
+        <div class="table-responsive" id="tabla">
+            <table class="table productoListado">
+                <thead>
+                    <tr>
+                        <th id="deshabilitados-nombre">Nombre</th>
+                        <th id="deshabilitados-acciones">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td>{{ producto.nombre }}</td>
+                            <td>
+                                <p align="justify">
+                                    <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-eye-open"> </i>
+                                    </a>
+                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-edit"> </i>
+                                    </a>
+                                    <a href="{% url 'productos:productoHabilitar' producto.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-plus"> </i>
+                                    </a>
+                                    <a href="{% url 'productos:productoEliminar' producto.id %}" class="btn btn-xs btn-default">
+                                        <i class="glyphicon glyphicon-remove"> </i>
+                                    </a>
+                                </p>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+
+        <p> No hay Productos deshabilitados </p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'GestionDeFormasDePagos/GestionDeFormasDePagos.html' %}
+{% load static %}
+
+{% block titulo %}
+Gestion de Formas De Pagos | Crear Formas De Pagos
+{% endblock %}
+
+{% block formaDePagoTitulo %}
+Nuevo Forma De Pago
+{% endblock %}
+
+{% block formaDePagoSubtitulo %}
+Agrega un Forma De Pago al listado
+{% endblock %}
+
+{% block formaDePagoContenido %}
+
+    <div class="formaDePagoCuerpo">
+        <form class="form-horizontal formulario" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2=""%}
+
+        </form>
+    </div>
+
+{% endblock %}

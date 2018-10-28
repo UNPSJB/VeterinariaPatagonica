@@ -1,13 +1,13 @@
 from django.contrib import admin
 from .models import Servicio
-from .models import ServicioInsumo
+from .models import ServicioProducto
 
-class ServicioInsumoInline(admin.TabularInline):
-    model = ServicioInsumo
+class ServicioProductoInline(admin.TabularInline):
+    model = ServicioProducto
 
 class ServicioAdmin(admin.ModelAdmin):
     inlines = [
-        ServicioInsumoInline,
+        ServicioProductoInline,
     ]
 
 admin.site.register(Servicio, ServicioAdmin)

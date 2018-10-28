@@ -5,7 +5,7 @@ Gestion de Mascota | Ver Deshabilitados
 {% endblock %}
 
 {% block mascotaTitulo %}
-Tipos de Atencion Deshabilitados
+Mascotas Deshabilitadas
 {% endblock %}
 
 {% block mascotaSubtitulo %}
@@ -23,36 +23,41 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
 
   <p> Los siguientes mascotas  pueden ser habilitados o eliminados.  </p>
 
-    {% if mascota %}
+    <form action="" method="GET">
+        <input name="nombre" placeholder="nombre">
+        <input name="patente" placeholder="patente">
+        <input name="especie" placeholder="especie">
+        <button type="submit">GO</button>
+    </form>
+
+    {% if mascotas %}
             <div class="table-responsive" id="tabla">
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
+                            <th id="deshabilitados-nombre">Mascotas</th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for mascota in mascota%}
+                        {% for mascota in mascotas %}
                             <tr>
-                                <td>{{ mascota.nombre }}</td>
-                                <td>{{ mascota.descripcion|truncatechars:40 }}</td>
+                                <td>{{ mascota.cliente }}, {{mascota.nombre }}</td>
                                 <td >
-			<p align="center">
-                                            <a  href="{% url 'mascota:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
+			                        <p align="justify">
+                                            <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaHabilitar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaHabilitar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-plus"> </i>
                                             </a>
-                                            <a href="{% url 'mascota:mascotaEliminar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaEliminar' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
-			</p>
+			                            </p>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -62,7 +67,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
 
     {% else %}
 
-        <p> No hay mascotas habilitadas</p>
+        <p> No hay mascotas Deshabilitadas</p>
 
     {% endif %}
 

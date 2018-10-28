@@ -24,7 +24,7 @@ class Rubro (models.Model):
     )
 
     descripcion = models.TextField(
-        help_text="Descrpcion del Rubro",
+        help_text="Descripcion del Rubro",
         max_length=MAXDESCRIPCION,
         unique=False,
         null=True,

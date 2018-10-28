@@ -10,14 +10,16 @@ class ServicioForm(forms.ModelForm):
                     'nombre',
                     'descripcion',
                     'tiempoEstimado',
-                    'precioManoDeObra'
+                    'precioManoDeObra',
+                    'productos',
                     ]
         labels = {
             'tipo':'Tipo.',
             'nombre':'Nombre.',
             'descripcion':'Descripcion.',
             'tiempoEstimado':'Tiempo Estimado.',
-            'precioManoDeObra':'Precio Mano de Obra.'
+            'precioManoDeObra':'Precio Mano de Obra.',
+            'productos':'Productos.',
             }
         error_messages = {
             'nombre' : {
@@ -32,7 +34,8 @@ class ServicioForm(forms.ModelForm):
             'nombre' : forms.TextInput(),
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
             'tiempoEstimado' : forms.NumberInput(),
-            'precioManoDeObra': forms.NumberInput()
+            'precioManoDeObra': forms.NumberInput(),
+            'productos': forms.Select(attrs={'class':'form-control'}),
         }
 
     def clean(self):

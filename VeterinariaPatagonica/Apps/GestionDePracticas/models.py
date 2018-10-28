@@ -5,9 +5,8 @@ from Apps.GestionDeClientes import models as gcmodels
 from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
 from Apps.GestionDeMascotas import models as gmmodels
-from Apps.GestionDeInsumos import models as gimodels
-from Apps.GestionDeMascotas import models as gmmodels
 
+from Apps.GestionDeProductos import models as gpmodels
 
 
 class PracticaBaseManager(models.Manager):
@@ -63,10 +62,10 @@ class Practica(models.Model):
         through='PracticaServicio',
         through_fields=('practica', 'servicio'),
     )
-    insumosReales = models.ManyToManyField(gimodels.Insumo,
+    productosReales = models.ManyToManyField(gpmodels.Producto,
         #verbose = 'Insumos Reales',
-        through='PracticaInsumo',
-        through_fields=('practica', 'insumo'),
+        through='PracticaProducto',
+        through_fields=('practica', 'producto'),
     )
 
     tipoDeAtencion = models.ForeignKey(
@@ -90,8 +89,8 @@ class Practica(models.Model):
 #--------------Metodos.--------------------
     def precioReal(self):
         total = Decimal("0")
-        for sinsumo in self.insumos.all():
-            total += sinsumo.insumo.precioEnUnidad(sinsumo.cantidad)
+        for sproducto in self.productos.all():
+            total += sproducto.producto.precioEnUnidad(sproducto.cantidad)
         for servicio in self.servicios.all():
             total += servicio.precioManoDeObra
         return total
@@ -133,9 +132,9 @@ class PracticaServicio(models.Model):
     cantidad = models.PositiveIntegerField()
 
 #---------Definicion de la clase necesaria para manejar Insumos ----------
-class PracticaInsumo(models.Model):
+class PracticaProducto(models.Model):
     practica = models.ForeignKey(Practica, on_delete=models.CASCADE)
-    insumo = models.ForeignKey(gimodels.Insumo, on_delete=models.CASCADE)
+    producto = models.ForeignKey(gpmodels.Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
 
 #---------Definicion de la superclase de los Estados---------

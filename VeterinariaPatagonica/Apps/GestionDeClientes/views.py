@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Cliente
 from .forms import ClienteFormFactory
+from VeterinariaPatagonica import tools
 
 def clientes(request):
     context = {}#Defino el contexto.
@@ -22,6 +23,7 @@ def modificar(request, id = None):
         print(formulario)
         if formulario.is_valid():
             cliente = formulario.save()
+            #return HttpResponseRedirect("/GestionDeMascotas/crear/{}".format(cliente.id))
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
             context['formulario'] = formulario
@@ -97,7 +99,8 @@ def ver(request, id):
     return HttpResponse(template.render(contexto, request))
 
 def verHabilitados(request):
-    clientes = Cliente.objects.filter(baja=False)
+    clientes = Cliente.objects.habilitados()
+    clientes = clientes.filter(tools.paramsToFilter(request.GET, Cliente))
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
     contexto = {
         'clientes' : clientes,
@@ -107,7 +110,8 @@ def verHabilitados(request):
     return  HttpResponse(template.render(contexto,request))
 
 def verDeshabilitados(request):
-    clientes = Cliente.objects.filter(baja=True)
+    clientes = Cliente.objects.deshabilitados()
+    clientes = clientes.filter(tools.paramsToFilter(request.GET, Cliente))
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
     contexto = {
         'clientes' : clientes,

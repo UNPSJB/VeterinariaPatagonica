@@ -1,0 +1,76 @@
+
+            <div class="menu_section">
+              <h1 class="menu-subtitulo"><a>General</a></h1>
+              <ul class="nav side-menu">
+
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Clientes </a>
+    							<ul class="nav child_menu">
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:clienteVerHabilitados' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:clienteCrear' %}">Crear Cliente</a></li>
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Cuenta Corriente</a></li>-->
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Pagos</a></li>-->
+    							</ul>
+				</li>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Mascotas </a>
+    							<ul class="nav child_menu">
+									<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascotaVerHabilitados' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascotaCrear' %}">Crear Mascota </a></li>
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>-->
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li> -->
+    							</ul>
+
+    						</li>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Productos </a>
+    							<ul class="nav child_menu">
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'productos:productoVerHabilitados' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'productos:productoCrear' %}">Crear Producto</a></li>
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>-->
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>-->
+									<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'rubros:rubroVerHabilitados' %}"> Ver Rubros </a></li>
+									<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'rubros:rubroCrear' %}"> Crear Rubro </a></li>
+    							</ul>
+				</li>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Servicios </a>
+    							<ul class="nav child_menu">
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioVerHabilitados' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioCrear' %}">Crear Servicio</a></li>
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>-->
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>-->
+    							</ul>
+                </li>
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Tipos de Atencion </a>
+    							<ul class="nav child_menu">
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tiposdeatencion:habilitados' %}">Inicio</a></li>
+    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tiposdeatencion:crear' %}">Crear Tipo de Atención</a></li>
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Baja</a></li>-->
+    								<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Modificacion</a></li>-->
+    							</ul>
+                </li>
+
+			  	<li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cobros </a>
+					<ul class="nav child_menu">
+						<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoVerHabilitados' %}">Inicio</a></li>
+						<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoCrear' %}">Crear Forma De Pago</a></li>
+						<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Cuenta Corriente</a></li>-->
+						<!--<li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Pagos</a></li>-->
+					</ul>
+				</li>
+
+                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Prácticas </a>
+    							<ul class="nav child_menu">
+                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Ver</a>
+                      <ul class="nav child_menu">
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaVerConsultasHabilitadas' %}">Consultas </a></li>
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaVerCirugiasHabilitadas' %}">Cirugías </a></li>
+                      </ul>
+                    </li>
+                    <li><i class="glyphicon glyphicon-chevron-right"></i><a href="#">Crear</a>
+                      <ul class="nav child_menu">
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaCrearConsulta' %}">Consulta </a></li>
+                        <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'practicas:practicaCrearCirugia' %}">Cirugía </a></li>
+                      </ul>
+                    </li>
+                  </ul>
+    						</li>
+              </ul>
+            </div>

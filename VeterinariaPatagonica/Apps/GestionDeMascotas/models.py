@@ -1,12 +1,26 @@
 from django.db import models
 from django.core.validators import RegexValidator
-
-
+from django.db.models import Q
 from Apps.GestionDeClientes import models as gcmodels
+from VeterinariaPatagonica import tools
 
 # Create your models here.
 
+class BaseMascotaManager(models.Manager):
+    pass
+
+MascotaManager = BaseMascotaManager.from_queryset(tools.BajasLogicasQuerySet)
+
 class Mascota(models.Model):
+    MAPPER = {
+        "especie": "especie__icontains",
+        "cliente": "cliente",
+        "patente": "patente__icontains",
+        "nombre": "nombre__icontains",
+        "duenio": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+        "desde": "fecha__gte"
+    }
+
     MAXPATENTE= 6
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     REGEX_ESPECIE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -47,10 +61,12 @@ class Mascota(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
+        help_text="ingrese cliente",
         error_messages={
         })
 
-    fechaNacimiento = models.DateTimeField(),
+    fechaNacimiento = models.DateField(blank=False,
+        error_messages={'required': "el cliente es obligatorio"})
 
     especie = models.CharField(
         help_text= "Especie de la Mascota",
@@ -65,10 +81,6 @@ class Mascota(models.Model):
             'blank': "La especie es obligatorio"
         }
     )
-    baja = models.BooleanField(default=False)
-
-    def __str__(self):
-        return "{0}, {1}".format(self.nombres, self.apellidos)
 
     raza = models.CharField(
         help_text="Especie de la Mascota",
@@ -82,3 +94,13 @@ class Mascota(models.Model):
             'max_length': "La especie puede tener a lo sumo {} caracteres".format(MAXESPECIE),
             'blank': "La especie es obligatorio"}
     )
+
+
+    baja = models.BooleanField(default=False)
+
+    objects = MascotaManager()
+
+    def __str__(self):
+        return "{0}, {1}".format(self.nombre, self.especie)
+
+

@@ -1,0 +1,66 @@
+{% extends 'GestionDeFormasDePagos/GestionDeFormasDePagos.html' %}
+
+{% block titulo %}
+Gestion de Formas De Pagos | Ver Habilitados
+{% endblock %}
+
+{% block formaDePagoTitulo %}
+Formas De Pagos Habilitados
+{% endblock %}
+
+{% block formaDePagoSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block formaDePagoContenido %}
+
+<!-- Listado -->
+<div class="formaDePagoCuerpo" >
+
+    <p> Los siguientes formasDePago estan habilitados.  </p>
+
+    {% if formasDePagos %}
+            <div class="table-responsive" id="tabla">
+                <table class="table formaDePagoListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for formaDePago in formasDePagos %}
+                            <tr>
+                                <td> <p>{{formaDePago.nombre }}</p></td>
+                                <td> <p align="justify">
+                                        <a  href="{% url 'formasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-search"> </i>
+                                        </a>
+                                        <a href="{% url 'formasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'formasDePagos:formaDePagoDeshabilitar' formaDePago.id%}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-minus"> </i>
+                                        </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay formasDePago habilitados</p>
+
+    {% endif %}
+
+    <a  id ="formaDePagoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'formasDePagos:formaDePagoCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}

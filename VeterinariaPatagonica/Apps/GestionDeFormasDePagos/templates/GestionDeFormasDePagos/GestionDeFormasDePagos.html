@@ -1,0 +1,35 @@
+{% extends "sitioBase.html" %}
+{% load static %}
+
+{% block paginaEstilos %}
+  {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/GestionDeFormasDePagos.css' %}">
+{% endblock paginaEstilos %}
+
+{% block paginaSeccionGeneral %}
+  <section>
+    {% block secciones %}
+      {% include './seccionesSnippet.html' with pagina='default' %}
+    {% endblock %}
+
+    <h4 class="formaDePagoTitulo">
+      {% block formaDePagoTitulo %}
+      {% endblock formaDePagoTitulo %}
+    </h4>
+
+    <div class="formaDePagoLineaTitulo"> </div>
+
+    <p class="formaDePagoSubtitulo">
+      {% block formaDePagoSubtitulo %}
+      {% endblock formaDePagoSubtitulo%}
+    </p>
+
+  {% block formaDePagoContenido %}
+  {% endblock formaDePagoContenido %}
+  </section>
+{% endblock paginaSeccionGeneral %}
+
+
+{% block footer %}
+  <p>Para mas información de las Formas De Pagos haga click aquí<p>
+{% endblock footer %}
