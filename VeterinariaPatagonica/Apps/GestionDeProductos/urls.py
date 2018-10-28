@@ -5,6 +5,7 @@ from . import views as productos_views
 app_name = 'productos'
 
 urlpatterns = [
+    url(r'^$', productos_views.producto, name='producto'),
     path('crear', productos_views.modificar, name='productoCrear'),
     path('modificar/<int:id>/', productos_views.modificar, name='productoModificar'),
     path('habilitar/<int:id>/', productos_views.habilitar, name='productoHabilitar'),

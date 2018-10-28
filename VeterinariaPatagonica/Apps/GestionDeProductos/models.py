@@ -4,8 +4,22 @@ from django.db import models
 from django.core.validators import RegexValidator #MinValueValidator, #MaxValueValidator
 from Apps.GestionDeRubros import models as grmodels
 # Create your models here.
+from VeterinariaPatagonica import tools
+
+class BaseProductoManager(models.Manager):
+    pass
+
+ProductoManager = BaseProductoManager.from_queryset(tools.BajasLogicasQuerySet)
+
 
 class Producto (models.Model):
+    MAPPER = {
+        "marca": "marca__icontains",
+        "formaDePresentacion": "formaDePresentacion__icontains",
+        "nombre": "nombre__icontains",
+
+        "precioPorUnidad": "precioPorUnidad__gte"
+    }
 
     MAX_NOMBRE = 50
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -155,6 +169,8 @@ class Producto (models.Model):
         #help_text='Deshabilitado',
         default=False
         )
+
+    objects = ProductoManager()
 
 
 

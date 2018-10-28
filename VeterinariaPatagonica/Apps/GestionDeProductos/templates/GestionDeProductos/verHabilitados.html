@@ -23,6 +23,18 @@ Actualmente disponibles
 
     <p> Los siguientes Productos estan habilitados.  </p>
 
+     <form action="" method="GET">
+         <input name="marca" placeholder="Marca">
+         <input name="nombre" placeholder="Nombre">
+         <input name="formaDePresentacion" placeholder="Forma de Presentacion">
+         <input name="precioPorUnidad" placeholder="precioPorUnidad">
+
+
+        <button type="submit">
+            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+        </button>
+    </form>
+
     {% if productos %}
         <div class="table-responsive" id="tabla">
             <table class="table productoListado">
@@ -38,7 +50,7 @@ Actualmente disponibles
                             <td> <p> {{ producto.nombre }} </p></td>
                             <td> <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-search"> </i>
+                                        <i class="glyphicon glyphicon-eye-open"> </i>
                                     </a>
                                     <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default">
                                         <i class="glyphicon glyphicon-edit"> </i>

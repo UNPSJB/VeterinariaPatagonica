@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Producto
 from .forms import ProductoFormFactory
+from VeterinariaPatagonica import tools
 
-
-def productos(request):
+def producto(request):
     context = {}#Defino un contexto.
     template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
@@ -32,19 +32,21 @@ def modificar(request, id = None):
     return HttpResponse(template.render( context, request))
 
 def verHabilitados(request):
-    producto = Producto.objects.filter(baja=False)
+    productos = Producto.objects.habilitados()
+    productos = productos.filter(tools.paramsToFilter(request.GET, Producto))
     template = loader.get_template('GestionDeProductos/verHabilitados.html')
     context = {
-        'productos': producto,
+        'productos': productos,
         'usuario': request.user
     }
     return HttpResponse(template.render(context, request))
 
 def verDeshabilitados(request):
-    producto = Producto.objects.filter(baja=True)
+    productos = Producto.objects.deshabilitados()
+    productos = productos.filter(tools.paramsToFilter(request.GET, Producto))
     template = loader.get_template('GestionDeProductos/verDeshabilitados.html')
     context = {
-        'productos' : producto,
+        'productos' : productos,
         'usuario' : request.user
     }
     return HttpResponse(template.render( context, request ))
@@ -52,13 +54,13 @@ def verDeshabilitados(request):
 def ver(request, id):
     #import ipdb; ipdb.set_trace()
     try:
-        producto = Producto.objects.get(id=id)
+        productos = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404( "No encontrado", "El Producto con id={} no existe.".format(id))
 
     template = loader.get_template('GestionDeProductos/ver.html')
     context = {
-        'producto': producto,
+        'producto': productos,
         'usuario': request.user
     }
     return HttpResponse(template.render(context, request))
