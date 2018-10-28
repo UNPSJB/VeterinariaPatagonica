@@ -32,17 +32,17 @@ Actualmente disponibles
                     <tbody>
                         {% for servicio in servicios %}
                             <tr>
-                                <td><p>{{ servicio.nombre }}</p></td>
+                              <td><p>{{ servicio.nombre }}</p></td>
                                 <td> <p align="center">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-search"> </i>
-                                            </a>
-                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a>
-                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-minus"> </i>
-                                            </a>
+                                  <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
+                                    <i class="glyphicon glyphicon-search"> </i>
+                                  </a>
+                                  <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">
+                                    <i class="glyphicon glyphicon-edit"> </i>
+                                  </a>
+                                  <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default">
+                                    <i class="glyphicon glyphicon-minus"> </i>
+                                  </a>
                                 </p> </td>
                             </tr>
                         {% endfor %}

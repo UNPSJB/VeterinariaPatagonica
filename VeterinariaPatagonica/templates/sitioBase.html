@@ -6,7 +6,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% block paginaEstilos %}
+{% block paginaEstilos %}
   <!-- Barra de Carga -->
   <!-- Bootstrap -->
   <link href="{% static 'gentelella/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet">
@@ -19,119 +19,109 @@
   <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
   <link href="{% static 'vendor/fontawesome/css/font-awesome.css' %}" rel="stylesheet">
   <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
-  {% endblock paginaEstilos %}
+ 
+
+{% endblock paginaEstilos %}
   <title>
-    {% block paginaTitulo %}
-        Veterinaria Patagonica
-    {% endblock paginaTitulo %}
+{% block paginaTitulo %}
+  Veterinaria Patagonica
+{% endblock paginaTitulo %}
   </title>
-</head>
-<body>
-<div class="container-fluid" id="el_container_fluid">
-<!-- Primer fila: Barra de titulo -->
-<div class="row">
-      <header class="col-xs-12" id="sitio-encabezado">
-          <div>
-            <!-- Menu de Usuario -->
-            <ul class="nav navbar-nav navbar-right">
-              <li class="">
-                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                  Menu De Usuario
-                  <span class=" fa fa-angle-down"></span>
-                </a>
-                <ul class="dropdown-menu dropdown-usermenu pull-right">
-                  <li><a href="javascript:;">Ayuda</a></li>
-                  <li><a href="{% url "login" %}"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a></li>
-                </ul>
-              </li>
+  </head>
+  <body>
+  <div class="container-fluid" id="el_container_fluid">
+  <!-- Primer fila: Barra de titulo -->
+  <div class="row">
+    <header class="col-xs-12" id="sitio-encabezado">
+      <div>
+        <!-- Menu de Usuario -->
+        <ul class="nav navbar-nav navbar-right">
+          <li class="">
+            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              Menu De Usuario
+              <span class=" fa fa-angle-down"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-usermenu pull-right">
+              <li><a href="javascript:;">Ayuda</a></li>
+              <li><a href="{% url "login" %}"><i class="fa fa-sign-out pull-right"></i> Cerrar Sesión</a></li>
             </ul>
-          </div>
-          <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagonica</h1>
-      </header>
-</div>
-<!-- Segunda Fila: Menu derecho, izquierdo y seccion general -->
-<div class="row" id="fila_centro" >
-
-              <!--Menu izquierdo-->
-              <nav class="col-sm-4 col-md-3 sitio-menu" id="sitio_menu_izq">
-                  <!-- Codigo copiado del template casi sin modificar, habria que ajustarlo linea a linea -->
-                  <div class="left_col scroll-view">
-                      <div class="clearfix"></div>
-                      <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-                          {% block paginaMenuIzq %}
-                          {% include './menuIzqSnippet.html' %}
-                          {% endblock paginaMenuIzq %}
-                      </div>
-                  </div>
-              </nav>
-              <!-- Seccion general -->
-          <div class="col-sm-8 col-md-7" id="sitio_seccion_principal">
-            <div class="contenedor">
-                {% block paginaSeccionGeneral %}
-                <section>
-                  <h3>Titulo</h3>
-                    <p> Texto bajo el titulo. <a href="/">Link al inicio</a></p>
-                    <a class="btn btn-primary cuadradito" href="{% url "clientes:clienteCrear" %}" role="button">Clientes</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "insumos:insumoCrear" %}" role="button">Insumos</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button">Servicios</a>
-                    <br>
-                    <a class="btn btn-primary cuadradito" href="{% url "mascotas:mascotaCrear" %}" role="button">Mascotas</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button">Tipo de Atención</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "practicas:practicaCrearCirugia" %}" role="button">Cirugía</a>
-                    <a class="btn btn-primary cuadradito" href="{% url "practicas:practicaCrearConsulta" %}" role="button">Consulta</a>
-
-              </section>
-
-                {% endblock paginaSeccionGeneral %}
-            </div>
-          </div>
-              <!-- Menu derecho -->
-              <nav class="col-sm-12 col-md-2 sitio-menu" id="sitio_menu_dch">
-                  {% block paginaMenuDch %}
-                  {% comment %}
-                  {% include './menuDchSnippet.html' %}
-                  {% endcomment %}
-
-                  <div class="panel panel-default">
-                      <div class="panel-heading"> <span> Nuevo panel </span><span class="glyphicon glyphicon-chevron-up float-dch"></span></div>
-                      <div class="list-group">
-                          <a href="#" class="list-group-item">Item</a>
-                          <a href="#" class="list-group-item">Item</a>
-                          <a href="#" class="list-group-item">Item</a>
-                          <a href="#" class="list-group-item">Item</a>
-                          <a href="#" class="list-group-item">Item</a>
-                      </div>
-                  </div>
-                  {% endblock paginaMenuDch %}
-              </nav>
+          </li>
+        </ul>
+      </div>
+    <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagonica</h1>
+    </header>
+  </div>
+  <!-- Segunda Fila: Menu derecho, izquierdo y seccion general -->
+  <div class="row" id="fila_centro" >
+    <!--Menu izquierdo-->
+    <nav class="col-sm-4 col-md-3 sitio-menu" id="sitio_menu_izq">
+      <!-- Codigo copiado del template casi sin modificar, habria que ajustarlo linea a linea -->
+      <div class="left_col scroll-view">
+        <div class="clearfix"></div>
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+          {% block paginaMenuIzq %}
+          {% include './menuIzqSnippet.html' %}
+          {% endblock paginaMenuIzq %}
         </div>
-        <!-- Tercer Fila: Pie de pagina -->
-        <div class="row">
-          <footer class="col-xs-12" id="sitio-piedepagina">
+      </div>
+    </nav>
+    <!-- Seccion general -->
+    <div class="col-sm-8 col-md-7" id="sitio_seccion_principal">
+      <div class="contenedor">
+        {% block paginaSeccionGeneral %}
+          <section>
+            <h3>Titulo</h3>
+            <p> Texto bajo el titulo. <a href="/">Link al inicio</a></p>
+            <a class="btn btn-primary cuadradito" href="{% url "clientes:clienteCrear" %}" role="button">Clientes</a>
+            <a class="btn btn-primary cuadradito" href="{% url "insumos:insumoCrear" %}" role="button">Insumos</a>
+            <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button">Servicios</a>
+            <br>
+            <a class="btn btn-primary cuadradito" href="{% url "mascotas:mascotaCrear" %}" role="button">Mascotas</a>
+            <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button">Tipo de Atención</a>
+            <a class="btn btn-primary cuadradito" href="{% url "practicas:practicaCrearCirugia" %}" role="button">Cirugía</a>
+            <a class="btn btn-primary cuadradito" href="{% url "practicas:practicaCrearConsulta" %}" role="button">Consulta</a>
+          </section>
+        {% endblock paginaSeccionGeneral %}
+      </div>
+    </div>
+    <!-- Menu derecho -->
+    <nav class="col-sm-12 col-md-2 sitio-menu" id="sitio_menu_dch">
+      {% block paginaMenuDch %}
+      {% comment %}
+      {% include './menuDchSnippet.html' %}
+      {% endcomment %}
+      <div class="panel panel-default">
+        <div class="panel-heading"> <span> Nuevo panel </span><span class="glyphicon glyphicon-chevron-up float-dch"></span></div>
+        <div class="list-group">
+          <a href="#" class="list-group-item">Item</a>
+          <a href="#" class="list-group-item">Item</a>
+          <a href="#" class="list-group-item">Item</a>
+          <a href="#" class="list-group-item">Item</a>
+          <a href="#" class="list-group-item">Item</a>
+        </div>
+      </div>
+      {% endblock paginaMenuDch %}
+    </nav>
+    </div>
+    <!-- Tercer Fila: Pie de pagina -->
+    <div class="row">
+      <footer class="col-xs-12" id="sitio-piedepagina">
         {% block paginaPie %}
-            <p> 2018 Ningún derecho reservado </p>
+          <p> 2018 Ningún derecho reservado </p>
         {% endblock paginaPie %}
-          </footer>
-        </div>
-</div> <!-- el_container_fluid -->
-
-{% block paginaJavascript %}
-
-  <!-- jQuery -->
-  <script src="{% static 'gentelella/jquery/dist/jquery.min.js' %}"></script>
-  <!-- NProgress -->
-  <script src="{% static 'gentelella/nprogress/nprogress.js' %}"></script>
-  <!-- Custom Theme Scripts -->
-  <script src="{% static 'js/custom.min.js' %}"></script>
-
-  <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
-  <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
-
-  <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
-
-
-{% endblock paginaJavascript %}
-
-</body>
-
+      </footer>
+    </div>
+  </div> <!-- el_container_fluid -->
+  {% block paginaJavascript %}
+    <!-- jQuery -->
+    <script src="{% static 'gentelella/jquery/dist/jquery.min.js' %}"></script>
+    <!-- NProgress -->
+    <script src="{% static 'gentelella/nprogress/nprogress.js' %}"></script>
+    <!-- Custom Theme Scripts -->
+    <script src="{% static 'js/custom.min.js' %}"></script>
+    <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
+  {% endblock paginaJavascript %}
+  </body>
 </html>

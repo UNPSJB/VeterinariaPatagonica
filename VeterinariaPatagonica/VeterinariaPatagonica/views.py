@@ -39,8 +39,6 @@ def base(request):
 def index(request):
     return render_to_response('sitioBase.html')
 
-
-
 def login(peticion):
 
     proxima = peticion.GET.get('proxima', default='/')
@@ -73,8 +71,6 @@ def login(peticion):
         contexto['formulario'] = formulario
 
     return HttpResponse(template.render( contexto, peticion) )
-
-
 
 def logout(peticion):
 

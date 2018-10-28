@@ -1,29 +1,23 @@
 from django import forms
-from .models import Servicio
+from .models import Servicio, ServicioInsumo
 from django.core.validators import RegexValidator
-
 from Apps.GestionDeClientes import models as gcmodels
 
-
-
-def ServicioFormFactory(servicio=None):
-
-    class ServicioForm(forms.ModelForm):
+class ServicioForm(forms.ModelForm):
+    class Meta:
         model = Servicio
         fields = [ 'tipo',
                     'nombre',
                     'descripcion',
                     'tiempoEstimado',
-                    'precioManoDeObra',
-                    'insumos',
+                    'precioManoDeObra'
                     ]
         labels = {
             'tipo':'Tipo.',
             'nombre':'Nombre.',
             'descripcion':'Descripcion.',
             'tiempoEstimado':'Tiempo Estimado.',
-            'precioManoDeObra':'Precio Mano de Obra.',
-            'insumos':'Insumos.',
+            'precioManoDeObra':'Precio Mano de Obra.'
             }
         error_messages = {
             'nombre' : {
@@ -38,8 +32,7 @@ def ServicioFormFactory(servicio=None):
             'nombre' : forms.TextInput(),
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
             'tiempoEstimado' : forms.NumberInput(),
-            'precioManoDeObra': forms.NumberInput(),
-            'insumos': forms.Select(attrs={'class':'form-control'}),
+            'precioManoDeObra': forms.NumberInput()
         }
 
     def clean(self):
@@ -47,9 +40,7 @@ def ServicioFormFactory(servicio=None):
         return cleaned_data
 
     def __init__(self, *args, **kwargs):
-
         super().__init__(*args, **kwargs)
-
         # [TODO] Averiguar una mejor manera de hacer esto:
         for field in self.fields.values():
             if not isinstance(field.widget, forms.CheckboxInput):
@@ -57,4 +48,7 @@ def ServicioFormFactory(servicio=None):
                     'class': 'form-control'
                 })
 
-    return ServicioForm
+class ServicioInsumoForm(forms.ModelForm):
+    class Meta:
+        model = ServicioInsumo
+        fields = ["insumo", "cantidad"]

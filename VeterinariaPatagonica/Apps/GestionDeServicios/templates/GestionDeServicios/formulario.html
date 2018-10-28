@@ -1,5 +1,7 @@
 {% extends 'GestionDeServicios/GestionDeServicios.html' %}
 
+{% load static %}
+
 {% block titulo %}
 Gestion de Servicios | Crear Servicios
 {% endblock %}
@@ -13,10 +15,16 @@ Agrega un Servicio al listado
 {% endblock %}
 
 {% block servicioContenido %}
-    <div class="servicioCuerpo">
-        <form class="form-horizontal formulario" action="" method="post">
-            {% csrf_token %}
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" %}
-        </form>
-    </div>
+  <div class="servicioCuerpo">
+    <form class="form-horizontal formulario" action="" method="post">
+      {% csrf_token %}
+      {% include './snippetServicios.html' with form=formulario formset=formset accion="Guardar Servicio" %}
+    </form>
+  </div>
 {% endblock %}
+
+
+{% block paginaJavascript %}
+{{block.super}}
+<script src="{% static 'GestionDeServicios/js/GestionDeServicios.js' %}"></script>
+{% endblock paginaJavascript%}

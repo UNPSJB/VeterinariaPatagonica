@@ -6,7 +6,6 @@ app_name = 'servicios'
 urlpatterns = [
     path('', servicios_views.verHabilitados, name='servicioVerHabilitados'),
     path('crear/', servicios_views.modificar, name= 'servicioCrear'),
-    #path('crear/<int:id>/', servicios_views.crear, name='servicioCrear'),
     path('modificar/<int:id>/', servicios_views.modificar, name="servicioModificar"),
     path('ver/<int:id>/', servicios_views.ver, name='servicioVer'),
     path('deshabilitar/<int:id>/', servicios_views.deshabilitar, name='servicioDeshabilitar'),

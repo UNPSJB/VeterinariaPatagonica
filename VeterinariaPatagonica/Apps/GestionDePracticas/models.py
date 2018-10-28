@@ -6,6 +6,7 @@ from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
 from Apps.GestionDeMascotas import models as gmmodels
 from Apps.GestionDeInsumos import models as gimodels
+from Apps.GestionDeMascotas import models as gmmodels
 
 
 
@@ -76,7 +77,16 @@ class Practica(models.Model):
             on_delete = models.CASCADE,
             error_messages = {
             })
-
+    mascota = models.ForeignKey(
+            gmmodels.Mascota,
+            on_delete = models.CASCADE,
+            error_messages = {
+            })
+    #estado = models.ForeignKey(
+            #Estado,
+            #on_delete = models.CASCADE,
+            #error_messages = {
+            #})
 #--------------Metodos.--------------------
     def precioReal(self):
         total = Decimal("0")
@@ -164,17 +174,22 @@ class Estado(models.Model):
 class Creada(Estado):
     TIPO = 1
 
-    def programar(self, practica, turno):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
-        if (turno >= datetime.now()):
-            return Programada.objects.create(practica = self.practica, turno=turno)
+    def programar(self, practica, mascota, turno, motivo):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
+        if (turno <= datetime.now()):
+            return Programada.objects.create(practica = self.practica, mascota = mascota, turno=turno, motivoReprogramacion =motivo)
         else:
-            raise Exception("error: %s es una fecha inválida" % (turno.__str__()));
-            return None
+            raise Exception("error: %s es una fecha inválida." % (turno.__str__()));
+            return self.estado#retur None
 
-    def presupuestar(self, practica, porcentajeDescuento, diasMantenimiento):
-        if not (0 <= porcentajeDescuento <= 100):
-            raise Exception("El porcentaje debe ser entre 0 y 100")
-        return Presupuestada.objects.create(practica = practica, porcentajeDescuento=porcentajeDescuento, diasMantenimiento = diasMantenimiento)
+    def presupuestar(self, practica, mascota, porcentajeDescuento, diasMantenimiento):
+        if not ((0 <= porcentajeDescuento <= 100) and (0<diasMantenimiento)):
+            raise Exception("El porcentaje debe ser entre 0 y 100./nLos dias de mantenimiento de oferta deben ser mayores a cero.")
+            return self.estado#return None
+        return Presupuestada.objects.create(practica = practica, mascota = mascota, porcentajeDescuento=porcentajeDescuento, diasMantenimiento = diasMantenimiento)
+
+    def realizar(slef, practica, mascota, productos):
+        return Realizada.objets.create(practica=practica,mascota=mascota,productos=productos)
+
 
 class Programada(Estado):
     TIPO = 2

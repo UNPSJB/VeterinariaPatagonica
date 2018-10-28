@@ -16,7 +16,8 @@ Agrega un Servicio al listado
     <div class="servicioCuerpo">
         <form class="form-horizontal" action="" method="post">
             {% csrf_token %}
-            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+            <!--[TODO][BUG] Crear anda mal. comentado varias cosas con crear (formulario). -->
+          --  {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
         </form>
     </div>
 {% endblock %}

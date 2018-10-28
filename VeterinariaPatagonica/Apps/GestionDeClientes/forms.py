@@ -1,7 +1,7 @@
 from django import forms
 from .models import Cliente
 from django.core.validators import RegexValidator
-from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
+#from localflavor.ar import forms as lforms #Lo comento porque me pincha [Matias]
 #Para que no pinche instalar -> pip install django-localflavor
 
 '''class creacionModelForm(forms.ModelForm):

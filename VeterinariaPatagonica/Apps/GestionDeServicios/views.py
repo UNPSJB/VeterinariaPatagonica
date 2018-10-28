@@ -3,25 +3,40 @@ from django.template import loader
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
-from .models import Servicio
-from .forms import *
-from django import forms
+from django.forms import modelformset_factory
+
+from .models import Servicio, ServicioInsumo
+from .forms import ServicioForm, ServicioInsumoForm
+
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
 def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
-    ServicioForm = ServicioFormFactory(servicio)
     context = {'usuario': request.user}
+    form = ServicioForm(instance=servicio)
+    ServicioInsumosFormset = modelformset_factory(ServicioInsumo,
+        fields=("insumo", "cantidad"))
     if request.method == 'POST':
-        formulario = ServicioForm(request.POST, instance=servicio)
-        if formulario.is_valid():
-            servicio = formulario.save()
-            return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
+        form = ServicioForm(request.POST, instance=servicio)
+        formset = ServicioInsumosFormset(request.POST)
+        if form.is_valid() and formset.is_valid():
+            servicio = form.save()
+            instances = formset.save(commit=False)
+            for sinsumo in instances:
+                sinsumo.servicio = servicio
+                sinsumo.save()
+            print(servicio, instances)
+            #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
         else:
-            context['formulario'] = formulario
+            context['formulario'] = form
+            context['formset'] = formset
+        context['formulario'] = form
+        context['formset'] = formset
     else:
-        context['formulario'] = ServicioForm(instance=servicio)
+        context['formulario'] = form
+        qs = ServicioInsumo.objects.none() if servicio is None else servicio.servicioinsumo_set.all()
+        context["formset"] = ServicioInsumosFormset(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))
 

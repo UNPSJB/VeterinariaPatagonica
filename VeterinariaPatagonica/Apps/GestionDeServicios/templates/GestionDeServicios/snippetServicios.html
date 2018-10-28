@@ -1,18 +1,33 @@
 {{ formulario.non_field_errors }}
-{% for campo in formulario %}
-    <div class="form-group {% if campo.errors %}has-error{% endif %}">
+{% for field in form %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
         <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
-            {{ campo.label }}
+            {{ field.label }}
         </label>
         <div class="col-sm-8">
-          {{ campo }}
+          {{ field }}
           <div class="campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
             {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
           </div>
         </div>
-        <span style="display:none;" class="help-block">{{ campo.help_text }}</span>
+        <span style="display:none;" class="help-block">{{ field.help_text }}</span>
     </div>
 {% endfor %}
+
+{{formset.management_form}}
+{% for form in formset %}
+{% if forloop.last %}
+<div id="formset-template">{{form}}</div>
+{% else %}
+{{form}}
+{% endif %}
+{% endfor %}
+<div>
+  <a class="btn btn-primary btn-lg" href='javascript:;' onclick="add();" role="button">
+    Agregar Insumo &raquo;
+  </a>
+</div>
+
 <div class="form-group">
     <div class="col-sm-offset-4 col-sm-8">
         <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
