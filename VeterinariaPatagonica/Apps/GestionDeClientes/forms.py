@@ -31,9 +31,9 @@ def ClienteFormFactory(cliente=None):
             model = Cliente
             fields = campos
             labels = {
-                'dniCuit':'DniCuit',
+                'dniCuit':'Dni/Cuit',
                 'nombres':'Nombres', 'apellidos':'Apellidos', 'direccion':'Direccion', 'localidad':'Localidad', 'celular':'Celular', 'telefono':'Telefono', 'email':'Email',
-                'tipoDeCliente':'TipoDeCliente',
+                'tipoDeCliente':'Tipo De Cliente',
                 'descuentoServicio':'DescuentoServicio', 'descuentoProducto':'DescuentoProducto', 'baja':'Baja'
             }
 

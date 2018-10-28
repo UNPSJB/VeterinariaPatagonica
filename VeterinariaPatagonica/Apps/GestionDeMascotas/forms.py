@@ -41,7 +41,7 @@ def MascotaFormFactory(mascota=None):
             labels = {
                 'patente':'Patente',
                 'cliente': "Cliente",
-                'fechaNacimiento': 'FechaNacimiento',
+                'fechaNacimiento': 'Fecha De Nacimiento',
                 'nombre':'Nombre',
                 'especie':'Especie',
                 'raza': 'Raza',
