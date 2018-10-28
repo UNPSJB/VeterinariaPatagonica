@@ -1,5 +1,5 @@
 from django import forms
-from .models import Servicio, ServicioInsumo
+from .models import Servicio, ServicioProducto
 from django.core.validators import RegexValidator
 from Apps.GestionDeClientes import models as gcmodels
 
@@ -11,7 +11,6 @@ class ServicioForm(forms.ModelForm):
                     'descripcion',
                     'tiempoEstimado',
                     'precioManoDeObra',
-                    'productos',
                     ]
         labels = {
             'tipo':'Tipo.',
@@ -19,7 +18,6 @@ class ServicioForm(forms.ModelForm):
             'descripcion':'Descripcion.',
             'tiempoEstimado':'Tiempo Estimado.',
             'precioManoDeObra':'Precio Mano de Obra.',
-            'productos':'Productos.',
             }
         error_messages = {
             'nombre' : {
@@ -35,7 +33,6 @@ class ServicioForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
             'tiempoEstimado' : forms.NumberInput(),
             'precioManoDeObra': forms.NumberInput(),
-            'productos': forms.Select(attrs={'class':'form-control'}),
         }
 
     def clean(self):
@@ -51,7 +48,7 @@ class ServicioForm(forms.ModelForm):
                     'class': 'form-control'
                 })
 
-class ServicioInsumoForm(forms.ModelForm):
+class ServicioProductoForm(forms.ModelForm):
     class Meta:
-        model = ServicioInsumo
-        fields = ["insumo", "cantidad"]
+        model = ServicioProducto
+        fields = ["producto", "cantidad"]

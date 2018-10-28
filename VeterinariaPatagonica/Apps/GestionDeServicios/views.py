@@ -5,8 +5,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.forms import modelformset_factory
 
-from .models import Servicio, ServicioInsumo
-from .forms import ServicioForm, ServicioInsumoForm
+from .models import Servicio, ServicioProducto
+from .forms import ServicioForm, ServicioProductoForm
 
 
 @login_required(redirect_field_name='proxima')
@@ -15,17 +15,17 @@ def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
-    ServicioInsumosFormset = modelformset_factory(ServicioInsumo,
-        fields=("insumo", "cantidad"))
+    ServicioProductoFormset = modelformset_factory(ServicioProducto,
+        fields=("producto", "cantidad"))
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
-        formset = ServicioInsumosFormset(request.POST)
+        formset = ServicioProductoFormset(request.POST)
         if form.is_valid() and formset.is_valid():
             servicio = form.save()
             instances = formset.save(commit=False)
-            for sinsumo in instances:
-                sinsumo.servicio = servicio
-                sinsumo.save()
+            for sproducto in instances:
+                sproducto.servicio = servicio
+                sproducto.save()
             print(servicio, instances)
             #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
         else:
@@ -35,8 +35,8 @@ def modificar(request, id = None):
         context['formset'] = formset
     else:
         context['formulario'] = form
-        qs = ServicioInsumo.objects.none() if servicio is None else servicio.servicioinsumo_set.all()
-        context["formset"] = ServicioInsumosFormset(queryset=qs)
+        qs = ServicioProducto.objects.none() if servicio is None else servicio.servicioproducto_set.all()
+        context["formset"] = ServicioProductoFormset(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))
 

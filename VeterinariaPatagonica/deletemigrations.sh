@@ -1,8 +1,9 @@
 #!/bin/bash
 
-for f in GestionDeProductos GestionDeClientes \
-GestionDeMascotas GestionDePracticas \
-GestionDeServicios GestionDeTiposDeAtencion
+for f in GestionDeRubros GestionDeClientes \
+GestionDeFormasDePagos GestionDeProductos \
+GestionDeMascotas GestionDeTiposDeAtencion \
+GestionDeServicios GestionDePracticas
 do
   rm ./Apps/$f/migrations -r
   mkdir ./Apps/$f/migrations

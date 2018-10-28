@@ -1,6 +1,9 @@
 #!/bin/bash
 
-for f in GestionDeMascotas GestionDePracticas
+for f in GestionDeRubros GestionDeClientes \
+GestionDeFormasDePagos GestionDeProductos \
+GestionDeMascotas GestionDeTiposDeAtencion \
+GestionDeServicios GestionDePracticas
 do
   python3 manage.py makemigrations $f
 done
