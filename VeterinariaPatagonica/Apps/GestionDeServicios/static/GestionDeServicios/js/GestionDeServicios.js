@@ -5,10 +5,11 @@ $(function() {
 	let max = $("#id_form-MAX_NUM_FORMS").val();
 
 	let add = function() {
-		let field = $("#formset-template").html().replace(RegExp(`form-${initial}`,"g"), `form-${total}`);
+		let field = $("#formset-template").html().replace(/form-\d+/g, `form-${total}`);
 		total += 1;
-		$("#formset-template").after(field);
+		$("#button-add").before(field);
+		$("#id_form-TOTAL_FORMS").val(total);
+		console.log(total);
 	}
-
 	window.add = add;
 });

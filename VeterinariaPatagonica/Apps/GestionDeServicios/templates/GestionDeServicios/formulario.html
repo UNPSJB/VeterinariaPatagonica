@@ -18,6 +18,7 @@ Agrega un Servicio al listado
   <div class="servicioCuerpo">
     <form class="form-horizontal formulario" action="" method="post">
       {% csrf_token %}
+      {{ formulario.non_field_errors }}
       {% include './snippetServicios.html' with form=formulario formset=formset accion="Guardar Servicio" %}
     </form>
   </div>

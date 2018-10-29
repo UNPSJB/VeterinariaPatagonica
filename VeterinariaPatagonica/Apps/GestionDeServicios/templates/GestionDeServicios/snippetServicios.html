@@ -14,6 +14,7 @@
     </div>
 {% endfor %}
 
+{{ formset.non_form_errors }}
 {{formset.management_form}}
 {% for form in formset %}
 {% if forloop.last %}
@@ -22,8 +23,8 @@
 {{form}}
 {% endif %}
 {% endfor %}
-<div>
-  <a class="btn btn-primary btn-lg" href='javascript:;' onclick="add();" role="button">
+<div id="button-add">
+  <a  href='javascript:;' onclick="add();" role="button">
     Agregar Insumo &raquo;
   </a>
 </div>

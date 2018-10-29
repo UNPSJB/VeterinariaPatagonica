@@ -4,9 +4,9 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.forms import modelformset_factory
-
 from .models import Servicio, ServicioProducto
-from .forms import ServicioForm, ServicioProductoForm
+from .forms import ServicioForm, ServicioProductoForm, ServicioProductoBaseFormSet
+from VeterinariaPatagonica import tools
 
 
 @login_required(redirect_field_name='proxima')
@@ -16,7 +16,8 @@ def modificar(request, id = None):
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,
-        fields=("producto", "cantidad"))
+        fields=("producto", "cantidad"),
+        formset=ServicioProductoBaseFormSet)
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
         formset = ServicioProductoFormset(request.POST)
@@ -26,7 +27,6 @@ def modificar(request, id = None):
             for sproducto in instances:
                 sproducto.servicio = servicio
                 sproducto.save()
-            print(servicio, instances)
             #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
         else:
             context['formulario'] = form
@@ -39,7 +39,7 @@ def modificar(request, id = None):
         context["formset"] = ServicioProductoFormset(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))
-
+'''
 def verHabilitados(request):
     servicio = Servicio.objects.filter(baja=False)
     template = loader.get_template('GestionDeServicios/verHabilitados.html')
@@ -49,6 +49,17 @@ def verHabilitados(request):
     }
 
     return  HttpResponse(template.render(context,request))
+'''
+def verHabilitados(request):
+    servicios = Servicio.objects.habilitados()
+    servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
+    template = loader.get_template('GestionDeServicios/verHabilitados.html')
+    contexto = {
+        'servicios' : servicios,
+        'usuario' : request.user,
+    }
+
+    return  HttpResponse(template.render(contexto,request))
 
 def verDeshabilitados(request):
     servicio = Servicio.objects.filter(baja=True)
