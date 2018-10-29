@@ -5,7 +5,7 @@ from dal import autocomplete
 from django.core.validators import RegexValidator
 
 #TIMEINPUT_FMTS = [ "%H:%M" ]
-
+#pip install django-autocomplete-light para que funcione el buscar de mascota
 
 '''class creacionModelForm(forms.ModelForm):
     class meta:
