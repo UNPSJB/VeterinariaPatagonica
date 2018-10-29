@@ -1,7 +1,13 @@
 from django.db import models
 from Apps.GestionDeProductos import models as pmodels
 from decimal import Decimal
+from VeterinariaPatagonica import tools
 
+
+class BaseServicioManager(models.Manager):
+    pass
+
+ServicioManager = BaseServicioManager.from_queryset(tools.BajasLogicasQuerySet)
 
 
 class Servicio(models.Model):
@@ -74,6 +80,10 @@ class Servicio(models.Model):
         help_text='Deshabilitado',
         default=False
         )
+
+
+    objects = ServicioManager()
+
     def __str__(self):
         cadena = 'Nombre de Servicio: {0}, Duración Estimada: {1} Precio: {2}.'
         return cadena.format(self.nombre, self.tiempoEstimado, self.precioManoDeObra)

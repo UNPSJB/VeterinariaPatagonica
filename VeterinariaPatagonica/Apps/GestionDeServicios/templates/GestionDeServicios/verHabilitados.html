@@ -20,6 +20,11 @@ Actualmente disponibles
 <!-- Listado -->
 <div class="servicioCuerpo" >
     <p> Los siguientes servicios estan habilitados.  </p>
+
+    <form action="" method="GET">
+      <input name="nombre" placeholder="nombre">
+      <button type="submit">Filtrar</button>
+    </form>
     {% if servicios %}
             <div class="table-responsive" id="tabla">
                 <table class="table servicioListado">
