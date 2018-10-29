@@ -1,11 +1,15 @@
 from django.shortcuts import render
 from django.template import loader
+from django.db.models import Q
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
 from VeterinariaPatagonica import tools
+from dal import autocomplete
+from Apps.GestionDeClientes.models import Cliente
+
 
 def mascota(request):
     context = {}
@@ -117,3 +121,16 @@ def verDeshabilitados(request):
         'usuario': request.user,
     }
     return HttpResponse(template.render(contexto, request))
+
+
+class clienteAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+
+        qs = Cliente.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
+
+        return qs

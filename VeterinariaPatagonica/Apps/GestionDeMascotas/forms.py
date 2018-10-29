@@ -1,5 +1,6 @@
 from django import forms
 from .models import Mascota
+from dal import autocomplete
 
 from django.core.validators import RegexValidator
 
@@ -9,7 +10,7 @@ from django.core.validators import RegexValidator
 '''class creacionModelForm(forms.ModelForm):
     class meta:
         model = Mascota'''
-
+'''
 cliente = forms.DateField(
     required=True,
     label='cliente',
@@ -22,6 +23,8 @@ cliente = forms.DateField(
     validators=[],
 
 )
+
+'''
 def MascotaFormFactory(mascota=None):
     campos = [ 'cliente',
                'fechaNacimiento',
@@ -58,7 +61,8 @@ def MascotaFormFactory(mascota=None):
             }
             widgets = {
                 'nombre' : forms.TextInput(),
-                'cliente': forms.Select(attrs={'class': 'form-control'}),
+                'cliente': autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete'),
+                #'cliente': forms.Select(attrs={'class': 'form-control'}),
                 'fechaNacimiento': forms.DateInput(),
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),
