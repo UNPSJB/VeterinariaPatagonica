@@ -1,7 +1,13 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from VeterinariaPatagonica import tools
 
-# Create your models here.
+
+class BaseFormasDePagosManager(models.Manager):
+    pass
+
+FormasDePagosManager = BaseFormasDePagosManager.from_queryset(tools.BajasLogicasQuerySet)
+
 
 class FormaDePago (models.Model):
 
@@ -36,6 +42,9 @@ class FormaDePago (models.Model):
     )
 
     baja = models.BooleanField(default=False)
+
+    objects = FormasDePagosManager()
+
     def __str__(self):
         cadena = 'Forma de Pago: {0}. {1}'
         return cadena.format(self.nombre, self.descripcion)

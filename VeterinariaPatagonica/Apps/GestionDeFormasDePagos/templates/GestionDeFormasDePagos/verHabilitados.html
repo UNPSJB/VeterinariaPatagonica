@@ -22,7 +22,10 @@ Actualmente disponibles
 <div class="formaDePagoCuerpo" >
 
     <p> Los siguientes formasDePago estan habilitados.  </p>
-
+    <form action="" method="GET">
+      <input name="nombre" placeholder="nombre">
+      <button type="submit">Filtrar</button>
+    </form>
     {% if formasDePagos %}
             <div class="table-responsive" id="tabla">
                 <table class="table formaDePagoListado">

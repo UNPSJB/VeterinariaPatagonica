@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import FormaDePago
 from .forms import FormaDePagoForm
-
+from VeterinariaPatagonica import tools
 
 def formasDePagos(request):
 
@@ -112,6 +112,20 @@ def verHabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
+
+def verDeshabilitados(request):
+    formasDePagos = FormaDePago.objects.deshabilitados()
+    formasDePagos = formasDePagos.filter(tools.paramsToFilter(request.GET, FormaDePago))
+    template = loader.get_template('GestionDeFormasDePagos/verDeshabilitados.html')
+    contexto = {
+        'formasDePagos' : formasDePagos,
+        'usuario' : request.user,
+    }
+
+    return  HttpResponse(template.render(contexto,request))
+
+
+'''
 def verDeshabilitados(request):
     formasDePagos = FormaDePago.objects.filter(baja=True)
     template = loader.get_template('GestionDeFormasDePagos/verDeshabilitados.html')
@@ -121,3 +135,4 @@ def verDeshabilitados(request):
     }
 
     return  HttpResponse(template.render(contexto,request))
+'''

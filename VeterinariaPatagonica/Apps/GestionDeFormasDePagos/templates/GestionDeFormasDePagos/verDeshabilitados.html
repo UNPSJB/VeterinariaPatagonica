@@ -22,8 +22,11 @@ Actualmente <strong>no</strong> disponibles
 <div class="formaDePagoCuerpo" >
 
   <p> Los siguientes fromasDePagos pueden ser habilitados o eliminados.  </p>
-
-    {% if fromasDePagos %}
+  <form action="" method="GET">
+    <input name="nombre" placeholder="nombre">
+    <button type="submit">Filtrar</button>
+  </form>
+    {% if formasDePagos %}
             <div class="table-responsive" id="tabla">
                 <table class="table formaDePagoListado">
                     <thead>
@@ -33,21 +36,21 @@ Actualmente <strong>no</strong> disponibles
                         </tr>
                     </thead>
                     <tbody>
-                        {% for formaDePago in fromasDePagos %}
+                        {% for formaDePago in formasDePagos %}
                             <tr>
                                 <td>{{formaDePago.nombre}}</td>
                                 <td >
                                     <p align="justify">
-                                        <a  href="{% url 'fromasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'formasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
                                         </a>
-                                        <a href="{% url 'fromasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'formasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'fromasDePagos:formaDePagoHabilitar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'formasDePagos:formaDePagoHabilitar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-plus"> </i>
                                         </a>
-                                        <a href="{% url 'fromasDePagos:formaDePagoEliminar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'formasDePagos:formaDePagoEliminar' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-remove"> </i>
                                         </a>
                                     </p>
