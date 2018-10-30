@@ -87,6 +87,10 @@ class Practica(models.Model):
             #error_messages = {
             #})
 #--------------Metodos.--------------------
+    def __str__(self):
+        cadena = 'Práctica: {0}. Hecha para el cliente: {1}. Su animal es: {2}.'
+        return cadena.format(self.nombre, self.cliente,self.mascota)
+
     def precioReal(self):
         total = Decimal("0")
         for sproducto in self.productos.all():

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
 from VeterinariaPatagonica import tools
-from dal import autocomplete
+#from dal import autocomplete
 from Apps.GestionDeClientes.models import Cliente
 
 
@@ -122,7 +122,7 @@ def verDeshabilitados(request):
     }
     return HttpResponse(template.render(contexto, request))
 
-
+'''
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
@@ -134,3 +134,4 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
 
         return qs
+'''
