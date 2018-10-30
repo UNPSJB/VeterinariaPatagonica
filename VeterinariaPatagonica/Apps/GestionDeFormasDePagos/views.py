@@ -66,25 +66,19 @@ def deshabilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeFormasDePagos.delete_FormasDePago', raise_exception=True)
 def eliminar(request, id):
-
     try:
         formaDePago = FormaDePago.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         formaDePago.delete()
         return HttpResponseRedirect( "/GestionDeFormasDePagos/" )
-
     else:
-
         template = loader.get_template('GestionDeFormasDePagos/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
