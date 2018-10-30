@@ -18,11 +18,14 @@
 {{formset.management_form}}
 {% for form in formset %}
 {% if forloop.last %}
-<div id="formset-template">{{form}}</div>
+<div id="formset-template">{{form}}
+  <a class="related-widget-wrapper-link add-related" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Agregar otro/a producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
+</div>
 {% else %}
 {{form}}
 {% endif %}
 {% endfor %}
+
 <div id="button-add">
   <a  href='javascript:;' onclick="add();" role="button">
     Agregar Insumo &raquo;

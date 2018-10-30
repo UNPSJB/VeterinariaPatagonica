@@ -13,7 +13,7 @@ def PracticaFormFactory(practica=None):
                         'precio',
                         'cliente',
                         'servicios',
-                        'insumosReales',
+                        'productosReales',
                         'tipoDeAtencion',
                         ]
             labels = {
@@ -21,7 +21,7 @@ def PracticaFormFactory(practica=None):
                 'precio':'Precio.',
                 'cliente':'Cliente.',
                 'servicios':'Servicios.',
-                'insumosReales':'Insumos Reales.',
+                'productosReales':'Productos Reales.',
                 'tipoDeAtencion':'Tipo De Atención.',
                 }
             error_messages = {
@@ -33,30 +33,14 @@ def PracticaFormFactory(practica=None):
                     'min_value' : 'Debe ingresar un valor no menor que el 0%'
                 },
             }
-#[TODO]------ Ver como implementar de esta forma los widgets. Ver ventajas.
-#            widgets = {
-#                'nombre' : forms.TextInput(),
-#                'precio' : forms.NumberInput(),
-#                'cliente': forms.Select(attrs={'class':'form-control'}),
-#                'servicios' : forms.Select(attrs={'class':'form-control'}),
-#                'insumosReales': forms.Select(attrs={'class':'form-control'}),
-#                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
-#            }
-
             widgets = {
                 'nombre' : forms.TextInput(),
                 'precio' : forms.NumberInput(),
                 'cliente': forms.Select(choices=gcmodels.Cliente.objects.all()),
                 'servicios' : forms.TextInput(),
-                'insumosReales': forms.TextInput(),
+                'productosReales': forms.TextInput(),
                 'tipoDeAtencion': forms.TextInput(),
             }
-
-#[BUG]-----Comentada porque pincha. no encuentra cleaned_data
-#    def clean(self):
-#        cleaned_data = super().clean()
-#    return cleaned_data
-
 
     def __init__(self, *args, **kwargs):
 

@@ -11,6 +11,11 @@ ServicioManager = BaseServicioManager.from_queryset(tools.BajasLogicasQuerySet)
 
 
 class Servicio(models.Model):
+
+    MAPPER ={
+    "nombre": "nombre__icontains",
+    }
+
     TIPO = (('C','Consulta'), ('Q','Quirurgica'))
     MAX_NOMBRE = 50
     MIN_NOMBRE = 2
@@ -80,7 +85,6 @@ class Servicio(models.Model):
         help_text='Deshabilitado',
         default=False
         )
-
 
     objects = ServicioManager()
 

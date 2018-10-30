@@ -39,17 +39,7 @@ def modificar(request, id = None):
         context["formset"] = ServicioProductoFormset(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))
-'''
-def verHabilitados(request):
-    servicio = Servicio.objects.filter(baja=False)
-    template = loader.get_template('GestionDeServicios/verHabilitados.html')
-    context = {
-        'servicio' : servicio,
-        'usuario' : request.user,
-    }
 
-    return  HttpResponse(template.render(context,request))
-'''
 def verHabilitados(request):
     servicios = Servicio.objects.habilitados()
     servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
@@ -61,14 +51,19 @@ def verHabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
+
+
+
 def verDeshabilitados(request):
-    servicio = Servicio.objects.filter(baja=True)
+    servicios = Servicio.objects.deshabilitados()
+    servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
     template = loader.get_template('GestionDeServicios/verDeshabilitados.html')
-    context = {
-        'servicio' : servicio,
+    contexto = {
+        'servicios' : servicios,
         'usuario' : request.user,
     }
-    return HttpResponse(template.render( context, request ))
+
+    return  HttpResponse(template.render(contexto,request))
 
 def ver(request, id):
     #import ipdb; ipdb.set_trace()
@@ -86,53 +81,39 @@ def ver(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.delete_Servicio', raise_exception=True)
 def deshabilitar(request, id):
-
     try:
         servicio = Servicio.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     servicio.baja = True
     servicio.save()
-
     return HttpResponseRedirect( "/GestionDeServicios/ver/{}".format(servicio.id) )
-
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.delete_Servicio', raise_exception=True)
 def habilitar(request, id):
-
     try:
         servicio = Servicio.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     servicio.baja = False
     servicio.save()
-
     return HttpResponseRedirect( "/GestionDeServicios/ver/{}".format(servicio.id) )
-
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.delete_Servicio', raise_exception=True)
 def eliminar(request, id):
-
     try:
         servicio = Servicio.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         servicio.delete()
         return HttpResponseRedirect( "/GestionDeServicios/" )
-
     else:
-
         template = loader.get_template('GestionDeServicios/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )

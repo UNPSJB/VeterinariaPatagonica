@@ -38,14 +38,14 @@ Actualmente disponibles
                         {% for servicio in servicios %}
                             <tr>
                               <td><p>{{ servicio.nombre }}</p></td>
-                                <td> <p align="center">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
+                                <td> <p align="justify">
+                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver este servicio en detalle.">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar este servicio.">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar este servicio.">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
                                 </p> </td>

@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
 from VeterinariaPatagonica import tools
-#from dal import autocomplete
+from dal import autocomplete
 from Apps.GestionDeClientes.models import Cliente
 
 

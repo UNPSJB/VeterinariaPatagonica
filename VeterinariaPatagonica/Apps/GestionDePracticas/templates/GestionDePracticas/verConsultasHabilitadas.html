@@ -20,6 +20,11 @@ Gestión de Consultas | Ver Consultas
 <!-- Listado -->
 <div class="practicaCuerpo" >
     <p> Se poseen las siguientes consultas almacenadas.  </p>
+    <form action="" method="GET">
+      <input name="nombre" placeholder="nombre">
+      <button type="submit">Filtrar</button>
+    </form>
+
     {% if practicas %}
             <div class="table-responsive" id="tabla">
                 <table class="table practicaListado">
@@ -34,17 +39,15 @@ Gestión de Consultas | Ver Consultas
                             <tr>
                                 <td>{{ practica.nombre }}</td>
                                 <td> <p align="center">
-                                            <!--<a  href="{% url 'practicas:practicaVer' practica.id %}" class="btn btn-xs btn-default">-->
-                                                <!--<i class="glyphicon glyphicon-eye-open"> </i>-->
-                                            <!--</a>-->
-                                            <!--href="{% url 'practicas:practicasModificar'-->
-                                            <!--<a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">-->
-                                                <!--<i class="glyphicon glyphicon-edit"> </i>-->
-                                            <!--</a>-->
-                                            <!--href="{% url 'practicas:practicasDeshabilitar'-->
-                                            <!--<a href="{% url 'practicas:practicasVer' practica.id %}" class="btn btn-xs btn-default">-->
-                                                <!--<i class="glyphicon glyphicon-minus"> </i>-->
-                                            <!--</a>-->
+                                  <a  href="{% url 'practicas:practicaVer' practica.id %}" class="btn btn-xs btn-default">
+                                      <i class="glyphicon glyphicon-eye-open"> </i>
+                                  </a>
+                                  <a href="{% url 'practicas:practicaModificar' practica.id %}" class="btn btn-xs btn-default">
+                                      <i class="glyphicon glyphicon-edit"> </i>
+                                  </a>
+                                  <a href="{% url 'practicas:practicaDeshabilitar' practica.id %}" class="btn btn-xs btn-default">
+                                      <i class="glyphicon glyphicon-minus"> </i>
+                                  </a>
                               </p> </td>
                             </tr>
                         {% endfor %}

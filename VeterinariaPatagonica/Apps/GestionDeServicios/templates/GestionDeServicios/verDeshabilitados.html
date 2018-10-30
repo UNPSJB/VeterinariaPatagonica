@@ -20,6 +20,10 @@ Actualmente <strong>no</strong> disponibles
 <!-- Listado -->
 <div class="servicioCuerpo" >
   <p> Los siguientes servicios pueden ser habilitados o eliminados.  </p>
+  <form action="" method="GET">
+    <input name="nombre" placeholder="nombre">
+    <button type="submit">Filtrar</button>
+  </form>
     {% if servicios %}
             <div class="table-responsive" id="tabla">
                 <table class="table servicioListado">
@@ -34,17 +38,17 @@ Actualmente <strong>no</strong> disponibles
                             <tr>
                                 <td>{{ servicio.nombre }}</td>
                                 <td >
-			<p align="center">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
+			                               <p align="justify">
+                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver este servicio en detalle.">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <!--<a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">-->
-                                                <!--<i class="glyphicon glyphicon-edit"> </i>-->
+                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar este servicio.">
+                                                <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default">-->
+                                            <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar este servicio.">
                                                 <i class="glyphicon glyphicon-plus"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default">-->
+                                            <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar este servicio permanentemente.">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
 			</p>
