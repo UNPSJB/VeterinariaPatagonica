@@ -13,11 +13,11 @@ class ServicioForm(forms.ModelForm):
                     'precioManoDeObra',
                     ]
         labels = {
-            'tipo':'Tipo.',
-            'nombre':'Nombre.',
-            'descripcion':'Descripcion.',
-            'tiempoEstimado':'Tiempo Estimado.',
-            'precioManoDeObra':'Precio Mano de Obra.',
+            'tipo':'Tipo:',
+            'nombre':'Nombre:',
+            'descripcion':'Descripcion:',
+            'tiempoEstimado':'Tiempo Estimado:',
+            'precioManoDeObra':'Precio Mano de Obra:',
             }
         error_messages = {
             'nombre' : {
@@ -28,7 +28,7 @@ class ServicioForm(forms.ModelForm):
             },
         }
         widgets = {
-            'tipo' : forms.TextInput(),
+
             'nombre' : forms.TextInput(),
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
             'tiempoEstimado' : forms.NumberInput(),

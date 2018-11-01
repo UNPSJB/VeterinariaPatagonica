@@ -51,9 +51,6 @@ def verHabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
-
-
-
 def verDeshabilitados(request):
     servicios = Servicio.objects.deshabilitados()
     servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
@@ -62,7 +59,6 @@ def verDeshabilitados(request):
         'servicios' : servicios,
         'usuario' : request.user,
     }
-
     return  HttpResponse(template.render(contexto,request))
 
 def ver(request, id):

@@ -50,6 +50,14 @@ class Practica(models.Model):
             error_messages = {
                 'max_digits': "Cantidad de digitos ingresados supera el máximo."
             })
+
+    montoAbonado = models.DecimalField(
+            max_digits = MAX_DIGITOS,
+            decimal_places = MAX_DECIMALES,
+            error_messages = {
+                'max_digits': "Cantidad de digitos ingresados supera el máximo."
+            })
+
     cliente = models.ForeignKey(
             gcmodels.Cliente,
             null=False,
@@ -80,6 +88,7 @@ class Practica(models.Model):
             on_delete = models.CASCADE,
             error_messages = {
             })
+            #[TODO]preguntar, ¿tengo que tener necesariamente el atributo estado en el modelo? ; Creo que si.
     #estado = models.ForeignKey(
             #Estado,
             #on_delete = models.CASCADE,
@@ -176,9 +185,9 @@ class Estado(models.Model):
 class Creada(Estado):
     TIPO = 1
 
-    def programar(self, practica, mascota, turno, motivo):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
+    def programar(self, practica, mascota, turno, senia, motivo):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
         if (turno <= datetime.now()):
-            return Programada.objects.create(practica = self.practica, mascota = mascota, turno=turno, motivoReprogramacion =motivo)
+            return Programada.objects.create(practica = self.practica, mascota = mascota, turno=turno, senia=senia, motivoReprogramacion =motivo)
         else:
             raise Exception("error: %s es una fecha inválida." % (turno.__str__()));
             return self.estado#retur None
@@ -197,23 +206,25 @@ class Programada(Estado):
     TIPO = 2
     turno = models.DateTimeField(auto_now = True)
     motivoReprogramacion = models.CharField(max_length = Practica.MAX_NOMBRE)
+    senia = models.PositiveSmallIntegerField()
 
     def reprogramar(self, practica, turno, motivoReprogramacion):
-        return Programada.objects.create(practica=practica, turno=turno, motivoReprogramacion=motivoReprogramacion)
+        return Programada.objects.create(practica=practica, turno=turno, senia=self.senia, motivoReprogramacion=motivoReprogramacion)
 
-    def pagar(self, monto):
+    def pagar(self, practica, monto):
+        return Programada.objects.create(practica=practica, turno=self.turno, senia=monto, motivoReprogramacion=self.motivoReprogramacion)
 
-        pass
-
-    def realizar(self):
-        pass
+        #[TODO] ¿Cómo poner los productos reales acá?
+    def realizar(self, practica, productos, servicios):
+        return Realizada.objects.create(practica=practica, productos=productos, servicios=servicios)
+        #pass
 
 class Presupuestada(Estado):
     TIPO = 3
-    porcentajeDescuento = models.PositiveSmallIntegerField()
+    porcentajeDescuento = models.PositiveSmallIntegerField()#[OJO]Deberia ser DecimalField
     diasMantenimiento = models.PositiveSmallIntegerField()
     #[TODO]fechaMantenimientoOferta = fechaActual+diasMantenimiento.
-
+    #[TODO]Preguntar, ¿Para que poner seniar? ; No se supone que al confirmar un presupuesto, es decir, al darle una fecha y pagar la senia la práctica quedo "Programada" ; ¿Es definirlo para usarlo en el confirmar, por modulacion?.
     def seniar(self, practica, turno, monto):
         return Programada.objects.create(practica=practica, turno=turno)
 
@@ -227,12 +238,17 @@ class Cancelada(Estado):
 class Realizada(Estado):
     TIPO = 5
 
-    def pagar(self, monto):
+    #[TODO] Idem pregunta del "realizar" en el estado "Programada". Agregar un item a los servicios de la práctica.Usar servicios.append()?
+    def agregarInternacion(self, practica, servicioInternacion):
         pass
 
 class Facturada(Estado):
     TIPO = 6
 
+    def pagar(self, practica, monto):
+        practica.montoAbonado += monto#[OJO] puede ser que esta linea no vaya.
+        return Facturada.objets.create(practica=practica,monto=monto)
+        pass
 
 for Klass in [Creada, Programada, Presupuestada, Cancelada, Realizada, Facturada]:
     Estado.register(Klass)

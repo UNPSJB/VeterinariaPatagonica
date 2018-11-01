@@ -36,23 +36,23 @@ Actualmente <strong>no</strong> disponibles
                     <tbody>
                         {% for servicio in servicios %}
                             <tr>
-                                <td>{{ servicio.nombre }}</td>
-                                <td >
-			                               <p align="justify">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver este servicio en detalle.">
-                                                <i class="glyphicon glyphicon-eye-open"> </i>
-                                            </a>
-                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar este servicio.">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a>
-                                            <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar este servicio.">
-                                                <i class="glyphicon glyphicon-plus"> </i>
-                                            </a>
-                                            <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar este servicio permanentemente.">
-                                                <i class="glyphicon glyphicon-remove"> </i>
-                                            </a>
-			</p>
-                                </td>
+                              <td>{{ servicio.nombre }}</td>
+                              <td >
+	                               <p align="justify">
+                                    <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver este servicio en detalle.">
+                                        <i class="glyphicon glyphicon-eye-open"> </i>
+                                    </a>
+                                    <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar este servicio.">
+                                        <i class="glyphicon glyphicon-edit"> </i>
+                                    </a>
+                                    <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar este servicio.">
+                                        <i class="glyphicon glyphicon-plus"> </i>
+                                    </a>
+                                    <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar este servicio permanentemente.">
+                                        <i class="glyphicon glyphicon-remove"> </i>
+                                    </a>
+	                               </p>
+                              </td>
                             </tr>
                         {% endfor %}
                     </tbody>

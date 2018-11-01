@@ -11,5 +11,17 @@ $(function() {
 		$("#id_form-TOTAL_FORMS").val(total);
 		console.log(total);
 	}
+	let quitar = function(){
+		let field = $("#formset-template").html();//Hacer aca en esta linea que señale lo que queiro borrar algo asi como remove(/form-\d+/g, `form-${total}`) pero no funciona asi. ni con removeChild()
+		if (total > 1){
+			total -= 1;
+			//$("#button-quitar").before(field); tendria que borrarlo aca parece.
+			$("#id_form-TOTAL_FORMS").val(total);
+			console.log(total);
+		} else{
+			alert("Imposible eliminar el Producto, el Servicio debe tener almenos un Producto.");
+		}
+	}
+	window.quitar = quitar;
 	window.add = add;
 });

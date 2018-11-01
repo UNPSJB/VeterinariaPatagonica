@@ -13,28 +13,35 @@
         <span style="display:none;" class="help-block">{{ field.help_text }}</span>
     </div>
 {% endfor %}
-
+{% block errores %}
 {{ formset.non_form_errors }}
-{{formset.management_form}}
-{% for form in formset %}
-{% if forloop.last %}
-<div id="formset-template">{{form}}
-  <a class="related-widget-wrapper-link add-related" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Agregar otro/a producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
-</div>
-{% else %}
-{{form}}
-{% endif %}
-{% endfor %}
-
-<div id="button-add">
-  <a  href='javascript:;' onclick="add();" role="button">
-    Agregar Insumo &raquo;
-  </a>
-</div>
-
-<div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
-        <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
-        <button type="submit" class="btn btn-sm btn-default">{{accion2}}</button>
+{% endblock errores %}
+<div class= "col-sm-offset-4" "col-sm-8">
+  {{formset.management_form}}
+  {% for form in formset %}
+    {% if forloop.last %}
+      <div id="formset-template">{{form}}
+      </div>
+    {% else %}
+      {{form}}
+    {% endif %}
+  {% endfor %}
+  <div>
+    <div id="button-add">
+      <a class = "btn btn-primary btn-sm" href='javascript:;' onclick="add();" role="button">
+        Agregar Producto &raquo;
+      </a>
     </div>
+    <div id="button-quitar">
+      <a  class = "btn btn-primary btn-sm" href='javascript:;' onclick="quitar();" role="button">
+        Quitar Producto &raquo;
+      </a>
+    </div>
+    <a class="related-widget-wrapper-link add-related" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crear un nuevo producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
+  </div>
+</div>
+<div class="form-group">
+  <div class="col-sm-offset-4 col-sm-8">
+    <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
+  </div>
 </div>

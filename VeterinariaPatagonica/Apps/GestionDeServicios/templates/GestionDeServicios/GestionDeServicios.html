@@ -7,6 +7,7 @@
 {% endblock paginaEstilos %}
 
 {% block paginaSeccionGeneral %}
+
   <section>
     {% block secciones %}
       {% include './seccionesSnippet.html' with pagina='default' %}
@@ -18,7 +19,8 @@
     </h4>
 
     <div class="servicioLineaTitulo"> </div>
-
+    {% block errores %}
+    {% endblock errores %}
     <p class="servicioSubtitulo">
       {% block servicioSubtitulo %}
       {% endblock servicioSubtitulo%}

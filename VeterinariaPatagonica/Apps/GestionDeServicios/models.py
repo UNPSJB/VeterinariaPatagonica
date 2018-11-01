@@ -16,13 +16,13 @@ class Servicio(models.Model):
     "nombre": "nombre__icontains",
     }
 
-    TIPO = (('C','Consulta'), ('Q','Quirurgica'))
+    TIPO = (('C','Consulta'), ('Q','Quirurgica'),('I','Internación') )
     MAX_NOMBRE = 50
     MIN_NOMBRE = 2
     MAX_DESCRIPCION = 200
     MAX_PRECIO = 7
     MAX_DECIMAL = 2
-    REGEX_NOMBRE = '^[C|Q]{1,1}$'
+    REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{1,100}$'
 
     tipo = models.CharField(
         help_text="Tipo de Servicio (Consulta-Cirugia)",
