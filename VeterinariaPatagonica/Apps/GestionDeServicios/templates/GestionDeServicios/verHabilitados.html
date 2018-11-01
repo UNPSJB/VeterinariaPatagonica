@@ -19,6 +19,10 @@ Actualmente disponibles
 {% block servicioContenido %}
 <!-- Listado -->
 <div class="servicioCuerpo" >
+  <form action="" method="GET">
+      <input name="nombre" placeholder="Nombre">
+      <button type="submit">Filtrar</button>
+  </form>
     <p> Los siguientes servicios estan habilitados.  </p>
     {% if servicios %}
             <div class="table-responsive" id="tabla">
@@ -33,7 +37,7 @@ Actualmente disponibles
                         {% for servicio in servicios %}
                             <tr>
                               <td><p>{{ servicio.nombre }}</p></td>
-                                <td> <p align="center">
+                                <td> <p align="justify">
                                             <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>

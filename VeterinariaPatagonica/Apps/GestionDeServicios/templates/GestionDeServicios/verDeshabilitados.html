@@ -19,6 +19,10 @@ Actualmente <strong>no</strong> disponibles
 {% block servicioContenido %}
 <!-- Listado -->
 <div class="servicioCuerpo" >
+  <form action="" method="GET">
+      <input name="nombre" placeholder="Nombre">
+      <button type="submit">Filtrar</button>
+  </form>
   <p> Los siguientes servicios pueden ser habilitados o eliminados.  </p>
     {% if servicios %}
             <div class="table-responsive" id="tabla">
@@ -32,7 +36,6 @@ Actualmente <strong>no</strong> disponibles
                     <tbody>
                         {% for servicio in servicios %}
                             <tr>
-<<<<<<< HEAD
                               <td>{{ servicio.nombre }}</td>
                               <td >
 	                               <p align="justify">
@@ -50,25 +53,6 @@ Actualmente <strong>no</strong> disponibles
                                     </a>
 	                               </p>
                               </td>
-=======
-                                <td>{{ servicio.nombre }}</td>
-                                <td >
-			<p align="center">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-eye-open"> </i>
-                                            </a>
-                                            <!--<a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">-->
-                                                <!--<i class="glyphicon glyphicon-edit"> </i>-->
-                                            </a>
-                                            <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default">-->
-                                                <i class="glyphicon glyphicon-plus"> </i>
-                                            </a>
-                                            <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default">-->
-                                                <i class="glyphicon glyphicon-remove"> </i>
-                                            </a>
-			</p>
-                                </td>
->>>>>>> d171883f1705683b917fe0fee76799f1880b8e43
                             </tr>
                         {% endfor %}
                     </tbody>

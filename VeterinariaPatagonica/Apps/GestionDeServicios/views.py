@@ -7,7 +7,7 @@ from django.forms import modelformset_factory
 
 from .models import Servicio, ServicioProducto
 from .forms import ServicioForm, ServicioProductoForm
-
+from VeterinariaPatagonica import tools
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
@@ -16,8 +16,8 @@ def modificar(request, id = None):
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,
-        fields=("producto", "cantidad"),
-        formset=ServicioProductoBaseFormSet)
+        fields=("producto", "cantidad"))#,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
+        #formset=ServicioProductoBaseFormSet)
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
         formset = ServicioProductoFormset(request.POST)
@@ -46,21 +46,21 @@ def verHabilitados(request):
     servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
     template = loader.get_template('GestionDeServicios/verHabilitados.html')
     context = {
-        'servicio' : servicio,
+        'servicios' : servicios,
         'usuario' : request.user,
     }
 
-    return  HttpResponse(template.render(contexto,request))
+    return  HttpResponse(template.render(context,request))
 
 def verDeshabilitados(request):
     servicios = Servicio.objects.deshabilitados()
     servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
     template = loader.get_template('GestionDeServicios/verDeshabilitados.html')
     context = {
-        'servicio' : servicio,
+        'servicios' : servicios,
         'usuario' : request.user,
     }
-    return  HttpResponse(template.render(contexto,request))
+    return  HttpResponse(template.render(context,request))
 
 def ver(request, id):
     #import ipdb; ipdb.set_trace()
