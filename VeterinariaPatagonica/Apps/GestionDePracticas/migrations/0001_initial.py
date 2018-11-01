@@ -16,6 +16,14 @@ class Migration(migrations.Migration):
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('GestionDeProductos', '0001_initial'),
         ('GestionDeClientes', '0001_initial'),
+=======
+        ('GestionDeClientes', '0001_initial'),
+        ('GestionDeServicios', '0001_initial'),
+        ('GestionDeTiposDeAtencion', '0002_auto_20181028_1945'),
+        ('GestionDeProductos', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('GestionDeMascotas', '0001_initial'),
+>>>>>>> d171883f1705683b917fe0fee76799f1880b8e43
     ]
 
     operations = [

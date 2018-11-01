@@ -1,14 +1,15 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 from Apps.GestionDeClientes import models as gcmodels
 from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
 from Apps.GestionDeMascotas import models as gmmodels
+
 from Apps.GestionDeProductos import models as gpmodels
 
 
-
-class BasePracticaManager(models.Manager):
+class PracticaBaseManager(models.Manager):
     pass
 
 class PracticaQuerySet(models.QuerySet):
@@ -19,7 +20,7 @@ class PracticaQuerySet(models.QuerySet):
             estados__id=models.F('max_id'),
             estados__tipo__in=[ e.TIPO for e in estados])
 
-PracticaManager = BasePracticaManager.from_queryset(PracticaQuerySet)
+PracticaManager = PracticaBaseManager.from_queryset(PracticaQuerySet)
 
 class Practica(models.Model):
 #------------Constantes.------------------
@@ -70,7 +71,7 @@ class Practica(models.Model):
         through_fields=('practica', 'servicio'),
     )
     productosReales = models.ManyToManyField(gpmodels.Producto,
-        #verbose = 'Productos Reales',
+        #verbose = 'Insumos Reales',
         through='PracticaProducto',
         through_fields=('practica', 'producto'),
     )
@@ -95,10 +96,6 @@ class Practica(models.Model):
             #error_messages = {
             #})
 #--------------Metodos.--------------------
-    def __str__(self):
-        cadena = 'Práctica: {0}. Hecha para el cliente: {1}. Su animal es: {2}.'
-        return cadena.format(self.nombre, self.cliente,self.mascota)
-
     def precioReal(self):
         total = Decimal("0")
         for sproducto in self.productos.all():
@@ -143,7 +140,7 @@ class PracticaServicio(models.Model):
     servicio = models.ForeignKey(gsmodels.Servicio, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField()
 
-#---------Definicion de la clase necesaria para manejar Productos ----------
+#---------Definicion de la clase necesaria para manejar Insumos ----------
 class PracticaProducto(models.Model):
     practica = models.ForeignKey(Practica, on_delete=models.CASCADE)
     producto = models.ForeignKey(gpmodels.Producto, on_delete=models.CASCADE)

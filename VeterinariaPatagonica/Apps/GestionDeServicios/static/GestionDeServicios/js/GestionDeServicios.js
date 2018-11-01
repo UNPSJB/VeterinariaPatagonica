@@ -5,11 +5,9 @@ $(function() {
 	let max = $("#id_form-MAX_NUM_FORMS").val();
 
 	let add = function() {
-		let field = $("#formset-template").html().replace(/form-\d+/g, `form-${total}`);
+		let field = $("#formset-template").html().replace(RegExp(`form-${initial}`,"g"), `form-${total}`);
 		total += 1;
-		$("#button-add").before(field);
-		$("#id_form-TOTAL_FORMS").val(total);
-		console.log(total);
+		$("#formset-template").after(field);
 	}
 	let quitar = function(){
 		let field = $("#formset-template").html();//Hacer aca en esta linea que señale lo que queiro borrar algo asi como remove(/form-\d+/g, `form-${total}`) pero no funciona asi. ni con removeChild()

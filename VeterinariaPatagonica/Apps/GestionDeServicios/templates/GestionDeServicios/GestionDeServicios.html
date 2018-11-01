@@ -1,4 +1,5 @@
 {% extends "sitioBase.html" %}
+
 {% load static %}
 
 {% block paginaEstilos %}
@@ -12,12 +13,10 @@
     {% block secciones %}
       {% include './seccionesSnippet.html' with pagina='default' %}
     {% endblock %}
-
     <h4 class="servicioTitulo">
       {% block servicioTitulo %}
       {% endblock servicioTitulo %}
     </h4>
-
     <div class="servicioLineaTitulo"> </div>
     {% block errores %}
     {% endblock errores %}
@@ -25,19 +24,11 @@
       {% block servicioSubtitulo %}
       {% endblock servicioSubtitulo%}
     </p>
-
   {% block servicioContenido %}
   {% endblock servicioContenido %}
   </section>
 {% endblock paginaSeccionGeneral %}
 
-
 {% block footer %}
   <p>Para mas información  de los Servicios haga click aquí<p>
 {% endblock footer %}
-
-{% block paginaJavascript %}
-    {{ block.super }}
-
-
-{% endblock paginaJavascript %}

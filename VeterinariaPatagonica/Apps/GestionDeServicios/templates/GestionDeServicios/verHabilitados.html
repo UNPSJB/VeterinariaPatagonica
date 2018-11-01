@@ -20,11 +20,6 @@ Actualmente disponibles
 <!-- Listado -->
 <div class="servicioCuerpo" >
     <p> Los siguientes servicios estan habilitados.  </p>
-
-    <form action="" method="GET">
-      <input name="nombre" placeholder="nombre">
-      <button type="submit">Filtrar</button>
-    </form>
     {% if servicios %}
             <div class="table-responsive" id="tabla">
                 <table class="table servicioListado">
@@ -38,14 +33,14 @@ Actualmente disponibles
                         {% for servicio in servicios %}
                             <tr>
                               <td><p>{{ servicio.nombre }}</p></td>
-                                <td> <p align="justify">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver este servicio en detalle.">
+                                <td> <p align="center">
+                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar este servicio.">
+                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar este servicio.">
+                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
                                 </p> </td>

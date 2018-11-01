@@ -4,9 +4,8 @@ from .models import Rubro
 class RubroForm(forms.ModelForm):
     class Meta:
         model = Rubro
-        fields = {
-            'nombre',
-            'descripcion',
+        fields = {'nombre',
+                    'descripcion',
                   }
         labels = {
             'nombre':'Nombre',

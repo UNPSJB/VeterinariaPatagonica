@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import FormaDePago
 from .forms import FormaDePagoForm
-from VeterinariaPatagonica import tools
+
 
 def formasDePagos(request):
 
@@ -66,19 +66,25 @@ def deshabilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeFormasDePagos.delete_FormasDePago', raise_exception=True)
 def eliminar(request, id):
+
     try:
         formaDePago = FormaDePago.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
+
     if request.method == 'POST':
+
         formaDePago.delete()
         return HttpResponseRedirect( "/GestionDeFormasDePagos/" )
+
     else:
+
         template = loader.get_template('GestionDeFormasDePagos/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
+
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
@@ -106,20 +112,6 @@ def verHabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
-
-def verDeshabilitados(request):
-    formasDePagos = FormaDePago.objects.deshabilitados()
-    formasDePagos = formasDePagos.filter(tools.paramsToFilter(request.GET, FormaDePago))
-    template = loader.get_template('GestionDeFormasDePagos/verDeshabilitados.html')
-    contexto = {
-        'formasDePagos' : formasDePagos,
-        'usuario' : request.user,
-    }
-
-    return  HttpResponse(template.render(contexto,request))
-
-
-'''
 def verDeshabilitados(request):
     formasDePagos = FormaDePago.objects.filter(baja=True)
     template = loader.get_template('GestionDeFormasDePagos/verDeshabilitados.html')
@@ -129,4 +121,3 @@ def verDeshabilitados(request):
     }
 
     return  HttpResponse(template.render(contexto,request))
-'''

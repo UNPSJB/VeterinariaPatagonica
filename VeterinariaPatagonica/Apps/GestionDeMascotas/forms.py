@@ -5,12 +5,12 @@ from .models import Mascota
 from django.core.validators import RegexValidator
 
 #TIMEINPUT_FMTS = [ "%H:%M" ]
-#pip install django-autocomplete-light para que funcione el buscar de mascota
+
 
 '''class creacionModelForm(forms.ModelForm):
     class meta:
         model = Mascota'''
-'''
+
 cliente = forms.DateField(
     required=True,
     label='cliente',
@@ -23,8 +23,6 @@ cliente = forms.DateField(
     validators=[],
 
 )
-
-'''
 def MascotaFormFactory(mascota=None):
     campos = [ 'cliente',
                'fechaNacimiento',
@@ -61,8 +59,8 @@ def MascotaFormFactory(mascota=None):
             }
             widgets = {
                 'nombre' : forms.TextInput(),
-                'cliente': autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete'),
-                #'cliente': forms.Select(attrs={'class': 'form-control'}),
+
+                'cliente': forms.Select(attrs={'class': 'form-control'}),
                 'fechaNacimiento': forms.DateInput(),
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),

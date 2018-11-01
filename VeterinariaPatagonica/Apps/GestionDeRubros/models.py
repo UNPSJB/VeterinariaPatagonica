@@ -36,7 +36,3 @@ class Rubro (models.Model):
     )
 
     baja = models.BooleanField(default=False)
-
-    def __str__(self):
-        cadena = 'Rubro: {0}. {1}'
-        return cadena.format(self.nombre, self.descripcion)

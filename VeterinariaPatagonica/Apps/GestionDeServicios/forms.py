@@ -34,6 +34,7 @@ class ServicioForm(forms.ModelForm):
             'tiempoEstimado' : forms.NumberInput(),
             'precioManoDeObra': forms.NumberInput(),
         }
+
     def clean(self):
         cleaned_data = super().clean()
         return cleaned_data
@@ -51,13 +52,3 @@ class ServicioProductoForm(forms.ModelForm):
     class Meta:
         model = ServicioProducto
         fields = ["producto", "cantidad"]
-
-class ServicioProductoBaseFormSet(forms.BaseModelFormSet):
-    def clean(self):
-        producto_ids = [item["producto"].id for item in self.cleaned_data]
-        if len(producto_ids) != len(set(producto_ids)):
-            raise forms.ValidationError("Hay productos repetidos.")
-        return super().clean()
-
-    def save(self, commit=True):
-        return super().save(commit=commit)
