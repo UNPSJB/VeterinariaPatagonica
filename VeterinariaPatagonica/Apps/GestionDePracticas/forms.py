@@ -13,7 +13,7 @@ def PracticaFormFactory(practica=None):
                         'precio',
                         'cliente',
                         'servicios',
-                        'insumosReales',
+                        'productosReales',
                         'tipoDeAtencion',
                         ]
             labels = {
@@ -21,7 +21,7 @@ def PracticaFormFactory(practica=None):
                 'precio':'Precio.',
                 'cliente':'Cliente.',
                 'servicios':'Servicios.',
-                'insumosReales':'Insumos Reales.',
+                'productosReales':'Insumos Reales.',
                 'tipoDeAtencion':'Tipo De Atención.',
                 }
             error_messages = {
@@ -39,7 +39,7 @@ def PracticaFormFactory(practica=None):
 #                'precio' : forms.NumberInput(),
 #                'cliente': forms.Select(attrs={'class':'form-control'}),
 #                'servicios' : forms.Select(attrs={'class':'form-control'}),
-#                'insumosReales': forms.Select(attrs={'class':'form-control'}),
+#                'productosReales': forms.Select(attrs={'class':'form-control'}),
 #                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
 #            }
 
@@ -48,7 +48,7 @@ def PracticaFormFactory(practica=None):
                 'precio' : forms.NumberInput(),
                 'cliente': forms.Select(choices=gcmodels.Cliente.objects.all()),
                 'servicios' : forms.TextInput(),
-                'insumosReales': forms.TextInput(),
+                'productosReales': forms.TextInput(),
                 'tipoDeAtencion': forms.TextInput(),
             }
 
@@ -112,7 +112,7 @@ class ModificacionForm(CreacionForm):
 #                'precio' : forms.NumberInput(),
 #                'cliente': forms.Select(attrs={'class':'form-control'}),
 #                'servicios' : forms.Select(attrs={'class':'form-control'}),
-#                'insumosReales': forms.Select(attrs={'class':'form-control'}),
+#                'productosReales': forms.Select(attrs={'class':'form-control'}),
 #                'tipoDeAtencion': forms.Select(attrs={'class':'form-control'}),
             }
 
@@ -121,7 +121,7 @@ class ModificacionForm(CreacionForm):
                 'precio': forms.NumberInput(),
                 'cliente': forms.Select(attrs={'class': 'form-control'}),
                 'servicios': forms.Select(attrs={'class': 'form-control'}),
-                'insumosReales': forms.Select(attrs={'class': 'form-control'}),
+                'productosReales': forms.Select(attrs={'class': 'form-control'}),
                 'tipoDeAtencion': forms.Select(attrs={'class': 'form-control'}),
             }
 '''
