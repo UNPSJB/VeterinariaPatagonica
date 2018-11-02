@@ -14,7 +14,7 @@ Elimina permanentemente los datos del servicio del sistema
 
 {% block servicioContenido %}
 <div class="servicioCuerpo">
-    <form class="form" action="{% url 'servicioEliminar' id %}" method="post">
+    <form class="form" action="{% url 'servicios:servicioEliminar' id %}" method="post">
         {% csrf_token %}
 		<p class="servicioAvisoEliminacion"> Confirmar eliminacion: </p>
         <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>

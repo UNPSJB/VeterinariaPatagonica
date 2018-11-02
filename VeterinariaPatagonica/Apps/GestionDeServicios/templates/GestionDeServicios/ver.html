@@ -14,6 +14,7 @@ Muestra datos del servicio
 
 {% block servicioContenido %}
     {% include './accionesSnippet.html' with item=servicio seccion='ver' %}
+
     <div class="servicioCuerpo">
         {% if servicio %}
         <div class="well">
@@ -22,7 +23,10 @@ Muestra datos del servicio
             <p>Nombre: {{ servicio.nombre }}</p>
             <p>Tiempo Estimado: {{ servicio.tiempoEstimado }}</p>
             <p>Precio de Mano de Obra: {{ servicio.precioManoDeObra }}</p>
+            <!-- [TODO] Preguntar ¿Cómo hacerlo? Deberia ir los productos que tiene el servicio. -->
+            <!--<p>Productos: {{servicio.productos}}</p>-->
         </div>
+
         {% else %}
             <p> El servicio no existe </p>
         {% endif %}

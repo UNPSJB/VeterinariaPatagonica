@@ -11,7 +11,6 @@
 
   <section>
     {% block secciones %}
-      {% include './seccionesSnippet.html' with pagina='default' %}
     {% endblock %}
     <h4 class="servicioTitulo">
       {% block servicioTitulo %}
@@ -27,7 +26,13 @@
   {% block servicioContenido %}
   {% endblock servicioContenido %}
   </section>
+
+  <div class= "col-sm-offset-11">
+    <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
+  </div>
+
 {% endblock paginaSeccionGeneral %}
+
 
 {% block footer %}
   <p>Para mas información  de los Servicios haga click aquí<p>

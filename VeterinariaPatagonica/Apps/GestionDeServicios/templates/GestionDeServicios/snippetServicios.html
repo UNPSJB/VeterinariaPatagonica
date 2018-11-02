@@ -1,39 +1,41 @@
 {{ formulario.non_field_errors }}
 {% for field in form %}
-    <div class="form-group {% if field.errors %}has-error{% endif %}">
-        <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
-            {{ field.label }}
-        </label>
-        <div class="col-sm-8">
-          {{ field }}
-          <div class="campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
-            {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
-          </div>
-        </div>
-        <span style="display:none;" class="help-block">{{ field.help_text }}</span>
+<div class="form-group {% if field.errors %}has-error{% endif %}">
+    <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
+        {{ field.label }}
+    </label>
+    <div class="col-sm-8">
+      {{ field }}
+      <div class="campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
+        {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
+      </div>
     </div>
+    <span style="display:none;" class="help-block">{{ field.help_text }}</span>
+</div>
 {% endfor %}
+
 {% block errores %}
-{{ formset.non_form_errors }}
+  {{ formset.non_form_errors }}
 {% endblock errores %}
+
 <div class= "col-sm-offset-4" "col-sm-8">
   {{formset.management_form}}
   {% for form in formset %}
     {% if forloop.last %}
-      <div id="formset-template">{{form}}
-      </div>
+      <div id="formset-template">{{form}}</div>
     {% else %}
       {{form}}
     {% endif %}
   {% endfor %}
-  <div>
-    <div id="button-add">
-      <a class = "btn btn-primary btn-sm" href='javascript:;' onclick="add();" role="button">
+
+  <div id="buttons">
+    <div>
+      <a id="button-add" class="btn btn-primary btn-sm" role="button">
         Agregar Producto &raquo;
       </a>
     </div>
-    <div id="button-quitar">
-      <a  class = "btn btn-primary btn-sm" href='javascript:;' onclick="quitar();" role="button">
+    <div>
+      <a id="button-remove" class="btn btn-primary btn-sm" role="button">
         Quitar Producto &raquo;
       </a>
     </div>

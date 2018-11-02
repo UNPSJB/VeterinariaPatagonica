@@ -15,12 +15,12 @@ def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
-    ServicioProductoFormset = modelformset_factory(ServicioProducto,
-        fields=("producto", "cantidad"))#,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
+    ServicioProductoForm = modelformset_factory(ServicioProducto,
+        fields=("producto", "cantidad"), min_num=1)#,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
         #formset=ServicioProductoBaseFormSet)
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
-        formset = ServicioProductoFormset(request.POST)
+        formset = ServicioProductoForm(request.POST)
         if form.is_valid() and formset.is_valid():
             servicio = form.save()
             instances = formset.save(commit=False)
@@ -37,7 +37,7 @@ def modificar(request, id = None):
     else:
         context['formulario'] = form
         qs = ServicioProducto.objects.none() if servicio is None else servicio.servicioproducto_set.all()
-        context["formset"] = ServicioProductoFormset(queryset=qs)
+        context["formset"] = ServicioProductoForm(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))
 
@@ -108,23 +108,28 @@ def habilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.delete_Servicio', raise_exception=True)
 def eliminar(request, id):
-
     try:
         servicio = Servicio.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         servicio.delete()
         return HttpResponseRedirect( "/GestionDeServicios/" )
-
     else:
-
         template = loader.get_template('GestionDeServicios/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
+
+
+
+
+
+
+
+
+
+#def volver(request, id):
+#    return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
