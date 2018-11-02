@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'dal',
+    'dal_select2',
+    'dal_select2.widgets',
     'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeClientes',
     'Apps.GestionDeProductos',
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
     'Apps.GestionDePracticas',
     'Apps.GestionDeTiposDeAtencion',
     'Apps.GestionDeRubros',
+    'Apps.GestionDeFacturas'
 ]
 
 MIDDLEWARE = [
