@@ -1,0 +1,36 @@
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
+
+{% block titulo %}
+Gestion de Facturas | Ver Factura
+{% endblock %}
+
+{% block facturaTitulo %}
+Ver Factura
+{% endblock %}
+
+{% block facturaSubtitulo %}
+Muestra datos del factura
+{% endblock %}
+
+{% block facturaContenido %}
+
+    {% include './accionesSnippet.html' with item=factura seccion='ver' %}
+
+    <div class="facturaCuerpo">
+
+        {% if factura %}
+        <div class="well">
+            <p>Identificador: {{ factura.id }}</p>
+            <p>Nombres: {{ factura.nombre }} </p>
+            <p>Descripcion: {{ factura.descripcion}}</p>
+
+        </div>
+        {% else %}
+
+            <p> La factura no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock facturaContenido %}

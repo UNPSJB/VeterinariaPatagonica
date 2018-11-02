@@ -1,0 +1,66 @@
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
+
+{% block titulo %}
+Gestion de Facturas | Ver Habilitados
+{% endblock %}
+
+{% block facturaTitulo %}
+Facturas Habilitados
+{% endblock %}
+
+{% block facturaSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block facturaContenido %}
+
+<!-- Listado -->
+<div class="facturaCuerpo" >
+
+    <p> Los siguientes facturas estan habilitados.  </p>
+
+    {% if facturas %}
+            <div class="table-responsive" id="tabla">
+                <table class="table facturaListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for factura in facturas %}
+                            <tr>
+                                <td> <p>{{factura.nombre }}</p></td>
+                                <td> <p align="justify">
+                                        <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-eye-open"> </i>
+                                        </a>
+                                        <a href="{% url 'facturas:facturaModificar' factura.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'facturas:facturaDeshabilitar' factura.id%}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-minus"> </i>
+                                        </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay facturas habilitados</p>
+
+    {% endif %}
+
+    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}
