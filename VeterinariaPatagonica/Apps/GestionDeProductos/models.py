@@ -17,7 +17,6 @@ class Producto (models.Model):
         "marca": "marca__icontains",
         "formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
-
         "precioPorUnidad": "precioPorUnidad__gte"
     }
 
@@ -100,7 +99,9 @@ class Producto (models.Model):
         error_messages = {
             'max_length' : "La marca puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
             'blank' : "La marca es obligatoria"
-            })
+
+        }
+    )
 
     stock = models.IntegerField(
         help_text="Stock del Producto",
@@ -123,12 +124,14 @@ class Producto (models.Model):
         error_messages = {
             'invalid_choice' : "Opcion invalida",
             'blank' : "La unidad de medida es obligatoria"
-        })
+        }
+    )
 
     precioPorUnidad = models.DecimalField(
         help_text="Precio del Producto",
         max_digits = MAX_DIGITOS,
-        decimal_places = MAX_DECIMALES)
+        decimal_places = MAX_DECIMALES
+    )
 
     precioDeCompra = models.DecimalField(
         help_text="Precio de Compra del Producto",
@@ -136,7 +139,8 @@ class Producto (models.Model):
         unique=False,
         null=False,
         blank=False,
-        decimal_places = MAX_DECIMALES)
+        decimal_places = MAX_DECIMALES
+    )
 
 
     rubro = models.ForeignKey(
@@ -165,10 +169,7 @@ class Producto (models.Model):
         }
     )
 
-    baja = models.BooleanField(
-        #help_text='Deshabilitado',
-        default=False
-        )
+    baja = models.BooleanField(default=False)
 
     objects = ProductoManager()
 

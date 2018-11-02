@@ -20,8 +20,8 @@ Muestra datos del producto
 
         {% if producto %}
         <div class="well">
-            <p>Identificador: {{ producto.id }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
-            <p>Nombre: {{ producto.nombre }}</p>
+            <p>Identificador: {{ producto.id }} </p>
+            <p>Nombre: {{ producto.nombre }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %}) </p>
             <p>Marca: {{ producto.marca }}</p>
             <p>Stock: {{ producto.stock }}</p>
             <p>Forma De Presentacion: {{ producto.formaDePresentacion }}</p>
