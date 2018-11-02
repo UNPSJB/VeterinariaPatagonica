@@ -39,7 +39,7 @@ def verHabilitados(request):
         'productos': productos,
         'usuario': request.user
     }
-    return HttpResponse(template.render(context, request))
+    return HttpResponse(template.render( context, request ))
 
 def verDeshabilitados(request):
     productos = Producto.objects.deshabilitados()

@@ -1,32 +1,32 @@
+from .models import Factura, DetalleFactura
 from django import forms
-from .models import Rubro
 
-class RubroForm(forms.ModelForm):
+class FacturaForm(forms.ModelForm):
     class Meta:
-        model = Rubro
+        model = Factura
         fields = {
-            'nombre',
-            'descripcion',
-                  }
+            'tipo',
+            'cliente',
+            'fecha',
+            'total'
+        }
+
         labels = {
-            'nombre':'Nombre',
-            'descripcion' : 'Descripcion'
+            'tipo':'Tipo',
+            'cliente' : 'Cliente',
+            'fecha' : 'Fecha',
+            'total' : 'Total'
         }
 
         error_messages = {
-            'nombre' : {
+            'tipo' : {
                 'max_length': ("Nombre demasiados largo"),
             }
         }
 
         widgets = {
-            'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 })
-        }
 
-        field_order = [
-            'nombre',
-            'descripcion'
-        ]
+        }
 
 
     def clean(self):
@@ -43,3 +43,12 @@ class RubroForm(forms.ModelForm):
                 field.widget.attrs.update({
                     'class': 'form-control'
                 })
+
+class DetalleFacturaForm(forms.ModelForm):
+    class Meta:
+        model = DetalleFactura
+        fields= {
+            'factura': 'Factura',
+            'subtotal': 'Subtotal',
+            'cantidad': 'Cantidad'
+        }

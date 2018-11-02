@@ -1,14 +1,14 @@
-{% extends 'GestionDeFormasDePagos/GestionDeFormasDePagos.html' %}
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
 
 {% block titulo %}
-Gestion de Formas De Pagos | Ver Deshabilitados
+Gestion de Facturas | Ver Deshabilitados
 {% endblock %}
 
-{% block formaDePagoTitulo %}
-Formas De Pagos Deshabilitados
+{% block facturaTitulo %}
+Facturas Deshabilitados
 {% endblock %}
 
-{% block formaDePagoSubtitulo %}
+{% block facturaSubtitulo %}
 Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
@@ -16,16 +16,16 @@ Actualmente <strong>no</strong> disponibles
 {% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
 {% endblock %}
 
-{% block formaDePagoContenido %}
+{% block facturaContenido %}
 
 <!-- Listado -->
-<div class="formaDePagoCuerpo" >
+<div class="facturaCuerpo" >
 
-  <p> Los siguientes formasDePagos pueden ser habilitados o eliminados.  </p>
+  <p> Los siguientes facturas pueden ser habilitados o eliminados.  </p>
 
-    {% if formasDePagos %}
+    {% if facturas %}
             <div class="table-responsive" id="tabla">
-                <table class="table formaDePagoListado">
+                <table class="table facturaListado">
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
@@ -33,21 +33,21 @@ Actualmente <strong>no</strong> disponibles
                         </tr>
                     </thead>
                     <tbody>
-                        {% for formaDePago in formasDePagos %}
+                        {% for factura in facturas %}
                             <tr>
-                                <td>{{formaDePago.nombre}}</td>
+                                <td>{{factura.nombre}}</td>
                                 <td >
                                     <p align="justify">
-                                        <a  href="{% url 'formasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
                                         </a>
-                                        <a href="{% url 'formasDePagos:formaDePagoModificar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'facturas:facturaModificar' factura.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'formasDePagos:formaDePagoHabilitar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'facturas:facturaHabilitar' factura.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-plus"> </i>
                                         </a>
-                                        <a href="{% url 'formasDePagos:formaDePagoEliminar' formaDePago.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'facturas:facturaEliminar' factura.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-remove"> </i>
                                         </a>
                                     </p>
@@ -60,7 +60,7 @@ Actualmente <strong>no</strong> disponibles
 
     {% else %}
 
-        <p> No hay fromas De Pagos deshabilitados</p>
+        <p> No hay facturas deshabilitados</p>
 
     {% endif %}
 
