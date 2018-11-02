@@ -4,9 +4,10 @@ from .models import FormaDePago
 class FormaDePagoForm(forms.ModelForm):
     class Meta:
         model = FormaDePago
-        fields = {'nombre',
-                    'descripcion',
-                  }
+        fields = {
+            'nombre',
+            'descripcion',
+        }
         labels = {
             'nombre':'Nombre',
             'descripcion' : 'Descripcion'
@@ -21,6 +22,11 @@ class FormaDePagoForm(forms.ModelForm):
         widgets = {
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 })
         }
+
+        field_order = [
+            'nombre',
+            'descripcion'
+        ]
 
 
     def clean(self):
