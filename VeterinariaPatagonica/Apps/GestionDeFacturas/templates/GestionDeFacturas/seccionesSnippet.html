@@ -1,0 +1,8 @@
+<!DOCTYPE html>
+<div class="facturaSecciones">
+
+        <a id="facturaLinkHabilitados" class="btn btn-sm btn-default {% if pagina == 'facturas:facturaVerHabilitados' %} disabled {% endif %}"  href="{% url 'facturas:facturaVerHabilitados' %}"> Habilitados </a>
+
+        <a id="facturaLinkDeshabilitados" class="btn btn-sm btn-default {% if pagina == 'facturas:facturaVerDeshabilitados' %} disabled {% endif %}"  href="{% url 'facturas:facturaVerDeshabilitados' %}"> Deshabilitados </a>
+
+</div>

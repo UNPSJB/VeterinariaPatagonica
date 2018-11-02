@@ -1,0 +1,35 @@
+{% extends "sitioBase.html" %}
+{% load static %}
+
+{% block paginaEstilos %}
+  {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/GestionDeFacturas.css' %}">
+{% endblock paginaEstilos %}
+
+{% block paginaSeccionGeneral %}
+  <section>
+    {% block secciones %}
+      {% include './seccionesSnippet.html' with pagina='default' %}
+    {% endblock %}
+
+    <h4 class="facturaTitulo">
+      {% block facturaTitulo %}
+      {% endblock facturaTitulo %}
+    </h4>
+
+    <div class="facturaLineaTitulo"> </div>
+
+    <p class="facturaSubtitulo">
+      {% block facturaSubtitulo %}
+      {% endblock facturaSubtitulo%}
+    </p>
+
+  {% block facturaContenido %}
+  {% endblock facturaContenido %}
+  </section>
+{% endblock paginaSeccionGeneral %}
+
+
+{% block footer %}
+  <p>Para mas información de las Facturas haga click aquí<p>
+{% endblock footer %}

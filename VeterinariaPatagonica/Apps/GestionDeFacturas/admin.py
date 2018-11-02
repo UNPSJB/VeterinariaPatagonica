@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import detalleFactura
-from  .models import factura
+from .models import DetalleFactura
+from  .models import Factura
 # Register your models here.
 
-class detalleFacturaInline(admin.TabularInline):
-    model = detalleFactura
+class DetalleFacturaInline(admin.TabularInline):
+    model = DetalleFactura
 
-class facturaAdmin(admin.ModelAdmin):
-    inlines = (detalleFacturaInline,)
+class FacturaAdmin(admin.ModelAdmin):
+    inlines = (DetalleFacturaInline,)
 
-admin.site.register(factura, facturaAdmin)
+admin.site.register(Factura, FacturaAdmin)
