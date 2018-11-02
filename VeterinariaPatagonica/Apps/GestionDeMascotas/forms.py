@@ -1,6 +1,6 @@
 from django import forms
 from .models import Mascota
-#from dal import autocomplete
+from dal import autocomplete
 
 from django.core.validators import RegexValidator
 
@@ -60,7 +60,8 @@ def MascotaFormFactory(mascota=None):
             widgets = {
                 'nombre' : forms.TextInput(),
 
-                'cliente': forms.Select(attrs={'class': 'form-control'}),
+                'cliente': autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete'),
+                #'cliente': forms.Select(attrs={'class': 'form-control'}),
                 'fechaNacimiento': forms.DateInput(),
                 'raza' : forms.TextInput(),
                 'especie': forms.TextInput(),
