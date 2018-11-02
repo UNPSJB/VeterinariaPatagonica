@@ -1,4 +1,3 @@
-
 from django.db import models
 from django.contrib.auth.models import User
 from Apps.GestionDeClientes import models as gcmodels
@@ -184,7 +183,7 @@ class Creada(Estado):
 
     def programar(self, practica, mascota, turno, senia, motivo):#¿Poner turno como parametro? en ese caso, ¿inicializar?- supongo que si.
         if (turno <= datetime.now()):
-            return Programada.objects.create(practica = self.practica, mascota = mascota, turno=turno, senia=senia, motivoReprogramacion =motivo)
+            return Programada.objects.create(practica = practica, mascota = mascota, turno=turno, senia=senia, motivoReprogramacion =motivo)
         else:
             raise Exception("error: %s es una fecha inválida." % (turno.__str__()));
             return self.estado#retur None
@@ -195,9 +194,8 @@ class Creada(Estado):
             return self.estado#return None
         return Presupuestada.objects.create(practica = practica, mascota = mascota, porcentajeDescuento=porcentajeDescuento, diasMantenimiento = diasMantenimiento)
 
-    def realizar(slef, practica, mascota, productos):
+    def realizar(self, practica, mascota, productos):
         return Realizada.objets.create(practica=practica,mascota=mascota,productos=productos)
-
 
 class Programada(Estado):
     TIPO = 2
@@ -206,13 +204,18 @@ class Programada(Estado):
     senia = models.PositiveSmallIntegerField()
 
     def reprogramar(self, practica, turno, motivoReprogramacion):
+        self.turno = turno
+        return self
         return Programada.objects.create(practica=practica, turno=turno, senia=self.senia, motivoReprogramacion=motivoReprogramacion)
 
     def pagar(self, practica, monto):
+        practica.senia += monot
+        return self
         return Programada.objects.create(practica=practica, turno=self.turno, senia=monto, motivoReprogramacion=self.motivoReprogramacion)
 
         #[TODO] ¿Cómo poner los productos reales acá?
     def realizar(self, practica, productos, servicios):
+        #######
         return Realizada.objects.create(practica=practica, productos=productos, servicios=servicios)
         #pass
 
@@ -245,7 +248,7 @@ class Facturada(Estado):
     def pagar(self, practica, monto):
         practica.montoAbonado += monto#[OJO] puede ser que esta linea no vaya.
         return Facturada.objets.create(practica=practica,monto=monto)
-        pass
+        #pass
 
 for Klass in [Creada, Programada, Presupuestada, Cancelada, Realizada, Facturada]:
     Estado.register(Klass)
