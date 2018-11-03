@@ -13,6 +13,17 @@ Nueva Factura
 Agrega una Factura al listado
 {% endblock %}
 
+{% block paginaEstilos %}
+{{ block.super }}
+{{formulario.media.css}}
+{% endblock %}
+
+{% block paginaJavascript %}
+{{ block.super }}
+{{formulario.media.js}}
+{% endblock %}
+
+
 {% block facturaContenido %}
 
     <div class="facturaCuerpo">

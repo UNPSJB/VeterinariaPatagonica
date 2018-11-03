@@ -1,5 +1,6 @@
 from .models import Factura, DetalleFactura
 from django import forms
+from dal import autocomplete
 
 class FacturaForm(forms.ModelForm):
     class Meta:
@@ -25,7 +26,7 @@ class FacturaForm(forms.ModelForm):
         }
 
         widgets = {
-
+            'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
         }
 
 

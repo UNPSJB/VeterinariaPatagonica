@@ -1,81 +1,81 @@
-.rubroSecciones {
+.facturaSecciones {
   padding: 0px;
   margin-top: 0px;
   text-align: right;
 }
 
-.rubroTitulo {
+.facturaTitulo {
   margin-top: 10px;
   margin-bottom:3px;
   font-weight: normal;
 }
 
-.rubroSubtitulo {
+.facturaSubtitulo {
   margin: 3px 0px 20px 0px;
   font-style: italic;
   color: #555;
 }
 
-.rubroLineaTitulo {
+.facturaLineaTitulo {
   border-bottom: 1px solid #DDD;
 }
 
-.rubroCuerpo {
+.facturaCuerpo {
   padding: 0px;
   margin-top: 5px;
 }
 
-rubroHabilitadosCrear {
+facturaHabilitadosCrear {
   clear: both;
   margin-bottom: 10px;
 }
 
-.rubroEtiqueta {
+.facturaEtiqueta {
   text-align: left;
   font-weight: bold;
   margin: 0px 0px 5px 0px;
   padding: 0px;
 }
 
-.rubro-aviso-eliminacion {
+.factura-aviso-eliminacion {
   text-align: center;
   text-weight: bold;
   margin: 20px 0px 20px 0px;
 }
 
-.rubro-item-acciones a {
+.factura-item-acciones a {
   margin: 10px 0px 10px 0px;
 }
 
-.rubro-accion-listado {
+.factura-accion-listado {
   font-size: 110%;
   margin-left: 0.5em;
   margin-right: 0.5em;
 }
-.rubro-accion-listado:hover {
+.factura-accion-listado:hover {
   text-decoration: none;
 }
 
-.rubroListado thead {
+.facturaListado thead {
   background-color: transparent;
   color: #2A3F54;
 }
 
-.rubroListado,
-.rubroListado thead,
-.rubroListado thead tr,
-.rubroListado thead tr th,
-.rubroListado tbody,
-.rubroListado tbody tr,
-.rubroListado tbody tr, {
+.facturaListado,
+.facturaListado thead,
+.facturaListado thead tr,
+.facturaListado thead tr th,
+.facturaListado tbody,
+.facturaListado tbody tr,
+.facturaListado tbody tr, {
   border: 0px solid #FFF;
 }
 
-table.table.rubroListado {
+table.table.facturaListado {
   border: 0px solid #FFF;
 }
 
-.rubroListado>tbody>tr>td {
+.facturaListado>tbody>tr>td {
     padding-top: 9px;
     padding-left: 4px;
     border-top: 1px solid #DDD !important;

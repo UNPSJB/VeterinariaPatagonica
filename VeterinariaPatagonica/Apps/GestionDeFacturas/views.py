@@ -8,6 +8,11 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .models import Factura
 from .forms import FacturaForm
 
+from VeterinariaPatagonica import tools
+
+from dal import autocomplete
+from django.db.models import Q
+from Apps.GestionDeClientes.models import Cliente
 
 def facturas(request):
 
@@ -121,3 +126,15 @@ def verDeshabilitados(request):
     }
 
     return  HttpResponse(template.render(contexto,request))
+
+class clienteAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+
+        qs = Cliente.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
+
+        return qs
