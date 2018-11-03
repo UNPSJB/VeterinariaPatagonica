@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.forms import modelformset_factory
 
 from .models import Servicio, ServicioProducto
-from .forms import ServicioForm, ServicioProductoForm
+from .forms import ServicioForm, ServicioProductoForm, ServicioProductoBaseFormSet
 from VeterinariaPatagonica import tools
 
 @login_required(redirect_field_name='proxima')
@@ -15,12 +15,12 @@ def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
-    ServicioProductoForm = modelformset_factory(ServicioProducto,
-        fields=("producto", "cantidad"), min_num=1)#,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
-        #formset=ServicioProductoBaseFormSet)
+    ServicioProductoFormset = modelformset_factory(ServicioProducto,
+        fields=("producto", "cantidad"), min_num=1,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
+        formset=ServicioProductoBaseFormSet)
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
-        formset = ServicioProductoForm(request.POST)
+        formset = ServicioProductoFormset(request.POST)
         if form.is_valid() and formset.is_valid():
             servicio = form.save()
             instances = formset.save(commit=False)
@@ -28,18 +28,16 @@ def modificar(request, id = None):
                 sproducto.servicio = servicio
                 sproducto.save()
             print(servicio, instances)
-            #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
-        else:
-            context['formulario'] = form
-            context['formset'] = formset
+            #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id)
         context['formulario'] = form
         context['formset'] = formset
     else:
         context['formulario'] = form
         qs = ServicioProducto.objects.none() if servicio is None else servicio.servicioproducto_set.all()
-        context["formset"] = ServicioProductoForm(queryset=qs)
+        context["formset"] = ServicioProductoFormset(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))
+
 
 def verHabilitados(request):
     servicios = Servicio.objects.habilitados()

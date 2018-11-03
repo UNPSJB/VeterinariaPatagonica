@@ -37,3 +37,8 @@
 {% block footer %}
   <p>Para mas información  de los Servicios haga click aquí<p>
 {% endblock footer %}
+
+{% block paginaJavascript %}
+{{block.super}}
+<script src="{% static 'js/GestionDeServicios.js' %}"></script>
+{% endblock paginaJavascript%}

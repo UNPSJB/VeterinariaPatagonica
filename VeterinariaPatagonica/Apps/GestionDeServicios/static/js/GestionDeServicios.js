@@ -13,20 +13,23 @@ $(function() {
 	let add = function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
-			field = `<div id="item-${total}">${field}</div>`;
+			field = `<div class="col-xs-9" id="item-${total}">${field}</div>`;
 			total += 1;
 			$("#id_form-TOTAL_FORMS").val(total);
 			$buttons.before(field);
 		}
 	}
 
-	let remove = function() {
+	let remove = function(e) {
+		let item = e.currentTarget.parentNode.id.split('-')[1]; //[TODO]: Ver con Diego
 		if (total > min) {
 			total -= 1;
-			$(`#item-${total}`).remove();
+			$(`#item-${item}`).remove();
 			$("#id_form-TOTAL_FORMS").val(total);
 		}
 	}
-	$("#button-remove").click(remove);
+
+	$(document).on("click",".rm",remove);
 	$("#button-add").click(add);
+
 });

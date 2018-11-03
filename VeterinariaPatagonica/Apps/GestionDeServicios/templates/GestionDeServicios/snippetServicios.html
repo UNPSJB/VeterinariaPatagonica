@@ -1,4 +1,6 @@
 {{ formulario.non_field_errors }}
+
+
 {% for field in form %}
 <div class="form-group {% if field.errors %}has-error{% endif %}">
     <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
@@ -19,31 +21,35 @@
 {% endblock errores %}
 
 <div class= "col-sm-offset-4" "col-sm-8">
-  {{formset.management_form}}
-  {% for form in formset %}
-    {% if forloop.last %}
-      <div id="formset-template">{{form}}</div>
-    {% else %}
-      {{form}}
-    {% endif %}
-  {% endfor %}
+  <div class="col-xs-12 well" >
+    {{formset.management_form}}
+    {% for form in formset %}
+      {% if forloop.last %}
+        <div  id="formset-template">
+          {{form}}
+          <a class="btn btn-danger btn-sm rm pull-right"><span class="glyphicon glyphicon-trash" title="Deshechar este producto."></span></a>
+        </div>
+      {% else %}
+      <div class="col-xs-9">
+        {{form}}
+        <!-- <button class="btn btn-danger btn-sm rm" id="manzana" >eliminar</button> -->
+      </div>
+      {% endif %}
+    {% endfor %}
 
-  <div id="buttons">
-    <div>
-      <a id="button-add" class="btn btn-primary btn-sm" role="button">
-        Agregar Producto &raquo;
-      </a>
+
+    <div id="buttons">
+      <div>
+        <a id="button-add" class="btn btn-primary btn-sm pull-right" role="button">
+          Agregar Producto &raquo;
+        </a>
+        <a class="related-widget-wrapper-link add-related pull-right" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crear un nuevo producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
+      </div>
     </div>
-    <div>
-      <a id="button-remove" class="btn btn-primary btn-sm" role="button">
-        Quitar Producto &raquo;
-      </a>
-    </div>
-    <a class="related-widget-wrapper-link add-related" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crear un nuevo producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
   </div>
-</div>
-<div class="form-group">
-  <div class="col-sm-offset-4 col-sm-8">
-    <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
+  <div class="form-group">
+    <div class="col-sm-offset-4 col-sm-8">
+      <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
+    </div>
   </div>
 </div>
