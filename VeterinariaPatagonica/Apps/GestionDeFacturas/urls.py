@@ -17,6 +17,5 @@ urlpatterns = [
     path('ver/<int:id>/', facturas_views.ver, name="facturaVer"),
     path('verHabilitados/', facturas_views.verHabilitados, name="facturaVerHabilitados"),
     path('verDeshabilitados/', facturas_views.verDeshabilitados, name="facturaVerDeshabilitados"),
-
     path('clienteAutocomplete/', facturas_views.clienteAutocomplete.as_view(), name='facturaClienteAutocomplete'),
 ]

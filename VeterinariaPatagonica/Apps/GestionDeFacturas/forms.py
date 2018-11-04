@@ -21,12 +21,15 @@ class FacturaForm(forms.ModelForm):
 
         error_messages = {
             'tipo' : {
-                'max_length': ("Nombre demasiados largo"),
+                'max_length': ("Nombre demasiado largo"),
             }
         }
 
         widgets = {
+            'tipo': forms.TextInput(),
             'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
+            'fecha': forms.TextInput(),
+            'total': forms.TextInput(),
         }
 
         field_order=[
@@ -56,14 +59,18 @@ class DetalleFacturaForm(forms.ModelForm):
     class Meta:
         model = DetalleFactura
         fields= {
-            'factura': 'Factura',
-            'subtotal': 'Subtotal',
-            'cantidad': 'Cantidad',
-            "producto": "Producto"
+            'factura',
+            'subtotal',
+            'cantidad',
+            'producto',
         }
 
 
 class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
+
+    def save(self, commit=True):
+        return super().save(commit=commit)
+
     def clean(self):
         #import ipdb; ipdb.set_trace()
         producto_ids = [item["producto"].id for item in self.cleaned_data]
@@ -71,5 +78,5 @@ class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
             raise forms.ValidationError("Hay productos repetidos.")
         return super().clean()
 
-    def save(self, commit=True):
-        return super().save(commit=commit)
+
+

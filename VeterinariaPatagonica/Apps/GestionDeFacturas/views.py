@@ -6,10 +6,9 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Factura
-from .forms import FacturaForm
-
+from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura
+from django.forms import modelformset_factory
 from VeterinariaPatagonica import tools
-
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
@@ -20,23 +19,32 @@ def facturas(request):
     template = loader.get_template('GestionDeFacturas/GestionDeFacturas.html')#Cargo el template desde la carpeta templates/GestionDeFacturas.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
-
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeFacturas.add_Factura', raise_exception=True)
 def modificar(request, id = None):
-
     factura = Factura.objects.get(id=id) if id is not None else None
     context = {'usuario': request.user}
+    form = FacturaForm(instance=factura)
+    DetalleFacturaFormset = modelformset_factory(
+        DetalleFactura,
+        fields=("producto", "cantidad"), min_num=1,
+        formset=DetalleFacturaBaseFormSet)
     if request.method == 'POST':
-        formulario = FacturaForm(request.POST, instance=factura)
-        print(formulario)
-        if formulario.is_valid():
-            factura = formulario.save()
-            return HttpResponseRedirect("/GestionDeFacturas/ver/{}".format(factura.id))
-        else:
-            context['formulario'] = formulario
+        form = FacturaForm(request.POST, instance=factura)
+        formset = DetalleFacturaFormset(request.POST)
+        if form.is_valid() and formset.is_valid():
+            factura = form.save()
+            instances = formset.save(commit=False)
+            for detalle in instances:
+                detalle.factura = factura
+                detalle.save()
+            print(factura, instances)
+        context['formulario'] = form
+        context['formset'] = formset
     else:
-        context['formulario'] = FacturaForm(instance=factura)
+        context['formulario'] = form
+        qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()
+        context["formset"] = DetalleFacturaFormset(queryset=qs)
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
