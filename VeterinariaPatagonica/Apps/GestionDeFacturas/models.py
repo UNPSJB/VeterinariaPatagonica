@@ -45,6 +45,12 @@ class Factura(models.Model):
 
     )
 
+
+    productos = models.ManyToManyField(proModel.Producto,
+        through='FacturaProducto',
+        through_fields=('factura', 'producto'),
+    )
+
     total = models.IntegerField(
         help_text="Importe total de la Factura",
         unique=False,
