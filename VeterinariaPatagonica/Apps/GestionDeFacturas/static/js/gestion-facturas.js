@@ -1,5 +1,5 @@
 
-$(document).ready(function() {
+/*$(document).ready(function() {
 
     $('.facturas-form-linkinfo').each(function(i,x){
         $(x).click(function(e){
@@ -8,7 +8,7 @@ $(document).ready(function() {
             $('#'+a).toggle();
         });
     });
-});
+})*/
 
 
 $(function() {
@@ -32,7 +32,6 @@ $(function() {
 			$buttons.before(field);
 		}
 	}
-
 
 	$(document).on("click",".rm",remove);
 	$("#button-add").click(add);

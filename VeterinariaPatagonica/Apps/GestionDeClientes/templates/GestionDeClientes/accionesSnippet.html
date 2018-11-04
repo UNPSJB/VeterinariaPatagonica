@@ -1,18 +1,18 @@
 
 <div class="clienteItemAcciones">
 
-        {% if seccion == 'ver' %}
-        <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteVer' item.id %}">Ver</a>
+        {% if seccion != 'ver' %}
+                <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteVer' item.id %}">Ver</a>
         {% endif %}
 
         {% if seccion != 'modificar' %}
-        <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteModificar' item.id %}">Modificar</a>
+                <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteModificar' item.id %}">Modificar</a>
         {% endif %}
 
         {% if item.baja == False %}
-            <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteDeshabilitar' item.id %}">Deshabilitar</a>
+                <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteDeshabilitar' item.id %}">Deshabilitar</a>
         {% else %}
-            <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteHabilitar' item.id %}">Habilitar</a>
+                <a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteHabilitar' item.id %}">Habilitar</a>
         {% endif %}
 
 </div>
