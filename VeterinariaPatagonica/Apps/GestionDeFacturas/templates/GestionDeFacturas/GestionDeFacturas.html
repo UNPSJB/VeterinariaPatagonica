@@ -20,16 +20,26 @@
     <div class="facturaLineaTitulo"> </div>
 
     <p class="facturaSubtitulo">
-      {% block facturaSubtitulo %}
+        {% block facturaSubtitulo %}
       {% endblock facturaSubtitulo%}
     </p>
 
   {% block facturaContenido %}
   {% endblock facturaContenido %}
+
   </section>
+  <div class= "col-sm-offset-11">
+    <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
+  </div>
+
 {% endblock paginaSeccionGeneral %}
 
 
 {% block footer %}
   <p>Para mas información de las Facturas haga click aquí<p>
 {% endblock footer %}
+
+{% block paginaJavascript %}
+{{block.super}}
+<script src="{% static 'js/GestionDeFacturas.js' %}"></script>
+{% endblock paginaJavascript%}
