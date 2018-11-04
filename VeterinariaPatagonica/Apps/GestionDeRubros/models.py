@@ -1,9 +1,13 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from VeterinariaPatagonica import tools
 
 # Create your models here.
 
 class Rubro (models.Model):
+    MAPPER = {
+        "nombre": "nombre__icontains",
+    }
 
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     MAXNOMBRE = 50
@@ -36,3 +40,5 @@ class Rubro (models.Model):
     )
 
     baja = models.BooleanField(default=False)
+
+

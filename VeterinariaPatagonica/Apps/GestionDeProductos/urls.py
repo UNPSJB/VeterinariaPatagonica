@@ -14,17 +14,7 @@ urlpatterns = [
     path('ver/<int:id>/', productos_views.ver, name='productoVer'),
     path('verHabilitados/', productos_views.verHabilitados, name='productoVerHabilitados'),
     path('verDeshabilitados/', productos_views.verDeshabilitados, name='productoVerDeshabilitados'),
+    path('rubroAutocomplete/', productos_views.rubroAutocomplete.as_view(), name='productoRubroAutocomplete'),
 
 ]
 
-
-
-
-'''
-app_name = 'insumos'
-urlpatterns = [
-    url(r'^$',insumos_views.insumos, name='insumo'),
-    url(r'altainsumo.html/$',insumos_views.crear, name='alta'),
-    #url(r'altainsumo.html/$',views.verdemo, name='alta'),
-]
-'''
