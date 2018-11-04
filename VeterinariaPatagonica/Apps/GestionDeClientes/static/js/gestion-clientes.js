@@ -1,10 +1,13 @@
 $(document).ready(function() {
 
-    $('.clientes-form-linkinfo').each(function(i,x){
-        $(x).click(function(e){
+    $('.clientes-form-linkinfo').each(
 
-            var a = $(e.target).attr('for');
-            $('#'+a).toggle();
+            function(i,x){
+
+                $(x).click(function(e){
+
+                     var a = $(e.target).attr('for');
+                     $('#'+a).toggle();
         });
     });
 
