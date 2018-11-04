@@ -37,3 +37,6 @@ class FormaDePago (models.Model):
 
     baja = models.BooleanField(default=False)
 
+
+    def __str__ (self):
+        return "{0}, {1}".format(self.nombre,self.descripcion)

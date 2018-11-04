@@ -29,6 +29,13 @@ class FacturaForm(forms.ModelForm):
             'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
         }
 
+        field_order=[
+            'tipo',
+            'cliente',
+            'fecha',
+            'total',
+        ]
+
 
     def clean(self):
         cleaned_data = super().clean()
