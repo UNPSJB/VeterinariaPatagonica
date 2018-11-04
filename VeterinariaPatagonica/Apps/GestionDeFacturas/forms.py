@@ -29,6 +29,13 @@ class FacturaForm(forms.ModelForm):
             'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
         }
 
+        field_order=[
+            'tipo',
+            'cliente',
+            'fecha',
+            'total',
+        ]
+
 
     def clean(self):
         cleaned_data = super().clean()
@@ -51,5 +58,18 @@ class DetalleFacturaForm(forms.ModelForm):
         fields= {
             'factura': 'Factura',
             'subtotal': 'Subtotal',
-            'cantidad': 'Cantidad'
+            'cantidad': 'Cantidad',
+            "producto": "Producto"
         }
+
+
+class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
+    def clean(self):
+        #import ipdb; ipdb.set_trace()
+        producto_ids = [item["producto"].id for item in self.cleaned_data]
+        if len(producto_ids) != len(set(producto_ids)):
+            raise forms.ValidationError("Hay productos repetidos.")
+        return super().clean()
+
+    def save(self, commit=True):
+        return super().save(commit=commit)

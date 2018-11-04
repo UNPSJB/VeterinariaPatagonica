@@ -1,6 +1,5 @@
 from django.db import models
 from django.core.validators import RegexValidator
-from VeterinariaPatagonica import tools
 
 # Create your models here.
 
@@ -41,4 +40,7 @@ class Rubro (models.Model):
 
     baja = models.BooleanField(default=False)
 
+
+    def __str__ (self):
+        return "{0}, {1}".format(self.nombre,self.descripcion)
 
