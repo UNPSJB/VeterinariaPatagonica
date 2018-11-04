@@ -13,7 +13,7 @@ Nueva Factura
 Agrega una Factura al listado
 {% endblock %}
 
-{% block paginaEstilos %}
+<!--{% block paginaEstilos %}
 {{ block.super }}
 {{formulario.media.css}}
 {% endblock %}
@@ -21,7 +21,7 @@ Agrega una Factura al listado
 {% block paginaJavascript %}
 {{ block.super }}
 {{formulario.media.js}}
-{% endblock %}
+{% endblock %}-->
 
 
 {% block facturaContenido %}
@@ -31,7 +31,7 @@ Agrega una Factura al listado
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2=""%}
+            {% include './snippetFacturas.html' with form=formulario formset=formset accion="Guardar" %}
 
         </form>
     </div>

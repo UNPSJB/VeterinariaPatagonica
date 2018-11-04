@@ -21,7 +21,7 @@ $(function() {
 	}
 
 	let remove = function(e) {
-		let item = e.currentTarget.parentNode.id.split('-')[1]; //[TODO]: Ver con Diego
+		let item = e.currentTarget.parentNode.id.split('-')[1];
 		if (total > min) {
 			total -= 1;
 			$(`#item-${item}`).remove();

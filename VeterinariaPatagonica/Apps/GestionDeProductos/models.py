@@ -1,16 +1,15 @@
 from django.db import models
-#from django.apps import apps
-#from datetime import date, timedelta, time, datetime
-from django.core.validators import RegexValidator #MinValueValidator, #MaxValueValidator
+from django.core.validators import RegexValidator
 from Apps.GestionDeRubros import models as grmodels
-# Create your models here.
 from VeterinariaPatagonica import tools
+from django.db.models import Q
+
+# Create your models here.
 
 class BaseProductoManager(models.Manager):
     pass
 
 ProductoManager = BaseProductoManager.from_queryset(tools.BajasLogicasQuerySet)
-
 
 class Producto (models.Model):
     MAPPER = {
@@ -71,11 +70,11 @@ class Producto (models.Model):
         UNIDAD: lambda cantidad: "%s docenas y %s unidades" % (cantidad // 12, cantidad % 12)
     }
 
-    id = models.AutoField(
+    '''id = models.AutoField(
         primary_key=True,
         unique=True,
         editable=False
-    )
+    )'''
 
     nombre = models.CharField(
         help_text="Nombre del Producto",
@@ -145,12 +144,12 @@ class Producto (models.Model):
 
     rubro = models.ForeignKey(
         grmodels.Rubro,
-        help_text="Nombre del rubro al que pertenece",
+        #help_text="Nombre del rubro al que pertenece",
         unique=False,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        max_length = MAX_NOMBRE,
+        #max_length = MAX_NOMBRE,
         error_messages={
             'blank': "El rubro es obligatorio"
         }
