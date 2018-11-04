@@ -24,4 +24,3 @@ class DetalleFactura(models.Model):
     def  __unicode__(self):
         return self.subtotal
 
-     #campo hiden le paso el id
