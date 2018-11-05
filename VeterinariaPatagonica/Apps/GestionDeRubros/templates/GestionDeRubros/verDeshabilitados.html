@@ -29,6 +29,7 @@ Actualmente <strong>no</strong> disponibles
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-descripcion"> Descripcion </th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
@@ -36,6 +37,7 @@ Actualmente <strong>no</strong> disponibles
                         {% for rubro in rubros %}
                             <tr>
                                 <td>{{rubro.nombre}}</td>
+                                <td> <p>{{rubro.descripcion|truncatechars:40 }}</p></td>
                                 <td >
                                     <p align="justify">
                                         <a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default">

@@ -38,13 +38,15 @@ Actualmente <strong>no</strong> disponibles
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
+                            <th id="deshabilitados-dni">DNI/CUIT</th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cliente in clientes %}
                             <tr>
-                                <td>{{ cliente.apellidos }} {{cliente.nombres}}</td>
+                                <td>{{ cliente.apellidos }}, {{cliente.nombres}}</td>
+                                <td><p> {{cliente.dniCuit}} </p></td>
                                 <td >
                                     <p align="justify">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">

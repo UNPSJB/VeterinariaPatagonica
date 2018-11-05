@@ -29,6 +29,7 @@ Actualmente disponibles
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-descripcion"> Descripcion </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
@@ -36,6 +37,7 @@ Actualmente disponibles
                         {% for formaDePago in formasDePagos %}
                             <tr>
                                 <td> <p>{{formaDePago.nombre }}</p></td>
+                                <td> <p>{{formaDePago.descripcion }}</p></td>
                                 <td> <p align="justify">
                                         <a  href="{% url 'formasDePagos:formaDePagoVer' formaDePago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
