@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         ('GestionDeServicios', '0001_initial'),
         ('GestionDeProductos', '0001_initial'),
         ('GestionDeClientes', '0001_initial'),
-        ('GestionDeTiposDeAtencion', '0002_auto_20181102_0025'),
+        ('GestionDeTiposDeAtencion', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 

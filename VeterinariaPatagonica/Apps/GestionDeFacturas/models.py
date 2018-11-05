@@ -1,6 +1,6 @@
 from django.db import models
 from Apps.GestionDeProductos import models as proModel
-from Apps.GestionDeClientes import  models as cliModel
+from Apps.GestionDeClientes import models as cliModel
 from django.core.validators import RegexValidator
 from decimal import Decimal
 
@@ -45,16 +45,17 @@ class Factura(models.Model):
         error_messages={
             'blank': "La fecha es obligatoria"
         }
-
     )
+
+
 
 
     deatalles = models.ManyToManyField(
         proModel.Producto,
         through='DetalleFactura',
-        through_fields=('factura', 'producto'),
-    )
 
+    )
+    
     total = models.IntegerField(
         help_text="Importe total de la Factura",
         unique=False,
@@ -96,7 +97,7 @@ class DetalleFactura(models.Model):
     producto = models.ForeignKey(
         proModel.Producto,
         on_delete=models.CASCADE,
-        help_text="Ingrese Producto",
+        #help_text="Ingrese Producto",
         unique=False,
         null=False,
         blank=False,
@@ -114,6 +115,7 @@ class DetalleFactura(models.Model):
         }
     )
     subtotal = models.DecimalField(
+        null= True,
         help_text="Ingrese precio del producto",
         max_digits= MAXDIGITO,
         decimal_places= MAXDECIMAL,

@@ -6,6 +6,10 @@ from .models import Producto
 from .forms import ProductoFormFactory
 from VeterinariaPatagonica import tools
 
+from dal import autocomplete
+from django.db.models import Q
+from Apps.GestionDeRubros.models import Rubro
+
 def producto(request):
     context = {}#Defino un contexto.
     template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
@@ -117,7 +121,17 @@ def eliminar(request, id):
 
         return HttpResponse( template.render( context, request) )
 
+class rubroAutocomplete(autocomplete.Select2QuerySetView):
 
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+
+        qs = Rubro.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(nombre__icontains=self.q))
+
+        return qs
 
 
 
