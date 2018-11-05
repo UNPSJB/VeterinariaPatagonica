@@ -1,0 +1,30 @@
+{% extends 'GestionDePracticas/practicas.html' %}
+{% load static %}
+
+{% block titulo %}
+Inicializar {{ tipo }}
+{% endblock %}
+
+{% block practica-titulo %}
+Inicializar {{ tipo }}
+{% endblock %}
+
+{% block practica-contenido %}
+
+    <div class="practica-cuerpo">
+
+        <form class="form-horizontal formulario" action="{{ formAction }}" method="post">
+
+            {% csrf_token %}
+            {% include "formularios/snippet.html" with formulario=formEstado accion=None %}
+
+            <div class="col-sm-12 acciones">
+                <button type="submit" class="btn btn-sm btn-default center-block">
+                    {{ accion }}
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+{% endblock %}

@@ -38,7 +38,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     nombre = forms.CharField(
         required = True,
         label = 'Nombre',
-        widget = forms.TextInput,
+        widget = forms.TextInput(attrs={"class" : "form-control"}),
         help_text="Nombre del tipo de atencion",
         error_messages = {
             'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(TipoDeAtencion.MAX_NOMBRE),
@@ -58,7 +58,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     descripcion = forms.CharField(
         required = False,
         label = 'Descripcion',
-        widget = forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
+        widget = forms.Textarea(attrs={ "cols" : 60, "rows" : 6, "class" : "form-control" }),
         help_text="Descripcion del tipo de atencion",
         error_messages = {},
         validators = [],
@@ -78,7 +78,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     tipoDeServicio = forms.ChoiceField(
         required = True,
         label = 'Tipo de servicio',
-        widget = forms.Select,
+        widget = forms.Select(attrs={"class" : "form-control"}),
         help_text='Tipo de servicio',
         error_messages = {
             'invalid_choice' : "La opcion no es valida",
@@ -91,7 +91,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     lugar = forms.ChoiceField(
         required = True,
         label = 'Lugar',
-        widget = forms.Select,
+        widget = forms.Select(attrs={"class" : "form-control"}),
         help_text="Lugar en donde se realiza el tipo de atencion",
         error_messages = {
             'invalid_choice' : "La opcion no es valida",
@@ -104,7 +104,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     inicioFranjaHoraria = forms.TimeField(
         required = True,
         label = 'Inicio horario de atencion',
-        widget = TimeTextInput,
+        widget = TimeTextInput(attrs={"class" : "form-control"}),
         help_text='Hora de inicio del tipo de atencion',
         error_messages = {
             'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
@@ -117,7 +117,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     finFranjaHoraria = forms.TimeField(
         required = True,
         label = 'Fin horario de atencion',
-        widget = TimeTextInput,
+        widget = TimeTextInput(attrs={"class" : "form-control"}),
         help_text='Hora de finalizacion del tipo de atencion',
         error_messages = {
             'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
@@ -130,7 +130,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     recargo = forms.DecimalField(
         required = True,
         label = 'Recargo',
-        widget = forms.NumberInput,
+        widget = forms.TextInput(attrs={"class" : "form-control"}),
         help_text="Porcentaje de recargo sobre el costo del servicio a aplicar",
         error_messages = {
             "required" : "El recargo es obligatorio",
@@ -150,54 +150,16 @@ class TipoDeAtencionForm(forms.ModelForm):
 
 
 
-    #---------------------- Orden de los Fields  ----------------------
-    field_order = [
-        'nombre',
-        'descripcion',
-        'tipoDeServicio',
-        'lugar',
-        'emergencia',
-        'inicioFranjaHoraria',
-        'finFranjaHoraria',
-        'recargo'
-    ]
-
-
-
     #---------------------- Modelo del ModelForm ----------------------
     class Meta:
         model = TipoDeAtencion
-        exclude = [ 'baja' ]
-
-
-
-    #----------------------Constructor ----------------------
-    def __init__(self, *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
-        #[TODO] Averiguar una mejor manera de hacer esto:
-        for field in self.fields.values():
-            if not isinstance(field.widget, forms.CheckboxInput):
-                field.widget.attrs.update({
-                    'class' : 'form-control'
-                })
-
-
-"""
-class ModificacionForm(CreacionForm):
-    #ModelForm para modificacion de Tipos de Atencion
-
-    baja = forms.BooleanField(
-        required = False,
-        label = 'Deshabilitado',
-        widget = forms.CheckboxInput,
-        help_text='Deshabilitado',
-        error_messages = {},
-        validators = [],
-    )
-
-    class Meta:
-        model = TipoDeAtencion
-        fields = '__all__'
-"""
+        fields = [
+            "nombre",
+            "descripcion",
+            "tipoDeServicio",
+            "lugar",
+            "emergencia",
+            "inicioFranjaHoraria",
+            "finFranjaHoraria",
+            "recargo"
+        ]

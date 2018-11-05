@@ -39,15 +39,16 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'dal_select2.widgets',
+    'Apps.Usuarios',
     'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeClientes',
-    'Apps.GestionDeProductos',
     'Apps.GestionDeMascotas',
+    'Apps.GestionDeProductos',
     'Apps.GestionDeServicios',
-    'Apps.GestionDePracticas',
     'Apps.GestionDeTiposDeAtencion',
     'Apps.GestionDeRubros',
-    'Apps.GestionDeFacturas'
+    'Apps.GestionDeFacturas',
+    'Apps.GestionDePracticas',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'VeterinariaPatagonica.errores.ManejadorErrores',
 ]
 
 
@@ -152,3 +154,8 @@ STATICFILES_DIRS = [
 ]
 
 LOGIN_URL = '/login/'
+
+
+AUTH_USER_MODEL = 'Usuarios.Usuario'
+
+

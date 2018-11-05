@@ -1,8 +1,10 @@
 from decimal import Decimal
 from django.db import models
-from django.apps import apps
 from datetime import date, timedelta, time, datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator, DecimalValidator
+
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
+from Apps.GestionDeServicios.models import Servicio
 
 
 
@@ -60,24 +62,8 @@ class FranjaHoraria():
 
 
 
-class TipoDeAtencionManager(models.Manager):
-    """
 
-    Por ahora no veo la necesidad de crear un Manager para
-    los Tipos de Atencion aunque puede ser que lo dejemos
-
-    """
-
-    def habilitados(self):
-        """ Tipos de Atencion habilitados """
-
-        return self.filter(baja=False)
-
-    def deshabilitados(self):
-        """ Tipos de Atencion deshabilitados """
-
-        return self.filter(baja=True)
-
+TipoDeAtencionManager = models.Manager.from_queryset(BajasLogicasQuerySet)
 
 
 class TipoDeAtencion(models.Model):
@@ -102,14 +88,12 @@ class TipoDeAtencion(models.Model):
     EN_VETERINARIA = 'VET'
     EN_DOMICILIO = 'DOM'
 
-    LUGAR = {
-        'VET' : 'Veterinaria',
-        'DOM' : 'Domicilio'
-    }
+    LUGARES_DE_ATENCION = (
+        (EN_VETERINARIA, "Veterinaria"),
+        (EN_DOMICILIO, "Domicilio")
+    )
 
-    LUGARES_DE_ATENCION = tuple(LUGAR.items())
-
-    RECARGO_DEFAULT = 0
+    RECARGO_DEFAULT = Decimal(0)
     LUGAR_DEFAULT = EN_VETERINARIA
 
 
@@ -167,7 +151,7 @@ class TipoDeAtencion(models.Model):
 
     tipoDeServicio = models.CharField(
         max_length=25,
-        choices=apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO,
+        choices=Servicio.TIPO,
         error_messages = {
             'invalid_choice' : "Opcion invalida",
             'blank' : "El tipo de servicio es obligatorio"
@@ -216,4 +200,5 @@ class TipoDeAtencion(models.Model):
 
         self.inicioFranjaHoraria = franja.inicio
         self.finFranjaHoraria = franja.fin
+
 

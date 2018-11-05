@@ -1,48 +1,61 @@
-{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% extends 'GestionDePracticas/practicas.html' %}
 
 {% block titulo %}
-Gestión de Prácticas | Ver Prácticas
+Ver {{ tipo }}
 {% endblock %}
 
-{% block practicaTitulo %}
-<<<<<<< HEAD
-Ver Práctica
+{% block practica-titulo %}
+Ver {{ tipo }}
 {% endblock %}
-||||||| merged common ancestors
-Ver Practica
-{% endblock practicaTitulo%}
-=======
-<h3>Ver Práctica</h3>
-{% endblock %}
->>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
 
-{% block practicaSubtitulo %}
-<<<<<<< HEAD
-Muestra datos de la práctica
+{% block practica-subtitulo %}
+{% if practica.estado %}
+    Ultima modificacion el dia {{ practica.estado.marca }}
+{% endif %}
 {% endblock %}
-||||||| merged common ancestors
-Muestra datos de la práctica
-{% endblock practicaSubtitulo %}
-=======
-<p>Muestra datos de la práctica</p>
-{% endblock %}
->>>>>>> bccb48685e40e04944099e326985ffd31d016bc4
 
-{% block practicaContenido %}
-    {% include './accionesSnippet.html' with item=practica seccion='ver' %}
-    <div class="practicaCuerpo">
-        {% if practica %}
-        <div class="well">
-            <p>Identificador: {{ practica.id }}</p>
-            <p>Precio: {{practica.precio}} </p>
-            <p>Cliente: {{ practica.cliente }} </p>
-            <p>Servicios:{{practica.servicios}} </p>
-            <p>Insumos Reales: {{ practica.productosReales }}</p>
-            <p>Tipo de Atención: {{practica.tipoDeAtencion}}</p>
-        </div>
-        {% else %}
-            <p> La práctica no existe </p>
+{% block practica-contenido %}
+
+<div class="practica-cuerpo">
+
+    <div class="well">
+
+        <p>Numero: {{ practica.id }}</p>
+        <p>Cliente: {{ practica.cliente }}</p>
+        <p>Tipo de Atencion: {{ practica.tipoDeAtencion }}</p>
+        <p>Estado: {{ practica.estado }}</p>
+
+        <p> Servicios: </p>
+        <ul>
+            {% for detalle in practica.practica_servicios.all %}
+            <li> {{ detalle.cantidad }}: {{ detalle.servicio.nombre }} </li>
+            {% endfor %}
+        </ul>
+        <p> Productos: </p>
+        <ul>
+            {% for detalle in practica.practica_productos.all %}
+            <li> {{ detalle.cantidad }}: {{ detalle.producto.nombre }} </li>
+            {% endfor %}
+        </ul>
+
+
+        {% if practica.estado.realizada_servicios %}
+        <p> Servicios realizados: </p>
+        <ul>
+            {% for detalle in practica.estado.realizada_servicios.all %}
+            <li> {{ detalle.cantidad }}: {{ detalle.servicio.nombre }} </li>
+            {% endfor %}
+        </ul>
         {% endif %}
+        {% if practica.estado.realizada_productos %}
+        <p> Productos utilizados: </p>
+        <ul>
+            {% for detalle in practica.estado.realizada_productos.all %}
+            <li> {{ detalle.cantidad }}: {{ detalle.producto.nombre }} </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
     </div>
-{% endblock practicaContenido %}
-</html>
+</div>
+{% endblock %}

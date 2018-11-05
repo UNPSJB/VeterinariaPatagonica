@@ -1,16 +1,6 @@
 from django.contrib import admin
-from .models import *
+from .models.practica import Practica, PracticaProducto, PracticaServicio
 
-class PracticaServicioInline(admin.TabularInline):
-    model = PracticaServicio
-
-class PracticaAdmin(admin.ModelAdmin):
-    inlines = [
-        PracticaServicioInline,
-    ]
-
-class PracticaInsumoInline(admin.TabularInline):
-    model = PracticaProducto
-
-
-admin.site.register(Practica, PracticaAdmin)
+admin.site.register(Practica)
+admin.site.register(PracticaProducto)
+admin.site.register(PracticaServicio)
