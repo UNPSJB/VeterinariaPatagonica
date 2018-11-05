@@ -68,9 +68,6 @@ class DetalleFacturaForm(forms.ModelForm):
 
 class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
 
-    def save(self, commit=True):
-        return super().save(commit=commit)
-
     def clean(self):
         #import ipdb; ipdb.set_trace()
         producto_ids = [item["producto"].id for item in self.cleaned_data]
@@ -78,5 +75,6 @@ class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
             raise forms.ValidationError("Hay productos repetidos.")
         return super().clean()
 
-
+    def save(self, commit=True):
+        return super().save(commit=commit)
 
