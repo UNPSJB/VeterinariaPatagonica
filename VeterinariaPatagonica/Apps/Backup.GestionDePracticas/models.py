@@ -4,7 +4,6 @@ from Apps.GestionDeClientes import models as gcmodels
 from Apps.GestionDeServicios import models as gsmodels
 from Apps.GestionDeTiposDeAtencion import models as gtdamodels
 from Apps.GestionDeMascotas import models as gmmodels
-
 from Apps.GestionDeProductos import models as gpmodels
 
 
