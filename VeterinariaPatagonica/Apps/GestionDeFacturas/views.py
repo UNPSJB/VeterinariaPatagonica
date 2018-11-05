@@ -6,12 +6,13 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Factura
-from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura
+from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura, FacturaFormFactory
 from django.forms import modelformset_factory
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
+from Apps.GestionDePracticas.models import Practica
 
 def facturas(request):
 
@@ -45,6 +46,24 @@ def modificar(request, id = None):
         context['formulario'] = form
         qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()
         context["formset"] = DetalleFacturaFormset(queryset=qs)
+    template = loader.get_template('GestionDeFacturas/formulario.html')
+    return HttpResponse(template.render(context, request))
+
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeFacturas.add_Factura', raise_exception=True)
+def crearFacturaPractica(request, id):
+    practica = Practica.objects.get(id=id)
+    context = {'usuario': request.user}
+    Form = FacturaFormFactory(instance=practica)
+    DetalleFacturaFormset = modelformset_factory(
+        DetalleFactura,
+        fields=("producto", "cantidad"), min_num=1,
+        formset=DetalleFacturaBaseFormSet)
+    if request.method == 'POST':
+        pass
+    context["practica"] = practica
+    context["form"] = Form(initial={})
+    context['formset'] = DetalleFacturaFormset(initial=practica.practicaproducto_set.values())
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
@@ -135,6 +154,7 @@ def verDeshabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
+
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
@@ -146,3 +166,4 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
 
         return qs
+
