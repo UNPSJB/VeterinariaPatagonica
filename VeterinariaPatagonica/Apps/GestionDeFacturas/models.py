@@ -49,6 +49,7 @@ class Factura(models.Model):
 
 
 
+
     deatalles = models.ManyToManyField(
         proModel.Producto,
         through='DetalleFactura',
