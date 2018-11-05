@@ -4,6 +4,10 @@
 Gestion de Facturas | Ver Factura
 {% endblock %}
 
+{% block secciones %}
+    {% include './seccionesSnippet.html' with pagina='default' %}
+{% endblock %}
+
 {% block facturaTitulo %}
 Ver Factura
 {% endblock %}
@@ -21,8 +25,10 @@ Muestra datos del factura
         {% if factura %}
         <div class="well">
             <p>Identificador: {{ factura.id }}</p>
-            <p>Nombres: {{ factura.nombre }} </p>
-            <p>Descripcion: {{ factura.descripcion}}</p>
+            <p>Tipo: {{factura.tipo}}</p>
+            <p>Fecha: {{factura.fecha}}</p>
+            <p>Cliente: {{ factura.cliente }} </p>
+            <p>Total: {{ factura.total}}</p>
 
         </div>
         {% else %}

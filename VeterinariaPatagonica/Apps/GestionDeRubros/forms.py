@@ -7,7 +7,8 @@ class RubroForm(forms.ModelForm):
         fields = {
             'nombre',
             'descripcion',
-                  }
+        }
+
         labels = {
             'nombre':'Nombre',
             'descripcion' : 'Descripcion'
@@ -15,17 +16,18 @@ class RubroForm(forms.ModelForm):
 
         error_messages = {
             'nombre' : {
-                'max_length': ("Nombre demasiados largo"),
+                'max_length': ("Nombre demasiado largo"),
             }
         }
 
         widgets = {
+            'nombre': forms.TextInput(),
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 })
         }
 
         field_order = [
             'nombre',
-            'descripcion'
+            'descripcion',
         ]
 
 

@@ -61,9 +61,10 @@ class Mascota(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        help_text="ingrese cliente",
+        help_text="Ingrese cliente",
         error_messages={
-        })
+        }
+    )
 
     fechaNacimiento = models.DateField(blank=False,
         error_messages={'required': "el cliente es obligatorio"})
