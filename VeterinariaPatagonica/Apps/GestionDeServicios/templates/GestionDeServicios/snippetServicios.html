@@ -1,6 +1,5 @@
 {{ formulario.non_field_errors }}
 
-
 {% for field in form %}
 <div class="form-group {% if field.errors %}has-error{% endif %}">
     <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
@@ -36,14 +35,12 @@
       </div>
       {% endif %}
     {% endfor %}
-
-
     <div id="buttons">
       <div>
         <a id="button-add" class="btn btn-primary btn-sm pull-right" role="button">
           Agregar Producto &raquo;
         </a>
-        <a class="related-widget-wrapper-link add-related pull-right" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crear un nuevo producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
+        <a class="related-widget-wrapper-link add-related pull-right" id="add_id_servicioproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crea un nuevo producto."><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
       </div>
     </div>
   </div>

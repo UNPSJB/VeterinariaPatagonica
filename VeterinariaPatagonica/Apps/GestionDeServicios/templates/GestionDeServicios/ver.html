@@ -17,18 +17,44 @@ Muestra datos del servicio
 
     <div class="servicioCuerpo">
         {% if servicio %}
-        <div class="well">
-            <p>Identificador: {{ servicio.id }}</p>
-            <p>tipo: {{ servicio.tipo }}</p>
-            <p>Nombre: {{ servicio.nombre }}</p>
-            <p>Tiempo Estimado: {{ servicio.tiempoEstimado }}</p>
-            <p>Precio de Mano de Obra: {{ servicio.precioManoDeObra }}</p>
-            <!-- [TODO] Preguntar ¿Cómo hacerlo? Deberia ir los productos que tiene el servicio. -->
-            <!--<p>Productos: {{servicio.productos}}</p>-->
-        </div>
+          <div class="col-md-12 well">
+            <table>
+              <p>Identificador: {{ servicio.id }}</p>
+              <p>tipo: {{ servicio.tipo }}</p>
+              <p>Nombre: {{ servicio.nombre }}</p>
+              <p>Tiempo Estimado: {{ servicio.tiempoEstimado }}</p>
+              <p>Precio de Mano de Obra: {{ servicio.precioManoDeObra }}</p>
+              <thead>
+                <th bgcolor="white">Productos</th>
+              </thead>
+              <thead>
+                  <tr>
+                      <th>Nombre</th>
+                      <th>Cantidad</th>
+                  </tr>
+              </thead>
+              {% for servicioproducto in servicio.servicioproducto_set.all %}
+              <tr>
+                <div class="col-xs-11">
+                  <td><p>{{servicioproducto.producto}}</p>
+                  </td>
+                </div>
+                <div class="col-xs-1">
+                  <td><p align="justify"><p>{{servicioproducto.cantidad}}</p>
+                    </p>
+                  </td>
+                </div>
+              </tr>
+              {% endfor %}
+            </table>
+          </div>
 
         {% else %}
             <p> El servicio no existe </p>
         {% endif %}
     </div>
+    <div class= "col-sm-offset-11">
+      <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
+    </div>
+
 {% endblock servicioContenido %}
