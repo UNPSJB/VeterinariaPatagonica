@@ -40,6 +40,8 @@ Actualmente <strong>no</strong> disponibles
                 <thead>
                     <tr>
                         <th id="deshabilitados-nombre">Nombre</th>
+                        <th id="deshabilitados-marca">Marca</th>
+                        <th id="deshabilitados-precio">Precio</th>
                         <th id="deshabilitados-acciones">Acciones</th>
                     </tr>
                 </thead>
@@ -47,6 +49,8 @@ Actualmente <strong>no</strong> disponibles
                     {% for producto in productos %}
                         <tr>
                             <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.marca }}</td>
+                            <td>{{ producto.precio }}</td>
                             <td>
                                 <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">

@@ -37,14 +37,16 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Mascotas</th>
+                            <th id="deshabilitados-nombre"> Mascota </th>
+                            <th id="deshabilitados-clinte"> Cliente</th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td>{{ mascota.cliente }}, {{mascota.nombre }}</td>
+                                <td> <p>{{ mascota.nombre }}</p></td>
+                                <td><p>{{ mascota.cliente }}</p></td>
                                 <td >
 			                        <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">

@@ -40,14 +40,16 @@ Actualmente disponibles
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre"> Mascotas </th>
-                            <th id="deshabilitados-acciones"> Acciones </th>
+                            <th id="deshabilitados-nombre">Mascotas </th>
+                            <th id="deshabilitados-clinte">Cliente</th>
+                            <th id="deshabilitados-acciones">Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
-                                <td> <p>{{ mascota.cliente }}, {{mascota.nombre }} </p></td>
+                                <td> <p>{{ mascota.nombre }}</p></td>
+                                <td><p>{{ mascota.cliente }}</p></td>
                                 <td> <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
