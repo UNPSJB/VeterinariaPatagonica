@@ -59,10 +59,7 @@ def deshabilitados(peticion):
 def ver(peticion, id):
     """ Ver tipo de atencion segun <id> """
 
-    try:
-        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404( "Tipo de atencion no encontrado" )
+    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
 
     template = loader.get_template(plantilla('ver'))
     contexto = {
@@ -107,10 +104,7 @@ def crear(peticion):
 def modificar(peticion, id):
     """ Modificar tipo de atencion con clave primaria <id> """
 
-    try:
-        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404("Tipo de atencion no encontrado")
+    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
 
     if peticion.method == 'POST':
 
@@ -142,10 +136,7 @@ def modificar(peticion, id):
 def deshabilitar(peticion, id):
     """ Deshablitar el tipo de atencion con clave primaria <id> """
 
-    try:
-        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404("Tipo de atencion no encontrado")
+    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
 
     tipoDeAtencion.baja = True
     tipoDeAtencion.save()
@@ -158,10 +149,7 @@ def deshabilitar(peticion, id):
 def habilitar(peticion, id):
     """ Hablitar el tipo de atencion con clave primaria <id> """
 
-    try:
-        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404("Tipo de atencion no encontrado")
+    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
 
     tipoDeAtencion.baja = False
     tipoDeAtencion.save()
@@ -175,10 +163,7 @@ def habilitar(peticion, id):
 def eliminar(peticion, id):
     """ Eliminar el tipo de atencion con clave primaria <id> """
 
-    try:
-        tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404("Tipo de atencion no encontrado")
+    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
 
     if peticion.method == 'POST':
 
@@ -193,5 +178,3 @@ def eliminar(peticion, id):
         }
 
         return HttpResponse( template.render( contexto, peticion) )
-
-

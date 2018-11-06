@@ -97,7 +97,22 @@ class Servicio(models.Model):
             productos += sproducto.producto.precioEnUnidad(sproducto.cantidad)
         return self.precioManoDeObra + productos
 
+
 class ServicioProducto(models.Model):
-    servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
-    producto = models.ForeignKey(pmodels.Producto, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("servicio", "producto")
+        index_together = ["servicio", "producto"]
+
+    servicio = models.ForeignKey(
+        Servicio,
+        on_delete=models.CASCADE,
+        related_name="servicio_productos",
+    )
+    producto = models.ForeignKey(
+        pmodels.Producto,
+        on_delete=models.CASCADE,
+        related_name="producto_servicios",
+    )
     cantidad = models.PositiveIntegerField()
+

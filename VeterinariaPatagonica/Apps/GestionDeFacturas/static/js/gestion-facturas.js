@@ -38,10 +38,19 @@ $(function() {
 	let add = function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
-			field = `<div class="col-xs-9" id="item-${total}">${field}</div>`;
+			field = `<div class="col-sm-8" id="item-${total}">${field}</div>`;
 			total += 1;
 			$("#id_form-TOTAL_FORMS").val(total);
 			$buttons.before(field);
+		}
+	}
+
+	let remove = function(e) {
+		let item = e.currentTarget.parentNode.id.split('-')[1];
+		if (total > min) {
+			total -= 1;
+			$(`#item-${item}`).remove();
+			$("#id_form-TOTAL_FORMS").val(total);
 		}
 	}
 
@@ -49,3 +58,4 @@ $(function() {
 	$("#button-add").click(add);
 
 });
+
