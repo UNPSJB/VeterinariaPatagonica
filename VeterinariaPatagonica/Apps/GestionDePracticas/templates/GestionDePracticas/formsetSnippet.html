@@ -1,0 +1,25 @@
+<div class="form-inline col-sm-12" id="{{ formset.prefix }}">
+
+    {{ formset.management_form }}
+
+    <div class="encabezado">
+        <strong>{{ label }}</strong>
+    </div>
+
+    <div class="formset-forms" id="div-{{ formset.prefix }}">
+        {% for form in formset.get_forms %}
+            {% include "./formsetFormSnippet.html" with prefix=formset.prefix form=form %}
+        {% endfor %}
+    </div>
+
+    <div class="agregar" >
+        <a class="btn btn-sm btn-default" href="javascript:;" onclick="agregar('#div-{{ formset.prefix }}')">Agregar</a>
+    </div>
+
+    <div class="errores-formset alerta">
+        {% for error in formset.non_form_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    </div>
+
+</div>

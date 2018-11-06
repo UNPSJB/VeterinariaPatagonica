@@ -1,27 +1,35 @@
-{% extends 'GestionDeTiposDeAtencion/tiposdeatencion.html' %}
-{% load static %}
+{% extends 'GestionDeTiposDeAtencion/tda.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Crear Tipo de Atencion
 {% endblock %}
 
-{% block tda-titulo %}
+{% block tituloSeccion %}
 Nuevo Tipo de Atencion
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block subtitulo %}
 Agrega un tipo de atencion al listado
 {% endblock %}
 
-{% block tda-contenido %}
+{% block contenido %}
 
-    <div class="tda-cuerpo">
+    <div class="cuerpo">
 
         <form class="form-horizontal formulario" action="{% url 'tiposDeAtencion:crear' %}" method="post">
 
             {% csrf_token %}
 
             {% include "formularios/snippet.html" with formulario=formulario accion="Crear" %}
+
+            {% comment %}
+            {% include './formulario_snippet.html' with campos=formulario %}
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <button type="submit" class="btn btn-sm btn-default">Crear</button>
+                </div>
+            </div>
+            {% endcomment %}
 
         </form>
     </div>

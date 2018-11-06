@@ -1,0 +1,91 @@
+.formset-forms .form-group {
+    width: auto;
+    margin: 0px 0px 4px 0px ;
+}
+
+.form-inline input[type=text],
+.form-inline input[type=email],
+.form-inline input[type=password],
+.form-inline input[type=number],
+.form-inline textarea,
+.form-inline select {
+    width: 100% !important;
+}
+
+form .acciones {
+    display: table;
+    margin-top: 25px;
+}
+
+.form-inline {
+    padding: 0px 15px;
+}
+
+.formset-form .form-group.cantidad {
+    width: 13%;
+}
+.form-group.eliminar {
+    width: auto;
+}
+.formset-form .form-group.servicio,
+.formset-form .form-group.producto {
+    width: 83%;
+}
+.formset-form .form-group.observaciones {
+    width: 97%;
+}
+#serviciosformset .form-group.servicio {
+    width: 86%;
+}
+
+
+
+#productosformset {
+    margin-top: 30px;
+}
+#serviciosformset {
+    margin-top: 10px;
+}
+#serviciosformset .formset-forms .form-group.observaciones,
+#productosformset .formset-forms .form-group {
+    margin-bottom: 0px;
+}
+.form-inline .encabezado{ 
+    border: 0.5px solid #DDD;
+    padding: 6px;
+}
+.form-inline .formset-form{ 
+    border-bottom: 0.5px solid #DDD;
+    border-left:      0.5px solid #DDD;
+    border-right:    0.5px solid #DDD;
+    padding: 6px;
+}
+.form-inline .agregar .btn { 
+    margin-top: 4px;
+}
+.form-group.eliminar a {
+    color: #000;
+}
+
+
+
+
+form.form-horizontal.filtrado .form-group{
+    margin-bottom: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+form.form-horizontal.filtrado textarea.form-control,
+form.form-horizontal.filtrado select.form-control,
+form.form-horizontal.filtrado input[type=number].form-control,
+form.form-horizontal.filtrado input[type=text].form-control{
+    height: 27px;
+}
+
+#filtrar-practicas {
+    padding: 10px;
+    border-style: solid;
+    border-color: #DDD;
+    border-width: 0.5px 0px 0.5px 0px;
+    margin-bottom: 15px;
+}

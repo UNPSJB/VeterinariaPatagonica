@@ -1,0 +1,51 @@
+{% extends 'GestionDePracticas/practicas.html' %}
+{% load static %}
+
+{% block titulo %}
+Crear {{ tipo }}
+{% endblock %}
+
+{% block practica-titulo %}
+Crear {{ tipo }}
+{% endblock %}
+
+{% block practica-contenido %}
+
+    <div class="practica-cuerpo">
+        <form class="form-horizontal formulario" action="{{ formAction }}" method="POST" onsubmit="validar(event);">
+
+            {% csrf_token %}
+            {% include "formularios/snippet.html" with formulario=formPractica accion=None %}
+            {% include "./formsetSnippet.html" with formset=formServicios label="Servicios" %}
+            {% include "formularios/snippet.html" with formulario=formAcciones accion=None %}
+
+        </form>
+    </div>
+
+    <div id="empty-form-{{ formServicios.prefix }}" class="hidden" >
+        {% include "./formsetFormSnippet.html" with prefix=formServicios.prefix form=formServicios.empty_form %}
+    </div>
+
+
+{% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static 'GestionDePracticas/js/practicas.js' %}"></script>
+    <script type="text/javascript">
+        var validadores = [
+            {
+                "validador" : validarFormset,
+                "argumentos" : {
+                    "reemplazador" : reemplazarServicios,
+                    "comparador" : compararServicios,
+                    "formset_id" : "div-{{ formServicios.prefix }}",
+                }
+            },
+            {
+                "validador" : validarAccion,
+                "argumentos" : {}
+            }
+        ]
+    </script>
+{% endblock %}

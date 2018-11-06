@@ -2,7 +2,7 @@
 
 {% for field in form %}
 <div class="form-group {% if field.errors %}has-error{% endif %}">
-    <label for="{{ campo.id_for_label }}" class="col-sm-2 control-label etiqueta">
+    <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
         {{ field.label }}
     </label>
     <div class="col-sm-8">
@@ -19,10 +19,8 @@
   {{ formset.non_form_errors }}
 {% endblock errores %}
 
-<div class= "col-sm-offset-0" "col-sm-1">
-
-<a> DETALLE DE FACTURA </a>
-  <div class="col-xs-11 well" >
+<div class= "col-sm-offset-4" "col-sm-8">
+  <div class="col-xs-12 well" >
     {{formset.management_form}}
     {% for form in formset %}
       {% if forloop.last %}
@@ -33,7 +31,7 @@
           </a>
         </div>
       {% else %}
-        <div class="col-xs-12">
+        <div class="col-xs-9">
         {{form}}
         <!-- <button class="btn btn-danger btn-sm rm" id="manzana" >eliminar</button> -->
       </div>
@@ -43,14 +41,14 @@
     <div id="buttons">
       <div>
         <a id="button-add" class="btn btn-primary btn-sm pull-right" role="button">
-          Agregar Producto &raquo;
+          <p>Agregar Producto &raquo;</p>
         </a>
-        <a class="related-widget-wrapper-link add-related pull-right" id="add_id_facturaproducto_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crear un nuevo producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
+        <a class="related-widget-wrapper-link add-related pull-right" id="add_id_detallefactura_set-0-producto" href="/admin/GestionDeProductos/producto/add/?_to_field=id&amp;_popup=1" title="Crear un nuevo producto"><img src="/static/admin/img/icon-addlink.svg" alt="Agregar"></a>
       </div>
     </div>
   </div>
   <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-4">
+    <div class="col-sm-offset-4 col-sm-8">
       <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
     </div>
   </div>

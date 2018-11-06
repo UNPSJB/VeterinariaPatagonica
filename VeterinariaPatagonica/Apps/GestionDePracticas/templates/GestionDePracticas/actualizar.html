@@ -1,0 +1,29 @@
+{% extends 'GestionDePracticas/practicas.html' %}
+{% load static %}
+
+{% block titulo %}
+{{ form.accion|capfirst }} {{ tipo }}
+{% endblock %}
+
+{% block practica-titulo %}
+{{ form.accion|capfirst }} {{ tipo }}
+{% endblock %}
+
+{% block practica-contenido %}
+
+    <div class="practica-cuerpo">
+
+    {% include "./filtradoSnippet.html" with form=filtrado accion="Filtrar" %}
+
+        <form class="form-horizontal formulario" action="{{ formAction }}" method="POST">
+
+            {% csrf_token %}
+
+            {% include "formularios/snippet.html" with formulario=practica accion=None %}
+            {% include "formularios/snippet.html" with formulario=estado accion=estado.accion %}
+
+        </form>
+
+    </div>
+
+{% endblock %}

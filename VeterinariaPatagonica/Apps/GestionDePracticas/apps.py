@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class GestiondepracticasConfig(AppConfig):
+class PracticasConfig(AppConfig):
     name = 'GestionDePracticas'

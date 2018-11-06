@@ -1,0 +1,32 @@
+<div class="formset-form {% if form.DELETE.value %}deshabilitado hidden{% else %}habilitado{% endif %}">
+
+    {% for field in form.visible_fields %}
+    <div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
+        {{ field }}
+    </div>
+    {% endfor %}
+
+    <div class="form-group eliminar">
+        <a role="button" href="javascript:;" onclick="eliminar(event, '#div-{{ prefix }}')" class="pull-right"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+
+    <div class="hidden fields">
+        {% for field in form.hidden_fields %}
+        <div class="form-group {{ field.name }}">
+            {{ field }}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="errores-form alerta">
+        {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+        {% endfor %}
+        {% for field in form %}
+            {% for error in field.errors %}
+                <p>{{ field.name }}: {{ error }}</p>
+            {% endfor %}
+        {% endfor %}
+    </div>
+
+</div>

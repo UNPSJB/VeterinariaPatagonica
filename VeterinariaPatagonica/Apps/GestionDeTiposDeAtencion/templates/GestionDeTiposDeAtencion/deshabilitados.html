@@ -1,14 +1,14 @@
-{% extends 'GestionDeTiposDeAtencion/tiposdeatencion.html' %}
+{% extends 'GestionDeTiposDeAtencion/tda.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Deshabilitados
 {% endblock %}
 
-{% block tda-titulo %}
+{% block tituloSeccion %}
 Tipos de Atencion Deshabilitados
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block subtitulo %}
 Actualmente <strong>no</strong> disponibles para ser asignados a practicas
 {% endblock %}
 
@@ -16,16 +16,16 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
 {% include './secciones_snippet.html' with pagina='ver_deshabilitados' %}
 {% endblock %}
 
-{% block tda-contenido %}
+{% block contenido %}
 
 <!-- Listado -->
-<div class="tda-cuerpo" >
+<div class="cuerpo" >
 
   <p> Los siguientes tipos de servicio pueden ser habilitados o eliminados.  </p>
 
     {% if tiposDeAtencion %}
             <div class="table-responsive" id="tabla">
-                <table class="table tda-listado">
+                <table class="table listado">
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
@@ -41,7 +41,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                                 <td >
 			<p align="center">
                                             <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
-                                                <i class="glyphicon glyphicon-eye-open"> </i>
+                                                <i class="glyphicon glyphicon-search"> </i>
                                             </a>
                                             <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-edit"> </i>
