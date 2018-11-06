@@ -6,6 +6,7 @@ $(function() {
 
 	let $buttons = $("#buttons");
 	let template = $("#formset-template").html().replace(RegExp(`form-${initial}`,"g"), `form-ITEM`);
+
 	$("#formset-template").remove();
 	total = total - 1;
 	$("#id_form-TOTAL_FORMS").val(total);
@@ -13,13 +14,13 @@ $(function() {
 	let add = function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
-			field = `<div class="col-xs-9" id="item-${total}">${field}</div>`;
 			total += 1;
+			field = `<div class="col-xs-9" id="item-${total}">${field}</div>`;
 			$("#id_form-TOTAL_FORMS").val(total);
 			$buttons.before(field);
 		}
 	}
-
+/*
 	let remove = function(e) {
 		let item = e.currentTarget.parentNode.id.split('-')[1];
 		if (total > min) {
@@ -28,8 +29,18 @@ $(function() {
 			$("#id_form-TOTAL_FORMS").val(total);
 		}
 	}
+*/
 
-	$(document).on("click",".rm",remove);
+	let remove = function(){
+		if(total > min ){
+			total-=1;
+			$(`#item-${total}`).remove();
+			$("#id_form-TOTAL_FORMS").val(total);
+		}
+	}
+
+	$("#button-remove").click(remove);
+	//$(document).on("click",".rm",remove);
 	$("#button-add").click(add);
 
 });
