@@ -1,5 +1,5 @@
 echo "Load Gestion de Insumos"
-python manage.py loaddata ./Apps/GestionDeInsumos/fixtures/GestionDeInsumos.json
+python manage.py loaddata ./Apps/GestionDeProductos/fixtures/GestionDeProductos.json
 
 echo "Load Gestion de Clientes"
 python manage.py loaddata ./Apps/GestionDeClientes/fixtures/GestionDeClientes.json
@@ -15,3 +15,5 @@ python manage.py loaddata ./Apps/GestionDeServicios/fixtures/GestionDeServicios.
 
 echo "Load Gestion de TiposDeAtencion"
 python manage.py loaddata ./Apps/GestionDeTiposDeAtencion/fixtures/GestionDeTiposDeAtencion.json
+
+python manage.py loaddata ./Apps/GestionDeRubros/fixtures/GestionDeRubros.json
