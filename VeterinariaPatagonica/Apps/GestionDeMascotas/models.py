@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.db.models import Q
 from Apps.GestionDeClientes import models as gcmodels
 from VeterinariaPatagonica import tools
+from datetime import date
 
 # Create your models here.
 
@@ -66,8 +67,10 @@ class Mascota(models.Model):
         }
     )
 
-    fechaNacimiento = models.DateField(blank=False,
-        error_messages={'required': "el cliente es obligatorio"})
+    fechaNacimiento = models.DateField(
+        blank=False,
+        default=date.today(),
+        error_messages={'required': "la fecha es obligatorio"})
 
     especie = models.CharField(
         help_text= "Especie de la Mascota",
