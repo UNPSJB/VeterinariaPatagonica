@@ -47,9 +47,6 @@ class Factura(models.Model):
         }
     )
 
-
-
-
     deatalles = models.ManyToManyField(
         proModel.Producto,
         through='DetalleFactura',
@@ -72,14 +69,14 @@ class Factura(models.Model):
         cadena = 'Tipo de Factura: {0}, Cliente: {1} Total: {2}.'
         return cadena.format(self.tipo, self.cliente, self.total)
 
-    def precio(self):
+    def precioTotal(self):
         productos = Decimal("0")
         for detalle in self.detalleFactura.set.all():
-            productos += detalle.producto.precioEnUnidad(detalle.cantidad)
-        return self.precioManoDeObra + productos
+            productos += detalle.producto.precioEnUnidad(detalle.producto, detalle.cantidad)
+        return self.productos
 
-    def  __unicode__(self):
-        return self.total
+    '''def  __unicode__(self):
+        return self.total'''
 
 class DetalleFactura(models.Model):
     factura = models.ForeignKey(
