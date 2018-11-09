@@ -16,7 +16,7 @@ def modificar(request, id = None):
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,
-        fields=("producto", "cantidad"), min_num=1,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
+        fields=("producto", "cantidad"), min_num=1,
         formset=ServicioProductoBaseFormSet)
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
@@ -28,6 +28,7 @@ def modificar(request, id = None):
                 sproducto.servicio = servicio
                 sproducto.save()
             print(servicio, instances)
+
             #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id)
         context['formulario'] = form
         context['formset'] = formset

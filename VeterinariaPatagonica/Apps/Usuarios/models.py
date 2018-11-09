@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 
 class Usuario(AbstractUser):
-
     def permitidos(self, choices):
 
         if self.is_superuser:

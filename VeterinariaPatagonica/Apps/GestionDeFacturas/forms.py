@@ -23,6 +23,7 @@ def FacturaFormFactory(practica):
 
             widgets = {
                 'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
+                'total': Factura.precioTotal(Factura),
 
             }
 

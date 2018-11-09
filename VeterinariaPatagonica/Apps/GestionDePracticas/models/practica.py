@@ -300,6 +300,46 @@ class Practica(models.Model):
                 descripcion="La practica debe encontrarse en estado %s, actualmente se encuentra en estado %s" % (estado.__name__, actual.__class__.__name__),
             )
 
+    def precios(self):
+        # Servicios
+        totalInsumos = Decimal("0")
+        totalServicios = Decimal("0")
+        if self.estado().esRealizada():
+            # Si la practica esta realizada, debo tomar los servicios practicados
+            # y los productos utilizados
+            insumos = self.practica_productos.all()
+            for insumo in insumos:
+                totalInsumos += insumo.precioTotal()
+            servicios = self.practica_servicios.all()
+            for servicio in servicios:
+                totalServicios += servicio.precioTotal()
+        else:
+            # Si no esta realizada, debo tomar el total por los servicios contratados
+            servicios = self.servicios.all()
+            for servicio in servicios:
+                totalServicios += servicio.precioTotal()
+        
+        # Recargos tipo de atencion
+        recargo = self.tipoDeAtencion.recargo
+        
+        # Descuetos, solo los de servicio, los de producto son para la facturacion de productos
+        descuento = self.cliente.descuentoServicio
+
+        # Faltan los adelantos en concepto de senia o pago antes de realizar la practica
+        adelanto = Decimal("0")
+
+        # Estos campos son tranquilamente de la factura
+        self.precio
+        self.descuento
+        self.recargo
+        return totalInsumos, totalServicios, adelanto, recargo, descuento
+
+    def precioTotal(self):
+        insumos, servicios, adelanto, recargo, descuento = self.precios()
+        total = insumos + servicios - adelanto
+        totalRecargo = (total * recargo / 100) if recargo else Decimal("0")
+        totalDescuento = (total * descuento / 100) if descuento else Decimal("0")
+        return total + totalRecargo - totalDescuento
 
 class PracticaServicio(models.Model):
 
@@ -348,6 +388,8 @@ class PracticaServicio(models.Model):
     def __str__(self):
         return "{}: {}".format(self.servicio.nombre, self.cantidad)
 
+    def precioTotal(self):
+        return self.precio * self.cantidad
 
 
 class PracticaProducto(models.Model):
@@ -383,7 +425,8 @@ class PracticaProducto(models.Model):
         ]
     )
 
-
+    def precioTotal(self):
+        return self.precio * self.cantidad
 
     def save(self, *args, **kwargs):
 
