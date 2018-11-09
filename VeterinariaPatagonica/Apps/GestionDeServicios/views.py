@@ -15,25 +15,27 @@ def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
-    ServicioProductoFormset = modelformset_factory(ServicioProducto,
-        fields=("producto", "cantidad"), min_num=1,#[TODO]Para que era este? se borro la definicion en el merge.Perdí este avance, recuperé casi todo. Falta esto principalmente.
-        formset=ServicioProductoBaseFormSet)
+    ServicioProductoFormset = modelformset_factory(ServicioProducto,#          Defino la forma del formset. Van a tener el checkbox eliminar, la cantidad mínima de forms en el formset
+        fields=("producto", "cantidad"), min_num=1, extra=1, can_delete=True,# es de 1 y la máxima es la determinada por django (1000),
+        formset=ServicioProductoBaseFormSet)#                                  además se define que siempre va a haber una tupla adicional (extra).
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
         formset = ServicioProductoFormset(request.POST)
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid() and formset.is_valid():#Verifico si los forms del formset cumplen las restricciones definidas (Si no se lanzó un ValidationError).
             servicio = form.save()
             instances = formset.save(commit=False)
+            for obj in formset.deleted_objects:#Bucle for que elimina los form que tienen tildado el checkbox "eliminar"
+                obj.delete()
             for sproducto in instances:
                 sproducto.servicio = servicio
                 sproducto.save()
-            print(servicio, instances)
-            #return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id)
+            #print(servicio, instances)
+            return HttpResponseRedirect("/GestionDeServicios/ver/{}".format(servicio.id))
         context['formulario'] = form
-        context['formset'] = formset
+        context["formset"] = formset
     else:
         context['formulario'] = form
-        qs = ServicioProducto.objects.none() if servicio is None else servicio.servicioproducto_set.all()
+        qs = ServicioProducto.objects.none() if servicio is None else servicio.servicio_productos.all()#Obtengo los productos ya cargados en el servicio, para poder mostrarlos en el formset.
         context["formset"] = ServicioProductoFormset(queryset=qs)
     template = loader.get_template('GestionDeServicios/formulario.html')
     return HttpResponse(template.render(context, request))

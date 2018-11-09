@@ -1,9 +1,12 @@
 #!/bin/bash
 
 python3 manage.py loaddata ./fixtures/auth.json
-for f in GestionDeProductos GestionDeClientes \
+for f in GestionDeRubros GestionDeClientes \
 GestionDeMascotas GestionDeTiposDeAtencion \
-GestionDeServicios GestionDePracticas
+Usuarios GestionDeFormasDePagos \
+GestionDeProductos \
+GestionDeServicios GestionDePracticas \
+GestionDeFacturas
 do
   echo "Load $f"
   python3 manage.py loaddata ./Apps/$f/fixtures/$f.json

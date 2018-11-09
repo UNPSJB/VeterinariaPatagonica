@@ -1,7 +1,12 @@
 #!/bin/bash
 echo "Dumpdataeando auth"
 python3 manage.py dumpdata auth > ./fixtures/auth.json
-for f in GestionDeClientes GestionDeMascotas GestionDePracticas GestionDeProductos GestionDeServicios GestionDeTiposDeAtencion
+for f in GestionDeClientes GestionDeMascotas \
+GestionDeRubros GestionDeFormasDePagos \
+Usuarios \
+GestionDeProductos GestionDeServicios \
+GestionDeTiposDeAtencion GestionDePracticas \
+GestionDeFacturas
 do $
  echo "Dumpdataeando $f"
  mkdir -p ./Apps/$f/fixtures

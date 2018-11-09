@@ -33,7 +33,7 @@ Muestra datos del servicio
                       <th>Cantidad</th>
                   </tr>
               </thead>
-              {% for servicioproducto in servicio.servicioproducto_set.all %}
+              {% for servicioproducto in servicio.servicio_productos.all %}
               <tr>
                 <div class="col-xs-11">
                   <td><p>{{servicioproducto.producto}}</p>
