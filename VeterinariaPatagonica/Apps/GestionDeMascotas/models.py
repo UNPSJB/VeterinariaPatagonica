@@ -1,3 +1,4 @@
+from django.utils import timezone as djangotimezone
 from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import Q
@@ -73,6 +74,7 @@ class Mascota(models.Model):
         #default=date.today(),
         #default=timezone.now(),
         #default=now(),
+        default=djangotimezone.now,
         error_messages={'required': "la fecha es obligatorio"})
 
     especie = models.CharField(

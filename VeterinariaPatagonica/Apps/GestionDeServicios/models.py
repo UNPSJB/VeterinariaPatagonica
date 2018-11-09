@@ -91,10 +91,10 @@ class Servicio(models.Model):
         cadena = 'Nombre de Servicio: {0}, Duración Estimada: {1} Precio: {2}.'
         return cadena.format(self.nombre, self.tiempoEstimado, self.precioManoDeObra)
 
-    def precio(self):
+    def precioTotal(self):
         productos = Decimal("0")
-        for sproducto in self.servicioproducto_set.all():
-            productos += sproducto.producto.precioEnUnidad(sproducto.cantidad)
+        for sproducto in self.servicio_productos.all():
+            productos += sproducto.precioTotal()
         return self.precioManoDeObra + productos
 
 
@@ -116,3 +116,5 @@ class ServicioProducto(models.Model):
     )
     cantidad = models.PositiveIntegerField()
 
+    def precioTotal(self):
+        return self.producto.precioEnUnidad(self.cantidad)
