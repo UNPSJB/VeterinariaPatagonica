@@ -35,11 +35,10 @@ def modificar(request, id = None):
         form = FacturaForm(request.POST, instance=factura)
         formset = DetalleFacturaFormset(request.POST)
         if form.is_valid() and formset.is_valid():
-            factura = form.save()
+            factura = form.save(commit=False)
             instances = formset.save(commit=False)
-            for detalle in instances:
-                detalle.factura = factura
-                detalle.save()
+            factura.calcular_subtotales(instances)
+
             print(factura, instances)
         context['formulario'] = form
         context['formset'] = formset
