@@ -103,13 +103,16 @@ class FacturaForm(forms.ModelForm):
 class DetalleFacturaForm(forms.ModelForm):
     class Meta:
         model = DetalleFactura
-        fields= {
-            'factura',
-            'subtotal',
-            'cantidad',
+        fields= [
+            #'factura',
             'producto',
-        }
+            'cantidad',
+            'subtotal',
+        ]
 
+        widgets = {
+            'subtotal' : forms.TextInput(attrs={'disabled': ''}),
+        }
 
 class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
 

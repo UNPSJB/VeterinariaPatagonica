@@ -68,9 +68,15 @@ class Mascota(models.Model):
     )
 
     fechaNacimiento = models.DateField(
+        help_text="Fecha de la nacimiento de la mascota",
+        unique=False,
+        null=False,
         blank=False,
-        default=date.today(),
-        error_messages={'required': "la fecha es obligatorio"})
+        error_messages={
+            'blank': "La fecha es obligatoria"
+        }
+    )
+
 
     especie = models.CharField(
         help_text= "Especie de la Mascota",

@@ -6,7 +6,7 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Factura
-from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura, FacturaFormFactory
+from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura, DetalleFacturaForm, FacturaFormFactory
 from django.forms import modelformset_factory
 from VeterinariaPatagonica import tools
 from dal import autocomplete
@@ -28,7 +28,8 @@ def modificar(request, id = None):
     form = FacturaForm(instance=factura)
     DetalleFacturaFormset = modelformset_factory(
         DetalleFactura,
-        fields=("producto", "cantidad"), min_num=1,
+        DetalleFacturaForm,
+        min_num=1,
         formset=DetalleFacturaBaseFormSet)
     if request.method == 'POST':
         form = FacturaForm(request.POST, instance=factura)

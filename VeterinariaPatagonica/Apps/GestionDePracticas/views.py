@@ -37,7 +37,7 @@ PLANTILLAS = {
     "productos" : "productos",
 }
 def plantilla(nombre, subdirectorio=""):
-    return join( "GestionDePracticas", subdirectorio, PLANTILLAS[nombre]+".html")
+    return join( "GestionDePracticas/", subdirectorio, PLANTILLAS[nombre]+".html")
 
 
 
@@ -266,7 +266,6 @@ def crearProductos(request, idCreacion):
         "formAction" : reverse("practicas:"+tipo+":crear:productos", args=(idCreacion,)),
         "accion" : "Modificar",
     }
-
     template = loader.get_template(plantilla('productos'))
     return HttpResponse(template.render(context, request))
 
