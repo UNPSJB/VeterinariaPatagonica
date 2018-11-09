@@ -23,6 +23,20 @@ $ function calculo(cantidad,precio,inputtext,totaltext){
 }
 
 
+/*function sumaItems()
+{
+    function getVal(item)
+    {
+        if(document.getElementById(item).value != “”)
+            return parseFloat(document.getElementById(item).value);
+        else
+            return 0;
+}
+document.getElementById(‘PX_TOTAL’).value =
+getVal(‘PX_1’) + getVal(‘PX_2’);
+}*/
+
+
 $(function() {
 	let total = Number($("#id_form-TOTAL_FORMS").val());
 	let initial = $("#id_form-INITIAL_FORMS").val();
