@@ -10,6 +10,32 @@
     });
 })*/
 
+//Forma de hacer el calculo de subtotal y total
+$ function calculo(cantidad,precio,inputtext,totaltext){
+
+	// Calculo del subtotal
+	subtotal = precio*cantidad;
+	inputtext.value=subtotal;
+
+        //Calculo del total
+	total = eval(totaltext.value);
+	totaltext.value = total + subtotal;
+}
+
+
+/*function sumaItems()
+{
+    function getVal(item)
+    {
+        if(document.getElementById(item).value != “”)
+            return parseFloat(document.getElementById(item).value);
+        else
+            return 0;
+}
+document.getElementById(‘PX_TOTAL’).value =
+getVal(‘PX_1’) + getVal(‘PX_2’);
+}*/
+
 $(function() {
 	let total = Number($("#id_form-TOTAL_FORMS").val());
 	let initial = $("#id_form-INITIAL_FORMS").val();

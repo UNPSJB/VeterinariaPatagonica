@@ -1,9 +1,11 @@
+from django.utils import timezone as djangotimezone
 from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import Q
 from Apps.GestionDeClientes import models as gcmodels
 from VeterinariaPatagonica import tools
 from datetime import date
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -72,11 +74,11 @@ class Mascota(models.Model):
         unique=False,
         null=False,
         blank=False,
-        error_messages={
-            'blank': "La fecha es obligatoria"
-        }
-    )
-
+        #default=date.today(),
+        #default=timezone.now(),
+        #default=now(),
+        default=djangotimezone.now,
+        error_messages={'required': "la fecha es obligatorio"})
 
     especie = models.CharField(
         help_text= "Especie de la Mascota",

@@ -266,6 +266,7 @@ def crearProductos(request, idCreacion):
         "formAction" : reverse("practicas:"+tipo+":crear:productos", args=(idCreacion,)),
         "accion" : "Modificar",
     }
+
     template = loader.get_template(plantilla('productos'))
     return HttpResponse(template.render(context, request))
 
@@ -300,7 +301,8 @@ def crearPresupuestada(request, idCreacion):
         "accion" : "Crear",
     }
 
-    template = loader.get_template(plantilla('inicializar'))
+    #template = loader.get_template(plantilla('inicializar'))
+    template = loader.get_template('GestionDePracticas/inicializar.html')
     return HttpResponse(template.render(context, request))
 
 
@@ -334,7 +336,8 @@ def crearProgramada(request, idCreacion):
         "accion" : "Crear",
     }
 
-    template = loader.get_template(plantilla('inicializar'))
+    #template = loader.get_template(plantilla('inicializar'))
+    template = loader.get_template('GestionDePracticas/inicializar.html')
     return HttpResponse(template.render(context, request))
 
 
@@ -367,7 +370,8 @@ def crearRealizada(request, idCreacion):
         "accion" : "Crear",
     }
 
-    template = loader.get_template(plantilla('inicializar'))
+    #template = loader.get_template(plantilla('inicializar'))
+    template = loader.get_template('GestionDePracticas/inicializar.html')
     return HttpResponse(template.render(context, request))
 
 
@@ -384,7 +388,8 @@ def listarConsultas(request):
     formFiltrado = FiltradoForm(request.GET)
     practicas = filtrarPracticas(formFiltrado, Practica.objects.deTipo(TIPO))
 
-    template = loader.get_template( plantilla("listar") )
+    #template = loader.get_template( plantilla("listar") )
+    template = loader.get_template('GestionDePracticas/listar.html')
     context = {
         "filtrado" : formFiltrado,
         "tipo" : TIPO,
@@ -405,7 +410,8 @@ def verConsulta(request, id):
         "tipo" : TIPO,
         'practica' : practica
     }
-    template = loader.get_template(plantilla('ver'))
+    #template = loader.get_template(plantilla('ver'))
+    template = loader.get_template('GestionDePracticas/ver.html')
 
     return HttpResponse(template.render( context, request ))
 
@@ -459,7 +465,8 @@ def crearConsulta(request):
         "formAction" : reverse("practicas:consulta:crear:nueva"),
     }
 
-    template = loader.get_template(plantilla('crear'))
+    #template = loader.get_template(plantilla('crear'))
+    template = loader.get_template('GestionDePracticas/crear.html')
     return HttpResponse(template.render(context, request))
 
 
@@ -607,7 +614,8 @@ def listarCirugias(request):
     practicas = filtrarPracticas(formFiltrado, Practica.objects.deTipo(TIPO))
 
 
-    template = loader.get_template( plantilla("listar") )
+    #template = loader.get_template( plantilla("listar") )
+    template = loader.get_template('GestionDePracticas/listar.html')
 
     context = {
         "tipo" : TIPO,
@@ -629,7 +637,8 @@ def verCirugia(request, id):
         "tipo" : TIPO,
         'practica' : practica
     }
-    template = loader.get_template(plantilla('ver'))
+    #template = loader.get_template(plantilla('ver'))
+    template = loader.get_template('GestionDePracticas/ver.html')
 
     return HttpResponse(template.render( context, request ))
 
@@ -682,7 +691,8 @@ def crearCirugia(request):
         "formAction" : reverse("practicas:cirugia:crear:nueva"),
     }
 
-    template = loader.get_template(plantilla('crear'))
+    #template = loader.get_template(plantilla('crear'))
+    template = loader.get_template('GestionDePracticas/crear.html')
     return HttpResponse(template.render(context, request))
 
 

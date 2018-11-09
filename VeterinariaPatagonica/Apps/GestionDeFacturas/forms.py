@@ -6,7 +6,7 @@ def FacturaFormFactory(practica):
     class FacturaForm(forms.ModelForm):
         class Meta:
             model = Factura
-            fields = { 'tipo', 'cliente', 'fecha', 'total'}
+            fields = {'tipo', 'cliente', 'fecha', 'total'}
 
             labels = {
                 'tipo': 'Tipo',
@@ -26,6 +26,8 @@ def FacturaFormFactory(practica):
                 'total': Factura.precioTotal(Factura),
 
             }
+
+            print(Factura.precioTotal(Factura)),
 
         def clean(self):
             cleaned_data = super().clean()

@@ -89,7 +89,8 @@ class Estado(models.Model):
     def __str__(self):
         return self.__class__.__name__
 
-
+    def esRealizada(self):
+        return self.tipo == Realizada.TIPO or self.tipo == Facturada.TIPO
 
 class EstadoCancelable(Estado):
 
