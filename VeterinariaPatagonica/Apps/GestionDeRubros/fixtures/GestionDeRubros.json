@@ -1,1 +1,2 @@
-[]
+[{"model": "GestionDeRubros.rubro", "pk": 1, "fields": {"nombre": "Medicación","descripcion": "Una descripcion", "baja": false}},
+{"model": "GestionDeRubros.rubro", "pk": 2, "fields": {"nombre": "Jugeteria","descripcion": "Una descripcion", "baja": false}}]
