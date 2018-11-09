@@ -1,0 +1,28 @@
+{% extends 'GestionDePagos/GestionDePagos.html' %}
+{% load static %}
+
+{% block titulo %}
+Gestion de Pagos | Crear Pagos
+{% endblock %}
+
+{% block pagosTitulo %}
+Nuevo Pago
+{% endblock %}
+
+{% block pagosSubtitulo %}
+Agrega un Pago al listado
+{% endblock %}
+
+{% block pagosContenido %}
+
+    <div class="pagosCuerpo">
+        <form class="form-horizontal formulario" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2=""%}
+
+        </form>
+    </div>
+
+{% endblock %}

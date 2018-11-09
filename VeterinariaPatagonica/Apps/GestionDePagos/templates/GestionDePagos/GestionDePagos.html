@@ -1,0 +1,35 @@
+{% extends "sitioBase.html" %}
+{% load static %}
+
+{% block paginaEstilos %}
+  {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/GestionDePagos.css' %}">
+{% endblock paginaEstilos %}
+
+{% block paginaSeccionGeneral %}
+    <section>
+        {% block secciones %}
+
+        {% endblock %}
+        <h4 class="pagosTitulo">
+            {% block pagosTitulo %}
+            {% endblock pagosTitulo %}
+        </h4>
+
+        <div class="pagosLineaTitulo"> </div>
+
+        <p class="pagosSubtitulo">
+            {% block pagosSubtitulo %}
+            {% endblock pagosSubtitulo%}
+        </p>
+
+        {% block pagosContenido %}
+        {% endblock pagosContenido %}
+    </section>
+
+{% endblock paginaSeccionGeneral %}
+
+
+{% block footer %}
+  <p>Para mas información de los Pagos haga click aquí<p>
+{% endblock footer %}

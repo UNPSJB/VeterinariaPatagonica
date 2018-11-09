@@ -1,0 +1,82 @@
+.pagosSecciones {
+  padding: 0px;
+  margin-top: 0px;
+  text-align: right;
+}
+
+.pagosTitulo {
+  margin-top: 10px;
+  margin-bottom:3px;
+  font-weight: normal;
+}
+
+.pagosSubtitulo {
+  margin: 3px 0px 20px 0px;
+  font-style: italic;
+  color: #555;
+}
+
+.pagosLineaTitulo {
+  border-bottom: 1px solid #DDD;
+}
+
+.pagosCuerpo {
+  padding: 0px;
+  margin-top: 5px;
+}
+
+.pagosHabilitadosCrear {
+  clear: both;
+  margin-bottom: 10px;
+}
+
+.pagosEtiqueta {
+  text-align: left;
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+  padding: 0px;
+}
+
+.pagos-aviso-eliminacion {
+  text-align: center;
+  text-weight: bold;
+  margin: 20px 0px 20px 0px;
+}
+
+.pagosItemAcciones a {
+  margin: 10px 0px 10px 0px;
+}
+
+.pagos-accion-listado {
+  font-size: 110%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.pagos-accion-listado:hover {
+  text-decoration: none;
+}
+
+.pagosListado thead {
+  background-color: transparent;
+  color: #2A3F54;
+}
+
+.pagosListado,
+.pagosListado thead,
+.pagosListado thead tr,
+.pagosListado thead tr th,
+.pagosListado tbody,
+.pagosListado tbody tr,
+.pagosListado tbody tr, {
+  border: 0px solid #FFF;
+}
+
+table.table.pagosListado {
+  border: 0px solid #FFF;
+}
+
+.pagosListado>tbody>tr>td {
+    padding-top: 9px;
+    padding-left: 4px;
+    border-top: 1px solid #DDD !important;
+}

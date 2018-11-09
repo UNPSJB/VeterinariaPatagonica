@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from Apps.GestionDeRubros import models as grmodels
 from VeterinariaPatagonica import tools
-from django.db.models import Q
+
 
 # Create your models here.
 
@@ -144,12 +144,11 @@ class Producto (models.Model):
 
     rubro = models.ForeignKey(
         grmodels.Rubro,
-        #help_text="Nombre del rubro al que pertenece",
         unique=False,
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        #max_length = MAX_NOMBRE,
+        help_text="Nombre del rubro",
         error_messages={
             'blank': "El rubro es obligatorio"
         }
@@ -171,8 +170,6 @@ class Producto (models.Model):
     baja = models.BooleanField(default=False)
 
     objects = ProductoManager()
-
-
 
     def __str__(self):
         fp = self.formaDePresentacion

@@ -29,7 +29,7 @@ Actualmente disponibles
         <input name="precioPorUnidad" placeholder="Precio Por Unidad">
         <!--<button type="submit">GO</button>-->
         <button type="submit">
-            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
+            <i class="glyphicon glyphicon-search" data-toggle="tooltip" data-placement="bottom" title="Buscar"> </i>
         </button>
     </form>
 
@@ -48,13 +48,13 @@ Actualmente disponibles
                             <td> <p> {{ producto.nombre }} </p></td>
                             <td> <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-eye-open"> </i>
+                                        <i class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="bottom" title="Ver Producto"></i>
                                     </a>
                                     <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-edit"> </i>
+                                        <i class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto"></i>
                                     </a>
                                     <a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-minus"> </i>
+                                        <i class="glyphicon glyphicon-minus" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Producto"></i>
                                     </a>
                             </p> </td>
                         </tr>
@@ -69,7 +69,7 @@ Actualmente disponibles
 
     {% endif %}
 
-    <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Crear </a>
+    <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Nuevo Producto </a>
 
 </div>
 

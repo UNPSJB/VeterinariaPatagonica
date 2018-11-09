@@ -1,0 +1,69 @@
+{% extends 'GestionDePagos/GestionDePagos.html' %}
+
+{% block titulo %}
+Gestion de Pagos | Ver Deshabilitados
+{% endblock %}
+
+{% block pagosTitulo %}
+Pagos Deshabilitados
+{% endblock %}
+
+{% block pagosSubtitulo %}
+Actualmente <strong>no</strong> disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% endblock %}
+
+{% block pagosContenido %}
+
+<!-- Listado -->
+<div class="pagosCuerpo" >
+
+  <p> Los siguientes Pagos pueden ser habilitados o eliminados.  </p>
+
+    {% if pagos %}
+            <div class="table-responsive" id="tabla">
+                <table class="table pagosListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre">Pagos</th>
+                            <th id="deshabilitados-acciones">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in pagos %}
+                            <tr>
+                                <td>{{pago.nombre}}</td>
+                                <td >
+                                    <p align="justify">
+                                        <a  href="{% url 'pagos:pagoVer' pago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-eye-open"> </i>
+                                        </a>
+                                        <a href="{% url 'pagos:pagoModificar' pago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'pagos:pagoHabilitar' pago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-plus"> </i>
+                                        </a>
+                                        <a href="{% url 'pagos:pagoEliminar' pago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-remove"> </i>
+                                        </a>
+                                    </p>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay Pagos deshabilitados</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
