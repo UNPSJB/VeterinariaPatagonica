@@ -11,7 +11,7 @@
 })*/
 
 //Forma de hacer el calculo de subtotal y total
-$ function calculo(cantidad,precio,inputtext,totaltext){
+  function calculo(cantidad,precio,inputtext,totaltext){
 
 	// Calculo del subtotal
 	subtotal = precio*cantidad;
@@ -20,7 +20,7 @@ $ function calculo(cantidad,precio,inputtext,totaltext){
         //Calculo del total
 	total = eval(totaltext.value);
 	totaltext.value = total + subtotal;
-}
+  }
 
 
 /*function sumaItems()

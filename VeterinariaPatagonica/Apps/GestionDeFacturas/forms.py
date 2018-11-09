@@ -113,7 +113,7 @@ class DetalleFacturaForm(forms.ModelForm):
         ]
 
         widgets = {
-            'subtotal' : forms.TextInput(attrs={'disabled': ''}),
+            'subtotal' : forms.NumberInput(attrs={'disabled': '', 'value': 0.0}),
         }
 
 class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
