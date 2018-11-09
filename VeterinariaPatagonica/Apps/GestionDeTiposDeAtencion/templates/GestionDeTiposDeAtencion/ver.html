@@ -1,26 +1,22 @@
-{% extends 'GestionDeTiposDeAtencion/tiposdeatencion.html' %}
+{% extends 'GestionDeTiposDeAtencion/tda.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Tipo de Atencion
 {% endblock %}
 
-{% block secciones %}
-    {% include './secciones_snippet.html' with pagina='default' %}
-{% endblock %}
-
-{% block tda-titulo %}
+{% block tituloSeccion %}
 Ver Tipo de Atencion
 {% endblock %}
 
-{% block tda-subtitulo %}
+{% block subtitulo %}
 Muestra datos del tipo de atencion
 {% endblock %}
 
-{% block tda-contenido %}
+{% block contenido %}
 
     {% include './acciones_snippet.html' with item=tipoDeAtencion seccion='ver' %}
 
-    <div class="tda-cuerpo">
+    <div class="cuerpo">
 
         {% if tipoDeAtencion %}
         <div class="well">

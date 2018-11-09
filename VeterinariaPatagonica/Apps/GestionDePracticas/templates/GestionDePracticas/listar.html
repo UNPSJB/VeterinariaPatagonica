@@ -1,0 +1,48 @@
+{% extends 'GestionDePracticas/practicas.html' %}
+
+{% block titulo %}
+Practicas de tipo: {{ tipo }}
+{% endblock %}
+
+{% block practica-titulo %}
+Practicas de tipo: {{ tipo }}
+{% endblock %}
+
+{% block practica-contenido %}
+
+    <div class="practica-cuerpo">
+
+    {% include "./filtradoSnippet.html" with form=filtrado accion="Filtrar" %}
+
+    {% if practicas %}
+        <div class="table-responsive" id="tabla">
+            <table class="table listado">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Cliente</th>
+                        <th>Estado</th>
+                        <th>Creacion</th>
+                        <th>Ultima actualizacion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for practica in practicas %}
+                        <tr>
+                            <td>{{ practica.id }}</td>
+                            <td>{{ practica.cliente }}</td>
+                            <td>{{ practica.estado }}</td>
+                            <td>{{ practica.estados.inicial.marca|date:"d/m/y" }}</td>
+                            <td>{{ practica.estado.marca|date:"d/m/y" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+        <p>Sin resultados</p>
+    {% endif %}
+    </div>
+
+{% endblock %}

@@ -4,9 +4,24 @@
 
 from django.db.models import Q
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
+from .errores import VeterinariaPatagonicaError
+
+class VeterinariaPatagonicaQuerySet(models.QuerySet):
+
+    def get(self, **kwargs):
+        try:
+            object = super().get(**kwargs)
+        except ObjectDoesNotExist:
+            raise VeterinariaPatagonicaError(
+                titulo="Objeto '%s' no encontrado" % self.model.__name__,
+                descripcion="El objeto solicitado no fue encontrado",
+            )
+        return object
+
 
 #Esta clase sirve para gestionar las bajas
-class BajasLogicasQuerySet(models.QuerySet):
+class BajasLogicasQuerySet(VeterinariaPatagonicaQuerySet):
     def habilitados(self):
         return self.filter(baja=False)
 

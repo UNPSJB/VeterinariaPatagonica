@@ -10,6 +10,32 @@
     });
 })*/
 
+//Forma de hacer el calculo de subtotal y total
+$ function calculo(cantidad,precio,inputtext,totaltext){
+
+	// Calculo del subtotal
+	subtotal = precio*cantidad;
+	inputtext.value=subtotal;
+
+        //Calculo del total
+	total = eval(totaltext.value);
+	totaltext.value = total + subtotal;
+}
+
+
+/*function sumaItems()
+{
+    function getVal(item)
+    {
+        if(document.getElementById(item).value != “”)
+            return parseFloat(document.getElementById(item).value);
+        else
+            return 0;
+}
+document.getElementById(‘PX_TOTAL’).value =
+getVal(‘PX_1’) + getVal(‘PX_2’);
+}*/
+
 
 $(function() {
 	let total = Number($("#id_form-TOTAL_FORMS").val());
@@ -26,10 +52,19 @@ $(function() {
 	let add = function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
-			field = `<div class="col-xs-9" id="item-${total}">${field}</div>`;
+			field = `<div class="col-sm-8" id="item-${total}">${field}</div>`;
 			total += 1;
 			$("#id_form-TOTAL_FORMS").val(total);
 			$buttons.before(field);
+		}
+	}
+
+	let remove = function(e) {
+		let item = e.currentTarget.parentNode.id.split('-')[1];
+		if (total > min) {
+			total -= 1;
+			$(`#item-${item}`).remove();
+			$("#id_form-TOTAL_FORMS").val(total);
 		}
 	}
 
@@ -37,3 +72,4 @@ $(function() {
 	$("#button-add").click(add);
 
 });
+

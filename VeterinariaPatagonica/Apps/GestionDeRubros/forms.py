@@ -4,10 +4,10 @@ from .models import Rubro
 class RubroForm(forms.ModelForm):
     class Meta:
         model = Rubro
-        fields = {
+        fields = [
             'nombre',
             'descripcion',
-        }
+        ]
 
         labels = {
             'nombre':'Nombre',
@@ -21,14 +21,13 @@ class RubroForm(forms.ModelForm):
         }
 
         widgets = {
-            'nombre': forms.TextInput(),
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 })
         }
 
-        field_order = [
+    field_order = [
             'nombre',
             'descripcion',
-        ]
+    ]
 
 
     def clean(self):

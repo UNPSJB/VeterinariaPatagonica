@@ -1,0 +1,32 @@
+{% extends 'sitioBase.html' %}
+{% load static %}
+
+{% block paginaEstilos %}
+{{ block.super }}
+    <link href="{% static 'GestionDeTiposDeAtencion/css/tda.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block paginaSeccionGeneral %}
+
+        <section>
+        {% block secciones %}
+        {% include './secciones_snippet.html' with pagina='default' %}
+        {% endblock %}
+
+        <h4 class="titulo">
+            {% block tituloSeccion %}
+            {% endblock %}
+        </h4>
+        <div class="linea-titulo"></div>
+        <p class="subtitulo">
+            {% block subtitulo %}
+            {% endblock %}
+        </p>
+
+        {% block contenido %}
+        {% endblock contenido %}
+        </section>
+
+{% endblock %}
+

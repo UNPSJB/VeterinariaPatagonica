@@ -80,6 +80,30 @@ select:focus {
     background-color: #fff;
 }
 
+.has-error input[type=email],
+.has-error input[type=password],
+.has-error input[type=number],
+.has-error input[type=checkbox],
+.has-error input[type=radio],
+.has-error input[type=text],
+.has-error textarea,
+.has-error select {
+    border: 1px solid #A94442 !important;
+    color: #A94442 !important;
+}
+
+.has-error input[type=email]:focus,
+.has-error input[type=password]:focus,
+.has-error input[type=number]:focus,
+.has-error input[type=checkbox]:focus,
+.has-error input[type=radio]:focus,
+.has-error input[type=text]:focus,
+.has-error textarea:focus,
+.has-error select:focus {
+    border: 1px solid #A94442 !important;
+    color: #A94442 !important;
+}
+
 input[type=email],
 input[type=password],
 input[type=number],
@@ -87,6 +111,17 @@ input[type=text],
 textarea,
 select {
     width: 100%;
+}
+
+input,
+textarea,
+select,
+.form-control {
+    padding: 4px 6px 4px 6px;
+    font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.471;
 }
 
 .btn {
@@ -384,4 +419,118 @@ ul.nav>li>i {
 
 #seccion-inputs input {
     margin-bottom: 10px;
+}
+
+.form-group {
+    width: 100%;
+}
+
+
+
+#imagenServicio {
+  background-image: url('../images/servicio.jpg');
+  background-size: contain;
+}
+#imagenProducto {
+  background-image: url('../images/hueso.jpg');
+  background-size: contain;
+}
+#imagenCliente {
+  background-image: url('../images/cliente.jpg');
+  background-size: contain;
+}
+#imagenMascota {
+  background-image: url('../images/perro.jpg');
+  background-size: contain;
+}
+#imagenCirugia {
+  background-image: url('../images/cirugia.jpg');
+  background-size: contain;
+}
+#imagenConsulta {
+  background-image: url('../images/vacuna.jpg');
+  background-size: contain;
+}
+#imagenTipoDeAtencion {
+  background-image: url('../images/casa.jpg');
+  background-size: contain;
+}
+
+
+/*
+*******************************************************************************
+*/
+
+
+
+.secciones {
+  padding: 0px;
+  margin-top: 0px;
+  text-align: right;
+}
+
+.titulo {
+  margin-top: 10px;
+  margin-bottom:3px;
+  font-weight: normal;
+}
+
+.subtitulo {
+  margin: 3px 0px 20px 0px;
+  font-style: italic;
+  color: #555;
+}
+
+.linea-titulo {
+  border-bottom: 1px solid #DDD;
+}
+
+.cuerpo {
+  padding: 0px;
+  margin-top: 5px;
+}
+
+.formulario-etiqueta {
+  text-align: left;
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+  padding: 0px;
+}
+
+.accion-listado {
+  font-size: 110%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.accion-listado:hover {
+  text-decoration: none;
+}
+
+.listado thead {
+  background-color: transparent;
+  color: #2A3F54;
+}
+
+.listado,
+.listado thead,
+.listado thead tr,
+.listado thead tr th,
+.listado tbody,
+.listado tbody tr,
+.listado tbody tr {
+  border: 0px solid #FFF;
+}
+
+table.table.listado {
+  border: 0px solid #FFF;
+}
+
+.listado>tbody>tr>td {
+    padding-top: 9px;
+    padding-left: 4px;
+    border-top: 1px solid #DDD !important;
+}
+
+.alerta {
+    color: #A94442;
 }
