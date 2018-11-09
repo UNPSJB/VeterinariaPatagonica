@@ -72,7 +72,7 @@ class Mascota(models.Model):
         blank=False,
         #default=date.today(),
         #default=timezone.now(),
-        default=now(),
+        #default=now(),
         error_messages={'required': "la fecha es obligatorio"})
 
     especie = models.CharField(
