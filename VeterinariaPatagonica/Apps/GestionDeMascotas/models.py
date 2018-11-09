@@ -5,6 +5,7 @@ from django.db.models import Q
 from Apps.GestionDeClientes import models as gcmodels
 from VeterinariaPatagonica import tools
 from datetime import date
+from django.utils.timezone import now
 
 # Create your models here.
 
@@ -69,7 +70,13 @@ class Mascota(models.Model):
     )
 
     fechaNacimiento = models.DateField(
+        help_text="Fecha de la nacimiento de la mascota",
+        unique=False,
+        null=False,
         blank=False,
+        #default=date.today(),
+        #default=timezone.now(),
+        #default=now(),
         default=djangotimezone.now,
         error_messages={'required': "la fecha es obligatorio"})
 

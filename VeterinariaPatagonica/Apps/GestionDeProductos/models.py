@@ -177,7 +177,7 @@ class Producto (models.Model):
     def __str__(self):
         fp = self.formaDePresentacion
         unidad = list(filter(lambda t: fp in t, Producto.TUPLAS)).pop()
-        return "Producto: {0} Unidad: {1} Precio: {2}".format(self.nombre, Producto.UNIDADES_DICT[unidad[0]], self.precioPorUnidad)
+        return "Producto: {0}, Unidad: {1}, Precio: {2}".format(self.nombre, Producto.UNIDADES_DICT[unidad[0]], self.precioPorUnidad)
 
     def precioEnUnidad(self, cantidad):
         return Producto.CONVERT[self.formaDePresentacion](self.precioPorUnidad) * cantidad

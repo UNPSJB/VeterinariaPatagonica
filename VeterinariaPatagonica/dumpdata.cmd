@@ -1,5 +1,5 @@
 echo "Dumpdataeando Gestion de Insumos"
-python manage.py dumpdata GestionDeInsumos > ./Apps/GestionDeInsumos/fixtures/GestionDeInsumos.json
+python manage.py dumpdata GestionDeProductos > ./Apps/GestionDeProductos/fixtures/GestionDeProductos.json
 
 echo "Dumpdataeando Gestion de Clientes"
 python manage.py dumpdata GestionDeClientes > ./Apps/GestionDeClientes/fixtures/GestionDeClientes.json
@@ -15,3 +15,6 @@ python manage.py dumpdata GestionDeServicios > ./Apps/GestionDeServicios/fixture
 
 echo "Dumpdataeando Gestion de TiposDeAtencion"
 python manage.py dumpdata GestionDeTiposDeAtencion > ./Apps/GestionDeTiposDeAtencion/fixtures/GestionDeTiposDeAtencion.json
+
+echo "Dumpdataeando Gestion de TiposDeAtencion"
+python manage.py dumpdata GestionDeRubros > ./Apps/GestionDeRubros/fixtures/GestionDeRubros.json

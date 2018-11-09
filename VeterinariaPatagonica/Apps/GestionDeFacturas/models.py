@@ -63,6 +63,8 @@ class Factura(models.Model):
         }
     )
 
+
+
     baja = models.BooleanField(default=False)
 
     def __str__(self):
@@ -103,7 +105,7 @@ class DetalleFactura(models.Model):
         }
     )
     cantidad = models.IntegerField(
-        help_text="Ingrese Cantidad",
+        #help_text="Ingrese Cantidad",
         unique=False,
         null=False,
         blank=False,
@@ -113,7 +115,7 @@ class DetalleFactura(models.Model):
     )
     subtotal = models.DecimalField(
         null= True,
-        help_text="Ingrese precio del producto",
+        #help_text="Ingrese precio del producto",
         max_digits= MAXDIGITO,
         decimal_places= MAXDECIMAL,
     )
