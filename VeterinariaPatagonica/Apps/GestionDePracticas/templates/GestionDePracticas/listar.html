@@ -24,6 +24,7 @@ Practicas de tipo: {{ tipo }}
                         <th>Estado</th>
                         <th>Creacion</th>
                         <th>Ultima actualizacion</th>
+                        <!--<th>Ver</th>-->
                     </tr>
                 </thead>
                 <tbody>
@@ -34,6 +35,17 @@ Practicas de tipo: {{ tipo }}
                             <td>{{ practica.estado }}</td>
                             <td>{{ practica.estados.inicial.marca|date:"d/m/y" }}</td>
                             <td>{{ practica.estado.marca|date:"d/m/y" }}</td>
+                            <!--NO ANDAN LOS IF. la idea es que nos deje ver en detalle la práctica, según sea consulta o cirugía-->
+                            <!--{% if practica.servicios.TIPO == 'C' %}-->
+                              <!--<td><a  href="{% url 'practicas:consulta:ver' practica.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta consulta en detalle.">-->
+                                  <!--<i class="glyphicon glyphicon-eye-open"> </i>-->
+                              <!--</a></td>-->
+                            <!--{% endif %}-->
+                            <!--{% if practica.servicios.TIPO == 'Q' %}-->
+                              <!--<td><a  href="{% url 'practicas:cirugia:ver' practica.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta cirugía en detalle.">-->
+                                  <!--<i class="glyphicon glyphicon-eye-open"> </i>-->
+                              <!--</a></td>-->
+                            <!--{% endif %}-->
                         </tr>
                     {% endfor %}
                 </tbody>

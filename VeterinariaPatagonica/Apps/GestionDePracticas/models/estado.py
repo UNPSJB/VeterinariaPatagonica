@@ -9,6 +9,7 @@ from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeProductos.models import Producto
 from .practica import Practica
 
+from django.core.exceptions import ValidationError
 
 
 __all__ = [ "Estado", "Creada", "Presupuestada", "Programada", "Realizada", "RealizadaServicio", "RealizadaProducto", "Cancelada", "Facturada" ]
@@ -210,7 +211,12 @@ class Presupuestada(EstadoRealizable, EstadoCancelable):
 
     def confirmar(self, practica, turno):
         #[TODO]if fechaActual < fechaMantenimientoOferta: return Programada(self, practica, turno)
-        return Programada.objects.create(practica=practica, turno=turno)
+        if practica.tipoDeAtencion.inicioFranjaHoraria <= turno <= practica.tipoDeAtencion.finFranjaHoraria:
+
+            return Programada.objects.create(practica=practica, turno=turno)
+        else:
+            raise ValidationError("Turno no válido según el tipo de atención elegída")
+
 
     def programar(self, inicio, duracion):
 
