@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Rubro
 from .forms import RubroForm
+from VeterinariaPatagonica import tools
 
 
 def rubros(request):
@@ -97,7 +98,8 @@ def ver(request, id):
     return HttpResponse(template.render(contexto, request))
 
 def verHabilitados(request):
-    rubros = Rubro.objects.filter(baja=False)
+    rubros = Rubro.objects.habilitados()
+    rubros = rubros.filter(tools.paramsToFilter(request.GET, Rubro))
     template = loader.get_template('GestionDeRubros/verHabilitados.html')
     contexto = {
         'rubros' : rubros,
@@ -106,8 +108,10 @@ def verHabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
+
 def verDeshabilitados(request):
-    rubros = Rubro.objects.filter(baja=True)
+    rubros = Rubro.objects.deshabilitados()
+    rubros = rubros.filter(tools.paramsToFilter(request.GET, Rubro))
     template = loader.get_template('GestionDeRubros/verDeshabilitados.html')
     contexto = {
         'rubros' : rubros,
