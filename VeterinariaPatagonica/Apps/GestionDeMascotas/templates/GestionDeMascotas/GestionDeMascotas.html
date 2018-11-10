@@ -3,7 +3,8 @@
 
 {% block paginaEstilos %}
   {{ block.super }}
-    <link rel="stylesheet" href="{% static 'GestionDeMascotas/css/GestionDeMascotas.css' %}">
+    <link rel="stylesheet" href="{% static 'css/GestionDeMascotas.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" >
 {% endblock paginaEstilos %}
 
 {% block paginaSeccionGeneral %}
@@ -16,7 +17,7 @@
       {% block mascotaTitulo %}
       {% endblock mascotaTitulo %}
     </h4>
-
+    <br>
     <div class="mascotaLineaTitulo"> </div>
 
     <p class="mascotaSubtitulo">
@@ -29,7 +30,14 @@
   </section>
 {% endblock paginaSeccionGeneral %}
 
+
 {% block footer %}
   <p>Para mas información de las mascotas haga click aquí<p>
 {% endblock footer %}
 
+{% block paginaJavascript %}
+    {{block.super}}
+    <script src="{% static 'js/GestionDeMascotas.js' %}"></script>
+    <script src="js/moment.min.js"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js'%}"></script>
+{% endblock paginaJavascript %}

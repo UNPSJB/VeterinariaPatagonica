@@ -9,7 +9,7 @@ Mascotas Deshabilitadas
 {% endblock %}
 
 {% block mascotaSubtitulo %}
-Actualmente <strong>no</strong> disponibles para ser asignados a mascota
+Actualmente <strong>no</strong> disponibles para ser asignados a clientes
 {% endblock %}
 
 {% block secciones %}
@@ -21,16 +21,39 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
 <!-- Listado -->
 <div class="mascotaCuerpo" >
 
-  <p> Los siguientes mascotas  pueden ser habilitados o eliminados.  </p>
+    <div id="filtrar-practicas">
+        <a role="button" href="#filtrarMascotas" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarMascotas" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="nombre" placeholder="Nombre">
+                            <input name="patente" placeholder="Patente">
+                            <input name="duenio" placeholder="Dueño">
+                            <input name="especie" placeholder="Especie">
 
-    <form action="" method="GET">
-        <input name="nombre" placeholder="nombre">
-        <input name="patente" placeholder="patente">
-        <input name="especie" placeholder="especie">
-        <button type="submit">
-            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
-        </button>
-    </form>
+                            <button type="submit" class="" >
+
+                                    <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                    <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+
+    <div class="mascotaLineaTitulo"> </div>
+
+    <br>
+    <p> Las siguientes mascotas  pueden ser habilitadas o eliminadas: </p>
 
     {% if mascotas %}
             <div class="table-responsive" id="tabla">
@@ -70,7 +93,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a mascota
             </div>
 
     {% else %}
-
+        <br>
         <p> No hay mascotas Deshabilitadas</p>
 
     {% endif %}

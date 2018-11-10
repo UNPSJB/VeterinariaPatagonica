@@ -35,7 +35,7 @@ Actualmente disponibles
                     <tbody>
                         {% for factura in facturas %}
                             <tr>
-                                <td> <p>{{factura.nombre }}</p></td>
+                                <td> <p>{{ factura.cliente }}</p></td>
                                 <td> <p align="justify">
                                         <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-eye-open"> </i>

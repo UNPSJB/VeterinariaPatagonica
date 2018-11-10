@@ -59,14 +59,12 @@ class FacturaForm(forms.ModelForm):
             'tipo',
             'cliente',
             'fecha',
-            'total'
         ]
 
         labels = {
             'tipo':'Tipo',
             'cliente' : 'Cliente',
             'fecha' : 'Fecha',
-            'total' : 'Total'
         }
 
         error_messages = {
@@ -99,8 +97,7 @@ class FacturaForm(forms.ModelForm):
             'tipo',
             'cliente',
             'fecha',
-            'total',
-        ]
+    ]
 
 class DetalleFacturaForm(forms.ModelForm):
     class Meta:
@@ -109,12 +106,12 @@ class DetalleFacturaForm(forms.ModelForm):
             #'factura',
             'producto',
             'cantidad',
-            'subtotal',
+            #'subtotal',
         ]
 
-        widgets = {
-            'subtotal' : forms.NumberInput(attrs={'disabled': '', 'value': 0.0}),
-        }
+        #widgets = {
+        #    'subtotal' : forms.NumberInput(attrs={'disabled': '', 'value': 0.0}),
+        #}
 
 class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
 
