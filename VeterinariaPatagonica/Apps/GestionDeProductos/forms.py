@@ -35,15 +35,15 @@ def ProductoFormFactory(producto=None):
             model = Producto
             fields = campos
             labels = {
-                'nombre':'Nombre',
-                'marca': 'Marca',
-                'stock': 'Stock',
-                'formaDePresentacion':'FormaDePresentacion',
-                'precioPorUnidad':'PrecioPorUnidad',
-                'precioDeCompra' : 'PrecioDeCompra',
-                'rubro':'Rubro',
-                'descripcion':'Descripcion',
-                'baja':'Baja'
+                'nombre':'Nombre:',
+                'marca': 'Marca:',
+                'stock': 'Stock:',
+                'formaDePresentacion':'Forma de Presentación:',
+                'precioPorUnidad':'Precio por Unidad:',
+                'precioDeCompra' : 'Precio de Compra:',
+                'rubro':'Rubro:',
+                'descripcion':'Descripción:',
+                'baja':'Baja:'
             }
 
             error_messages = {
@@ -87,4 +87,3 @@ def ProductoFormFactory(producto=None):
                     })
 
     return ProductoForm
-

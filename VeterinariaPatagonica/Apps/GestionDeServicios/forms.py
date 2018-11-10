@@ -15,7 +15,7 @@ class ServicioForm(forms.ModelForm):
         labels = {
             'tipo':'Tipo:',
             'nombre':'Nombre:',
-            'descripcion':'Descripcion:',
+            'descripcion':'Descripción:',
             'tiempoEstimado':'Tiempo Estimado:',
             'precioManoDeObra':'Precio Mano de Obra:',
             }

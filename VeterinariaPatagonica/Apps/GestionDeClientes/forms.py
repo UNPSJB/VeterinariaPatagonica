@@ -31,10 +31,10 @@ def ClienteFormFactory(cliente=None):
             model = Cliente
             fields = campos
             labels = {
-                'dniCuit':'Dni/Cuit',
-                'nombres':'Nombres', 'apellidos':'Apellidos', 'direccion':'Direccion', 'localidad':'Localidad', 'celular':'Celular', 'telefono':'Telefono', 'email':'Email',
-                'tipoDeCliente':'Tipo De Cliente',
-                'descuentoServicio':'DescuentoServicio', 'descuentoProducto':'DescuentoProducto', 'baja':'Baja'
+                'dniCuit':'Dni/Cuit:',
+                'nombres':'Nombres:', 'apellidos':'Apellidos:', 'direccion':'Dirección:', 'localidad':'Localidad:', 'celular':'Celular:', 'telefono':'Teléfono:', 'email':'Email:',
+                'tipoDeCliente':'Tipo de Cliente:',
+                'descuentoServicio':'Descuento Servicio:', 'descuentoProducto':'Descuento Producto:','cuentaCorriente' : 'Cuenta Corriente:', 'baja':'Baja:'
             }
 
             error_messages = {
