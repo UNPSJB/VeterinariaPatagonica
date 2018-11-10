@@ -114,7 +114,7 @@ def eliminar(request, id):
         raise Http404()
     if request.method == 'POST':
         servicio.delete()
-        return HttpResponseRedirect( "/GestionDeServicios/" )
+        return HttpResponseRedirect( "/GestionDeServicios/verDeshabilitados" )
     else:
         template = loader.get_template('GestionDeServicios/eliminar.html')
         context = {
@@ -122,14 +122,6 @@ def eliminar(request, id):
             'id' : id
         }
         return HttpResponse( template.render( context, request) )
-
-
-
-
-
-
-
-
 
 #def volver(request, id):
 #    return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))

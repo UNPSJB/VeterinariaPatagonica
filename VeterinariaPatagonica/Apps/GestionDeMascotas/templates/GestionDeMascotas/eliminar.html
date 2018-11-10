@@ -1,0 +1,23 @@
+{% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
+
+{% block titulo %}
+Gestion de Mascotas| Eliminar Mascota
+{% endblock %}
+
+{% block mascotaTitulo %}
+Eliminar Mascota
+{% endblock %}
+
+{% block mascotaSubtitulo %}
+Elimina permanentemente los datos de la mascota del sistema
+{% endblock %}
+
+{% block mascotaContenido %}
+<div class="mascotaCuerpo">
+    <form class="form" action="{% url 'mascotas:mascotaEliminar' id %}" method="post">
+        {% csrf_token %}
+		<p class="mascotaAvisoEliminacion"> Confirmar eliminacion: </p>
+        <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
+    </form>
+</div>
+{% endblock mascotaContenido %}

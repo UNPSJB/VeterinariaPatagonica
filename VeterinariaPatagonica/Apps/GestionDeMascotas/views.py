@@ -70,14 +70,10 @@ def eliminar(request, id):
         mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         mascota.delete()
-        return HttpResponseRedirect( "/GestionDeMascotas/" )
-
+        return HttpResponseRedirect( "/GestionDeMascotas/verDeshabilitados/" )
     else:
-
         template = loader.get_template('GestionDeMascotas/eliminar.html')
         context = {
             'usuario' : request.user,

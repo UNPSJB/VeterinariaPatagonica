@@ -66,25 +66,19 @@ def deshabilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeRubros.delete_Rubro', raise_exception=True)
 def eliminar(request, id):
-
     try:
         rubro = Rubro.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         rubro.delete()
-        return HttpResponseRedirect( "/GestionDeRubros/" )
-
+        return HttpResponseRedirect( "/GestionDeRubros/verDeshabilitados/" )
     else:
-
         template = loader.get_template('GestionDeRubros/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):

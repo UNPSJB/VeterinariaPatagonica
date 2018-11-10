@@ -14,7 +14,7 @@ Elimina permanentemente los datos del producto del sistema
 
 {% block productoContenido %}
 <div class="productoCuerpo">
-    <form class="form" action="{% url 'productoEliminar' id %}" method="post">
+    <form class="form" action="{% url 'productos:productoEliminar' id %}" method="post">
         {% csrf_token %}
 		<p class="productoAvisoEliminacion"> Confirmar eliminacion: </p>
         <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
