@@ -182,7 +182,7 @@ class TipoDeAtencion(models.Model):
     #---------------------- Metodos ----------------------
     def __str__(self):
         """ String para Tipos de Atencion """
-        return self.nombre
+        return "{0}, ({1} | {2})".format(self.nombre,self.inicioFranjaHoraria,self.finFranjaHoraria)
 
 
 
@@ -200,5 +200,3 @@ class TipoDeAtencion(models.Model):
 
         self.inicioFranjaHoraria = franja.inicio
         self.finFranjaHoraria = franja.fin
-
-

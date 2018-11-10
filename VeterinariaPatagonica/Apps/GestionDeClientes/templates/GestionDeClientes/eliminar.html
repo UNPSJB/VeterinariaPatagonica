@@ -1,0 +1,23 @@
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+
+{% block titulo %}
+Gestion de Clientes| Eliminar Cliente
+{% endblock %}
+
+{% block clienteTitulo %}
+Eliminar Cliente
+{% endblock %}
+
+{% block clienteSubtitulo %}
+Elimina permanentemente los datos del cliente del sistema
+{% endblock %}
+
+{% block clienteContenido %}
+<div class="clienteCuerpo">
+    <form class="form" action="{% url 'clientes:clienteEliminar' id %}" method="post">
+        {% csrf_token %}
+		<p class="clienteAvisoEliminacion"> Confirmar eliminacion: </p>
+        <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
+    </form>
+</div>
+{% endblock clienteContenido %}
