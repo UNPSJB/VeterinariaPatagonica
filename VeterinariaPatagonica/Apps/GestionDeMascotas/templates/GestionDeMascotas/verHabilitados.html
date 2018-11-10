@@ -9,7 +9,6 @@ Mascotas Habilitadas
 {% endblock %}
 
 {% block mascotaSubtitulo %}
-Actualmente disponibles
 {% endblock %}
 
 {% block secciones %}
@@ -21,19 +20,38 @@ Actualmente disponibles
 <!-- Listado -->
 <div class="mascotaCuerpo" >
 
-    <p> Los siguientes mascotas estan habilitados.  </p>
+    <div id="filtrar-practicas">
+        <a role="button" href="#filtrarMascotas" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarMascotas" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="nombre" placeholder="Nombre">
+                            <input name="patente" placeholder="Patente">
+                            <input name="duenio" placeholder="Dueño">
+                            <input name="especie" placeholder="Especie">
 
-    <form action="" method="GET">
-        <input name="nombre" placeholder="nombre">
-        <input name="patente" placeholder="patente">
-        <input name="duenio" placeholder="dueño">
-        <input name="especie" placeholder="especie">
+                            <button type="submit" class="" >
 
-        <button type="submit">
-            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
-        </button>
-    </form>
+                                    <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                    <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
 
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="mascotaLineaTitulo"> </div>
+
+    <br>
+    <!--<p> Las siguientes mascotas estan habilitadas:  </p>-->
 
     {% if mascotas %}
             <div class="table-responsive" id="tabla">
