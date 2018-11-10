@@ -122,9 +122,7 @@ class rubroAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
-
         qs = Rubro.objects.all()
-
         if self.q:
             qs = qs.filter(Q(nombre__icontains=self.q))
 

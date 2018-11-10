@@ -1,5 +1,10 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
-{% load static %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    {{formulario.media.css}}
+
+{% endblock %}
 
 {% block titulo %}
 Gestion de Productos | Crear Producto
@@ -12,6 +17,7 @@ Nuevo Producto
 {% block productoSubtitulo %}
 Agrega un Producto al listado
 {% endblock %}
+
 
 {% block productoContenido %}
 
@@ -29,5 +35,5 @@ Agrega un Producto al listado
 
 {% block paginaJavascript %}
     {{ block.super }}
-    <script src="{% static 'js/GestionDeProductos.js' %}"></script>
-{% endblock paginaJavascript %}
+    {{formulario.media.js}}
+{% endblock %}
