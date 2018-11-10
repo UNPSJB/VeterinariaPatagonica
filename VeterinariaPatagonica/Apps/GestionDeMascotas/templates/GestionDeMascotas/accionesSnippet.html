@@ -1,7 +1,7 @@
 
 <div class="mascotaItemAcciones">
 
-        {% if seccion == 'ver' %}
+        {% if seccion != 'ver' %}
         <a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaVer' item.id %}">Ver</a>
         {% endif %}
 
