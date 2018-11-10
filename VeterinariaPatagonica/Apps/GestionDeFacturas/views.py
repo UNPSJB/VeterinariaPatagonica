@@ -13,6 +13,7 @@ from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
 from Apps.GestionDePracticas.models import Practica
+from Apps.GestionDeProductos.models import Producto
 
 def facturas(request):
 
@@ -164,6 +165,17 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
+
+        return qs
+
+class productoAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        qs = Producto.objects.all()
+
+        if self.q:
+           qs = qs.filter(Q(descripcion__icontains=self.q) | Q(nombre__icontains=self.q) | Q(marca__icontains=self.q))
 
         return qs
 
