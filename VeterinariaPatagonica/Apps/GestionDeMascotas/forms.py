@@ -2,11 +2,6 @@ from django import forms
 from .models import Mascota
 from dal import autocomplete
 
-from django.core.validators import RegexValidator
-
-#TIMEINPUT_FMTS = [ "%H:%M" ]
-
-
 '''class creacionModelForm(forms.ModelForm):
     class meta:
         model = Mascota'''
