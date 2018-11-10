@@ -1,7 +1,7 @@
 
 <div class="productoItemAcciones">
 
-        {% if seccion == 'ver' %}
+        {% if seccion != 'ver' %}
         <a  class="btn btn-sm btn-default" href="{% url 'productos:productoVer' item.id %}">Ver</a>
         {% endif %}
 
