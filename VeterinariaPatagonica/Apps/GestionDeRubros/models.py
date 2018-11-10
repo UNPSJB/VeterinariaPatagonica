@@ -1,7 +1,13 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from VeterinariaPatagonica import tools
 
 # Create your models here.
+
+class BaseRubroManager(models.Manager):
+    pass
+
+RubroManager = BaseRubroManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Rubro (models.Model):
     MAPPER = {
@@ -39,6 +45,8 @@ class Rubro (models.Model):
     )
 
     baja = models.BooleanField(default=False)
+
+    objects = RubroManager()
 
 
     def __str__ (self):

@@ -33,6 +33,7 @@ class Migration(migrations.Migration):
                 ('baja', models.BooleanField(default=False)),
                 ('cliente', models.ForeignKey(error_messages={'blank': 'El cliente es obligatorio'}, on_delete=django.db.models.deletion.CASCADE, to='GestionDeClientes.Cliente')),
                 ('deatalles', models.ManyToManyField(through='GestionDeFacturas.DetalleFactura', to='GestionDeProductos.Producto')),
+
             ],
         ),
         migrations.AddField(

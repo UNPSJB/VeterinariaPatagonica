@@ -9,7 +9,7 @@ Rubros Habilitados
 {% endblock %}
 
 {% block rubroSubtitulo %}
-Actualmente disponibles
+<!--Actualmente disponibles-->
 {% endblock %}
 
 {% block secciones %}
@@ -21,7 +21,36 @@ Actualmente disponibles
 <!-- Listado -->
 <div class="rubroCuerpo" >
 
-    <p> Los siguientes rubros estan habilitados.  </p>
+    <!--<p> Los siguientes rubros estan habilitados.  </p>-->
+
+    <div id="filtrarRubrosHabilitados">
+        <a role="button" href="#filtrarRubros" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarRubros" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="nombre" placeholder="Nombre">
+
+                            <button type="submit" class="" >
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="rubroLineaTitulo"> </div>
+
+    <br>
 
     {% if rubros %}
             <div class="table-responsive" id="tabla">

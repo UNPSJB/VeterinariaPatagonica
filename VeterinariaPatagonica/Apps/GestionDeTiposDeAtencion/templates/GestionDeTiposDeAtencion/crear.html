@@ -20,7 +20,7 @@ Agrega un tipo de atencion al listado
 
             {% csrf_token %}
 
-            {% include "formularios/snippet.html" with formulario=formulario accion="Crear" %}
+            {% include "formularios/snippet.html" with formulario=formulario accion="Guardar datos" %}
 
             {% comment %}
             {% include './formulario_snippet.html' with campos=formulario %}
