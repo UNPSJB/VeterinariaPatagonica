@@ -62,6 +62,10 @@ def ProductoFormFactory(producto=None):
                 #'rubro' : forms.Select(attrs={'class': 'form-control'}),
             }
 
+        field_order = [
+            'nombre','marca','descripcion','formaDePresentacion','stock','precioDeCompra','precioPorUnidad','rubro',
+        ]
+
         '''def clean_nombre(self):
             dato = self.data["nombre"]
             try:

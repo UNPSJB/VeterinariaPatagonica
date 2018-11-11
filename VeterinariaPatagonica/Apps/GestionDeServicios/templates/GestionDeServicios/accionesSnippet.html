@@ -1,14 +1,14 @@
 
 <div class="servicio-item-acciones">
-        {% if seccion != 'ver' %}
-        <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioVer' servicio.id %}">Ver</a>
+        {% if seccion == 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioVer' item.id %}">Ver</a>
         {% endif %}
         {% if seccion != 'modificar' %}
-        <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioModificar' servicio.id %}">Modificar</a>
+        <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioModificar' item.id %}">Modificar</a>
         {% endif %}
         {% if item.baja == False %}
-            <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioDeshabilitar' servicio.id %}">Deshabilitar</a>
+            <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioDeshabilitar' item.id %}">Deshabilitar</a>
         {% else %}
-            <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioHabilitar' servicio.id %}">Habilitar</a>
+            <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioHabilitar' item.id %}">Habilitar</a>
         {% endif %}
 </div>

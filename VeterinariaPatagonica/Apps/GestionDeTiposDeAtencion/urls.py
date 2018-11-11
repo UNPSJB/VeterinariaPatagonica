@@ -12,6 +12,6 @@ urlpatterns = [
     path('eliminar/<int:id>/', views.eliminar, name='eliminar'),
     path('habilitados/', views.habilitados, name='habilitados'),
     path('deshabilitados/', views.deshabilitados, name='deshabilitados'),
-    path('', views.habilitados, name='habilitados'),
+    #path('', views.habilitados, name='habilitados'),
 ]
 

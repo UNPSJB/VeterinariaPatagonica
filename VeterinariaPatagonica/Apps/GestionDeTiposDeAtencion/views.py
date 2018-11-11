@@ -135,14 +135,13 @@ def modificar(peticion, id):
 @permission_required('GestionDeTiposDeAtencion.delete_TipoDeAtencion', raise_exception=True)
 def deshabilitar(peticion, id):
     """ Deshablitar el tipo de atencion con clave primaria <id> """
-
     tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
 
     tipoDeAtencion.baja = True
     tipoDeAtencion.save()
 
-    return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
-
+    #return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
+    return HttpResponseRedirect(reverse("tiposDeAtencion:deshabilitados"))
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeTiposDeAtencion.delete_TipoDeAtencion', raise_exception=True)
@@ -154,8 +153,7 @@ def habilitar(peticion, id):
     tipoDeAtencion.baja = False
     tipoDeAtencion.save()
 
-    return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
-
+    return HttpResponseRedirect( reverse("tiposDeAtencion:habilitados") )
 
 
 @login_required(redirect_field_name='proxima')

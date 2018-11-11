@@ -39,7 +39,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                                 <td>{{ tipoDeAtencion.nombre }}</td>
                                 <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
                                 <td >
-			<p align="center">
+			                        <p align="justify">
                                             <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-search"> </i>
                                             </a>
@@ -52,7 +52,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                                             <a href="{% url 'tiposDeAtencion:eliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
                                                 <i class="glyphicon glyphicon-remove"> </i>
                                             </a>
-			</p>
+			                        </p>
                                 </td>
                             </tr>
                         {% endfor %}
