@@ -11,7 +11,7 @@ ServicioManager = BaseServicioManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Servicio(models.Model):
 
-    MAPPER = {
+    MAPPER ={
         "nombre": "nombre__icontains",
         "tipo": "tipo__icontains"
     }
