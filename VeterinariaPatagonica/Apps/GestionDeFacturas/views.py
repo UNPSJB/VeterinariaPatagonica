@@ -68,34 +68,6 @@ def crearFacturaPractica(request, id):
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
-def habilitar(request, id):
-    try:
-        factura = Factura.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    factura.baja = False
-    factura.save()
-
-    return HttpResponseRedirect( "/GestionDeFacturas/verHabilitados/" )
-
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
-def deshabilitar(request, id):
-
-    try:
-        factura = Factura.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    factura.baja = True
-    factura.save()
-
-    return HttpResponseRedirect( "/GestionDeFacturas/verDeshabilitados/" )
-
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
 def eliminar(request, id):
@@ -135,19 +107,11 @@ def ver(request, id):
 
     return HttpResponse(template.render(contexto, request))
 
-def verHabilitados(request):
-    facturas = Factura.objects.filter(baja=False)
-    template = loader.get_template('GestionDeFacturas/verHabilitados.html')
-    contexto = {
-        'facturas': facturas,
-        'usuario': request.user,
-    }
 
-    return  HttpResponse(template.render(contexto,request))
-
-def verDeshabilitados(request):
-    facturas = Factura.objects.filter(baja=True)
-    template = loader.get_template('GestionDeFacturas/verDeshabilitados.html')
+def listar(request):
+    facturas = Factura.objects.all()
+    facturas = facturas.filter(tools.paramsToFilter(request.GET, Factura))
+    template = loader.get_template('GestionDeFacturas/listar.html')
     contexto = {
         'facturas' : facturas,
         'usuario' : request.user,

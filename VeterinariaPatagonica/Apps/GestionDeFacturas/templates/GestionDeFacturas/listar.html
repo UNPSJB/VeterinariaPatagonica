@@ -1,0 +1,91 @@
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
+
+{% block titulo %}
+Gestion de Facturas | Ver Habilitados
+{% endblock %}
+
+{% block facturaTitulo %}
+Facturas Emitidas
+{% endblock %}
+
+{% block facturaSubtitulo %}
+{% endblock %}
+
+{% block secciones %}
+{% endblock %}
+
+{% block facturaContenido %}
+
+<!-- Listado -->
+<div class="facturaCuerpo" >
+
+       <div id="filtrarFacturasForm">
+        <a role="button" href="#filtrarFacturas" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarFacturas" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="tipo" placeholder="Tipo">
+                            <input name="cliente" placeholder="Cliente">
+                            <input name="Fecha" placeholder="Fecha">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="facturaLineaTitulo"> </div>
+
+    <br>
+
+    {% if facturas %}
+            <div class="table-responsive" id="tabla">
+                <table class="table facturaListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-tipo"> Tipo </th>
+                            <th id="deshabilitados-cliente"> Cliente </th>
+                            <th id="deshabilitados-fecha"> Fecha </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for factura in facturas %}
+                            <tr>
+                                <td> <p>{{ factura.tipo}}</p></td>
+                                <td> <p>{{ factura.cliente }}</p></td>
+                                <td> <p>{{ factura.fecha }}</p></td>
+                                <td> <p align="justify">
+                                        <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-eye-open"> </i>
+                                        </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay facturas emitidas</p>
+
+    {% endif %}
+
+    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}

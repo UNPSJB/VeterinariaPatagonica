@@ -3,6 +3,7 @@ from Apps.GestionDeProductos import models as proModel
 from Apps.GestionDeClientes import models as cliModel
 from django.core.validators import RegexValidator
 from decimal import Decimal
+from django.db.models import Q
 
 # Create your models here.
 
@@ -12,6 +13,12 @@ MAXDECIMAL = 2
 MAXDIGITO = 6
 
 class Factura(models.Model):
+
+    MAPPER = {
+        "tipo": "tipo__icontains",
+        "cliente": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+        "fecha": "fecha_icontains"
+    }
 
     tipo = models.CharField(
         help_text= "Tipo de factura",
