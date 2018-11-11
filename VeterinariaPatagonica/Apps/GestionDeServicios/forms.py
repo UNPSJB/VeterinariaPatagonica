@@ -6,7 +6,7 @@ from Apps.GestionDeClientes import models as gcmodels
 class ServicioForm(forms.ModelForm):
     class Meta:
         model = Servicio
-        fields = [ 'tipo',
+        fields = [  'tipo',
                     'nombre',
                     'descripcion',
                     'tiempoEstimado',
@@ -30,7 +30,7 @@ class ServicioForm(forms.ModelForm):
         widgets = {
 
             'nombre' : forms.TextInput(),
-            'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 }),
+            'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':4 }),
             'tiempoEstimado' : forms.NumberInput(),
             'precioManoDeObra': forms.NumberInput(),
         }

@@ -55,30 +55,28 @@ Actualmente <strong>no</strong> disponibles
                 <table class="table servicioListado">
                   <thead>
                       <tr>
-                          <th id="deshabilitados-nombre">Nombre</th>
-                          <th id="deshabilitados-acciones">Acciones</th>
+                          <th id="deshabilitados-nombre"> Nombre </th>
+                          <th id="deshabilitados-acciones"> Acciones </th>
                       </tr>
                   </thead>
                   <tbody>
                     {% for servicio in servicios %}
                       <tr>
-                        <td>{{ servicio.nombre }}</td>
-                        <td >
-                           <p align="justify">
+                        <td> <p> {{ servicio.nombre }} </p> </td>
+                        <td> <p align="justify">
                               <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Servicio">
                                   <i class="glyphicon glyphicon-eye-open"> </i>
                               </a>
-                              <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Servicio.">
+                              <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Servicio">
                                   <i class="glyphicon glyphicon-edit"> </i>
                               </a>
-                              <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Servicio.">
+                              <a href="{% url 'servicios:servicioHabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Servicio">
                                   <i class="glyphicon glyphicon-plus"> </i>
                               </a>
-                              <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Servicio permanentemente.">
+                              <a href="{% url 'servicios:servicioEliminar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Servicio">
                                   <i class="glyphicon glyphicon-remove"> </i>
                               </a>
-                           </p>
-                        </td>
+                        </p> </td>
                       </tr>
                     {% endfor %}
                   </tbody>
