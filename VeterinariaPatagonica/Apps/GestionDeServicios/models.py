@@ -13,7 +13,8 @@ class Servicio(models.Model):
 
     MAPPER ={
         "nombre": "nombre__icontains",
-        "tipo": "tipo__icontains"
+        "tipo": "tipo__icontains",
+        "precioManoDeObra": "precioManoDeObra__icontains"
     }
 
     TIPO = (('C','Consulta'), ('Q','Quirurgica'),('I','Internación') )
