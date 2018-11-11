@@ -28,8 +28,8 @@ Actualmente disponibles
         <input name="formaDePresentacion" placeholder="Forma De Presentacion">
         <input name="precioPorUnidad" placeholder="Precio Por Unidad">
         <!--<button type="submit">GO</button>-->
-        <button type="submit">
-            <i class="glyphicon glyphicon-search" data-toggle="tooltip" data-placement="bottom" title="Buscar"> </i>
+        <button type="submit" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+            <i class="glyphicon glyphicon-search"> </i>
         </button>
     </form>
 
@@ -38,9 +38,9 @@ Actualmente disponibles
             <table class="table productoListado">
                 <thead>
                     <tr>
-                        <th id="deshabilitados-nombre">Nombre</th>
-                        <th id="deshabilitados-marca">Marca</th>
-                        <th id="deshabilitados-precio">Precio</th>
+                        <th id="deshabilitados-nombre"> Nombre </th>
+                        <th id="deshabilitados-marca"> Marca </th>
+                        <th id="deshabilitados-precio"> Precio </th>
                         <th id="deshabilitados-acciones"> Acciones </th>
                     </tr>
                 </thead>
@@ -48,17 +48,17 @@ Actualmente disponibles
                     {% for producto in productos %}
                         <tr>
                             <td> <p> {{ producto.nombre }} </p></td>
-                            <td>{{ producto.marca }}</td>
-                            <td>{{ producto.precio }}</td>
+                            <td> <p> {{ producto.marca }} </p></td>
+                            <td> <p> {{ producto.precio }} </p></td>
                             <td> <p align="justify">
-                                    <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-eye-open" data-toggle="tooltip" data-placement="bottom" title="Ver Producto"></i>
+                                    <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
+                                        <i class="glyphicon glyphicon-eye-open"></i>
                                     </a>
-                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-edit" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto"></i>
+                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto">
+                                        <i class="glyphicon glyphicon-edit"></i>
                                     </a>
-                                    <a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-minus" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Producto"></i>
+                                    <a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Producto">
+                                        <i class="glyphicon glyphicon-minus"></i>
                                     </a>
                             </p> </td>
                         </tr>
@@ -73,7 +73,7 @@ Actualmente disponibles
 
     {% endif %}
 
-    <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Nuevo Producto </a>
+    <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Crear </a>
 
 </div>
 
