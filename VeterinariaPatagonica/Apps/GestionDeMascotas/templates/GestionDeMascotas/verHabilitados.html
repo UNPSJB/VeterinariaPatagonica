@@ -36,7 +36,7 @@ Mascotas Habilitadas
                             <input name="duenio" placeholder="Dueño">
                             <input name="especie" placeholder="Especie">
 
-                            <button type="submit" class="" >
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
 
                                     <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
                                     <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
@@ -58,9 +58,9 @@ Mascotas Habilitadas
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Mascotas </th>
-                            <th id="deshabilitados-clinte">Cliente</th>
-                            <th id="deshabilitados-acciones">Acciones </th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-clinte"> Cliente </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,13 +69,13 @@ Mascotas Habilitadas
                                 <td> <p>{{ mascota.nombre }}</p></td>
                                 <td><p>{{ mascota.cliente }}</p></td>
                                 <td> <p align="justify">
-                                            <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Mascota">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Mascota">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'mascotas:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'mascotas:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Mascota">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
                                 </p> </td>

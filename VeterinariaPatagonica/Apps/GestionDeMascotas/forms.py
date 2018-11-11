@@ -2,9 +2,6 @@ from django import forms
 from .models import Mascota
 from dal import autocomplete
 
-'''class creacionModelForm(forms.ModelForm):
-    class meta:
-        model = Mascota'''
 
 cliente = forms.DateField(
     required=True,
@@ -19,12 +16,10 @@ cliente = forms.DateField(
 
 )
 def MascotaFormFactory(mascota=None):
-    campos = [ 'cliente',
+    campos = [ 'nombre', 'cliente',
                'fechaNacimiento',
-               'nombre',
-               'raza',
-               'especie',
-               ]
+               'especie', 'raza' ]
+
     if mascota is  None:
         campos.insert(0, 'patente')
 
