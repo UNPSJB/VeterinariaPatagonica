@@ -6,13 +6,14 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Factura
-from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura, FacturaFormFactory
+from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura, DetalleFacturaForm, FacturaFormFactory
 from django.forms import modelformset_factory
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
 from Apps.GestionDePracticas.models import Practica
+from Apps.GestionDeProductos.models import Producto
 
 def facturas(request):
 
@@ -28,17 +29,17 @@ def modificar(request, id = None):
     form = FacturaForm(instance=factura)
     DetalleFacturaFormset = modelformset_factory(
         DetalleFactura,
-        fields=("producto", "cantidad"), min_num=1,
+        DetalleFacturaForm,
+        min_num=1,
         formset=DetalleFacturaBaseFormSet)
     if request.method == 'POST':
         form = FacturaForm(request.POST, instance=factura)
         formset = DetalleFacturaFormset(request.POST)
         if form.is_valid() and formset.is_valid():
-            factura = form.save()
+            factura = form.save(commit=False)
             instances = formset.save(commit=False)
-            for detalle in instances:
-                detalle.factura = factura
-                detalle.save()
+            factura.calcular_subtotales(instances)
+
             print(factura, instances)
         context['formulario'] = form
         context['formset'] = formset
@@ -164,6 +165,17 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
         if self.q:
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
+
+        return qs
+
+class productoAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        qs = Producto.objects.all()
+
+        if self.q:
+           qs = qs.filter(Q(descripcion__icontains=self.q) | Q(nombre__icontains=self.q) | Q(marca__icontains=self.q))
 
         return qs
 

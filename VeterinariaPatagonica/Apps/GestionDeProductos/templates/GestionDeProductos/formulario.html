@@ -1,5 +1,11 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
 
+{% block paginaEstilos %}
+    {{ block.super }}
+    {{formulario.media.css}}
+
+{% endblock %}
+
 {% block titulo %}
 Gestion de Productos | Crear Producto
 {% endblock %}
@@ -12,16 +18,6 @@ Nuevo Producto
 Agrega un Producto al listado
 {% endblock %}
 
-{% block paginaEstilos %}
-{{ block.super }}
-{{formulario.media.css}}
-{% endblock %}
-
-{% block paginaJavascript %}
-{{ block.super }}
-{{formulario.media.js}}
-{% endblock %}
-
 {% block productoContenido %}
 
     <div class="productoCuerpo">
@@ -29,10 +25,15 @@ Agrega un Producto al listado
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar" %}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar datos" %}
 
         </form>
     </div>
 
 {% endblock %}
 
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    {{formulario.media.js}}
+{% endblock %}

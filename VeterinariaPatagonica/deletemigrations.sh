@@ -3,6 +3,7 @@
 for f in GestionDeRubros GestionDeClientes \
 GestionDeFormasDePagos GestionDeProductos \
 GestionDeMascotas GestionDeTiposDeAtencion \
+GestionDeFacturas Usuarios \
 GestionDeServicios GestionDePracticas
 do
   rm ./Apps/$f/migrations -r

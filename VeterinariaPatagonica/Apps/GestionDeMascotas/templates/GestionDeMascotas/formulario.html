@@ -1,5 +1,11 @@
 {% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
 
+{% block paginaEstilos %}
+    {{ block.super }}
+    {{formulario.media.css}}
+
+{% endblock %}
+
 {% block titulo %}
 Gestion de Mascotas | Crear mascota
 {% endblock %}
@@ -12,15 +18,6 @@ Nueva Mascota
 Agrega una Mascota al listado
 {% endblock %}
 
-{% block paginaEstilos %}
-{{ block.super }}
-{{formulario.media.css}}
-{% endblock %}
-
-{% block paginaJavascript %}
-{{ block.super }}
-{{formulario.media.js}}
-{% endblock %}
 
 {% block mascotaContenido %}
 
@@ -29,9 +26,15 @@ Agrega una Mascota al listado
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Crear" %}
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" %}
 
         </form>
     </div>
 
+{% endblock %}
+
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    {{formulario.media.js}}
 {% endblock %}

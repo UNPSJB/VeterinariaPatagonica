@@ -9,7 +9,7 @@ Servicios Habilitados
 {% endblock %}
 
 {% block servicioSubtitulo %}
-Actualmente disponibles
+<!--Actualmente disponibles-->
 {% endblock %}
 
 {% block secciones %}
@@ -19,11 +19,35 @@ Actualmente disponibles
 {% block servicioContenido %}
 <!-- Listado -->
 <div class="servicioCuerpo" >
-  <form action="" method="GET">
-      <input name="nombre" placeholder="Nombre">
-      <div class="glyphicon glyphicon-search"><button type="submit">Filtrar</button></div>
-  </form>
-    <p> Los siguientes servicios estan habilitados.  </p>
+
+    <div id="filtrarServiciosHabilitados">
+        <a role="button" href="#filtrarServicios" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarServicios" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="nombre" placeholder="Nombre">
+                            <input name="tipo" placeholder="Tipo">
+
+                            <button type="submit" class="" >
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="servicioLineaTitulo"> </div>
+    <!--<p> Los siguientes servicios estan habilitados.  </p>-->
     {% if servicios %}
             <div class="table-responsive" id="tabla">
                 <table class="table servicioListado">

@@ -80,3 +80,22 @@ table.table.clienteListado {
     padding-left: 4px;
     border-top: 1px solid #DDD !important;
 }
+
+.wrapper-simple {
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    width: 45px;
+    height: 40px;
+    padding: 10px 5px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fefaf4), to(#f4ede2));
+    border-radius: 5px;
+    box-shadow: inset rgba(255, 254, 255, 1) 0 0.1em 2px,
+                    #b7a082 0 1px 2px;
+    position: relative;
+    color: orange;
+}
+
+.naranja{
+    color: orange;
+}

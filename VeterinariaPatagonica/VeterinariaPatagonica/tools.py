@@ -7,6 +7,10 @@ from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 from .errores import VeterinariaPatagonicaError
 
+#from VeterinariaPatagonica.Apps.GestionDeProductos.models import Producto
+from dal import autocomplete
+
+
 class VeterinariaPatagonicaQuerySet(models.QuerySet):
 
     def get(self, **kwargs):
@@ -39,3 +43,18 @@ def paramsToFilter(params, Modelo):
             name = mapper[key]
             filters &= name(value) if callable(name) else Q(**{name: value})
     return filters
+
+'''
+class productoAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        qs = Producto.objects.all()
+
+        if self.q:
+           qs = qs.filter(Q(descripcion__icontains=self.q) | Q(nombre__icontains=self.q) | Q(marca__icontains=self.q))
+
+        return qs
+
+
+'''

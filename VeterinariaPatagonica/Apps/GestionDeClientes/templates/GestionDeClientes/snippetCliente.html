@@ -1,0 +1,26 @@
+{{ formulario.non_field_errors }}
+{% for campo in formulario %}
+    <div class="form-group {{ campo.name }} {% if campo.errors %}has-error{% endif %}">
+        <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
+            {{ campo.label }}
+        </label>
+        <div class="col-sm-8">
+            {{ campo }}
+            <div class="campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
+                {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+{% if accion %}
+<div class="form-group">
+    <div   class="col-sm-offset-4">
+        <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
+        <button type="submit" class="btn btn-sm btn-default">
+            Guardar Datos y Crear Mascota
+            <a href="{% url 'mascotas:mascotaCrear' %}"></a>
+        </button>
+    </div>
+</div>
+{% endif %}

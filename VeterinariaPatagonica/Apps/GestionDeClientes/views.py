@@ -62,25 +62,19 @@ def deshabilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.delete_Cliente', raise_exception=True)
 def eliminar(request, id):
-
     try:
         cliente = Cliente.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         cliente.delete()
-        return HttpResponseRedirect( "/GestionDeClientes/" )
-
+        return HttpResponseRedirect( "/GestionDeClientes/verDeshabilitados/" )
     else:
-
         template = loader.get_template('GestionDeClientes/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):

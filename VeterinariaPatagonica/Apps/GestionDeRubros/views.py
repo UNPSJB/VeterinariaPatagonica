@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Rubro
 from .forms import RubroForm
+from VeterinariaPatagonica import tools
 
 
 def rubros(request):
@@ -66,25 +67,19 @@ def deshabilitar(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeRubros.delete_Rubro', raise_exception=True)
 def eliminar(request, id):
-
     try:
         rubro = Rubro.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         rubro.delete()
-        return HttpResponseRedirect( "/GestionDeRubros/" )
-
+        return HttpResponseRedirect( "/GestionDeRubros/verDeshabilitados/" )
     else:
-
         template = loader.get_template('GestionDeRubros/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
@@ -103,7 +98,8 @@ def ver(request, id):
     return HttpResponse(template.render(contexto, request))
 
 def verHabilitados(request):
-    rubros = Rubro.objects.filter(baja=False)
+    rubros = Rubro.objects.habilitados()
+    rubros = rubros.filter(tools.paramsToFilter(request.GET, Rubro))
     template = loader.get_template('GestionDeRubros/verHabilitados.html')
     contexto = {
         'rubros' : rubros,
@@ -112,8 +108,10 @@ def verHabilitados(request):
 
     return  HttpResponse(template.render(contexto,request))
 
+
 def verDeshabilitados(request):
-    rubros = Rubro.objects.filter(baja=True)
+    rubros = Rubro.objects.deshabilitados()
+    rubros = rubros.filter(tools.paramsToFilter(request.GET, Rubro))
     template = loader.get_template('GestionDeRubros/verDeshabilitados.html')
     contexto = {
         'rubros' : rubros,

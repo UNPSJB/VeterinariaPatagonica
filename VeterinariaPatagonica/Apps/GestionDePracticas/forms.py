@@ -11,12 +11,13 @@ from Apps.GestionDeTiposDeAtencion.models import TipoDeAtencion
 from .models import *
 
 
+#from django.core.exceptions import ValidationError
 
 # Clases ######################################################################
 
 class PresupuestadaForm(forms.Form):
 
-    diasMantenimiento = forms.IntegerField(min_value=1, required=True)
+    diasMantenimiento = forms.IntegerField(min_value=1, required=True, label ="Dias de mantenimiento.")
 
     def datos(self):
         datos = {
@@ -47,6 +48,18 @@ class ProgramadaForm(forms.Form):
     def accion(self):
         return "programar"
 
+
+    ''' Defino el clean acá para hacer la validación de que la fecha esté en el rango del tipo de atención
+    seleccionado. ver si hacer acá realmente o como una validacion en metodo de transición de estado a "programada".
+    Lo definí en el metodo de transición, ver cual queda. '''
+'''
+    def clean(self):
+        ret = super().clean()
+        tda = self.tipoDeAtencion
+        if not tda.inicioFranjaHoraria <= inicio <= tda.finFranjaHoraria:
+            raise ValidationError("Fecha inválida")
+        return ret
+'''
 
 
 class RealizadaForm(forms.Form):
@@ -271,7 +284,7 @@ def practicaFormFactory(tipo):
         )
 
         mascota = forms.ModelChoiceField(
-            queryset=Mascota.objects.habilitados(),
+            queryset=Mascota.objects.habilitados(),#[TODO]Hacer el filtro de que la mascota pertenezca al cliente. algo asi como Mascota.objects.habilitados().filter(cliente=cliente) PERO ASI NO ANDA.
             required=False,
         )
 

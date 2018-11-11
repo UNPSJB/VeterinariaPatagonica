@@ -5,9 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from .models import Mascota
 from .forms import MascotaFormFactory
-
 from VeterinariaPatagonica import tools
-
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
@@ -70,14 +68,10 @@ def eliminar(request, id):
         mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         mascota.delete()
-        return HttpResponseRedirect( "/GestionDeMascotas/" )
-
+        return HttpResponseRedirect( "/GestionDeMascotas/verDeshabilitados/" )
     else:
-
         template = loader.get_template('GestionDeMascotas/eliminar.html')
         context = {
             'usuario' : request.user,

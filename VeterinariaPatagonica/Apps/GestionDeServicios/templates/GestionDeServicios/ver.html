@@ -18,14 +18,14 @@ Muestra datos del servicio
     <div class="servicioCuerpo">
         {% if servicio %}
           <div class="col-md-12 well">
-            <table>
+            <table class="table listado">
               <p>Identificador: {{ servicio.id }}</p>
               <p>tipo: {{ servicio.tipo }}</p>
               <p>Nombre: {{ servicio.nombre }}</p>
               <p>Tiempo Estimado: {{ servicio.tiempoEstimado }}</p>
               <p>Precio de Mano de Obra: {{ servicio.precioManoDeObra }}</p>
               <thead>
-                <th bgcolor="white">Productos</th>
+                <th>Productos</th>
               </thead>
               <thead>
                   <tr>
@@ -33,7 +33,7 @@ Muestra datos del servicio
                       <th>Cantidad</th>
                   </tr>
               </thead>
-              {% for servicioproducto in servicio.servicioproducto_set.all %}
+              {% for servicioproducto in servicio.servicio_productos.all %}
               <tr>
                 <div class="col-xs-11">
                   <td><p>{{servicioproducto.producto}}</p>

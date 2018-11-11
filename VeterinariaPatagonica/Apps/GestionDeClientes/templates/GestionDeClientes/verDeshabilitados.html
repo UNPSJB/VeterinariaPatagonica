@@ -21,16 +21,39 @@ Actualmente <strong>no</strong> disponibles
 <!-- Listado -->
 <div class="clienteCuerpo" >
 
-  <p> Los siguientes clientes pueden ser habilitados o eliminados.  </p>
+   <div id="filtrarClientesDeshabilitados">
+            <a role="button" href="#filtrarClientes" data-toggle="collapse">
+                <i class="glyphicon glyphicon-tasks"></i>
+                <span>Criterios de busqueda</span>
+            </a>
+        <div id="filtrarClientes" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="dniCuit" placeholder="DNI/CUIT">
+                            <input name="nombres" placeholder="Nombres">
+                            <input name="apellidos" placeholder="Apellidos">
 
-        <form action="" method="GET">
-        <input name="dniCuit" placeholder="Dni/Cuit">
-        <input name="nombres" placeholder="nombres">
-        <input name="apellidos" placeholder="apellidos">
-            <button type="submit">
-                <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
-            </button>
-    </form>
+                            <button type="submit" class="" >
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="clienteLineaTitulo"> </div>
+
+    <br>
+
+    <p> Los siguientes clientes pueden ser habilitados o eliminados.  </p>
+
 
     {% if clientes %}
             <div class="table-responsive" id="tabla">

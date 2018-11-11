@@ -70,6 +70,9 @@ class Mascota(models.Model):
     )
 
     fechaNacimiento = models.DateField(
+        help_text="Fecha de la nacimiento de la mascota",
+        unique=False,
+        null=False,
         blank=False,
         #default=date.today(),
         #default=timezone.now(),

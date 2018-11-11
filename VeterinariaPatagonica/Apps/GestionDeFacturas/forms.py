@@ -59,14 +59,12 @@ class FacturaForm(forms.ModelForm):
             'tipo',
             'cliente',
             'fecha',
-            'total'
         ]
 
         labels = {
             'tipo':'Tipo',
             'cliente' : 'Cliente',
             'fecha' : 'Fecha',
-            'total' : 'Total'
         }
 
         error_messages = {
@@ -99,26 +97,32 @@ class FacturaForm(forms.ModelForm):
             'tipo',
             'cliente',
             'fecha',
-            'total',
-        ]
+    ]
 
 class DetalleFacturaForm(forms.ModelForm):
     class Meta:
         model = DetalleFactura
-        fields= {
-            'factura',
-            'subtotal',
-            'cantidad',
+        fields= [
+            #'factura',
             'producto',
-        }
+            'cantidad',
+            #'subtotal',
+        ]
 
+        widgets = {
+            'producto': autocomplete.ModelSelect2(url='/GestionDeFacturas/productoAutocomplete'),
+
+        }
+        #widgets = {
+        #    'subtotal' : forms.NumberInput(attrs={'disabled': '', 'value': 0.0}),
+        #}
 
 class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
 
     def clean(self):
         #import ipdb; ipdb.set_trace()
-        producto_ids = [item["producto"].id for item in self.cleaned_data]
-        if len(producto_ids) != len(set(producto_ids)):
+        producto= [item["producto"].id for item in self.cleaned_data]
+        if len(producto) != len(set(producto)):
             raise forms.ValidationError("Hay productos repetidos.")
         return super().clean()
 

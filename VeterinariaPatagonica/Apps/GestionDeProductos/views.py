@@ -106,27 +106,22 @@ def eliminar(request, id):
         producto = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
         producto.delete()
-        return HttpResponseRedirect( "/GestionDeProductos/" )
-
+        return HttpResponseRedirect( "/GestionDeProductos/verDeshabilitados/" )
     else:
         template = loader.get_template('GestionDeProductos/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
 
 class rubroAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
-
         qs = Rubro.objects.all()
-
         if self.q:
             qs = qs.filter(Q(nombre__icontains=self.q))
 

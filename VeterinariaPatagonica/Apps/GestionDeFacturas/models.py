@@ -47,7 +47,7 @@ class Factura(models.Model):
         }
     )
 
-    deatalles = models.ManyToManyField(
+    detalles = models.ManyToManyField(
         proModel.Producto,
         through='DetalleFactura',
 
@@ -57,13 +57,12 @@ class Factura(models.Model):
         help_text="Importe total de la Factura",
         unique=False,
         null=False,
+        default=0.0,
         blank=False,
         error_messages={
             'blank': "El importe es obligatorio"
         }
     )
-
-
 
     baja = models.BooleanField(default=False)
 
@@ -72,10 +71,20 @@ class Factura(models.Model):
         return cadena.format(self.tipo, self.cliente, self.total)
 
     def precioTotal(self):
-        productos = Decimal("0")
-        for detalle in self.detalleFactura.set.all():
-            productos += detalle.producto.precioEnUnidad(detalle.producto, detalle.cantidad)
-        return self.productos
+        total = Decimal("0")
+        for detalle in self.detalles.all():
+            total += detalle.subtotal
+        return total
+
+    def calcular_subtotales(self, detalles):
+        self.total = Decimal("0")
+        self.save()
+        for detalle in detalles:
+            detalle.factura = self
+            detalle.save()
+            self.total += detalle.subtotal
+        self.save()
+
 
     '''def  __unicode__(self):
         return self.total'''
@@ -105,7 +114,7 @@ class DetalleFactura(models.Model):
         }
     )
     cantidad = models.IntegerField(
-        help_text="Ingrese Cantidad",
+        #help_text="Ingrese Cantidad",
         unique=False,
         null=False,
         blank=False,
@@ -115,7 +124,7 @@ class DetalleFactura(models.Model):
     )
     subtotal = models.DecimalField(
         null= True,
-        help_text="Ingrese precio del producto",
+        #help_text="Ingrese precio del producto",
         max_digits= MAXDIGITO,
         decimal_places= MAXDECIMAL,
     )
@@ -123,3 +132,13 @@ class DetalleFactura(models.Model):
     def  __unicode__(self):
         return self.subtotal
 
+
+
+    def save(self, *args, **kwargs):
+        if (not "commit" in kwargs) or (kwargs["commit"]):
+            if (self.subtotal is None):
+                precio = self.producto.precioPorUnidad
+                self.subtotal = precio * self.cantidad
+                print("Precio: {}, Cantidad: {}, Subtotal: {}".format(precio, self.cantidad, self.subtotal))
+
+        super().save(*args, **kwargs)

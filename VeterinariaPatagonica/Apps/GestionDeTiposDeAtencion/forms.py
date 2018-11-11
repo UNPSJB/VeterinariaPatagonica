@@ -37,7 +37,7 @@ class TipoDeAtencionForm(forms.ModelForm):
     #---------------------- Form Fields  ----------------------
     nombre = forms.CharField(
         required = True,
-        label = 'Nombre',
+        label = 'Nombre:',
         widget = forms.TextInput(attrs={"class" : "form-control"}),
         help_text="Nombre del tipo de atencion",
         error_messages = {
@@ -57,7 +57,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     descripcion = forms.CharField(
         required = False,
-        label = 'Descripcion',
+        label = 'Descripción:',
         widget = forms.Textarea(attrs={ "cols" : 60, "rows" : 6, "class" : "form-control" }),
         help_text="Descripcion del tipo de atencion",
         error_messages = {},
@@ -68,7 +68,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     emergencia = forms.BooleanField(
         required = False,
-        label = 'Emergencia',
+        label = 'Emergencia:',
         widget = forms.CheckboxInput,
         help_text="Determina el grado de urgencia del tipo de atencion",
         error_messages = {},
@@ -77,7 +77,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     tipoDeServicio = forms.ChoiceField(
         required = True,
-        label = 'Tipo de servicio',
+        label = 'Tipo de Servicio:',
         widget = forms.Select(attrs={"class" : "form-control"}),
         help_text='Tipo de servicio',
         error_messages = {
@@ -90,7 +90,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     lugar = forms.ChoiceField(
         required = True,
-        label = 'Lugar',
+        label = 'Lugar:',
         widget = forms.Select(attrs={"class" : "form-control"}),
         help_text="Lugar en donde se realiza el tipo de atencion",
         error_messages = {
@@ -103,7 +103,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     inicioFranjaHoraria = forms.TimeField(
         required = True,
-        label = 'Inicio horario de atencion',
+        label = 'Inicio Horario de Atención:',
         widget = TimeTextInput(attrs={"class" : "form-control"}),
         help_text='Hora de inicio del tipo de atencion',
         error_messages = {
@@ -116,7 +116,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     finFranjaHoraria = forms.TimeField(
         required = True,
-        label = 'Fin horario de atencion',
+        label = 'Fin Horario de Atención:',
         widget = TimeTextInput(attrs={"class" : "form-control"}),
         help_text='Hora de finalizacion del tipo de atencion',
         error_messages = {
@@ -129,7 +129,7 @@ class TipoDeAtencionForm(forms.ModelForm):
 
     recargo = forms.DecimalField(
         required = True,
-        label = 'Recargo',
+        label = 'Recargo:',
         widget = forms.TextInput(attrs={"class" : "form-control"}),
         help_text="Porcentaje de recargo sobre el costo del servicio a aplicar",
         error_messages = {

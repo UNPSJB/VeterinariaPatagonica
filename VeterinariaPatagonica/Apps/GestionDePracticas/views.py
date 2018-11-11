@@ -267,8 +267,7 @@ def crearProductos(request, idCreacion):
         "accion" : "Modificar",
     }
 
-    #template = loader.get_template(plantilla('productos'))
-    template = loader.get_template('GestionDePracticas/productos.html')
+    template = loader.get_template(plantilla('productos'))
     return HttpResponse(template.render(context, request))
 
 
@@ -325,11 +324,14 @@ def crearProgramada(request, idCreacion):
             practica = crearPractica(request.session, idCreacion)
 
             return HttpResponseRedirect(reverse("practicas:"+tipo+":ver", args=(practica.pk,)))
-
+            '''AGREGO EL ELSE PARA MANEJAR EL VALIDATIONERROR (POR FECHA INVÁLIDA) PUESTO EN EL FORM (LINEA 55)'''
+        #else:
+        #    print("FECHA INVALIDA")
     else:
 
         formInicializacion = InicializacionForm()
 
+    print("+"*20)
     context = {
         "tipo" : tipo,
         "formEstado" : formInicializacion,

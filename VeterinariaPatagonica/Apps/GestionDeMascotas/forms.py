@@ -2,11 +2,6 @@ from django import forms
 from .models import Mascota
 from dal import autocomplete
 
-from django.core.validators import RegexValidator
-
-#TIMEINPUT_FMTS = [ "%H:%M" ]
-
-
 '''class creacionModelForm(forms.ModelForm):
     class meta:
         model = Mascota'''
@@ -40,13 +35,13 @@ def MascotaFormFactory(mascota=None):
             model = Mascota
             fields = campos
             labels = {
-                'patente':'Patente',
-                'cliente': "Cliente",
-                'fechaNacimiento': 'Fecha De Nacimiento',
-                'nombre':'Nombre',
-                'especie':'Especie',
-                'raza': 'Raza',
-                'baja':'Baja'
+                'patente':'Patente:',
+                'cliente': "Cliente:",
+                'fechaNacimiento': 'Fecha de Nacimiento:',
+                'nombre':'Nombre:',
+                'especie':'Especie:',
+                'raza': 'Raza:',
+                'baja':'Baja:'
             }
             error_messages = {
                 'nombre' : {

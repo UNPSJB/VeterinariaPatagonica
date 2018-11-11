@@ -10,8 +10,8 @@ class FormaDePagoForm(forms.ModelForm):
         ]
 
         labels = {
-            'nombre':'Nombre',
-            'descripcion' : 'Descripcion'
+            'nombre':'Nombre:',
+            'descripcion' : 'Descripción:'
         }
 
         error_messages = {

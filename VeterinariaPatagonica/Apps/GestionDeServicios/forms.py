@@ -15,7 +15,7 @@ class ServicioForm(forms.ModelForm):
         labels = {
             'tipo':'Tipo:',
             'nombre':'Nombre:',
-            'descripcion':'Descripcion:',
+            'descripcion':'Descripción:',
             'tiempoEstimado':'Tiempo Estimado:',
             'precioManoDeObra':'Precio Mano de Obra:',
             }
@@ -56,11 +56,12 @@ class ServicioProductoForm(forms.ModelForm):
 
 class ServicioProductoBaseFormSet(forms.BaseModelFormSet):
     def clean(self):
-        #import ipdb; ipdb.set_trace()
-        producto_ids = [item["producto"].id for item in self.cleaned_data]
-        if len(producto_ids) != len(set(producto_ids)):
+        ret = super().clean()
+        productos = [form.cleaned_data for form in self if form.cleaned_data]#Obtengo los productos puestos en el formulario (No toma las tuplas vacias).
+        producto_ids = [d["producto"].pk for d in productos if not d["DELETE"]]#Obtengo los Ids de los productos que no estén marcados como "eliminados"(El Checkbox "eliminar").
+        if len(producto_ids) != len(set(producto_ids)):#Verifico si hay productos repetidos.
             raise forms.ValidationError("Hay productos repetidos.")
-        return super().clean()
+        return ret
 
     def save(self, commit=True):
         return super().save(commit=commit)
