@@ -28,9 +28,9 @@ Actualmente disponibles para ser asignados a practicas
                 <table class="table listado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-descripcion"> Descripcion </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,14 +38,14 @@ Actualmente disponibles para ser asignados a practicas
                             <tr>
                                 <td>{{ tipoDeAtencion.nombre }}</td>
                                 <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
-                                <td> <p align="center">
-                                            <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                <td> <p align="justify">
+                                            <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Tipo De Atencion">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Tipo De Atencion">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'tiposDeAtencion:deshabilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                            <a href="{% url 'tiposDeAtencion:deshabilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Tipo De Atencion">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
                                 </p> </td>

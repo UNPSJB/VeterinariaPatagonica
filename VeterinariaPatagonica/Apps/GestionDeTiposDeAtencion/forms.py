@@ -58,11 +58,11 @@ class TipoDeAtencionForm(forms.ModelForm):
     descripcion = forms.CharField(
         required = False,
         label = 'Descripción:',
-        widget = forms.Textarea(attrs={ "cols" : 60, "rows" : 6, "class" : "form-control" }),
+        widget = forms.Textarea(attrs={ "cols" : 60, "rows" : 4, "class" : "form-control" }),
         help_text="Descripcion del tipo de atencion",
         error_messages = {},
         validators = [],
-        max_length = None,
+        max_length = 200,
         min_length = None,
     )
 
@@ -153,13 +153,8 @@ class TipoDeAtencionForm(forms.ModelForm):
     #---------------------- Modelo del ModelForm ----------------------
     class Meta:
         model = TipoDeAtencion
-        fields = [
-            "nombre",
-            "descripcion",
-            "tipoDeServicio",
-            "lugar",
-            "emergencia",
-            "inicioFranjaHoraria",
-            "finFranjaHoraria",
-            "recargo"
-        ]
+        fields = [  "tipoDeServicio", "nombre",
+                    "emergencia", "lugar",
+                    "inicioFranjaHoraria",
+                    "finFranjaHoraria",
+                    "descripcion", "recargo"   ]

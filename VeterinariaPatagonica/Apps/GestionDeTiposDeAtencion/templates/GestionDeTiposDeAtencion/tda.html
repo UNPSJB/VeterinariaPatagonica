@@ -8,25 +8,28 @@
 
 
 {% block paginaSeccionGeneral %}
-
-        <section>
+    <section>
         {% block secciones %}
-        {% include './secciones_snippet.html' with pagina='default' %}
+
         {% endblock %}
 
         <h4 class="titulo">
             {% block tituloSeccion %}
             {% endblock %}
         </h4>
+        <br>
         <div class="linea-titulo"></div>
         <p class="subtitulo">
             {% block subtitulo %}
             {% endblock %}
         </p>
 
-        {% block contenido %}
-        {% endblock contenido %}
-        </section>
+    {% block contenido %}
+    {% endblock contenido %}
+    </section>
 
 {% endblock %}
 
+{% block footer %}
+  <p>Para mas información de los tipo de atencion haga click aquí<p>
+{% endblock footer %}
