@@ -7,7 +7,7 @@ Usuarios \
 GestionDeProductos GestionDeServicios \
 GestionDeTiposDeAtencion GestionDePracticas \
 GestionDeFacturas
-do $
+do 
  echo "Dumpdataeando $f"
  mkdir -p ./Apps/$f/fixtures
  python3 manage.py dumpdata $f > ./Apps/$f/fixtures/$f.json
