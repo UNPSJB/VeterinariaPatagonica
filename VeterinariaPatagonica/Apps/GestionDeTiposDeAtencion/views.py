@@ -7,6 +7,7 @@ from django import forms
 
 from .models import TipoDeAtencion
 from .forms import TipoDeAtencionForm
+from VeterinariaPatagonica import tools
 
 
 
@@ -30,6 +31,7 @@ def habilitados(peticion):
     """ Listado de tipos de atencion habilitados """
 
     tiposDeAtencion = TipoDeAtencion.objects.habilitados()
+    tiposDeAtencion = tiposDeAtencion.filter(tools.paramsToFilter(peticion.GET, TipoDeAtencion))
 
     template = loader.get_template( plantilla('habilitados') )
 
@@ -45,7 +47,7 @@ def deshabilitados(peticion):
     """ Listado de tipos de atencion deshabilitados """
 
     tiposDeAtencion = TipoDeAtencion.objects.deshabilitados()
-
+    tiposDeAtencion = tiposDeAtencion.filter(tools.paramsToFilter(peticion.GET, TipoDeAtencion))
     template = loader.get_template(plantilla('deshabilitados'))
 
     contexto = {

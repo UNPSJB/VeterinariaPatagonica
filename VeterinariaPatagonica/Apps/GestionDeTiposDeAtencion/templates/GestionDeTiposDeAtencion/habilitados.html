@@ -21,7 +21,38 @@ Actualmente disponibles para ser asignados a practicas
 <!-- Listado -->
 <div class="cuerpo" >
 
-    <p> Los siguientes tipos de servicio estan habilitados.  </p>
+    <!--<p> Los siguientes tipos de servicio estan habilitados.  </p>-->
+
+    <div id="filtrarTiposDeAtencionHabilitados">
+        <a role="button" href="#filtrarTiposDeAtencion" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarTiposDeAtencion" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="nombre" placeholder="Nombre">
+                            <input name="emergencia" placeholder="Emergencia">
+                            <input name="lugar" placeholder="Lugar">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="linea-titulo"> </div>
+
+    <br>
 
     {% if tiposDeAtencion %}
             <div class="table-responsive" id="tabla">

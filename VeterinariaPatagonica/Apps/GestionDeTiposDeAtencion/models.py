@@ -5,6 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 
 from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 from Apps.GestionDeServicios.models import Servicio
+from VeterinariaPatagonica import tools
 
 
 
@@ -62,8 +63,11 @@ class FranjaHoraria():
 
 
 
+class BaseTiposDeAtencion(models.Manager):
+    pass
 
-TipoDeAtencionManager = models.Manager.from_queryset(BajasLogicasQuerySet)
+TiposDeAtencionManager = BaseTiposDeAtencion.from_queryset(tools.BajasLogicasQuerySet)
+#TiposDeAtencionManager = models.Manager.from_queryset(BajasLogicasQuerySet)
 
 
 class TipoDeAtencion(models.Model):
@@ -72,9 +76,6 @@ class TipoDeAtencion(models.Model):
     Model para los Tipos de Atencion
 
     """
-
-    # Manager para Tipos de Atencion
-    objects = TipoDeAtencionManager()
 
     RECARGO_PARTE_ENTERA = 3
     RECARGO_PARTE_DECIMAL = 2
@@ -96,6 +97,11 @@ class TipoDeAtencion(models.Model):
     RECARGO_DEFAULT = Decimal(0)
     LUGAR_DEFAULT = EN_VETERINARIA
 
+    MAPPER = {
+        "nombre": "nombre__icontains",
+        "emergencia": "emergencia__icontains",
+        "lugar": "lugar__icontains",
+    }
 
 
     #---------------------- Model Fields ----------------------
@@ -177,6 +183,8 @@ class TipoDeAtencion(models.Model):
         editable=False
     )
 
+    # Manager para Tipos de Atencion
+    objects = TiposDeAtencionManager()
 
 
     #---------------------- Metodos ----------------------
