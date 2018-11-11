@@ -5,21 +5,16 @@ from localflavor.ar import forms as lforms
 from django.core.validators import RegexValidator
 #Para que no pinche instalar -> pip install django-localflavor
 
-class creacionModelForm(forms.ModelForm):
-    class meta:
-        model = Cliente
-
 
 def ClienteFormFactory(cliente=None):
-    campos = [
-                'tipoDeCliente',
+    campos = [  'tipoDeCliente',
                 'nombres',
-               'apellidos',
-               'direccion',
-               'localidad',
-               'celular',
-               'telefono',
-               'email',
+                'apellidos',
+                'direccion',
+                'localidad',
+                'celular',
+                'telefono',
+                'email',
 
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
 

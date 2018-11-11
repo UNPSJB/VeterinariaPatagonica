@@ -21,7 +21,7 @@ Actualmente <strong>no</strong> disponibles
 <!-- Listado -->
 <div class="clienteCuerpo" >
 
-   <div id="filtrarClientesDeshabilitados">
+    <div id="filtrarClientesDeshabilitados">
             <a role="button" href="#filtrarClientes" data-toggle="collapse">
                 <i class="glyphicon glyphicon-tasks"></i>
                 <span>Criterios de busqueda</span>
@@ -36,7 +36,7 @@ Actualmente <strong>no</strong> disponibles
                             <input name="nombres" placeholder="Nombres">
                             <input name="apellidos" placeholder="Apellidos">
 
-                            <button type="submit" class="" >
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
 
                                 <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
                                 <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
@@ -54,38 +54,35 @@ Actualmente <strong>no</strong> disponibles
 
     <p> Los siguientes clientes pueden ser habilitados o eliminados.  </p>
 
-
     {% if clientes %}
             <div class="table-responsive" id="tabla">
                 <table class="table clienteListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-dni">DNI/CUIT</th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-dni"> DNI/CUIT </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for cliente in clientes %}
                             <tr>
-                                <td>{{ cliente.apellidos }}, {{cliente.nombres}}</td>
-                                <td><p> {{cliente.dniCuit}} </p></td>
-                                <td >
-                                    <p align="justify">
-                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-eye-open"> </i>
+                                <td> <p>{{ cliente.apellidos }}, {{cliente.nombres}}</p></td>
+                                <td> <p> {{cliente.dniCuit}} </p></td>
+                                <td> <p align="justify">
+                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
+                                            <i class="glyphicon glyphicon-eye-open" ></i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Cliente">
                                             <i class="glyphicon glyphicon-edit"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Cliente">
                                             <i class="glyphicon glyphicon-plus"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Cliente">
                                             <i class="glyphicon glyphicon-remove"> </i>
                                         </a>
-                                    </p>
-                                </td>
+                                </p> </td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -23,7 +23,7 @@ Clientes Habilitados
 
     <!--<p> Los siguientes clientes estan habilitados.  </p>-->
 
-        <div id="filtrarClientesHabilitados">
+    <div id="filtrarClientesHabilitados">
         <a role="button" href="#filtrarClientes" data-toggle="collapse">
             <i class="glyphicon glyphicon-tasks"></i>
             <span>Criterios de busqueda</span>
@@ -38,10 +38,10 @@ Clientes Habilitados
                             <input name="nombres" placeholder="Nombres">
                             <input name="apellidos" placeholder="Apellidos">
 
-                            <button type="submit" class="" >
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
 
                                 <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
 
                             </button>
                         </form>
@@ -60,7 +60,7 @@ Clientes Habilitados
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre"> Nombre </th>
-                            <th id="deshabilitados-dni">DNI/CUIT</th>
+                            <th id="deshabilitados-dni"> DNI/CUIT </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
@@ -68,16 +68,16 @@ Clientes Habilitados
                         {% for cliente in clientes %}
                             <tr>
                                 <td> <p>{{ cliente.apellidos }}, {{cliente.nombres }}</p></td>
-                                <td><p> {{cliente.dniCuit}} </p></td>
+                                <td> <p> {{cliente.dniCuit}} </p></td>
                                 <td> <p align="justify">
-                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Cliente">
+                                            <i class="glyphicon glyphicon-edit" > </i>
                                         </a>
-                                        <a href="{% url 'clientes:clienteDeshabilitar' cliente.id%}" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-minus"> </i>
+                                        <a href="{% url 'clientes:clienteDeshabilitar' cliente.id%}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Cliente">
+                                            <i class="glyphicon glyphicon-minus" > </i>
                                         </a>
                                 </p> </td>
                             </tr>
