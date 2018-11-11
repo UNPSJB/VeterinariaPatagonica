@@ -33,7 +33,7 @@ def modificar(request, id = None):
         context['formulario'] = ProductoForm(instance=producto)
     template = loader.get_template('GestionDeProductos/formulario.html')
 
-    return HttpResponse(template.render( context, request))
+    return HttpResponse(template.render(context, request))
 
 def verHabilitados(request):
     productos = Producto.objects.habilitados()
@@ -56,7 +56,6 @@ def verDeshabilitados(request):
     return HttpResponse(template.render( context, request ))
 
 def ver(request, id):
-    #import ipdb; ipdb.set_trace()
     try:
         productos = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
@@ -129,18 +128,3 @@ class rubroAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
-
-'''
-def insumos(request):
-    context = {}#Defino un contexto.
-    template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
-    return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
-'''
-
-'''
-def alta(request):
-    context = {}#Defino un contexto.
-    template = loader.get_template('demos/altainsumo.html')#Cargo el template desde la carpeta demos.
-    #template = loader.get_template('demos/altainsumo.html')#Cargo el template desde la carpeta demos.
-    return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
-'''

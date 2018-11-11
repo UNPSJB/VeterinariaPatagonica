@@ -14,7 +14,7 @@ Permite cambiar datos relacionados al tipo de atencion
 
 {% block contenido %}
 
-    {% include './acciones_snippet.html' with item=tipoDeAtencion seccion='modificar' %}
+    <!--{% include './acciones_snippet.html' with item=tipoDeAtencion seccion='modificar' %}-->
 
     <div class="cuerpo">
             <form class="form-horizontal formulario" action="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id  %}" method="post">

@@ -1,0 +1,66 @@
+{% extends 'GestionDePagos/GestionDePagos.html' %}
+
+{% block titulo %}
+Gestion de Pagos | Ver Habilitados
+{% endblock %}
+
+{% block pagosTitulo %}
+Pagos Habilitados
+{% endblock %}
+
+{% block pagosSubtitulo %}
+Actualmente disponibles
+{% endblock %}
+
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
+
+{% block pagosContenido %}
+
+<!-- Listado -->
+<div class="pagosCuerpo" >
+
+    <p> Los siguientes pagos estan habilitados.  </p>
+
+    {% if pagos %}
+            <div class="table-responsive" id="tabla">
+                <table class="table pagosListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre"> Pagos </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in pagos %}
+                            <tr>
+                                <td> <p>{{pago.fecha }}</p></td>
+                                <td> <p align="justify">
+                                        <a  href="{% url 'pagos:pagoVer' pago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-eye-open"> </i>
+                                        </a>
+                                        <a href="{% url 'pagos:pagoModificar' pago.id %}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-edit"> </i>
+                                        </a>
+                                        <a href="{% url 'pagos:pagoDeshabilitar' pago.id%}" class="btn btn-xs btn-default">
+                                            <i class="glyphicon glyphicon-minus"> </i>
+                                        </a>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+    {% else %}
+
+        <p> No hay pagos habilitados</p>
+
+    {% endif %}
+
+    <a  id ="pagosHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Crear </a>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'GestionDePagos/GestionDePagos.html' %}
+
+{% block titulo %}
+Gestion Pagos | Ver Pagos
+{% endblock %}
+
+{% block secciones %}
+    {% include './seccionesSnippet.html' with pagina='default' %}
+{% endblock %}
+
+{% block pagosTitulo %}
+Ver Pagos
+{% endblock %}
+
+{% block pagosSubtitulo %}
+Muestra datos del pago
+{% endblock %}
+
+{% block pagosContenido %}
+
+    {% include './accionesSnippet.html' with item=pago seccion='ver' %}
+
+    <div class="pagosCuerpo">
+
+        {% if pago %}
+        <div class="well">
+            <p>Identificador: {{ pago.id }}</p>
+            <p>Fecha: {{ pago.fecha }} </p>
+            <p>Importe Total: {{ pago.importeTotal}}</p>
+
+        </div>
+        {% else %}
+
+            <p> El pago no existe </p>
+
+        {% endif %}
+
+    </div>
+
+{% endblock pagosContenido %}

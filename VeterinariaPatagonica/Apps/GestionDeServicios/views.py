@@ -87,7 +87,7 @@ def deshabilitar(request, id):
     servicio.baja = True
     servicio.save()
 
-    return HttpResponseRedirect( "/GestionDeServicios/ver/{}".format(servicio.id) )
+    return HttpResponseRedirect( "/GestionDeServicios/verDeshabilitados/")
 
 
 @login_required(redirect_field_name='proxima')
@@ -102,7 +102,7 @@ def habilitar(request, id):
     servicio.baja = False
     servicio.save()
 
-    return HttpResponseRedirect( "/GestionDeServicios/ver/{}".format(servicio.id) )
+    return HttpResponseRedirect( "/GestionDeServicios/verHabilitados/")
 
 
 @login_required(redirect_field_name='proxima')

@@ -34,7 +34,7 @@ Servicios Habilitados
                             <input name="nombre" placeholder="Nombre">
                             <input name="tipo" placeholder="Tipo">
 
-                            <button type="submit" class="" >
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
 
                                 <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
                                 <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
@@ -53,25 +53,25 @@ Servicios Habilitados
                 <table class="table servicioListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-acciones">Acciones</th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for servicio in servicios %}
                             <tr>
-                              <td><p>{{ servicio.nombre }}</p></td>
-                                <td> <p align="justify">
-                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver este servicio en detalle.">
+                              <td> <p>{{ servicio.nombre }} </p> </td>
+                              <td> <p align="justify">
+                                            <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Servicio ">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar este servicio.">
+                                            <a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Servicio.">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
-                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar este servicio.">
+                                            <a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Servicio">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
-                                </p> </td>
+                              </p> </td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -9,7 +9,7 @@ Productos Habilitados
 {% endblock %}
 
 {% block productoSubtitulo %}
-Actualmente disponibles
+<!--Actualmente disponibles-->
 {% endblock %}
 
 {% block secciones %}
@@ -20,27 +20,48 @@ Actualmente disponibles
 
 <!-- Listado -->
 <div class="productoCuerpo" >
-    <p> Los siguientes Productos estan habilitados.  </p>
+    <!--<p> Los siguientes Productos estan habilitados.  </p>-->
 
-    <form action="" method="GET">
-        <input name="nombre" placeholder="Nombre">
-        <input name="marca" placeholder="Marca">
-        <input name="formaDePresentacion" placeholder="Forma De Presentacion">
-        <input name="precioPorUnidad" placeholder="Precio Por Unidad">
-        <!--<button type="submit">GO</button>-->
-        <button type="submit">
-            <a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>
-        </button>
-    </form>
+        <div id="filtrarProductosHabilitados">
+        <a role="button" href="#filtrarProductos" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarProductos" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                                <input name="nombre" placeholder="Nombre">
+                                <input name="marca" placeholder="Marca">
+                                <input name="formaDePresentacion" placeholder="Forma De Presentacion">
+                                <input name="precioPorUnidad" placeholder="Precio Por Unidad">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="productoLineaTitulo"> </div>
+
+    <br>
 
     {% if productos %}
         <div class="table-responsive" id="tabla">
             <table class="table productoListado">
                 <thead>
                     <tr>
-                        <th id="deshabilitados-nombre">Nombre</th>
-                        <th id="deshabilitados-marca">Marca</th>
-                        <th id="deshabilitados-precio">Precio</th>
+                        <th id="deshabilitados-nombre"> Nombre </th>
+                        <th id="deshabilitados-marca"> Marca </th>
+                        <th id="deshabilitados-precio"> Precio </th>
                         <th id="deshabilitados-acciones"> Acciones </th>
                     </tr>
                 </thead>
@@ -48,17 +69,17 @@ Actualmente disponibles
                     {% for producto in productos %}
                         <tr>
                             <td> <p> {{ producto.nombre }} </p></td>
-                            <td>{{ producto.marca }}</td>
-                            <td>{{ producto.precio }}</td>
+                            <td> <p> {{ producto.marca }} </p></td>
+                            <td> <p> {{ producto.precio }} </p></td>
                             <td> <p align="justify">
-                                    <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-eye-open"> </i>
+                                    <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
+                                        <i class="glyphicon glyphicon-eye-open"></i>
                                     </a>
-                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-edit"> </i>
+                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto">
+                                        <i class="glyphicon glyphicon-edit"></i>
                                     </a>
-                                    <a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default">
-                                        <i class="glyphicon glyphicon-minus"> </i>
+                                    <a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Producto">
+                                        <i class="glyphicon glyphicon-minus"></i>
                                     </a>
                             </p> </td>
                         </tr>

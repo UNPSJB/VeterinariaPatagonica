@@ -1,28 +1,28 @@
 from django import forms
-from .models import Rubro
+from .models import Pagos
 
-class RubroForm(forms.ModelForm):
+class PagosForm(forms.ModelForm):
     class Meta:
-        model = Rubro
-        fields = [
-            'nombre',
-            'descripcion',
-        ]
-
-        labels = {
-            'nombre':'Nombre:',
-            'descripcion' : 'Descripción:'
+        model = Pagos
+        fields = {
+            'fecha',
+            'importeTotal',
         }
 
-        error_messages = {
-            'nombre' : {
-                'max_length': ("Nombre demasiado largo"),
-            }
+        labels = {
+            'fecha':'Fecha',
+            'importeTotal' : 'Importe Total'
         }
 
         widgets = {
-            'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':4 })
+            'fecha' : forms.TextInput(),
+            'importeTotal': forms.TextInput()
         }
+
+        field_order = [
+            'fecha',
+            'importeTotal',
+        ]
 
 
     def clean(self):

@@ -22,13 +22,8 @@ class FormaDePagoForm(forms.ModelForm):
 
         widgets = {
             'nombre' : forms.TextInput(),
-            'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':6 })
+            'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':4 })
         }
-
-    field_order = [
-        'nombre',
-        'descripcion',
-    ]
 
 
     def clean(self):

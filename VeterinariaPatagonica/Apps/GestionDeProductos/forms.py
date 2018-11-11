@@ -2,13 +2,6 @@ from django import forms
 from .models import Producto
 from dal import autocomplete
 
-from django.core.validators import RegexValidator
-
-'''
-class creacionModelForm(forms.ModelForm):
-    class meta:
-        model = Producto
-'''
 
 rubro = forms.DateField(
     required=True,
@@ -24,10 +17,13 @@ rubro = forms.DateField(
 )
 
 def ProductoFormFactory(producto=None):
-    campos = [ 'nombre', 'marca', 'stock', 'formaDePresentacion', 'precioPorUnidad', 'precioDeCompra', 'rubro', 'descripcion', ]
+    campos = [ 'marca', 'descripcion',
+               'formaDePresentacion', 'stock',
+               'precioDeCompra', 'precioPorUnidad',
+               'rubro' ]
 
     if producto is  None:
-        campos.insert(0, 'nombre') #0
+        campos.insert(0, 'nombre')
 
     class ProductoForm(forms.ModelForm):
 
@@ -54,22 +50,14 @@ def ProductoFormFactory(producto=None):
             }
 
             widgets = {
-                'nombre' : forms.TextInput(),
-                'formaDePresentacion' : forms.Select(choices=Producto.UNIDADES),
-                'precioPorUnidad': forms.TextInput(),
-                'precioDeCompra': forms.TextInput(),
+                #'nombre' : forms.TextInput(),
+                'descripcion': forms.Textarea(attrs={'cols': 60, 'rows': 4}),
+                'formaDePresentacion' : forms.Select(),
+                'precioPorUnidad': forms.NumberInput(),
+                'precioDeCompra': forms.NumberInput(),
                 'rubro' : autocomplete.ModelSelect2(url='/GestionDeProductos/rubroAutocomplete'),
-                #'rubro' : forms.Select(attrs={'class': 'form-control'}),
             }
 
-        '''def clean_nombre(self):
-            dato = self.data["nombre"]
-            try:
-                return forms.CharField().clean(dato)
-            except forms.ValidationError:
-                pass
-
-            return forms.CharField().clean(dato)'''
 
         def clean(self):
             cleaned_data = super().clean()
