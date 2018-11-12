@@ -6,6 +6,6 @@ GestionDeMascotas GestionDeTiposDeAtencion \
 GestionDeFacturas Usuarios \
 GestionDeServicios GestionDePracticas
 do
-  python3 manage.py makemigrations $f
+  python manage.py makemigrations $f
 done
-python3 manage.py migrate
+python manage.py migrate

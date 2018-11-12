@@ -1,6 +1,6 @@
-rmdir ./Apps/GestionDeInsumos/migrations
-mkdir ./Apps/GestionDeInsumos/migrations
-notepad ./Apps/GestionDeInsumos/migrations/__init__.py
+rmdir ./Apps/GestionDeProductos/migrations
+mkdir ./Apps/GestionDeProductos/migrations
+notepad ./Apps/GestionDeProductos/migrations/__init__.py
 
 rmdir ./Apps/GestionDeClientes/migrations
 mkdir ./Apps/GestionDeClientes/migrations
@@ -21,3 +21,12 @@ notepad ./Apps/GestionDeServicios/migrations/__init__.py
 rmdir ./Apps/GestionDeTiposDeAtencion/migrations
 mkdir ./Apps/GestionDeTiposDeAtencion/migrations
 notepad ./Apps/GestionDeTiposDeAtencion/migrations/__init__.py
+
+rmdir ./Apps/GestionDeRubros/migrations
+mkdir ./Apps/GestionDeRubros/migrations
+notepad ./Apps/GestionDeRubros/migrations/__init__.py
+
+rmdir ./Apps/GestionDeFacturas/migrations
+mkdir ./Apps/GestionDeFacturas/migrations
+notepad ./Apps/GestionDeFacturas/migrations/__init__.py
+
