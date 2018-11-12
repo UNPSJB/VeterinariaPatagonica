@@ -4,7 +4,7 @@ from Apps.GestionDeClientes import models as cliModel
 from django.core.validators import RegexValidator
 from decimal import Decimal
 from django.db.models import Q
-
+from django.utils import timezone as djangotimezone
 # Create your models here.
 
 REGEXTIPO = '^[A-B-C]{1}$'
@@ -49,6 +49,7 @@ class Factura(models.Model):
         unique=False,
         null=False,
         blank=False,
+        default=djangotimezone.now,
         error_messages={
             'blank': "La fecha es obligatoria"
         }

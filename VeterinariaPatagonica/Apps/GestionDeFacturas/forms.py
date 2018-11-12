@@ -59,12 +59,14 @@ class FacturaForm(forms.ModelForm):
             'tipo',
             'cliente',
             'fecha',
+            'total'
         ]
 
         labels = {
             'tipo':'Tipo',
             'cliente' : 'Cliente',
             'fecha' : 'Fecha',
+            'total': "Total"
         }
 
         error_messages = {
@@ -75,7 +77,7 @@ class FacturaForm(forms.ModelForm):
 
         widgets = {
             'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
-
+            #'total': Factura.calcular_subtotales(Factura, DetalleFactura)
         }
 
     def clean(self):
