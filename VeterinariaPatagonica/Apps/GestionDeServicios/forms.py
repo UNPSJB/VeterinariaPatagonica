@@ -26,6 +26,10 @@ class ServicioForm(forms.ModelForm):
             'precio' : {
                 'min_value' : 'Debe ingresar un valor no menor que el 0%'
             },
+            'precioManoDeObra': {
+                'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Servicio.MAX_ENTERO),
+                'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Servicio.PRECIO),
+            }
         }
         widgets = {
 

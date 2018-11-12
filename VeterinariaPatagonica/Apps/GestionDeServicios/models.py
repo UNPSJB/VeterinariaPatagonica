@@ -2,6 +2,7 @@ from django.db import models
 from Apps.GestionDeProductos import models as pmodels
 from decimal import Decimal
 from VeterinariaPatagonica import tools
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class BaseServicioManager(models.Manager):
@@ -20,9 +21,15 @@ class Servicio(models.Model):
     MAX_NOMBRE = 50
     MIN_NOMBRE = 2
     MAX_DESCRIPCION = 200
-    MAX_PRECIO = 7
-    MAX_DECIMAL = 2
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{1,100}$'
+
+
+    MAX_ENTERO = 7
+    MAX_DECIMAL = 2
+    MIN_PRECIO = Decimal(0)
+    MAX_PRECIO = Decimal(9000000.00)
+    PRECIO = MAX_ENTERO + MAX_DECIMAL
+
 
     tipo = models.CharField(
         help_text="Tipo de Servicio (Consulta-Cirugia)",
@@ -67,11 +74,15 @@ class Servicio(models.Model):
         }
     )
     precioManoDeObra = models.DecimalField(
-        max_digits = MAX_PRECIO,
+        max_digits = PRECIO,
         decimal_places = MAX_DECIMAL,
         unique=False,
         null=False,
         blank=False,
+        validators=[
+            MinValueValidator(MIN_PRECIO, message=("El precio no debe ser menor a ${:.%df}" % (MAX_DECIMAL)).format(MIN_PRECIO)),
+            MaxValueValidator(MAX_PRECIO, message=("El precio no puede ser mayor a ${:.%df}" % (MAX_DECIMAL)).format(MAX_PRECIO)),
+        ],
         error_messages={
             'blank': "El precio del servicio es obligarotio"
         }

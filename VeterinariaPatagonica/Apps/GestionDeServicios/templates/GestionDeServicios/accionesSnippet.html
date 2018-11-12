@@ -1,5 +1,5 @@
 <div class="servicio-item-acciones">
-        {% if seccion == 'ver' %}
+        {% if seccion != 'ver' %}
         <a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioVer' item.id %}">Ver</a>
         {% endif %}
         {% if seccion != 'modificar' %}
