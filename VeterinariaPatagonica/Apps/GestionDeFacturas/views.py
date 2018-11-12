@@ -43,9 +43,9 @@ def modificar(request, id = None):
             factura.calcular_subtotales(instances)
             for obj in formset.deleted_objects:#Bucle for que elimina los form que tienen tildado el checkbox "eliminar"
                 obj.delete()
-            for sproducto in instances:
-                sproducto.servicio = servicio
-                sproducto.save()
+            for detalle in instances:
+                detalle.factura = factura
+                detalle.save()
             return HttpResponseRedirect("/GestionDeFacturas/ver/{}".format(factura.id))
             print(factura, instances)
         context['formulario'] = form
