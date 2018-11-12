@@ -60,6 +60,7 @@ Actualmente <strong>no</strong> disponibles
                     <tr>
                         <th id="deshabilitados-nombre"> Nombre </th>
                         <th id="deshabilitados-marca"> Marca </th>
+                        <th id="deshabilitados-formaPresentacion"> Forma de Presentacion </th>
                         <th id="deshabilitados-precio"> Precio </th>
                         <th id="deshabilitados-acciones"> Acciones </th>
                     </tr>
@@ -69,7 +70,8 @@ Actualmente <strong>no</strong> disponibles
                         <tr>
                             <td>{{ producto.nombre }}</td>
                             <td>{{ producto.marca }}</td>
-                            <td>{{ producto.precio }}</td>
+                            <td> <p> {{ producto.formaDePresentacion }} </p></td>
+                            <td>{{ producto.precioPorUnidad }}</td>
                             <td> <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
                                         <i class="glyphicon glyphicon-eye-open"></i>
