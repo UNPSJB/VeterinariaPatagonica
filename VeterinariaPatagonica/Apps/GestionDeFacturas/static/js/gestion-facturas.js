@@ -23,6 +23,10 @@ $(function() {
 	}
 	$("#button-add").click(add);
 
+
+
+
+
 });
 
 
@@ -41,7 +45,7 @@ $(function() {
 
 
 //Forma de hacer el calculo de subtotal y total
-/*
+
   function calculo(cantidad,precio,inputtext,totaltext){
 
 	// Calculo del subtotal
@@ -52,7 +56,7 @@ $(function() {
 	total = eval(totaltext.value);
 	totaltext.value = total + subtotal;
   }
-*/
+
 
 
 

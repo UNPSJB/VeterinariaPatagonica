@@ -56,7 +56,6 @@ class ServicioProductoForm(forms.ModelForm):
         model = ServicioProducto
         fields = ["producto", "cantidad"]
 
-
 class ServicioProductoBaseFormSet(forms.BaseModelFormSet):
     def clean(self):
         ret = super().clean()

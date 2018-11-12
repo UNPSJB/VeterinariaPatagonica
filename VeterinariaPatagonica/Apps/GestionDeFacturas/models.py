@@ -6,6 +6,8 @@ from django.core.validators import RegexValidator
 from decimal import Decimal
 from django.db.models import Q
 from django.utils import timezone as djangotimezone
+
+from Apps.GestionDePracticas import models as praModel
 # Create your models here.
 
 # Create your models here.
@@ -100,8 +102,8 @@ class Factura(models.Model):
     productos = models.ForeignKey(
         praModel.Practica,
         unique=False,
-        blank=False,
-        null=False,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE,
         error_messages={
             'blank': "El producto es obligatorio"
