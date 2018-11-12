@@ -59,7 +59,8 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                     <thead>
                         <tr>
                             <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-descripcion">Descripcion </th>
+                            <th id="deshabilitados-emergencia">Emergencia </th>
+                            <th id="deshabilitados-lugar">Lugar </th>
                             <th id="deshabilitados-acciones">Acciones</th>
                         </tr>
                     </thead>
@@ -67,7 +68,9 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                         {% for tipoDeAtencion in tiposDeAtencion %}
                             <tr>
                                 <td>{{ tipoDeAtencion.nombre }}</td>
-                                <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
+                                <td>{{ tipoDeAtencion.emergencia }}</td>
+                                <td>{{ tipoDeAtencion.lugar }}</td>
+                                <!--<td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>-->
                                 <td> <p align="justify">
                                             <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-placement="bottom" title="Ver Tipo De Atencion">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>

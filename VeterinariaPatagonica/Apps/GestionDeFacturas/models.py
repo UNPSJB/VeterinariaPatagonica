@@ -4,8 +4,9 @@ from Apps.GestionDeProductos import models as proModel
 from Apps.GestionDeClientes import models as cliModel
 from django.core.validators import RegexValidator
 from decimal import Decimal
-
-from Apps.GestionDePracticas import models as praModel
+from django.db.models import Q
+from django.utils import timezone as djangotimezone
+# Create your models here.
 
 # Create your models here.
 
@@ -18,6 +19,12 @@ MAX_DIGITOS_AJUSTES = 5
 MAX_DECIMALES_AJUSTES = 2
 
 class Factura(models.Model):
+
+    MAPPER = {
+        "tipo": "tipo__icontains",
+        "cliente": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+        "fecha": "fecha_icontains"
+    }
 
     tipo = models.CharField(
         help_text= "Tipo de Factura.",
@@ -48,6 +55,7 @@ class Factura(models.Model):
         unique=False,
         null=False,
         blank=False,
+        default=djangotimezone.now,
         error_messages={
             'blank': "La fecha es obligatoria"
         }

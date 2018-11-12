@@ -31,8 +31,8 @@ Mascotas Habilitadas
                     <div>
                         <form action="" method="GET">
                             <br>
-                            <input name="nombre" placeholder="Nombre">
                             <input name="patente" placeholder="Patente">
+                            <input name="nombre" placeholder="Nombre">
                             <input name="duenio" placeholder="Dueño">
                             <input name="especie" placeholder="Especie">
 
@@ -58,16 +58,20 @@ Mascotas Habilitadas
                 <table class="table mascotaListado">
                     <thead>
                         <tr>
+                            <th id="deshabilitados-patente"> Patente </th>
                             <th id="deshabilitados-nombre"> Nombre </th>
-                            <th id="deshabilitados-clinte"> Cliente </th>
+                            <th id="deshabilitados-cliente"> Cliente </th>
+                            <th id="deshabilitados-especie"> Especie </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for mascota in mascotas %}
                             <tr>
+                                <td> <p>{{ mascota.patente }}</p></td>
                                 <td> <p>{{ mascota.nombre }}</p></td>
                                 <td><p>{{ mascota.cliente }}</p></td>
+                                <td><p>{{ mascota.especie }}</p></td>
                                 <td> <p align="justify">
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Mascota">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>

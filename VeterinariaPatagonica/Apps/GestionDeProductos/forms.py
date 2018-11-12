@@ -46,11 +46,19 @@ def ProductoFormFactory(producto=None):
                 'nombre' : {
                     'max_length': ("Nombre demasiado largo"),
                     'unique': ("Ese nombre ya existe"),
+                },
+
+                'precioPorUnidad': {
+                    'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Producto.MAX_ENTERO),
+                    'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Producto.PRECIO),
+                },
+                'precioDeCompra': {
+                    'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Producto.MAX_ENTERO),
+                    'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Producto.PRECIO),
                 }
             }
 
             widgets = {
-                #'nombre' : forms.TextInput(),
                 'descripcion': forms.Textarea(attrs={'cols': 60, 'rows': 4}),
                 'formaDePresentacion' : forms.Select(),
                 'precioPorUnidad': forms.NumberInput(),

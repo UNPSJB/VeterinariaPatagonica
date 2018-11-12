@@ -5,7 +5,6 @@ Gestion de Facturas | Ver Factura
 {% endblock %}
 
 {% block secciones %}
-    {% include './seccionesSnippet.html' with pagina='default' %}
 {% endblock %}
 
 {% block facturaTitulo %}
@@ -13,12 +12,11 @@ Ver Factura
 {% endblock %}
 
 {% block facturaSubtitulo %}
-Muestra datos del factura
+Datos del factura
 {% endblock %}
 
 {% block facturaContenido %}
 
-    {% include './accionesSnippet.html' with item=factura seccion='ver' %}
 
     <div class="facturaCuerpo">
 
