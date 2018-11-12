@@ -1,4 +1,5 @@
 $(function() {
+
 	let total = Number($("#id_form-TOTAL_FORMS").val());
 	let initial = $("#id_form-INITIAL_FORMS").val();
 	let min = Number($("#id_form-MIN_NUM_FORMS").val());
@@ -6,6 +7,8 @@ $(function() {
 
 	let $buttons = $("#buttons");
 	let template = $(`#item-${total}`).html().replace(RegExp(`form-${total - 1}`,"g"), `form-ITEM`);
+
+	console.log("Template: %s",template);
 
 	let add = function() {
 		console.log("ADD - Total al iniciar = %d",total);

@@ -39,16 +39,17 @@ INSTALLED_APPS = [
     'dal',
     'dal_select2',
     'dal_select2.widgets',
-    'Apps.Usuarios',
-    'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeClientes',
+    'Apps.GestionDeFormasDePagos',
+    'Apps.GestionDeFacturas',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeProductos',
+#    'Apps.GestionDePagos',
+    'Apps.GestionDePracticas',
+    'Apps.GestionDeRubros',
     'Apps.GestionDeServicios',
     'Apps.GestionDeTiposDeAtencion',
-    'Apps.GestionDeRubros',
-    'Apps.GestionDeFacturas',
-    'Apps.GestionDePracticas',
+    'Apps.Usuarios',
 ]
 
 MIDDLEWARE = [
@@ -157,5 +158,3 @@ LOGIN_URL = '/login/'
 
 
 AUTH_USER_MODEL = 'Usuarios.Usuario'
-
-

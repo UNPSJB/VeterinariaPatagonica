@@ -31,15 +31,22 @@ def modificar(request, id = None):
         DetalleFactura,
         DetalleFacturaForm,
         min_num=1,
+        extra=1,
+        can_delete=True,
         formset=DetalleFacturaBaseFormSet)
     if request.method == 'POST':
         form = FacturaForm(request.POST, instance=factura)
         formset = DetalleFacturaFormset(request.POST)
         if form.is_valid() and formset.is_valid():
-            factura = form.save(commit=False)
+            factura = form.save()
             instances = formset.save(commit=False)
             factura.calcular_subtotales(instances)
-
+            for obj in formset.deleted_objects:#Bucle for que elimina los form que tienen tildado el checkbox "eliminar"
+                obj.delete()
+            for sproducto in instances:
+                sproducto.servicio = servicio
+                sproducto.save()
+            return HttpResponseRedirect("/GestionDeFacturas/ver/{}".format(factura.id))
             print(factura, instances)
         context['formulario'] = form
         context['formset'] = formset
@@ -178,4 +185,3 @@ class productoAutocomplete(autocomplete.Select2QuerySetView):
            qs = qs.filter(Q(descripcion__icontains=self.q) | Q(nombre__icontains=self.q) | Q(marca__icontains=self.q))
 
         return qs
-

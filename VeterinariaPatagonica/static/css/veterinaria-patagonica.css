@@ -1,5 +1,5 @@
 @media (min-width: 750px) {
-    
+
     #sitio_seccion_principal {
         min-height: 100px;
     }
@@ -125,7 +125,7 @@ select,
 }
 
 .btn {
-    border-radius: 0px !important;    
+    border-radius: 0px !important;
 }
 
 .row-eq-height {
@@ -140,7 +140,7 @@ a {
     text-decoration: none;
     color: #337ab7;
 }
- 
+
  a:hover,
  a:focus {
     text-decoration: none;
@@ -237,7 +237,7 @@ ul.nav>li>i {
     padding: 10px;
     display: inline-block;
     background: #fff;
-    border: 1px solid #E6E9ED;    
+    border: 1px solid #E6E9ED;
     opacity: 1;
     transition: all .2s ease;
     margin: 0px;
@@ -261,7 +261,7 @@ ul.nav>li>i {
     padding: 10px;
     display: inline-block;
     background: #fff;
-    border: 1px solid #E6E9ED;    
+    border: 1px solid #E6E9ED;
     opacity: 1;
     transition: all .2s ease;
     margin: 0px;
@@ -278,10 +278,10 @@ ul.nav>li>i {
 }
 */
 .cuadradito {
-    height : 100px; 
-    width : 100px; 
+    height : 100px;
+    width : 100px;
     display:table-cell;
-    vertical-align:center; 
+    vertical-align:center;
     border: 1px solid black;
     background-color: red;
 }
@@ -533,4 +533,13 @@ table.table.listado {
 
 .alerta {
     color: #A94442;
+}
+
+.x_content {
+    padding: 0 5px 6px;
+    position: relative;
+    width: 100%;
+    float: left;
+    clear: both;
+    margin-top: 5px
 }

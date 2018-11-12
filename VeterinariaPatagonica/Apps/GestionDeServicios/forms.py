@@ -28,7 +28,6 @@ class ServicioForm(forms.ModelForm):
             },
         }
         widgets = {
-
             'nombre' : forms.TextInput(),
             'descripcion': forms.Textarea(attrs={ 'cols':60, 'rows':4 }),
             'tiempoEstimado' : forms.NumberInput(),

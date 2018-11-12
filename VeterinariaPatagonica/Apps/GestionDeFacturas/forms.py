@@ -22,6 +22,7 @@ def FacturaFormFactory(practica):
             }
 
             widgets = {
+
                 'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
                 'total': Factura.precioTotal(Factura),
 
@@ -128,4 +129,3 @@ class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
 
     def save(self, commit=True):
         return super().save(commit=commit)
-

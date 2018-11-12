@@ -1,8 +1,11 @@
 from django.db import models
+#from Apps.GestionDePagos import models as pagModel
 from Apps.GestionDeProductos import models as proModel
 from Apps.GestionDeClientes import models as cliModel
 from django.core.validators import RegexValidator
 from decimal import Decimal
+
+from Apps.GestionDePracticas import models as praModel
 
 # Create your models here.
 
@@ -11,10 +14,13 @@ MAXTIPO = 1
 MAXDECIMAL = 2
 MAXDIGITO = 6
 
+MAX_DIGITOS_AJUSTES = 5
+MAX_DECIMALES_AJUSTES = 2
+
 class Factura(models.Model):
 
     tipo = models.CharField(
-        help_text= "Tipo de factura",
+        help_text= "Tipo de Factura.",
         max_length=MAXTIPO,
         unique=False,
         null=False,
@@ -38,7 +44,7 @@ class Factura(models.Model):
     )
 
     fecha = models.DateField(
-        help_text="Fecha de la Factura",
+        help_text="Fecha de la Factura.",
         unique=False,
         null=False,
         blank=False,
@@ -52,9 +58,9 @@ class Factura(models.Model):
         through='DetalleFactura',
 
     )
-    
+
     total = models.IntegerField(
-        help_text="Importe total de la Factura",
+        help_text="Importe total de la Factura.",
         unique=False,
         null=False,
         default=0.0,
@@ -63,6 +69,45 @@ class Factura(models.Model):
             'blank': "El importe es obligatorio"
         }
     )
+    recargo = models.DecimalField(
+            blank=False,
+            null = False,
+            default=Decimal(0),
+            max_digits = MAX_DIGITOS_AJUSTES,
+            decimal_places = MAX_DECIMALES_AJUSTES,
+            error_messages = {},
+            validators = []
+    )
+
+    descuento = models.DecimalField(
+            blank=False,
+            null = False,
+            default=Decimal(0),
+            max_digits = MAX_DIGITOS_AJUSTES,
+            decimal_places = MAX_DECIMALES_AJUSTES,
+            error_messages = {},
+            validators = []
+    )
+
+    productos = models.ForeignKey(
+        praModel.Practica,
+        unique=False,
+        blank=False,
+        null=False,
+        on_delete=models.CASCADE,
+        error_messages={
+            'blank': "El producto es obligatorio"
+        }
+
+
+    )
+
+
+
+    #pago = models.OneToOneField(
+    #hel_text="Pago de la Factura.",
+    #through='pagModel.Pago',
+    #)
 
     baja = models.BooleanField(default=False)
 

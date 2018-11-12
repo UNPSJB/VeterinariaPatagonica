@@ -17,6 +17,7 @@ from Apps.GestionDeMascotas import models as gmmodels
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
 
+#from Apps.GestionDeFacturas.models import Factura
 
 
 __all__ = [ "Practica", "PracticaServicio", "PracticaProducto", "TIPO_PRACTICA" ]
@@ -92,7 +93,7 @@ class Practica(models.Model):
             },
             validators = [],
     )
-
+    '''
     recargo = models.DecimalField(
             blank=False,
             null = False,
@@ -112,7 +113,7 @@ class Practica(models.Model):
             error_messages = {},
             validators = []
     )
-
+    '''
     cliente = models.ForeignKey(
         Cliente,
         related_name='practicas',
@@ -158,7 +159,15 @@ class Practica(models.Model):
         through_fields=('practica','producto'),
         related_name='practicas'
     )
-
+    '''
+    factura = models.ForeignKey(
+        Factura,
+        related_name='practicas',
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    '''
 
 
     def __str__(self):
@@ -318,10 +327,10 @@ class Practica(models.Model):
             servicios = self.servicios.all()
             for servicio in servicios:
                 totalServicios += servicio.precioTotal()
-        
+
         # Recargos tipo de atencion
         recargo = self.tipoDeAtencion.recargo
-        
+
         # Descuetos, solo los de servicio, los de producto son para la facturacion de productos
         descuento = self.cliente.descuentoServicio
 

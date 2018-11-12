@@ -25,6 +25,7 @@ urlpatterns = [
 
     path("", include('Apps.GestionDePracticas.urls', namespace="practicas")),
 
+    #path("", include ('Apps.GestionDePagos.urls', namespace="pagos")),
 ]
 
 """

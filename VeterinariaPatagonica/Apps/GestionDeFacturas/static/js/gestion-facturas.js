@@ -1,3 +1,30 @@
+$(function() {
+
+  let total = Number($("#id_form-TOTAL_FORMS").val());
+  let initial = $("#id_form-INITIAL_FORMS").val();
+  let min = Number($("#id_form-MIN_NUM_FORMS").val());
+  let max = Number($("#id_form-MAX_NUM_FORMS").val());
+
+  let $buttons = $("#buttons");
+  let template = $(`#item-${total}`).html().replace(RegExp(`form-${total - 1}`,"g"), `form-ITEM`);
+
+  console.log("Template: %s", template);
+
+  let add = function() {
+		console.log("ADD - Total al iniciar = %d",total);
+		if (total < max) {
+			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
+			total += 1;
+			field = `<div class="col-xs-7" id="item-${total}">${field}</div>`;
+			$("#id_form-TOTAL_FORMS").val(total);
+			$buttons.before(field);
+		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",total)}
+		console.log("ADD - Total al finalizar = %d",total);
+	}
+	$("#button-add").click(add);
+
+});
+
 
 /*$(document).ready(function() {
 
@@ -10,7 +37,11 @@
     });
 })*/
 
+
+
+
 //Forma de hacer el calculo de subtotal y total
+/*
   function calculo(cantidad,precio,inputtext,totaltext){
 
 	// Calculo del subtotal
@@ -21,6 +52,8 @@
 	total = eval(totaltext.value);
 	totaltext.value = total + subtotal;
   }
+*/
+
 
 
 /*function sumaItems()
@@ -36,18 +69,10 @@ document.getElementById(‘PX_TOTAL’).value =
 getVal(‘PX_1’) + getVal(‘PX_2’);
 }*/
 
-$(function() {
-	let total = Number($("#id_form-TOTAL_FORMS").val());
-	let initial = $("#id_form-INITIAL_FORMS").val();
-	let min = Number($("#id_form-MIN_NUM_FORMS").val());
-	let max = Number($("#id_form-MAX_NUM_FORMS").val());
 
-	let $buttons = $("#buttons");
-	let template = $("#formset-template").html().replace(RegExp(`form-${initial}`,"g"), `form-ITEM`);
-	$("#formset-template").remove();
-	total = total - 1;
-	$("#id_form-TOTAL_FORMS").val(total);
 
+
+/*
 	let add = function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
@@ -57,18 +82,5 @@ $(function() {
 			$buttons.before(field);
 		}
 	}
-
-	let remove = function(e) {
-		let item = e.currentTarget.parentNode.id.split('-')[1];
-		if (total > min) {
-			total -= 1;
-			$(`#item-${item}`).remove();
-			$("#id_form-TOTAL_FORMS").val(total);
-		}
-	}
-
-	$(document).on("click",".rm",remove);
-	$("#button-add").click(add);
-
-});
-
+*/
+//	$("#button-add").click(add);
