@@ -278,3 +278,19 @@ function validar(event){
         event.preventDefault();
     }
 }
+
+function verAgenda(){
+    var value = $(this).val();
+    var [dia, mes, anio] = value.split(" ")[0].split("/");
+    console.log(dia, mes, anio);
+    $.ajax({
+        url: "/cirugias/verAgenda",
+        data: {fecha: `${anio}-${mes}-${dia}`},
+        success: function(data) {
+            console.log(data.turnos);
+        }
+    })
+
+}
+
+$("#id_inicio").on("change", verAgenda);

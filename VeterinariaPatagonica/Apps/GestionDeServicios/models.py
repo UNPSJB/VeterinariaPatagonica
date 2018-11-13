@@ -18,7 +18,11 @@ class Servicio(models.Model):
         "precioManoDeObra": "precioManoDeObra__icontains"
     }
 
-    TIPO = (('C','Consulta'), ('Q','Quirurgica'),('I','Internación') )
+    CONSULTA = 'C'
+    QUIRURGICA = 'Q'
+    INTERNACION = 'I'
+
+    TIPO = ((CONSULTA,'Consulta'), (QUIRURGICA,'Quirurgica'),(INTERNACION,'Internación') )
     MAX_NOMBRE = 50
     MIN_NOMBRE = 2
     MAX_DESCRIPCION = 200

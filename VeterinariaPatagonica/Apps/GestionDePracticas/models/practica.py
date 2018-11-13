@@ -34,7 +34,15 @@ TIPO_PRACTICA = {
 
 
 class PracticaBaseManager(models.Manager):
-    pass
+    def __init__(self, tipo = None):
+        super().__init__()
+        self.tipo = tipo
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tipo:
+            qs = qs.filter(tipoDeAtencion__tipoDeServicio=self.tipo)
+        return qs
 
 class PracticaQuerySet(VeterinariaPatagonicaQuerySet):
 
@@ -52,11 +60,12 @@ class PracticaQuerySet(VeterinariaPatagonicaQuerySet):
 
 PracticaManager = PracticaBaseManager.from_queryset(PracticaQuerySet)
 
-
-
 class Practica(models.Model):
 
     objects = PracticaManager()
+    consultas = PracticaManager(Servicio.CONSULTA)
+    quirurgicas = PracticaManager(Servicio.QUIRURGICA)
+    internaciones = PracticaManager(Servicio.INTERNACION)
 
     MAX_NOMBRE = 100
     MAX_MOTIVO = 300
@@ -169,11 +178,16 @@ class Practica(models.Model):
     )
     '''
 
+    turno = models.DateTimeField(
+        null=True,
+    )
+
 
     def __str__(self):
-        return "Practica numero {}".format( self.id )
+        return "{} {}".format(self.tipoDeAtencion.get_tipoDeServicio_display(), self.id)
 
-
+    def duracion(self):
+        return sum([servicio.servicio.tiempoEstimado * servicio.cantidad for servicio in self.practica_servicios.all()])
 
     def save(self, *args, **kwargs):
 

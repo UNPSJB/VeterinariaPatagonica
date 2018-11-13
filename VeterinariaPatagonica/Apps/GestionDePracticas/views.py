@@ -1,8 +1,8 @@
 from os.path import join
-
+from django.utils import timezone as djangotimezone
 from django.urls import reverse
 from django.template import loader
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Max
@@ -876,3 +876,17 @@ def detallesCirugia(request, id):
 
     template = loader.get_template(plantilla('detallar'))
     return HttpResponse(template.render(context, request))
+
+def verAgendaCirugia(request):
+    if "fecha" in request.GET:
+        fecha = request.GET["fecha"]
+    else:
+        fecha = djangotimezone.now()
+    practicas = Practica.quirurgicas.filter(turno__date=fecha)
+    turnos = [
+        {"turno": practica.turno,
+         "duracion": practica.duracion(),
+         "servicios": [servicio.nombre for servicio in practica.servicios.all()]
+         }
+              for practica in practicas]
+    return JsonResponse({ 'turnos':  turnos})
