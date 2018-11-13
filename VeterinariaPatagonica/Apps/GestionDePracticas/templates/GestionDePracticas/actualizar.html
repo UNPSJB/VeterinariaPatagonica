@@ -27,3 +27,8 @@
     </div>
 
 {% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static 'GestionDePracticas/js/practicas.js' %}"></script>
+{% endblock %}

@@ -150,7 +150,8 @@ class Creada(EstadoRealizable):
     TIPO = 1
 
     def programar(self, inicio, duracion):
-
+        self.practica.turno = inicio
+        self.practica.save()
         return Programada.objects.create(practica=self.practica, inicio=inicio, duracion=duracion)
 
     def presupuestar(self, diasMantenimiento):
@@ -182,7 +183,8 @@ class Programada(EstadoCancelable, EstadoRealizable):
     )
 
     def reprogramar(self, inicio, duracion, motivo):
-
+        self.practica.turno = inicio
+        self.practica.save()
         return Programada.objects.create(
             practica=self.practica,
             inicio=inicio,
