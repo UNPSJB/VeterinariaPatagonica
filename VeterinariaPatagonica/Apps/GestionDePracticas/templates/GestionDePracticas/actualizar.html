@@ -18,9 +18,10 @@
         <form class="form-horizontal formulario" action="{{ formAction }}" method="POST">
 
             {% csrf_token %}
-
+            
             {% include "formularios/snippet.html" with formulario=practica accion=None %}
             {% include "formularios/snippet.html" with formulario=estado accion=estado.accion %}
+
 
         </form>
 
