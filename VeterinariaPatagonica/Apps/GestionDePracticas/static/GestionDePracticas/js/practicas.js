@@ -287,7 +287,7 @@ function verAgenda(){
     var template = function(data) {
         var servicios = data.servicios.map(function(servicio) { return `${servicio}`}).join(", ");
         return `
-        <table style="text-align: center;">
+        <table style="text-align: center;" class="table agendaListado">
         <thead>
         <tr>
         <th id="agenda-turno" style="text-align: center; width: 20%;"> Turno </th>
@@ -299,7 +299,7 @@ function verAgenda(){
         <tr>
         <br>
         <td><p>${(new Date(Date.parse(data.turno))).toLocaleTimeString()}</p></td>
-        <td><p>${data.duracion}</p></td>
+        <td><p>${data.duracion}min</p></td>
         <td><p>${servicios}</p></td>
         </tr>
         </tbody>
@@ -310,7 +310,7 @@ function verAgenda(){
         data: {fecha: `${anio}-${mes}-${dia}`},
         success: function(data) {
             var html = data.turnos.map(template).join(" ");
-            agenda.html(`<table>${html}</table>`);
+            agenda.html(`<table><th><p>Agenda del Dia </p></th>${html}</table>`);
             //var c = document.getElementById('id_agenda').value;
             //print(c);
             /*document.getElementById('id_inicio').onchange = function(){
