@@ -455,7 +455,10 @@ ul.nav>li>i {
   background-image: url('../images/casa.jpg');
   background-size: contain;
 }
-
+#imagenFactura {
+  background-image: url('../images/factura.jpg');
+  background-size: contain;
+}
 
 /*
 *******************************************************************************

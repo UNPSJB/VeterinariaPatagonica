@@ -1,6 +1,7 @@
 from django.db import models
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, DecimalValidator
 from VeterinariaPatagonica import tools
+from decimal import Decimal
 
 # Create your models here.
 
@@ -150,14 +151,48 @@ class Cliente (models.Model):
         }
     )
 
-    descuentoServicio = models.PositiveSmallIntegerField(blank=True, default=0)
-    descuentoProducto = models.PositiveSmallIntegerField(blank=True, default=0)
+    PARTE_ENTERA = 3
+    PARTE_DECIMAL = 2
+    DESC_MIN = Decimal(0)
+    DESC_MAX = Decimal(100.00)
+    DEFAULT = Decimal(0)
+    DESCUENTO = PARTE_ENTERA + PARTE_DECIMAL
+
+    descuentoServicio = models.DecimalField(
+        max_digits= DESCUENTO,
+        decimal_places= PARTE_DECIMAL,
+        default= DEFAULT,
+        blank=True,
+        validators= [
+            MinValueValidator(DESC_MIN, message=("El descuento no puede ser menor a {:.%df}" % (PARTE_DECIMAL)).format(DESC_MIN)),
+            MaxValueValidator(DESC_MAX, message=("El descuento no puede ser mayor a {:.%df}" % (PARTE_DECIMAL)).format(DESC_MAX)),
+        ]
+    )
+
+    descuentoProducto = models.DecimalField(
+        max_digits=DESCUENTO,
+        decimal_places=PARTE_DECIMAL,
+        default=DEFAULT,
+        blank=True,
+        validators=[
+            MinValueValidator(DESC_MIN, message=("El descuento no puede ser menor a {:.%df}" % (PARTE_DECIMAL)).format(DESC_MIN)),
+            MaxValueValidator(DESC_MAX, message=("El descuento no puede ser mayor a {:.%df}" % (PARTE_DECIMAL)).format(DESC_MAX)),
+        ]
+    )
+
+    CC_MIN_PRECIO = Decimal(0)
+    CC_MAX_PRECIO = Decimal(3000.00)
+    PRECIO = PARTE_ENTERA + PARTE_DECIMAL
 
     cuentaCorriente = models.DecimalField(
-        max_digits = 6, #Son 6 digitos porque tiene un limite de adeudamiento de $3.000,00.
-        decimal_places = 2,
-        default=0.0,
-        blank=True
+        max_digits = PRECIO,
+        decimal_places = PARTE_DECIMAL,
+        default=DEFAULT,
+        blank=True,
+        validators = [
+            MinValueValidator(CC_MIN_PRECIO, message=("El precio no debe ser menor a ${:.%df}" % (PARTE_DECIMAL)).format(CC_MIN_PRECIO)),
+            MaxValueValidator(CC_MAX_PRECIO, message=("El precio no puede ser mayor a ${:.%df}" % (PARTE_DECIMAL)).format(CC_MAX_PRECIO)),
+        ]
     )
 
     baja = models.BooleanField(default=False)
