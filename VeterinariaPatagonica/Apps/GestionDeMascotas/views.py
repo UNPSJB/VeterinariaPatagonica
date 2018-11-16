@@ -17,10 +17,14 @@ def mascota(request):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
-def modificar(request, id= None):
+def modificar(request, id= None, cliente_id=None):
     mascota = Mascota.objects.get(id=id) if id is not None else None
-    MascotaForm = MascotaFormFactory(mascota)
+    cliente = None
+    if cliente_id:
+        cliente = Cliente.objects.get(pk=cliente_id)
+    MascotaForm = MascotaFormFactory(mascota, cliente)
     context = {'usuario': request.user}
+
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
         if formulario.is_valid():
