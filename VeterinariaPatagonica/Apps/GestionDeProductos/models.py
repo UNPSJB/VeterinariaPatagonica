@@ -17,7 +17,8 @@ class Producto (models.Model):
         "marca": "marca__icontains",
         "formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
-        "precioPorUnidad": "precioPorUnidad__gte"
+        "precioPorUnidadMayor": "precioPorUnidad__gte",
+        "precioPorUnidadMenor": "precioPorUnidad__lte"
     }
 
     MAX_NOMBRE = 50
