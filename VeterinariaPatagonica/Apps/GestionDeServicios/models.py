@@ -29,10 +29,10 @@ class Servicio(models.Model):
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{1,100}$'
 
 
-    MAX_ENTERO = 7
+    MAX_ENTERO = 6
     MAX_DECIMAL = 2
     MIN_PRECIO = Decimal(0)
-    MAX_PRECIO = Decimal(9000000.00)
+    MAX_PRECIO = Decimal(100000.00)
     PRECIO = MAX_ENTERO + MAX_DECIMAL
 
 
@@ -85,7 +85,7 @@ class Servicio(models.Model):
         null=False,
         blank=False,
         validators=[
-            MinValueValidator(MIN_PRECIO, message=("El precio no debe ser menor a ${:.%df}" % (MAX_DECIMAL)).format(MIN_PRECIO)),
+            MinValueValidator(MIN_PRECIO, message=("El precio no puede ser menor a ${:.%df}" % (MAX_DECIMAL)).format(MIN_PRECIO)),
             MaxValueValidator(MAX_PRECIO, message=("El precio no puede ser mayor a ${:.%df}" % (MAX_DECIMAL)).format(MAX_PRECIO)),
         ],
         error_messages={

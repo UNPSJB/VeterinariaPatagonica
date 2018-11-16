@@ -151,12 +151,12 @@ class Cliente (models.Model):
         }
     )
 
-    PARTE_ENTERA = 3
+    DESC_PARTE_ENTERA = 3
     PARTE_DECIMAL = 2
     DESC_MIN = Decimal(0)
     DESC_MAX = Decimal(100.00)
     DEFAULT = Decimal(0)
-    DESCUENTO = PARTE_ENTERA + PARTE_DECIMAL
+    DESCUENTO = DESC_PARTE_ENTERA + PARTE_DECIMAL
 
     descuentoServicio = models.DecimalField(
         max_digits= DESCUENTO,
@@ -180,9 +180,10 @@ class Cliente (models.Model):
         ]
     )
 
+    CC_PARTE_ENTERA = 4
     CC_MIN_PRECIO = Decimal(0)
     CC_MAX_PRECIO = Decimal(3000.00)
-    PRECIO = PARTE_ENTERA + PARTE_DECIMAL
+    PRECIO = CC_PARTE_ENTERA + PARTE_DECIMAL
 
     cuentaCorriente = models.DecimalField(
         max_digits = PRECIO,

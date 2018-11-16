@@ -26,7 +26,7 @@ class Producto (models.Model):
     MAXDESCRIPCION= 150
 
     STOCK_MIN_VALUE = 1
-    STOCK_MAX_VALUE = 99
+    STOCK_MAX_VALUE = 100
     MAX_ENTERO = 4
     MAX_DECIMAL = 2
     MIN_PRECIO = Decimal(0)
@@ -110,7 +110,7 @@ class Producto (models.Model):
     stock = models.IntegerField(
         help_text="Stock del Producto",
         validators=[
-            MinValueValidator(STOCK_MIN_VALUE, message=("El Stock debe ser mayor a 0")),
+            MinValueValidator(STOCK_MIN_VALUE, message=("El Stock no puede ser menor a {}").format(STOCK_MIN_VALUE)),
             MaxValueValidator(STOCK_MAX_VALUE, message=("El Stock no puede ser mayor a {}").format(STOCK_MAX_VALUE))
         ]
     )

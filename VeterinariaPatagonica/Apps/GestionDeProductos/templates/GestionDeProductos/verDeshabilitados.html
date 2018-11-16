@@ -70,8 +70,8 @@ Actualmente <strong>no</strong> disponibles
                         <tr>
                             <td>{{ producto.nombre }}</td>
                             <td>{{ producto.marca }}</td>
-                            <td> <p> {{ producto.formaDePresentacion }} </p></td>
-                            <td>{{ producto.precioPorUnidad }}</td>
+                            <td>{{ producto.formaDePresentacion }}</td>
+                            <td>$ {{ producto.precioPorUnidad }}</td>
                             <td> <p align="justify">
                                     <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
                                         <i class="glyphicon glyphicon-eye-open"></i>
