@@ -15,13 +15,14 @@ cliente = forms.DateField(
     validators=[],
 
 )
-def MascotaFormFactory(mascota=None):
+def MascotaFormFactory(mascota=None, cliente=None):
     campos = [ 'nombre', 'cliente',
                'fechaNacimiento',
                'especie', 'raza' ]
 
-    if mascota is  None:
+    if mascota is None:
         campos.insert(0, 'patente')
+
 
 
     class MascotaForm(forms.ModelForm):
@@ -29,6 +30,10 @@ def MascotaFormFactory(mascota=None):
         class Meta:
             model = Mascota
             fields = campos
+            widget_cliente = autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete')
+            if cliente:
+                widget_cliente = forms.TextInput(attrs={'value': str(cliente), 'disabled': 'disabled'})
+
             labels = {
                 'patente':'Patente:',
                 'cliente': "Cliente:",
@@ -48,9 +53,9 @@ def MascotaFormFactory(mascota=None):
                 }
             }
             widgets = {
-                'nombre' : forms.TextInput(),
+                'nombre' : forms.TextInput(attrs={'value': 'Galopito'}),
 
-                'cliente': autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete'),
+                'cliente': widget_cliente,
                 #'cliente': forms.Select(attrs={'class': 'form-control'}),
                 'fechaNacimiento': forms.DateInput(),
                 'raza' : forms.TextInput(),
