@@ -15,19 +15,17 @@ $(document).ready( function(){
 
 
     $(function () {
-        var today = new Date();
-        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        var time = today.getHours() + ":" + today.getMinutes();
-        var dateTime = date+' '+time;
+            var today = new Date();
+            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes();
+            var dateTime = date+' '+time;
             $("#id_fechaNacimiento").datetimepicker({
-                format: 'yyyy-mm-dd hh:ii',
-                autoclose: true,
-                todayBtn: true,
-                startDate: dateTime
-                }
-            );
-        }
-    );
+                locale: 'es',
+                format: 'L',
+                maxDate: new Date()
+            });
+
+    });
 });
 
 
