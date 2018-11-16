@@ -8,12 +8,9 @@ from django.core.validators import RegexValidator
 
 def ClienteFormFactory(cliente=None):
     campos = [  'tipoDeCliente',
-                'nombres',
-                'apellidos',
-                'direccion',
-                'localidad',
-                'celular',
-                'telefono',
+                'nombres', 'apellidos',
+                'direccion', 'localidad',
+                'celular', 'telefono',
                 'email',
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
 
@@ -21,14 +18,19 @@ def ClienteFormFactory(cliente=None):
         campos.insert(1, 'dniCuit')
 
     class ClienteForm(forms.ModelForm):
+
         class Meta:
             model = Cliente
             fields = campos
             labels = {
                 'dniCuit':'Dni/Cuit:',
-                'nombres':'Nombres:', 'apellidos':'Apellidos:', 'direccion':'Dirección:', 'localidad':'Localidad:', 'celular':'Celular:', 'telefono':'Teléfono:', 'email':'Email:',
-                'tipoDeCliente':'Tipo de Cliente:',
-                'descuentoServicio':'Descuento Servicio:', 'descuentoProducto':'Descuento Producto:','cuentaCorriente' : 'Cuenta Corriente:', 'baja':'Baja:'
+                'nombres':'Nombres:', 'apellidos':'Apellidos:',
+                'direccion':'Dirección:', 'localidad':'Localidad:',
+                'celular':'Celular:', 'telefono':'Teléfono:',
+                'email':'Email:', 'tipoDeCliente':'Tipo de Cliente:',
+                'descuentoServicio': 'Descuento Servicio:',
+                'descuentoProducto': 'Descuento Producto:',
+                'cuentaCorriente' : 'Cuenta Corriente:', 'baja':'Baja:'
             }
 
             error_messages = {
@@ -43,14 +45,26 @@ def ClienteFormFactory(cliente=None):
                 'dniCuit' : {
                     'max_length' : ("DNI/CUIT demasiado largo"),
                     'unique' : ("Ese DNI/CUIT ya existe"),
+                },
+
+                'descuentoServicio': {
+                    'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Cliente.PARTE_ENTERA),
+                    'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Cliente.DESCUENTO),
+                    'max_decimal_places': "Debe ingresar a lo sumo %d digitos para la parte decimal" % (Cliente.PARTE_DECIMAL),
+                },
+
+                'descuentoProducto': {
+                    'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Cliente.PARTE_ENTERA),
+                    'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Cliente.DESCUENTO),
                 }
+
             }
 
             widgets = {
                 'localidad' : forms.Select(choices=Cliente.LOCALIDADES),
-                'descuentoServicio': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0'}),
-                'descuentoProducto': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0'}),
-                'cuentaCorriente': forms.NumberInput(attrs={'data-tipo': 'especial', 'default': '0.0'})
+                'descuentoServicio': forms.NumberInput(attrs={'data-tipo': 'especial'}),
+                'descuentoProducto': forms.NumberInput(attrs={'data-tipo': 'especial'}),
+                'cuentaCorriente': forms.NumberInput(attrs={'data-tipo': 'especial'})
             }
 
         def clean_dniCuit(self):
