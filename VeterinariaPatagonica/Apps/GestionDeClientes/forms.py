@@ -12,7 +12,6 @@ def ClienteFormFactory(cliente=None):
                 'direccion', 'localidad',
                 'celular', 'telefono',
                 'email',
-
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
 
     if cliente is  None:

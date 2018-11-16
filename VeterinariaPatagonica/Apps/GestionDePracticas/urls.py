@@ -34,7 +34,7 @@ urlpatterns = [
         path('realizar/', views.realizarCirugia, name="realizar"),
         path('cancelar/', views.cancelarCirugia, name="cancelar"),
         path('programar/', views.programarCirugia, name="programar"),
-        path("verAgenda/", views.verAgendaCirugia, name="verAgendaCirugia")
+        path('verAgenda/', views.verAgendaCirugia, name="verAgendaCirugia")
     ], "cirugia")))
 
 ]

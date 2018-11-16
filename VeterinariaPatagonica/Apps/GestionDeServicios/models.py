@@ -93,7 +93,8 @@ class Servicio(models.Model):
         }
     )
 
-    productos = models.ManyToManyField(pmodels.Producto,
+    productos = models.ManyToManyField(
+        pmodels.Producto,
         through='ServicioProducto',
         through_fields=('servicio', 'producto'),
     )

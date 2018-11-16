@@ -89,3 +89,13 @@ form.form-horizontal.filtrado input[type=text].form-control{
     border-width: 0.5px 0px 0.5px 0px;
     margin-bottom: 15px;
 }
+
+.agendaListado,
+.agendaListado thead,
+.agendaListado thead tr,
+.agendaListado thead tr th,
+.agendaListado tbody,
+.agendaListado tbody tr,
+.agendaListado tbody tr, {
+  border: 0px solid #FFF;
+}

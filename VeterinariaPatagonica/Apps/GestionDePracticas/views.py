@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.db import transaction
 from django.db.models import Max
+from django.core import serializers
 
 from VeterinariaPatagonica.tools import paramsToFilter
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
