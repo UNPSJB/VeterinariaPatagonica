@@ -141,6 +141,13 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
 class productoAutocomplete(autocomplete.Select2QuerySetView):
 
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        results = super().get_results(context)
+        for index, result in enumerate(context['object_list']):
+            results[index]["precio"] = result.precioPorUnidad
+        return results
+
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !
         qs = Producto.objects.all()

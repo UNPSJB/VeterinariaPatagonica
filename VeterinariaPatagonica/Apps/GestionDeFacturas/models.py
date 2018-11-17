@@ -63,10 +63,10 @@ class Factura(models.Model):
         }
     )
 
-    detalles = models.ManyToManyField(
+    productos = models.ManyToManyField(
         proModel.Producto,
         through='DetalleFactura',
-
+        through_fields=('factura', 'producto'),
     )
 
     total = models.IntegerField(
@@ -98,7 +98,7 @@ class Factura(models.Model):
             error_messages = {},
             validators = []
     )
-
+    '''
     productos = models.ForeignKey(
         praModel.Practica,
         unique=False,
@@ -108,9 +108,8 @@ class Factura(models.Model):
         error_messages={
             'blank': "El producto es obligatorio"
         }
-
-
     )
+    '''
 
 
 
@@ -152,6 +151,7 @@ class DetalleFactura(models.Model):
         unique=False,
         null=False,
         blank=False,
+        related_name="detalles_producto",
         error_messages={
             'blank': "La Factura es obligatoria"
         }
@@ -164,6 +164,7 @@ class DetalleFactura(models.Model):
         unique=False,
         null=False,
         blank=False,
+        related_name="detalles_factura",
         error_messages={
             'blank': "Debe ingresar al menos un producto"
         }
@@ -187,7 +188,8 @@ class DetalleFactura(models.Model):
     def  __unicode__(self):
         return self.subtotal
 
-
+    def precio(self):
+        return self.subtotal // self.cantidad
 
     def save(self, *args, **kwargs):
         if (not "commit" in kwargs) or (kwargs["commit"]):
