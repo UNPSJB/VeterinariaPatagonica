@@ -9,6 +9,7 @@ app_name = 'mascotas'
 urlpatterns = [
     url(r'^$', mascotas_views.mascota, name='mascota'),
     path('crear/', mascotas_views.modificar, name="mascotaCrear"),
+    path('crear/<int:cliente_id>/', mascotas_views.modificar, name="mascotaCrearConCliente"),
     path('modificar/<int:id>/', mascotas_views.modificar, name="mascotaModificar"),
     path('habilitar/<int:id>/', mascotas_views.habilitar, name='mascotaHabilitar'),
     path('deshabilitar/<int:id>/', mascotas_views.deshabilitar, name='mascotaDeshabilitar'),
