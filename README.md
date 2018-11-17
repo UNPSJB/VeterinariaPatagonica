@@ -12,7 +12,7 @@
   
 ## Alumnos
 
-  Ducid Matias.
+  Ducid Matias.\n
   Allende Lucila.
   Tomczuk Miguel.
   Lopez Fernando.
