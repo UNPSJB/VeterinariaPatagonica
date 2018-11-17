@@ -7,6 +7,7 @@
 ## Cátedra
 
   Lic. Diego Van Haaster.
+  
   Lic. Bruno Pazos.
   
   
