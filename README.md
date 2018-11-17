@@ -12,10 +12,14 @@
   
 ## Alumnos
 
-  Ducid Matias.\n
+  Ducid Matias.
+  
   Allende Lucila.
+  
   Tomczuk Miguel.
+  
   Lopez Fernando.
+  
   Torres Nelson.
   
 
