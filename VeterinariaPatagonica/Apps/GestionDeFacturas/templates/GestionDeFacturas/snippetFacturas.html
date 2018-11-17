@@ -1,9 +1,4 @@
 {{ formulario.non_field_errors }}
-<script> function actualizarDinamico(precio,qnt,total){
- valorQnt = $("#"+precio).val();
- valorPrecio = $("#"+qnt).val();
- $("#"+total).val(parseInt(valorQnt) * parseInt(valorPrecio)); }
-</script>
 
 {% for field in form %}
   <div class="form-group {% if field.errors %}has-error{% endif %}">
