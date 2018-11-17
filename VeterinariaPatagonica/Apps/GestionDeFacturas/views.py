@@ -52,7 +52,7 @@ def modificar(request, id = None):
         context['formset'] = formset
     else:
         context['formulario'] = form
-        qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()
+        qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()#si ponemos "productos" no pincha. pero el modificar no muestra los items previamente agregados.
         context["formset"] = DetalleFacturaFormset(queryset=qs)
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
@@ -78,25 +78,19 @@ def crearFacturaPractica(request, id):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
 def eliminar(request, id):
-
     try:
         factura = Factura.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-
     if request.method == 'POST':
-
         factura.delete()
-        return HttpResponseRedirect( "/GestionDeFacturas/" )
-
+        return HttpResponseRedirect( "/GestionDeFacturas/listar" )
     else:
-
         template = loader.get_template('GestionDeFacturas/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
