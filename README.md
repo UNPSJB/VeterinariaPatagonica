@@ -1,9 +1,9 @@
 # VeterinariaPatagonica
 Sistema de Veterinaria
 
-#Desarrollo de Software 2018
+# Desarrollo de Software 2018
 
-#SGI - Sistema de Gestión de Información 
+# SGI - Sistema de Gestión de Información 
 
 ## Veterinaria Patagónica
 
