@@ -1,6 +1,3 @@
-# VeterinariaPatagonica
-Sistema de Veterinaria
-
 # Desarrollo de Software 2018
 
 # SGI - Sistema de Gestión de Información 
