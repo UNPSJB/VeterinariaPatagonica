@@ -33,6 +33,7 @@ class Factura(models.Model):
 
     tipo = models.CharField(
         choices=TIPODEFACTURA,
+        default='B',
         help_text= "Tipo de Factura.",
         max_length=MAXTIPO,
         unique=False,

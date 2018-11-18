@@ -19,14 +19,3 @@ urlpatterns = [
     path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
     #path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
 ]
-
-#nuevo
-'''url(r'^$', clientes_views.clientes, name="cliente"),
-url(r'crear/$', clientes_views.crear, name="clienteCrear"),
-url(r'ver/$')'''
-
-
-#viejo
-''''# url(r'sitio_base.html$',clientes_views.base, name="base"),
-url(r'^$', clientes_views.clientes, name='cliente'),
-url(r'altacliente.html/$', clientes_views.alta, name='alta'),'''
