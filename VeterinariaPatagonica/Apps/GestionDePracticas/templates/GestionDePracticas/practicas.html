@@ -4,6 +4,7 @@
 {% block paginaEstilos %}
     {{ block.super }}
     <link href="{% static 'GestionDePracticas/css/practicas.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" >
 {% endblock %}
 
 
@@ -27,3 +28,10 @@
 
 {% endblock %}
 
+{% block paginaJavascript %}
+   {{block.super}}
+    <script src="{% static 'GestionDePracticas/js/practicas.js' %}"></script>
+    <script src="{% static 'GestionDePracticas/js/moment.min.js' %}"></script>
+    <script src="{% static 'GestionDePracticas/js/es.js' %}"></script>
+    <script src="{% static 'GestionDePracticas/js/bootstrap-datetimepicker.min.js'%}"></script>
+{% endblock paginaJavascript %}
