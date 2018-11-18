@@ -77,4 +77,19 @@
   		console.log("ADD - Total al finalizar = %d",totalTuplas);
   	}
   	$("#button-add").click(add);
+
+
 })();
+
+    $(function () {
+        var today = new Date();
+        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+        var time = today.getHours() + ":" + today.getMinutes();
+        var dateTime = date+' '+time;
+        $("#id_fecha").datetimepicker({
+            locale: 'es',
+            format: 'L',
+            maxDate: new Date()
+        });
+
+    });

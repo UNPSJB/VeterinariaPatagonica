@@ -4,6 +4,7 @@
 {% block paginaEstilos %}
   {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/GestionDeFacturas.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" >
 {% endblock paginaEstilos %}
 
 {% block paginaSeccionGeneral %}
@@ -38,6 +39,9 @@
 {% endblock footer %}
 
 {% block paginaJavascript %}
-{{block.super}}
-<script src="{% static 'js/gestion-facturas.js' %}"></script>
+    {{block.super}}
+    <script src="{% static 'js/gestion-facturas.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/es.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js'%}"></script>
 {% endblock paginaJavascript%}
