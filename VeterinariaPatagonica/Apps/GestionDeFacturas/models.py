@@ -22,13 +22,17 @@ MAX_DECIMALES_AJUSTES = 2
 
 class Factura(models.Model):
 
+
     MAPPER = {
         "tipo": "tipo__icontains",
         "cliente": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
         "fecha": "fecha_icontains"
     }
 
+    TIPODEFACTURA = (('C','Consulta'), ('Q','Quirurgica'))
+
     tipo = models.CharField(
+        choices=TIPODEFACTURA,
         help_text= "Tipo de Factura.",
         max_length=MAXTIPO,
         unique=False,
@@ -63,10 +67,10 @@ class Factura(models.Model):
         }
     )
 
-    detalles = models.ManyToManyField(
+    productos = models.ManyToManyField(
         proModel.Producto,
         through='DetalleFactura',
-
+        through_fields=('factura', 'producto'),
     )
 
     total = models.IntegerField(
@@ -99,25 +103,6 @@ class Factura(models.Model):
             validators = []
     )
 
-    productos = models.ForeignKey(
-        praModel.Practica,
-        unique=False,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        error_messages={
-            'blank': "El producto es obligatorio"
-        }
-
-
-    )
-
-
-
-    #pago = models.OneToOneField(
-    #hel_text="Pago de la Factura.",
-    #through='pagModel.Pago',
-    #)
 
     baja = models.BooleanField(default=False)
 
@@ -152,6 +137,7 @@ class DetalleFactura(models.Model):
         unique=False,
         null=False,
         blank=False,
+        related_name="detalles_producto",
         error_messages={
             'blank': "La Factura es obligatoria"
         }
@@ -164,19 +150,13 @@ class DetalleFactura(models.Model):
         unique=False,
         null=False,
         blank=False,
+        related_name="detalles_factura",
         error_messages={
             'blank': "Debe ingresar al menos un producto"
         }
     )
-    cantidad = models.IntegerField(
-        #help_text="Ingrese Cantidad",
-        unique=False,
-        null=False,
-        blank=False,
-        error_messages={
-            'blank': "La cantidad es obligatoria"
-        }
-    )
+    cantidad = models.PositiveIntegerField()
+
     subtotal = models.DecimalField(
         null= True,
         #help_text="Ingrese precio del producto",
@@ -187,7 +167,8 @@ class DetalleFactura(models.Model):
     def  __unicode__(self):
         return self.subtotal
 
-
+    def precio(self):
+        return self.subtotal // self.cantidad
 
     def save(self, *args, **kwargs):
         if (not "commit" in kwargs) or (kwargs["commit"]):

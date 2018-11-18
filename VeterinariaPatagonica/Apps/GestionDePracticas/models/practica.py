@@ -177,8 +177,9 @@ class Practica(models.Model):
         on_delete=models.CASCADE,
     )
     '''
-
     turno = models.DateTimeField(
+        auto_now=False,
+        auto_now_add=False,
         null=True,
     )
 

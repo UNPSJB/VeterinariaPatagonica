@@ -1,0 +1,23 @@
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
+
+{% block titulo %}
+Gestion de Facturas| Eliminar Factura
+{% endblock %}
+
+{% block facturaTitulo %}
+Eliminar Factura
+{% endblock %}
+
+{% block facturaSubtitulo %}
+Elimina permanentemente los datos de la factura del sistema
+{% endblock %}
+
+{% block facturaContenido %}
+<div class="facturaCuerpo">
+    <form class="form" action="{% url 'facturas:facturaEliminar' id %}" method="post">
+        {% csrf_token %}
+		<p class="facturaAvisoEliminacion"> Confirmar eliminacion: </p>
+        <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
+    </form>
+</div>
+{% endblock facturaContenido %}

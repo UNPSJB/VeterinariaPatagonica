@@ -58,11 +58,16 @@ class ServicioProductoForm(forms.ModelForm):
 
 class ServicioProductoBaseFormSet(forms.BaseModelFormSet):
     def clean(self):
+
         ret = super().clean()
+        #if not ret.lenght()>0:
+        #    raise forms.ValidationError("Debe ingresar almenos un producto.")
         productos = [form.cleaned_data for form in self if form.cleaned_data]#Obtengo los productos puestos en el formulario (No toma las tuplas vacias).
         producto_ids = [d["producto"].pk for d in productos if not d["DELETE"]]#Obtengo los Ids de los productos que no estén marcados como "eliminados"(El Checkbox "eliminar").
         if len(producto_ids) != len(set(producto_ids)):#Verifico si hay productos repetidos.
             raise forms.ValidationError("Hay productos repetidos.")
+        print(productos)
+
         return ret
 
     def save(self, commit=True):

@@ -1,90 +1,80 @@
-$(function() {
+;(function() {
 
-  let total = Number($("#id_form-TOTAL_FORMS").val());
-  let initial = $("#id_form-INITIAL_FORMS").val();
-  let min = Number($("#id_form-MIN_NUM_FORMS").val());
-  let max = Number($("#id_form-MAX_NUM_FORMS").val());
+    //Defino las variables globales que voy a utilizar.
+    let totalTuplas = Number($("#id_form-TOTAL_FORMS").val());
+    let initial = $("#id_form-INITIAL_FORMS").val();
+    let min = Number($("#id_form-MIN_NUM_FORMS").val());
+    let max = Number($("#id_form-MAX_NUM_FORMS").val());
 
-  let $buttons = $("#buttons");
-  let template = $(`#item-${total}`).html().replace(RegExp(`form-${total - 1}`,"g"), `form-ITEM`);
+    let $buttons = $("#buttons");//Tomo los botones para luego crear cada item antes de los botones.
+    let template = $(`#item-${totalTuplas}`).html().replace(RegExp(`form-${totalTuplas - 1}`,"g"), `form-ITEM`);//Selecciono lo que es un item completo (producto+cantidad+checkBox).
+    let iterador = 0;
+    for (iterador ; iterador<totalTuplas; iterador++){//Este ciclo for es para darle comportamiento a todas las tuplas creadas por el formulario.
+      let cantidad =$(`#id_form-${iterador}-cantidad`).on("input", function() { calcularTotal(); });//Obtengo la cantidad del item y le doy comportamiento (llama a la funcion calcularTotal cuando lo modifican).
+      let producto = document.querySelector(`select[name="form-${iterador}-producto"]`);//Obtengo el producto del item y le doy comportamiento (llama a la funcion calcularTotal cuando cambia).
+      producto.onchange=function(e) {
+        calcularTotal();
+      };
+      let borrar = $(`#id_form-${iterador}-DELETE`).on("change", function() { calcularTotal(); });//Obtengo el checkBox eliminar del item y le doy comportamiento(llama a la funcion calcularTotal cuando cambia).
+    }
 
-  console.log("Template: %s", template);
+    let calcularTotal = function(){//Función que calcula el precio total de la factura y lo imprime en el input( input "total").
+      let i=0;
+      console.log("OBTENER TOTAL - entrando a la función.");
+      let acumulador =0;//Esta variable acumuladora está para ir guardando los valores de las tuplas que se deben sumar. Sumando todos sus valores.
 
-  let add = function() {
-		console.log("ADD - Total al iniciar = %d",total);
-		if (total < max) {
-			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
-			total += 1;
-			field = `<div class="col-xs-7" id="item-${total}">${field}</div>`;
-			$("#id_form-TOTAL_FORMS").val(total);
-			$buttons.before(field);
-		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",total)}
-		console.log("ADD - Total al finalizar = %d",total);
-	}
-	$("#button-add").click(add);
+      for (i ; i<totalTuplas; i++){//Recalculo para todas las tuplas, para tener el valor real sin importar el cambio que se haga, sea un cambio de producto, de cantidad o que clickeen el checkBox eliminar.
+        let item = $(`#item-${i+1}`);
+        let $item = $(item);
+        let inputCantidad =$(`#id_form-${i}-cantidad`, $item[0]);
+        let inputSelect = $(`#id_form-${i}-producto`,$item[0]);
+        let inputDelete = $(`#id_form-${i}-DELETE`, $item[0]);
+        let $inputSelect = $(inputSelect);
+        let borrar = inputDelete[0];
+        let cantidad = inputCantidad[0].value;
+        let texto = $inputSelect.find(":selected").text();
 
+        if (borrar.checked == false){//Si el checkbox no está tildado, intento sumar el valor calculado de esta tupla al acumulador.
+          if (cantidad < 0){ cantidad = 0;}//Si el usuario ingresa un valor negativo, lo ignoro y tomo la cantidad como 0.
+          if ((texto != "---------") && (cantidad)) {//Si se ingresó tanto cantidad como producto, calculo el valor de la tupla.
+            let varParseo = $inputSelect.find(":selected").text();//Obtengo el texto del input para parsearlo luego, y quedarme con su "precio".
+            varParseo = varParseo.split(",");
+            varParseo = varParseo[2];
+            varParseo = varParseo.split(" ");
+            varParseo = varParseo[2];
+            let precioProducto = parseInt(varParseo);//Ya se consiguió el precio, pero está en cadena, lo transformo a entero.
+            let precioFinalTupla = precioProducto * cantidad//Calculo el precio de la tupla.
+            console.log("El precio de la tupla completa es: %s",precioFinalTupla);
+            acumulador +=precioFinalTupla;//Sumo el total hasta ahora.
+          }else{
+            console.log("No se puede calcular el precio, falta llenar algún campo.");
+          }
+        }
+      }
+      document.getElementById("id_total").value = acumulador;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
+      console.log("OBTENER TOTAL - finalizando la función.");
+    }
 
-
-
-
-});
-
-
-/*$(document).ready(function() {
-
-    $('.facturas-form-linkinfo').each(function(i,x){
-        $(x).click(function(e){
-
-            var a = $(e.target).attr('for');
-            $('#'+a).toggle();
-        });
-    });
-})*/
-
-
-
-
-//Forma de hacer el calculo de subtotal y total
-
-  function calculo(cantidad,precio,inputtext,totaltext){
-
-	// Calculo del subtotal
-	subtotal = precio*cantidad;
-	inputtext.value=subtotal;
-
-        //Calculo del total
-	total = eval(totaltext.value);
-	totaltext.value = total + subtotal;
-  }
-
-
-
-
-/*function sumaItems()
-{
-    function getVal(item)
-    {
-        if(document.getElementById(item).value != “”)
-            return parseFloat(document.getElementById(item).value);
-        else
-            return 0;
-}
-document.getElementById(‘PX_TOTAL’).value =
-getVal(‘PX_1’) + getVal(‘PX_2’);
-}*/
-
-
-
-
-/*
-	let add = function() {
-		if (total < max) {
-			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
-			field = `<div class="col-sm-8" id="item-${total}">${field}</div>`;
-			total += 1;
-			$("#id_form-TOTAL_FORMS").val(total);
-			$buttons.before(field);
-		}
-	}
-*/
-//	$("#button-add").click(add);
+//Función que agrega un nuevo item (nueva tupla de selector de producto y cantidad). Asociandoles el comportamiento
+//dinámico para calcular el total.
+  	let add = function() {
+  		console.log("ADD - Total al iniciar = %d",totalTuplas);
+  		if (totalTuplas < max) {
+        let id = totalTuplas;
+        let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${id}`);//Construyo el item  con el id que debe llevar dentro.
+  			totalTuplas += 1;
+  			field = `<div class="col-xs-7" id="item-${totalTuplas}">${field}</div>`;//Coloco el id que debe llevar el item en su cabecera.
+  			$("#id_form-TOTAL_FORMS").val(totalTuplas);
+        let $field = $(field);
+        $buttons.before($field);
+        let cantidad =$(`#id_form-${id}-cantidad`, $field).on("input", function() { calcularTotal(); });//Obtengo el input cantidad del elemento a agregar, dandole ademas dinamismo (que llame a la funcion calcularTotal al ser modificado).
+        let producto = document.querySelector(`select[name="form-${id}-producto"]`, $field);//Obtengo el input producto del elemento a agregar, dondele ademas dinamismo (que llame a la funcion calcularTotal al cambiar).
+        producto.onchange=function(e) {
+          calcularTotal();
+        };
+        let borrar = $(`#id_form-${id}-DELETE`, $field).on("change", function() { calcularTotal(); });//Obtengo el checkBox del elemento a agregar, dandole ademas dinamismo (que llame a la funcion calcularTotal al cambiar).
+  		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",totalTuplas)}
+  		console.log("ADD - Total al finalizar = %d",totalTuplas);
+  	}
+  	$("#button-add").click(add);
+})();
