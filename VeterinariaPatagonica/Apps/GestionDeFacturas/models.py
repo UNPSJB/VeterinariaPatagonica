@@ -29,7 +29,7 @@ class Factura(models.Model):
         "fecha": "fecha_icontains"
     }
 
-    TIPODEFACTURA = (('C','Consulta'), ('Q','Quirurgica'))
+    TIPODEFACTURA = (('A','A'), ('B','B'), ('C', 'C'))
 
     tipo = models.CharField(
         choices=TIPODEFACTURA,
