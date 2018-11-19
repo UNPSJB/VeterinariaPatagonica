@@ -18,6 +18,9 @@
       let borrar = $(`#id_form-${iterador}-DELETE`).on("change", function() { calcularTotal(); });//Obtengo el checkBox eliminar del item y le doy comportamiento(llama a la funcion calcularTotal cuando cambia).
     }
 
+
+    //[TODO] FEATURE: calcularTotal no debería parsear un texto. Debería traer el .json con $ .ajax y extraer el precio de allí.
+
     let calcularTotal = function(){//Función que calcula el precio total de la factura y lo imprime en el input( input "total").
       let i=0;
       console.log("OBTENER TOTAL - entrando a la función.");
