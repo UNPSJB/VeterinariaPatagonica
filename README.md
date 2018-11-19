@@ -49,9 +49,13 @@ pip install django-autocomplete-light
 
 ##### Páginas de ayuda:
 https://www.quora.com/Why-is-it-very-difficult-to-install-Python-3-5-for-Ubuntu
+
 https://pip.pypa.io/en/latest/installing/#installing-with-get-pip-py
+
 https://docs.djangoproject.com/en/2.1/topics/install/
+
 https://www.bedjango.com/blog/how-toinstall-localflavor/
+
 https://django-autocomplete-light.readthedocs.io/en/master/install.html
 
 
