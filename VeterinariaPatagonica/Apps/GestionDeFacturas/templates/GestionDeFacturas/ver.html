@@ -25,6 +25,7 @@ Datos del factura
             <p>Tipo: {{factura.tipo}}</p>
             <p>Fecha: {{factura.fecha}}</p>
             <p>Cliente: {{ factura.cliente }} </p>
+            <p>Pago: {{factura.pago}}</p>
             <!-- Tabla para mostrar los detalles de la factura. -->
             <table class="table listado">
               <thead>
@@ -77,4 +78,5 @@ Datos del factura
     <div class= "col-sm-offset-11">
       <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
     </div>
+    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Pagar </a>
 {% endblock facturaContenido %}

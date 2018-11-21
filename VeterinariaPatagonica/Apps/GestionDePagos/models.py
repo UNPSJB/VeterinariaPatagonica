@@ -1,6 +1,7 @@
 from django.db import models
 
-class Pagos (models.Model):
+
+class Pago (models.Model):
 
     fecha = models.DateField(
         help_text="Fecha de pago",
@@ -18,6 +19,7 @@ class Pagos (models.Model):
             'blank':"El importe es obligatorio"
         }
     )
+
 
     baja = models.BooleanField(default=False)
 

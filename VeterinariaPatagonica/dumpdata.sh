@@ -3,7 +3,7 @@ echo "Dumpdataeando auth"
 python3 manage.py dumpdata auth > ./fixtures/auth.json
 for f in GestionDeClientes GestionDeMascotas \
 GestionDeRubros GestionDeFormasDePagos \
-Usuarios \
+Usuarios GestionDePagos \
 GestionDeProductos GestionDeServicios \
 GestionDeTiposDeAtencion GestionDePracticas \
 GestionDeFacturas

@@ -8,6 +8,13 @@
 
     let $buttons = $("#buttons");//Tomo los botones para luego crear cada item antes de los botones.
     let template = $(`#item-${totalTuplas}`).html().replace(RegExp(`form-${totalTuplas - 1}`,"g"), `form-ITEM`);//Selecciono lo que es un item completo (producto+cantidad+checkBox).
+
+    let $buttonAddPractica = $("#button-add-practica");
+//    let $item1 = $("#item-1");
+
+    let $inputPractica = $("#id_practica");
+    $inputPractica.hide();
+
     let iterador = 0;
     for (iterador ; iterador<totalTuplas; iterador++){//Este ciclo for es para darle comportamiento a todas las tuplas creadas por el formulario.
       let cantidad =$(`#id_form-${iterador}-cantidad`).on("input", function() { calcularTotal(); });//Obtengo la cantidad del item y le doy comportamiento (llama a la funcion calcularTotal cuando lo modifican).
@@ -54,9 +61,49 @@
           }
         }
       }
+
+      //[TODO] poner una funcion de "agregar precio de practica" y llamarla para incrementar el acumulador antes de actualizarlo.
+
       document.getElementById("id_total").value = acumulador;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
       console.log("OBTENER TOTAL - finalizando la función.");
     }
+
+
+
+    let sumarPractica = function(){
+      console.log("hola desde la funcion ");
+    }
+
+    let addPractica = function(){
+    /*  let label = `<label for="" class="col-sm-1 control-label etiqueta">
+          Práctica:
+      </label>`
+      $inputPractica.before(label);
+    */$inputPractica.show();
+      $buttonAddPractica.hide();
+      $inputPractica.on("input", function() { sumarPractica() });
+/*      console.log("ADD PRACTICA - entrando a la función");
+      $buttonAddPractica.hide();
+      if (totalTuplas < max) {
+        let id = totalTuplas;
+        let field = `<div class="col-xs-7" id="item-${id}">
+        <label for="id_form-${id-1}-producto">Práctica:</label><select name="form-${id-1}-producto" data-autocomplete-light-language="es-AR" data-autocomplete-light-url="/GestionDeFacturas/productoAutocomplete" id="id_form-${id-1}-producto" data-autocomplete-light-function="select2" tabindex="-1" class="select2-hidden-accessible" aria-hidden="true">
+        <option value="" selected="">---------</option>
+
+
+        <label for="id_form-${id-1}-DELETE">Eliminar:</label><input type="checkbox" name="form-${id-1}-DELETE" id="id_form-${id-1}-DELETE"><input type="hidden" name="form-${id-1}-id" id="id_form-${id-1}-id">
+        </div>`
+  			totalTuplas += 1;
+  			$("#id_form-TOTAL_FORMS").val(totalTuplas);
+        let $field = $(field);
+
+        $item1.before($field);
+
+        console.log("Se puede agregar....");
+      } else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",totalTuplas)}
+      console.log("ADD PRACTICA - saliendo de la función");
+*/    }
+
 
 //Función que agrega un nuevo item (nueva tupla de selector de producto y cantidad). Asociandoles el comportamiento
 //dinámico para calcular el total.
@@ -69,6 +116,7 @@
   			field = `<div class="col-xs-7" id="item-${totalTuplas}">${field}</div>`;//Coloco el id que debe llevar el item en su cabecera.
   			$("#id_form-TOTAL_FORMS").val(totalTuplas);
         let $field = $(field);
+
         $buttons.before($field);
         let cantidad =$(`#id_form-${id}-cantidad`, $field).on("input", function() { calcularTotal(); });//Obtengo el input cantidad del elemento a agregar, dandole ademas dinamismo (que llame a la funcion calcularTotal al ser modificado).
         let producto = document.querySelector(`select[name="form-${id}-producto"]`, $field);//Obtengo el input producto del elemento a agregar, dondele ademas dinamismo (que llame a la funcion calcularTotal al cambiar).
@@ -79,9 +127,10 @@
   		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",totalTuplas)}
   		console.log("ADD - Total al finalizar = %d",totalTuplas);
   	}
+
+
   	$("#button-add").click(add);
-
-
+    $("#button-add-practica").click(addPractica);
 })();
 
     $(function () {

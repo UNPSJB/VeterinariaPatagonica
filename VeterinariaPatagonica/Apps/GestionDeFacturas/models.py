@@ -8,6 +8,8 @@ from django.db.models import Q
 from django.utils import timezone as djangotimezone
 
 from Apps.GestionDePracticas import models as praModel
+
+from Apps.GestionDePagos import models as pagModel
 # Create your models here.
 
 # Create your models here.
@@ -78,7 +80,7 @@ class Factura(models.Model):
         help_text="Importe total de la Factura.",
         unique=False,
         null=False,
-        default=0.0,
+        default=0,
         blank=False,
         error_messages={
             'blank': "El importe es obligatorio"
@@ -104,6 +106,19 @@ class Factura(models.Model):
             validators = []
     )
 
+    pago = models.OneToOneField(
+        pagModel.Pago,
+        on_delete = models.CASCADE,
+        null = True,
+        blank = True
+    )
+
+    practica = models.ForeignKey(
+        praModel.Practica,
+        on_delete = models.CASCADE,
+        null = True,
+        blank = True
+    )
 
     baja = models.BooleanField(default=False)
 

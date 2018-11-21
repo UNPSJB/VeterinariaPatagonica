@@ -16,8 +16,8 @@ def modificar(request, id = None):
     context = {'usuario': request.user}
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,#          Defino la forma del formset. Van a tener el checkbox eliminar, la cantidad mínima de forms en el formset
-        fields=("producto", "cantidad"), min_num=1, extra=1, can_delete=True,# es de 1 y la máxima es la determinada por django (1000),
-        formset=ServicioProductoBaseFormSet)#                                  además se define que siempre va a haber una tupla adicional (extra).
+        fields=("producto", "cantidad"), min_num=1, extra=0, can_delete=True,# es de 1 y la máxima es la determinada por django (1000),
+        formset=ServicioProductoBaseFormSet)#                                  además se define que siempre va a haber cero tuplas adicionales (extra).
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
         formset = ServicioProductoFormset(request.POST)

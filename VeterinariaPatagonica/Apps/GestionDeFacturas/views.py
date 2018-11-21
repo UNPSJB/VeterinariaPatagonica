@@ -31,7 +31,7 @@ def modificar(request, id = None):
         DetalleFactura,
         DetalleFacturaForm,
         min_num=1,
-        extra=1,
+        extra=0,
         can_delete=True,
         formset=DetalleFacturaBaseFormSet)
     if request.method == 'POST':
@@ -94,19 +94,20 @@ def eliminar(request, id):
         return HttpResponse( template.render( context, request) )
 
 def ver(request, id):
-
+#[TODO] ACA PINCHA. no arma el render.
+#    import ipdb
+#    ipdb.set_trace()
     try:
         factura = Factura.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404("No encontrado", "El factura con id={} no existe.".format(id))
-
     template = loader.get_template('GestionDeFacturas/ver.html')
-    contexto = {
+    context = {
         'factura': factura,
         'usuario': request.user
     }
 
-    return HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(context, request))
 
 
 def listar(request):

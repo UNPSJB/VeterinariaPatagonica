@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'Apps.GestionDeFacturas',
     'Apps.GestionDeMascotas',
     'Apps.GestionDeProductos',
-#    'Apps.GestionDePagos',
+    'Apps.GestionDePagos',
     'Apps.GestionDePracticas',
     'Apps.GestionDeRubros',
     'Apps.GestionDeServicios',

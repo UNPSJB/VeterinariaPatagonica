@@ -1,9 +1,9 @@
 from django import forms
-from .models import Pagos
+from .models import Pago
 
-class PagosForm(forms.ModelForm):
+class PagoForm(forms.ModelForm):
     class Meta:
-        model = Pagos
+        model = Pago
         fields = {
             'fecha',
             'importeTotal',

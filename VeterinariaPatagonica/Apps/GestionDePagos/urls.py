@@ -7,7 +7,7 @@ app_name = 'pagos'
 
 urlpatterns = [
 
-    url(r'^$', pagos_views.pagos, name="pago"),
+    url(r'^$', pagos_views.pago, name="pago"),
     path('crear/', pagos_views.modificar, name="pagoCrear"),
     path('modificar/<int:id>/', pagos_views.modificar, name="pagoModificar"),
     path('habilitar/<int:id>/', pagos_views.habilitar, name="pagoHabilitar"),

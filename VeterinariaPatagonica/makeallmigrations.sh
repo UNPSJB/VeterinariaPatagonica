@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for f in GestionDeRubros GestionDeClientes \
-GestionDeFormasDePagos GestionDeProductos \
+GestionDeFormasDePagos GestionDeProductos GestionDePagos \
 GestionDeMascotas GestionDeTiposDeAtencion \
 GestionDeFacturas Usuarios \
 GestionDeServicios GestionDePracticas
