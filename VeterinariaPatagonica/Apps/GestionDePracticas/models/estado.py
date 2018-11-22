@@ -150,6 +150,7 @@ class Creada(EstadoRealizable):
     TIPO = 1
 
     def programar(self, inicio, duracion):
+        print(self.practica.mascota)
         self.practica.turno = inicio
         self.practica.save()
         return Programada.objects.create(practica=self.practica, inicio=inicio, duracion=duracion)

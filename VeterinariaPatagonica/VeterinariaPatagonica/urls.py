@@ -22,7 +22,7 @@ urlpatterns = [
     path(r'GestionDeRubros/', include('Apps.GestionDeRubros.urls', namespace= 'rubros')),
     path(r'GestionDeFormasDePagos/', include('Apps.GestionDeFormasDePagos.urls', namespace='formasDePagos')),
     path(r'GestionDeFacturas/', include('Apps.GestionDeFacturas.urls', namespace='facturas')),
-
+    path(r'GestionDePagos/',include('Apps.GestionDePagos.urls', namespace='pagos')),
     path("", include('Apps.GestionDePracticas.urls', namespace="practicas")),
 
     #path("", include ('Apps.GestionDePagos.urls', namespace="pagos")),

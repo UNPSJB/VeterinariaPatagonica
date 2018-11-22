@@ -31,7 +31,7 @@ def modificar(request, id = None):
         DetalleFactura,
         DetalleFacturaForm,
         min_num=1,
-        extra=1,
+        extra=0,
         can_delete=True,
         formset=DetalleFacturaBaseFormSet)
     if request.method == 'POST':
@@ -52,7 +52,7 @@ def modificar(request, id = None):
         context['formset'] = formset
     else:
         context['formulario'] = form
-        qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()
+        qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()#si ponemos "productos" no pincha. pero el modificar no muestra los items previamente agregados.
         context["formset"] = DetalleFacturaFormset(queryset=qs)
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
@@ -75,44 +75,21 @@ def crearFacturaPractica(request, id):
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
-def eliminar(request, id):
-
-    try:
-        factura = Factura.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    if request.method == 'POST':
-
-        factura.delete()
-        return HttpResponseRedirect( "/GestionDeFacturas/" )
-
-    else:
-
-        template = loader.get_template('GestionDeFacturas/eliminar.html')
-        context = {
-            'usuario' : request.user,
-            'id' : id
-        }
-
-        return HttpResponse( template.render( context, request) )
-
 def ver(request, id):
-
+#[TODO] ACA PINCHA. no arma el render.
+#    import ipdb
+#    ipdb.set_trace()
     try:
         factura = Factura.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404("No encontrado", "El factura con id={} no existe.".format(id))
-
     template = loader.get_template('GestionDeFacturas/ver.html')
-    contexto = {
+    context = {
         'factura': factura,
         'usuario': request.user
     }
 
-    return HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(context, request))
 
 
 def listar(request):
@@ -125,6 +102,15 @@ def listar(request):
     }
 
     return  HttpResponse(template.render(contexto,request))
+
+def verPractica(request, id):
+    factura = Factura.objects.get(id=id) if id is not None else None
+    practica = [{
+    "practica" : factura.practica,
+    "precio" : factura.practica.precio
+    #[TODO] agregar senia.
+    }]
+    return JsonResponse({'practica' : practica})
 
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
@@ -140,6 +126,13 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 class productoAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_results(self, context):
+        """Return data for the 'results' key of the response."""
+        results = super().get_results(context)
+        for index, result in enumerate(context['object_list']):
+            results[index]["precio"] = result.precioPorUnidad
+        return results
 
     def get_queryset(self):
         # Don't forget to filter out results depending on the visitor !

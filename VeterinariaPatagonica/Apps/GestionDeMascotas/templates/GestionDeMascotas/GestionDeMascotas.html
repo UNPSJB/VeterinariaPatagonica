@@ -38,6 +38,7 @@
 {% block paginaJavascript %}
     {{block.super}}
     <script src="{% static 'js/GestionDeMascotas.js' %}"></script>
-    <script src="js/moment.min.js"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/es.js' %}"></script>
     <script src="{% static 'js/bootstrap-datetimepicker.min.js'%}"></script>
 {% endblock paginaJavascript %}

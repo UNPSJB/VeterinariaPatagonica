@@ -68,7 +68,7 @@ Facturas Emitidas
                                 <td> <p>{{ factura.cliente }}</p></td>
                                 <td> <p>{{ factura.fecha }}</p></td>
                                 <td> <p align="justify">
-                                        <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default">
+                                        <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta factura.">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
                                         </a>
                                 </p> </td>

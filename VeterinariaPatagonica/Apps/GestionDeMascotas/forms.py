@@ -53,8 +53,7 @@ def MascotaFormFactory(mascota=None, cliente=None):
                 }
             }
             widgets = {
-                'nombre' : forms.TextInput(attrs={'value': 'Galopito'}),
-
+                'nombre' : forms.TextInput(),
                 'cliente': widget_cliente,
                 #'cliente': forms.Select(attrs={'class': 'form-control'}),
                 'fechaNacimiento': forms.DateInput(),

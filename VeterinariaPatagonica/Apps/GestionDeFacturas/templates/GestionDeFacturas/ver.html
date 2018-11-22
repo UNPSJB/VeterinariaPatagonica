@@ -17,17 +17,56 @@ Datos del factura
 
 {% block facturaContenido %}
 
-
     <div class="facturaCuerpo">
 
         {% if factura %}
-        <div class="well">
+        <div class=" col-md-12 well">
             <p>Identificador: {{ factura.id }}</p>
             <p>Tipo: {{factura.tipo}}</p>
             <p>Fecha: {{factura.fecha}}</p>
             <p>Cliente: {{ factura.cliente }} </p>
-            <p>Total: {{ factura.total}}</p>
-
+            <p>Pago: {{factura.pago}}</p>
+            <!-- Tabla para mostrar los detalles de la factura. -->
+            <table class="table listado">
+              <thead>
+                <th>Productos:</th>
+              </thead>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio por Unidad</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            {% for detalle in factura.detalles_producto.all %}
+              <div class="col-xs-11">
+                <td><p>{{detalle.producto.nombre}}</p>
+                </td>
+              </div>
+              <div class="col-xs-1">
+                <td><p align="justify"><p>{{detalle.precio}}</p>
+                  </p>
+                </td>
+              </div>
+              <div class="col-xs-1">
+                <td><p align="justify"><p>{{detalle.cantidad}}</p>
+                  </p>
+                </td>
+              </div>
+              <div class="col-xs-1">
+                <td><p align="justify"><p>{{detalle.subtotal}}</p>
+                  </p>
+                </td>
+              </div>
+            </tr>
+            {% endfor %}
+          <thead>
+            <tr>
+              <th>Total: {{ factura.total}}</th>
+            </tr>
+          </thead>
+        </table>
         </div>
         {% else %}
 
@@ -36,5 +75,8 @@ Datos del factura
         {% endif %}
 
     </div>
-
+    <div class= "col-sm-offset-11">
+      <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
+    </div>
+    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Pagar </a>
 {% endblock facturaContenido %}

@@ -6,13 +6,16 @@ def FacturaFormFactory(practica):
     class FacturaForm(forms.ModelForm):
         class Meta:
             model = Factura
-            fields = {'tipo', 'cliente', 'fecha', 'total'}
+            fields = {'tipo', 'cliente', 'fecha','descuento','recargo', 'practica', 'total'}
 
             labels = {
-                'tipo': 'Tipo',
-                'cliente': 'Cliente',
-                'fecha': 'Fecha',
-                'total': 'Total'
+                'tipo': 'Tipo:',
+                'cliente': 'Cliente:',
+                'fecha': 'Fecha:',
+                'descuento' : 'Descuento:',
+                'recargo' : 'Recargo:',
+                'practica': 'Práctica:',
+                'total': 'Total:',
             }
 
             error_messages = {
@@ -25,7 +28,6 @@ def FacturaFormFactory(practica):
 
                 'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
                 'total': Factura.precioTotal(Factura),
-
             }
 
             print(Factura.precioTotal(Factura)),
@@ -49,6 +51,9 @@ def FacturaFormFactory(practica):
             'tipo',
             'cliente',
             'fecha',
+            'descuento',
+            'recargo',
+            'practica',
             'total',
         ]
     return FacturaForm
@@ -60,14 +65,20 @@ class FacturaForm(forms.ModelForm):
             'tipo',
             'cliente',
             'fecha',
+            'descuento',
+            'recargo',
+            'practica',
             'total'
         ]
 
         labels = {
-            'tipo':'Tipo',
-            'cliente' : 'Cliente',
-            'fecha' : 'Fecha',
-            'total': "Total"
+            'tipo':'Tipo:',
+            'cliente' : 'Cliente:',
+            'fecha' : 'Fecha:',
+            'descuento' : 'Descuento:',
+            'recargo' : 'Recargo:',
+            'practica': 'Práctica:',
+            'total': 'Total:'
         }
 
         error_messages = {
