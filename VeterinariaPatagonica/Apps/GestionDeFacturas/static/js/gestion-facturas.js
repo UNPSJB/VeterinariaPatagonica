@@ -13,7 +13,8 @@
 //    let $item1 = $("#item-1");
 
     let $inputPractica = $("#id_practica");
-    $inputPractica.hide();
+    let divPractica = $inputPractica.parent().parent();
+    divPractica.hide();//Oculto el input de la práctica.
 
     let iterador = 0;
     for (iterador ; iterador<totalTuplas; iterador++){//Este ciclo for es para darle comportamiento a todas las tuplas creadas por el formulario.
@@ -71,38 +72,22 @@
 
 
     let sumarPractica = function(){
-      console.log("hola desde la funcion ");
+      let elementoSeleccionado = $inputPractica.find(":selected");
+      $.ajax({
+        url: "/verPractica",
+        data: {practica: `${$inputPractica.ajaxStart()}`},
+        success: function(data){
+          console.log("Llegué acá");
+        }
+      })
+      console.log(elementoSeleccionado);
     }
 
     let addPractica = function(){
-    /*  let label = `<label for="" class="col-sm-1 control-label etiqueta">
-          Práctica:
-      </label>`
-      $inputPractica.before(label);
-    */$inputPractica.show();
+      divPractica.show();
       $buttonAddPractica.hide();
-      $inputPractica.on("input", function() { sumarPractica() });
-/*      console.log("ADD PRACTICA - entrando a la función");
-      $buttonAddPractica.hide();
-      if (totalTuplas < max) {
-        let id = totalTuplas;
-        let field = `<div class="col-xs-7" id="item-${id}">
-        <label for="id_form-${id-1}-producto">Práctica:</label><select name="form-${id-1}-producto" data-autocomplete-light-language="es-AR" data-autocomplete-light-url="/GestionDeFacturas/productoAutocomplete" id="id_form-${id-1}-producto" data-autocomplete-light-function="select2" tabindex="-1" class="select2-hidden-accessible" aria-hidden="true">
-        <option value="" selected="">---------</option>
-
-
-        <label for="id_form-${id-1}-DELETE">Eliminar:</label><input type="checkbox" name="form-${id-1}-DELETE" id="id_form-${id-1}-DELETE"><input type="hidden" name="form-${id-1}-id" id="id_form-${id-1}-id">
-        </div>`
-  			totalTuplas += 1;
-  			$("#id_form-TOTAL_FORMS").val(totalTuplas);
-        let $field = $(field);
-
-        $item1.before($field);
-
-        console.log("Se puede agregar....");
-      } else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",totalTuplas)}
-      console.log("ADD PRACTICA - saliendo de la función");
-*/    }
+      $inputPractica.on("change", function() { sumarPractica() });
+    }
 
 
 //Función que agrega un nuevo item (nueva tupla de selector de producto y cantidad). Asociandoles el comportamiento

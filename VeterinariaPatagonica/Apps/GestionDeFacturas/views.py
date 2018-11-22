@@ -75,24 +75,6 @@ def crearFacturaPractica(request, id):
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
-def eliminar(request, id):
-    try:
-        factura = Factura.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-    if request.method == 'POST':
-        factura.delete()
-        return HttpResponseRedirect( "/GestionDeFacturas/listar" )
-    else:
-        template = loader.get_template('GestionDeFacturas/eliminar.html')
-        context = {
-            'usuario' : request.user,
-            'id' : id
-        }
-        return HttpResponse( template.render( context, request) )
-
 def ver(request, id):
 #[TODO] ACA PINCHA. no arma el render.
 #    import ipdb
@@ -120,6 +102,15 @@ def listar(request):
     }
 
     return  HttpResponse(template.render(contexto,request))
+
+def verPractica(request, id):
+    factura = Factura.objects.get(id=id) if id is not None else None
+    practica = [{
+    "practica" : factura.practica,
+    "precio" : factura.practica.precio
+    #[TODO] agregar senia.
+    }]
+    return JsonResponse({'practica' : practica})
 
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
