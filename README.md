@@ -1,8 +1,6 @@
 # Desarrollo de Software 2018
 
-# SGI - Sistema de Gestión de Información 
-
-## Veterinaria Patagónica
+# Sistema de Información de la Veterinaria Patagónica
 
 ## Cátedra
 
