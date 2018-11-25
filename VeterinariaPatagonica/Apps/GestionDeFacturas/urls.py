@@ -13,6 +13,7 @@ urlpatterns = [
     path('modificar/<int:id>/', facturas_views.modificar, name="facturaModificar"),
     path('eliminar/<int:id>/', facturas_views.eliminar, name="facturaEliminar"),
     path('ver/<int:id>/', facturas_views.ver, name="facturaVer"),
+    #path('ver/<int:irAPagar>/', facturas_views.ver, name="facturaVer"),
     path('clienteAutocomplete/', facturas_views.clienteAutocomplete.as_view(), name='facturaClienteAutocomplete'),
     path('facturarPractica/<int:id>', facturas_views.crearFacturaPractica, name='facturaPractica'),
     path('listar/', facturas_views.listar, name="facturaListar"),

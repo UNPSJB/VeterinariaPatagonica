@@ -18,3 +18,4 @@ urlpatterns = [
     path('verDeshabilitados/', pagos_views.verDeshabilitados, name="pagoVerDeshabilitados"),
 
 ]
+

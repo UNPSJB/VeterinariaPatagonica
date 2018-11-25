@@ -1,13 +1,21 @@
 from django import forms
 from .models import Pago
 
+#def PagoFormFactory(pago=None, factura=None):
+#return PagoForm
+
 class PagoForm(forms.ModelForm):
+
     class Meta:
         model = Pago
         fields = {
             'fecha',
             'importeTotal',
         }
+
+        '''widget_importe = forms.TextInput(),
+        if factura:
+            widget_importe = forms.TextInput(attrs={'value': str(factura), 'disabled': 'disabled'})'''
 
         labels = {
             'fecha':'Fecha',

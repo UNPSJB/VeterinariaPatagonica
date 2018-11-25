@@ -76,7 +76,12 @@ Datos del factura
 
     </div>
     <div class= "col-sm-offset-11">
-      <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
+      <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."> </span></a>
     </div>
-    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Pagar </a>
+
+
+    <div>
+        <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Pagar </a>
+    </div>
+
 {% endblock facturaContenido %}
