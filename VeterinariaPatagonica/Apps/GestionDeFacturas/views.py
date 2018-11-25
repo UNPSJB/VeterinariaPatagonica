@@ -76,6 +76,7 @@ def crearFacturaPractica(request, id):
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
 def eliminar(request, id):
@@ -129,6 +130,15 @@ def listar(request):
     }
 
     return  HttpResponse(template.render(contexto, request))
+
+def verPractica(request, id):
+    factura = Factura.objects.get(id=id) if id is not None else None
+    practica = [{
+    "practica" : factura.practica,
+    "precio" : factura.practica.precio
+    #[TODO] agregar senia.
+    }]
+    return JsonResponse({'practica' : practica})
 
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
