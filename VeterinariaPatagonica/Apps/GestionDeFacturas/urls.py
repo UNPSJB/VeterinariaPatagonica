@@ -16,6 +16,5 @@ urlpatterns = [
     path('facturarPractica/<int:id>', facturas_views.crearFacturaPractica, name='facturaPractica'),
     path('listar/', facturas_views.listar, name="facturaListar"),
     path('productoAutocomplete/', facturas_views.productoAutocomplete.as_view(), name='facturaProductoAutocomplete'),
-
     path('verPractica/<int:id>', facturas_views.verPractica, name="verPractica"),
 ]

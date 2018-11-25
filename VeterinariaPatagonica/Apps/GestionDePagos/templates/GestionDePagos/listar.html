@@ -1,35 +1,28 @@
 {% extends 'GestionDePagos/GestionDePagos.html' %}
 
 {% block titulo %}
-Gestion de Pagos | Ver Habilitados
+Gestion de Pagos | Ver Pagos
 {% endblock %}
 
 {% block pagosTitulo %}
-Pagos Habilitados
+Pagos
 {% endblock %}
 
 {% block pagosSubtitulo %}
 Actualmente disponibles
 {% endblock %}
 
-{% block secciones %}
-{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
-{% endblock %}
-
 {% block pagosContenido %}
 
 <!-- Listado -->
 <div class="pagosCuerpo" >
-
-    <p> Los siguientes pagos estan habilitados.  </p>
-
     {% if pagos %}
             <div class="table-responsive" id="tabla">
                 <table class="table pagosListado">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-nombre"> Pagos </th>
-                            <th id="deshabilitados-acciones"> Acciones </th>
+                            <th id="listar-nombre"> Pagos </th>
+                            <th id="listar-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -39,12 +32,6 @@ Actualmente disponibles
                                 <td> <p align="justify">
                                         <a  href="{% url 'pagos:pagoVer' pago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
-                                        </a>
-                                        <a href="{% url 'pagos:pagoModificar' pago.id %}" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-edit"> </i>
-                                        </a>
-                                        <a href="{% url 'pagos:pagoDeshabilitar' pago.id%}" class="btn btn-xs btn-default">
-                                            <i class="glyphicon glyphicon-minus"> </i>
                                         </a>
                                 </p> </td>
                             </tr>

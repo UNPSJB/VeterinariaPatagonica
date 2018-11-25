@@ -7,6 +7,8 @@ from .models import Pago
 #from .forms import PagoFormFactory
 from .forms import PagoForm
 from Apps.GestionDeFacturas.models import Factura
+from VeterinariaPatagonica import tools
+
 
 
 def pago(request):
@@ -41,32 +43,9 @@ def modificar(request, id = None): #, factura_id=None
         factura = Factura.objects.get(pk=factura_id)
     PagoForm = PagoFormFactory(pago, factura)'''
 
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDePagos.delete_Pago', raise_exception=True)
-def habilitar(request, id):
-    try:
-        pago = Pago.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
 
-    pago.baja = False
-    pago.save()
 
-    return HttpResponseRedirect( "/GestionDePagos/verHabilitados/" )
 
-@login_required(redirect_field_name='proxima')
-@permission_required('GestionDePagos.delete_Pago', raise_exception=True)
-def deshabilitar(request, id):
-
-    try:
-        pago = Pago.objects.get(id=id)
-    except ObjectDoesNotExist:
-        raise Http404()
-
-    pago.baja = True
-    pago.save()
-
-    return HttpResponseRedirect( "/GestionDePagos/verDeshabilitados/" )
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDePagos.delete_Pago', raise_exception=True)
@@ -107,22 +86,12 @@ def ver(request, id):
 
     return HttpResponse(template.render(contexto, request))
 
-def verHabilitados(request):
-    pago = Pago.objects.filter(baja=False)
-    template = loader.get_template('GestionDePagos/verHabilitados.html')
+def listar(request):
+    pagos = Pago.objects.all()
+    pagos = pagos.filter(tools.paramsToFilter(request.GET, Pago))
+    template = loader.get_template('GestionDePagos/listar.html')
     contexto = {
-        'pago' : pago,
+        'pagos' : pagos,
         'usuario' : request.user,
     }
-
-    return  HttpResponse(template.render(contexto,request))
-
-def verDeshabilitados(request):
-    pago = Pago.objects.filter(baja=True)
-    template = loader.get_template('GestionDePagos/verDeshabilitados.html')
-    contexto = {
-        'pago' : pago,
-        'usuario' : request.user,
-    }
-
-    return  HttpResponse(template.render(contexto,request))
+    return  HttpResponse(template.render(contexto, request))
