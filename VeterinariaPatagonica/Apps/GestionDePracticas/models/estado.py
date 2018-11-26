@@ -1,23 +1,25 @@
-from enum import Enum, unique
+from datetime import timedelta, date
 
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator, DecimalValidator
 from django.db import transaction
+from django.utils import timezone
 
 from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeProductos.models import Producto
-from .practica import Practica
-
-from django.core.exceptions import ValidationError
+from .practica import *
 
 
-__all__ = [ "Estado", "Creada", "Presupuestada", "Programada", "Realizada", "RealizadaServicio", "RealizadaProducto", "Cancelada", "Facturada" ]
+
+__all__ = [
+    "Estado", "Creada", "Presupuestada", "Programada",
+    "Realizada", "RealizadaServicio", "RealizadaProducto",
+    "Cancelada", "Facturada"
+]
 
 
-#[TODO]: Averiguar si hay alguna manera de personalizar el manager de objetos relacionados
-# ("objeto.relacionado_set"), estos metodos estaban pensados para ese manager, creia que
-# se podira con la opcion "Meta.base_manager_name" pero no funciono
+
 class EstadoManager(models.Manager):
 
     def inicializar(self):
@@ -61,23 +63,35 @@ class Estado(models.Model):
 
     objects = EstadoManager()
 
-    marca = models.DateTimeField(auto_now=True)
+    marca = models.DateTimeField(auto_now_add=True)
 
     practica = models.ForeignKey(
         Practica,
         related_name="estados",
+        related_query_name="estado",
         on_delete=models.CASCADE
     )
 
     tipo = models.PositiveSmallIntegerField(choices=TIPOS)
 
-    #[TODO]: Cuando este decidida la clase de usuario reemplazar AUTH_USER_MODEL
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        related_name="practica_estados",
+        related_query_name="practica_estado",
         null=True,
         blank=True,
         on_delete=models.CASCADE
     )
+
+    @classmethod
+    def acciones(cls):
+        return set()
+
+    def accionesPosibles(self):
+        if not self.esUltimo():
+            return set()
+        permitidas = self.practica.acciones()
+        return self.acciones().intersection(permitidas)
 
     def save(self, *args, **kwargs):
         if self.pk is None:
@@ -87,11 +101,26 @@ class Estado(models.Model):
     def related(self):
         return self.__class__ != Estado and self or getattr(self, self.get_tipo_display())
 
+    def esRealizada(self):
+        return self.tipo == Realizada.TIPO or self.tipo == Facturada.TIPO
+
+    def esUltimo(self):
+        return (self.practica.estado().id == self.related().id)
+
+    def siguienteEstado(self):
+        if self.esUltimo():
+            return None
+        siguiente = Estado.objects.filter(practica=self.practica, id__gt=self.pk).first()
+        return siguiente.related()
+
+    def anteriorEstado(self):
+        anterior = Estado.objects.filter(practica=self.practica, id__lt=self.pk).last()
+        return anterior.related()
+
     def __str__(self):
         return self.__class__.__name__
 
-    def esRealizada(self):
-        return self.tipo == Realizada.TIPO or self.tipo == Facturada.TIPO
+
 
 class EstadoCancelable(Estado):
 
@@ -112,51 +141,82 @@ class EstadoRealizable(Estado):
     class Meta:
         abstract = True
 
-    def realizar(self, inicio, duracion, condicionPreviaMascota="", resultados=""):
+    def realizar(self, inicio, finalizacion, condicionPreviaMascota="", resultados=""):
 
-        realizada = Realizada.objects.create(
-            practica=self.practica,
-            inicio=inicio,
-            duracion=duracion,
-            condicionPreviaMascota=condicionPreviaMascota,
-            resultados=resultados,
-        )
+        servicios = [
+            RealizadaServicio(
+                servicio=detalle.servicio,
+                cantidad=detalle.cantidad,
+                precio=detalle.precio,
+            ) for detalle in self.practica.practica_servicios.all()
+        ]
+
+        productos = [
+            RealizadaProducto(
+                producto=detalle.producto,
+                cantidad=detalle.cantidad,
+                precio=detalle.precio,
+            ) for detalle in self.practica.practica_productos.all()
+        ]
 
         with transaction.atomic():
-
-            detallesServicios = self.practica.practica_servicios.all()
-
-            for detalle in detallesServicios:
-                realizada.realizada_servicios.create(
-                    servicio=detalle.servicio,
-                    cantidad=detalle.cantidad,
-                    precio=detalle.precio,
-                )
-
-            detallesProductos = self.practica.practica_productos.all()
-
-            for detalle in detallesProductos:
-                realizada.realizada_productos.create(
-                    producto=detalle.producto,
-                    cantidad=detalle.cantidad,
-                    precio=detalle.precio,
-                )
+            realizada = Realizada.objects.create(
+                practica=self.practica,
+                inicio=inicio,
+                finalizacion=finalizacion,
+                condicionPreviaMascota=condicionPreviaMascota,
+                resultados=resultados,
+            )
+            realizada.realizada_servicios.set(servicios, bulk=False)
+            realizada.realizada_productos.set(productos, bulk=False)
 
         return realizada
 
 
 
-class Creada(EstadoRealizable):
+class EstadoProgramable(Estado):
+
+    class Meta:
+        abstract = True
+
+    def programar(self, inicio, finalizacion, adelanto):
+
+        if self.practica.adelanto is not None:
+            raise Exception("La practica ya tiene adelanto registrado")
+
+        with transaction.atomic():
+            programada = Programada.objects.create(
+                practica=self.practica,
+                inicio=inicio,
+                finalizacion=finalizacion,
+            )
+            adelanto = Adelanto.objects.create(
+                turno=programada,
+                importe=adelanto
+            )
+            self.practica.adelanto = adelanto
+            self.practica.save(force_update=True)
+
+        return programada
+
+
+
+class Creada(EstadoRealizable, EstadoCancelable, EstadoProgramable):
     TIPO = 1
 
-    def programar(self, inicio, duracion):
-        print(self.practica.mascota)
-        self.practica.turno = inicio
-        self.practica.save()
-        return Programada.objects.create(practica=self.practica, inicio=inicio, duracion=duracion)
+    @classmethod
+    def acciones(cls):
+        return set([
+            Practica.Acciones.presupuestar,
+            Practica.Acciones.programar,
+            Practica.Acciones.realizar,
+            Practica.Acciones.cancelar,
+        ])
+
+    def accionesPosibles(self):
+        return set([Practica.Acciones.cancelar])
 
     def presupuestar(self, diasMantenimiento):
-
         return Presupuestada.objects.create(
             practica = self.practica,
             diasMantenimiento=diasMantenimiento,
@@ -164,109 +224,217 @@ class Creada(EstadoRealizable):
 
 
 
+class ProgramadaManager(EstadoManager):
+    def enHorario(self, inicio, finalizacion):
+
+        total = models.Q(
+            inicio__lte=inicio,
+            finalizacion__gte=finalizacion
+        )
+
+        parcial = models.Q(
+            inicio__gt=inicio,
+            inicio__lt=finalizacion
+        ) | models.Q(
+            finalizacion__gt=inicio,
+            finalizacion__lt=finalizacion
+        )
+
+        return self.annotate(
+            max_id=models.Max('practica__estado__id')
+        ).filter(
+            total | parcial,
+            id=models.F('max_id'),
+        )
+
 class Programada(EstadoCancelable, EstadoRealizable):
     TIPO = 2
+    objects = ProgramadaManager()
 
-    inicio = models.DateTimeField(
-        blank=False
-    )
+    @classmethod
+    def acciones(cls):
+        return set([
+            Practica.Acciones.reprogramar,
+            Practica.Acciones.realizar,
+            Practica.Acciones.cancelar,
+        ])
 
-    duracion = models.PositiveSmallIntegerField(
-        blank=False
-    )
+    inicio = models.DateTimeField()
+
+    finalizacion = models.DateTimeField()
 
     motivoReprogramacion = models.CharField(
         verbose_name="Motivo de reprogramacion",
         max_length=Practica.MAX_MOTIVO,
         blank=True,
-        null=False,
-        default=""
     )
 
-    def reprogramar(self, inicio, duracion, motivo):
-        self.practica.turno = inicio
-        self.practica.save()
+    def reprogramar(self, inicio, finalizacion, motivoReprogramacion):
+
         return Programada.objects.create(
             practica=self.practica,
             inicio=inicio,
-            duracion=duracion,
-            motivoReprogramacion=motivo
+            finalizacion=finalizacion,
+            motivoReprogramacion=motivoReprogramacion
         )
 
-    def pagar(self, monto):
-        pass
+    @property
+    def duracion(self):
+        return int((self.finalizacion-self.inicio).total_seconds() / 60)
+
+    def esReprogramacion(self):
+        return isinstance(self.anteriorEstado(), Programada)
+
+    def fueRealizado(self):
+        siguienteEstado = self.siguienteEstado()
+        if siguienteEstado is None:
+            return False
+        if isinstance(siguienteEstado.related(), Realizada):
+            return True
+        return False
+
+    def fueCancelado(self):
+        siguiente = self.siguienteEstado()
+        if siguiente is None:
+            return False
+        return isinstance(siguiente, Cancelada)
+
+    def fueReprogramado(self):
+        siguiente = self.siguienteEstado()
+        if siguiente is None:
+            return False
+        return isinstance(siguiente, Programada)
+
+    def tiempoRestante(self):
+        return ((self.inicio - timezone.now()).total_seconds() / 60)
+
+    def turnosMismoHorario(self):
+        return Programada.objects.enHorario(
+            self.inicio,
+            self.finalizacion,
+        ).exclude(id=self.id)
 
 
 
-class Presupuestada(EstadoRealizable, EstadoCancelable):
+class Presupuestada(EstadoCancelable, EstadoRealizable, EstadoProgramable):
     TIPO = 3
 
-    #porcentajeDescuento = models.PositiveSmallIntegerField()
-    #[TODO]fechaMantenimientoOferta = fechaActual+diasMantenimiento:
+    @classmethod
+    def acciones(cls):
+        return set([
+            Practica.Acciones.programar,
+            Practica.Acciones.cancelar,
+            Practica.Acciones.realizar,
+        ])
 
-    # Seria necesario agregar un numero identificatorio a turnos/presupuestos/practicas?
-    # No decidimos entre dejar el id de django visible para los usuarios o agregar otro field
+    diasMantenimiento = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1,"Los dias de mantenimiento del presupuesto deben ser mas que cero")
+        ],
+    )
 
-    diasMantenimiento = models.PositiveSmallIntegerField()
+    def vencimiento(self):
+        return self.marca.date() + timedelta(days=self.diasMantenimiento)
 
-    def seniar(self, practica, turno, monto):
-        return Programada.objects.create(practica=practica, turno=turno)
+    def diasVigencia(self):
+        if not self.esUltimo():
+            return 0
+        dias = (self.vencimiento() - date.today()).days
+        return int( max(dias,0) )
 
-    def confirmar(self, practica, turno):
-        #[TODO]if fechaActual < fechaMantenimientoOferta: return Programada(self, practica, turno)
-        if practica.tipoDeAtencion.inicioFranjaHoraria <= turno <= practica.tipoDeAtencion.finFranjaHoraria:
+    def fueConfirmado(self):
+        siguiente = self.siguienteEstado()
+        if siguiente is None:
+            return False
+        return isinstance(siguiente, (Programada, Realizada))
 
-            return Programada.objects.create(practica=practica, turno=turno)
-        else:
-            raise ValidationError("Turno no válido según el tipo de atención elegída")
+    def fueCancelado(self):
+        siguiente = self.siguienteEstado()
+        if siguiente is None:
+            return False
+        return isinstance(siguiente, Cancelada)
+
+    def haExpirado(self):
+        return not (
+            self.fueConfirmado() or
+            self.fueCancelado() or
+            (self.diasVigencia() > 0)
+        )
+
+    def estaCompleto(self):
+        if self.practica.cliente is None or self.practica.mascota is None:
+            return False
+        return True
+
+    def accionesPosibles(self):
+        if (self.diasVigencia() == 0):
+            return set([Practica.Acciones.cancelar])
+        return super().accionesPosibles()
 
 
-    def programar(self, inicio, duracion):
-
-        return Programada.objects.create(practica=self.practica, inicio=inicio, duracion=duracion)
 
 
-
-class Realizada(EstadoCancelable):
+class Realizada(Estado):
     TIPO = 5
 
+    @classmethod
+    def acciones(cls):
+        return set([
+            Practica.Acciones.facturar,
+        ])
+
     inicio = models.DateTimeField()
-    duracion = models.PositiveSmallIntegerField()
-    condicionPreviaMascota = models.TextField(blank=True, null=False, default="")
-    resultados = models.TextField(blank=True, null=False, default="")
+
+    finalizacion = models.DateTimeField()
+
+    condicionPreviaMascota = models.TextField(
+        blank=True
+    )
+
+    resultados = models.TextField(
+        blank=True
+    )
+
     servicios = models.ManyToManyField(
         Servicio,
         through='RealizadaServicio',
         through_fields=('realizada','servicio'),
-        related_name='realizadas'
+        related_name='realizadas',
+        related_query_name='practica_realizada',
     )
+
     productos = models.ManyToManyField(
         Producto,
         through='RealizadaProducto',
         through_fields=('realizada','producto'),
-        related_name='realizadas'
+        related_name='realizadas',
+        related_query_name='practica_realizada',
     )
-
-    def agregarServicio(self, servicio=None, cantidad=None, precio=None):
-
-        return RealizadaServicio.objects.create(
-            realizada=self,
-            servicio=servicio,
-            cantidad=cantidad,
-            precio=precio,
-        )
-
-    def agregarProducto(self, producto=None, cantidad=None, precio=None):
-
-        return RealizadaProducto.objects.create(
-            realizada=self,
-            producto=producto,
-            cantidad=cantidad,
-            precio=precio,
-        )
 
     def pagar(self, monto):
         pass
+
+    def facturar(self):
+        return Facturada.objects.create(
+            practica=self.practica
+        )
+
+    @property
+    def duracion(self):
+        return int((self.finalizacion-self.inicio).total_seconds() / 60)
+
+    def totalServicios(self):
+
+        servicios = [ detalle for detalle in self.realizada_servicios.all() ]
+        return sum([ detalle.precioTotal() for detalle in servicios ])
+
+    def totalProductos(self):
+
+        productos = [ detalle for detalle in self.realizada_productos.all() ]
+        return sum([ detalle.precioTotal() for detalle in productos ])
+
+    def total(self):
+        return self.totalProductos() + self.totalServicios()
 
 
 
@@ -278,32 +446,36 @@ class RealizadaServicio(models.Model):
 
     realizada = models.ForeignKey(
         Realizada,
-        null=False,
-        blank=False,
         on_delete=models.CASCADE,
         related_name='realizada_servicios'
     )
 
     servicio = models.ForeignKey(
         Servicio,
-        null=False,
-        blank=False,
         on_delete=models.CASCADE,
         related_name='servicio_realizadas'
     )
 
-    cantidad = models.PositiveSmallIntegerField()
+    cantidad = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1,"La cantidad debe ser mayor que cero")
+        ],
+    )
 
     precio = models.DecimalField(
         max_digits=Practica.MAX_DIGITOS,
         decimal_places=Practica.MAX_DECIMALES,
         validators = [
-            MinValueValidator(Practica.MIN_PRECIO, message=("El precio no puede ser menor a {:.%df}" % (Practica.MAX_DECIMALES)).format(Practica.MIN_PRECIO)),
-            DecimalValidator(max_digits=Practica.MAX_DIGITOS, decimal_places=Practica.MAX_DECIMALES)
+            MinValueValidator(
+                Practica.MIN_PRECIO,
+                message=("El precio no puede ser menor a {:.%df}" % (Practica.MAX_DECIMALES)).format(Practica.MIN_PRECIO)
+            ),
         ]
     )
 
-    observaciones = models.TextField(blank=True)
+    observaciones = models.TextField(
+        blank=True
+    )
 
     def save(self, *args, **kwargs):
 
@@ -312,6 +484,9 @@ class RealizadaServicio(models.Model):
                 self.precio = self.servicio.precioManoDeObra
 
         super().save(*args, **kwargs)
+
+    def precioTotal(self):
+        return self.cantidad * self.precio
 
 
 
@@ -323,32 +498,35 @@ class RealizadaProducto(models.Model):
 
     realizada = models.ForeignKey(
         Realizada,
-        null=False,
-        blank=False,
         on_delete=models.CASCADE,
         related_name='realizada_productos'
     )
 
     producto = models.ForeignKey(
         Producto,
-        null=False,
-        blank=False,
         on_delete=models.CASCADE,
         related_name='producto_realizadas'
     )
 
-    cantidad = models.PositiveSmallIntegerField()
+    cantidad = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1,"La cantidad debe ser mayor que cero")
+        ],
+    )
 
     precio = models.DecimalField(
         max_digits=Practica.MAX_DIGITOS,
         decimal_places=Practica.MAX_DECIMALES,
         validators = [
-            MinValueValidator(Practica.MIN_PRECIO, message=("El precio no puede ser menor a {:.%df}" % (Practica.MAX_DECIMALES)).format(Practica.MIN_PRECIO)),
-            DecimalValidator(max_digits=Practica.MAX_DIGITOS, decimal_places=Practica.MAX_DECIMALES)
+            MinValueValidator(
+                Practica.MIN_PRECIO,
+                message=("El precio no puede ser menor a {:.%df}" % (Practica.MAX_DECIMALES)).format(Practica.MIN_PRECIO)
+            ),
         ]
     )
 
-    observaciones = models.TextField(blank=True)
+    def precioTotal(self):
+        return self.cantidad * self.precio
 
     def save(self, *args, **kwargs):
 
@@ -363,7 +541,9 @@ class RealizadaProducto(models.Model):
 class Cancelada(Estado):
     TIPO = 4
 
-    motivo = models.TextField(blank=True)
+    motivo = models.TextField(
+        blank=True
+    )
 
 
 

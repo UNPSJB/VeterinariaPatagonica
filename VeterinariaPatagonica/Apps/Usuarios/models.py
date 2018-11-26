@@ -1,17 +1,21 @@
 from django.contrib.auth.models import AbstractUser
 
+from Apps.GestionDePracticas.models.practica import Practica
+
 class Usuario(AbstractUser):
-    def permitidos(self, choices):
+
+    def acciones(self):
+
+        acciones = set(Practica.Acciones)
 
         if self.is_superuser:
-            return tuple(choices)
+            return acciones
 
+        seleccionados = set()
         permisos = self.get_all_permissions()
-        seleccionados = []
 
-        for item in choices:
-            permiso = "GestionDePracticas.add_"+item[0]
-            if permiso in permisos:
-                seleccionados.append(item)
+        for accion in acciones:
+            if accion.idPermiso() in permisos:
+                seleccionados.add(accion)
 
-        return tuple(seleccionados)
+        return seleccionados

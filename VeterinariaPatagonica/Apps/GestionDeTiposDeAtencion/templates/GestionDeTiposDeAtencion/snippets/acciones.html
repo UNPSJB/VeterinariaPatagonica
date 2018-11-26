@@ -1,0 +1,17 @@
+<div class="fila-acciones">
+
+    {% if seccion != 'ver' %}
+    <a  class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:ver' item.id %}">Ver</a>
+    {% endif %}
+
+    {% if seccion != 'modificar' %}
+    <a  class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:modificar' item.id %}">Modificar</a>
+    {% endif %}
+
+    {% if item.baja == False %}
+        <a  class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:deshabilitar' item.id %}">Deshabilitar</a>
+    {% else %}
+        <a  class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:habilitar' item.id %}">Habilitar</a>
+    {% endif %}
+
+</div>

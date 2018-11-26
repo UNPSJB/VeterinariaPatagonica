@@ -1,0 +1,43 @@
+{% extends 'GestionDePracticas/ver.html' %}
+{% load practicaUrl %}
+
+{% block estado %}
+<div class="marco">
+    <h4>Turno</h4>
+
+    <p><strong>Fecha de inicio del turno:</strong> {{ estado.inicio|date:"d/m/y" }}</p>
+    <p><strong>Hora de inicio del turno:</strong> {{ estado.inicio|date:"H:i" }}</p>
+    <p><strong>Hora de finalizacion del turno:</strong> {{ estado.finalizacion|date:"H:i" }}</p>
+    <p><strong>Duracion:</strong> {{ estado.duracion }} min</p>
+    <p><strong>Adelanto:</strong> ${{ practica.adelanto.importe }}</p>
+    <p><strong>Estado:</strong>
+    {% if estado.fueRealizado %}
+    Realizado
+    {% elif estado.fueCancelado %}
+    Cancelado
+    {% elif estado.fueReprogramado %}
+    Reprogramado
+    {% elif estado.tiempoRestante > 0 %}
+    Pendiente
+    {% else %}
+    Con retraso
+    {% endif %}
+    {% if estado.esReprogramacion %}
+    <p><strong>Motivo de reprogramacion:</strong>
+        {{ estado.motivoReprogramacion|default:"Sin motivo registrado" }}</p>
+    {% endif %}
+    {% with turnos=estado.turnosMismoHorario %}
+        {% if estado.esUltimo and turnos %}
+            <p><strong>Otros turnos en el mismo horario:</strong>
+                <ol>
+                    {% for turno in turnos %}
+                        <li><a href="{% practicaUrl turno.practica.nombreTipo "ver" id=turno.practica.id %}">
+                            Practica {{turno.practica.id}}: de {{ turno.inicio|date:"H:i" }} a {{ turno.finalizacion|date:"H:i" }}
+                        </a></li>
+                    {% endfor %}
+                </ol>
+            </p>
+        {% endif %}
+    {% endwith %}
+</div>
+{% endblock %}

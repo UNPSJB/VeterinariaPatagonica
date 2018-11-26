@@ -1,61 +1,99 @@
-{% extends 'GestionDePracticas/practicas.html' %}
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load practicaUrl %}
 
 {% block titulo %}
-Ver {{ tipo }}
+Ver {{ practica.get_tipo_display }}
 {% endblock %}
 
 {% block practica-titulo %}
-Ver {{ tipo }}
+Ver {{ practica.get_tipo_display }}
 {% endblock %}
 
 {% block practica-subtitulo %}
-{% if practica.estado %}
-    Ultima modificacion el dia {{ practica.estado.marca }}
-{% endif %}
+    Ultima modificacion el dia {{ practica.estado.marca|date:"l d/m/y" }} a las {{ practica.estado.marca|date:"H:i"  }}
 {% endblock %}
 
 {% block practica-contenido %}
 
-<div class="practica-cuerpo">
-
-    <div class="well">
-
-        <p>Numero: {{ practica.id }}</p>
-        <p>Cliente: {{ practica.cliente }}</p>
-        <p>Tipo de Atencion: {{ practica.tipoDeAtencion }}</p>
-        <p>Estado: {{ practica.estado }}</p>
-
-        <p> Servicios: </p>
-        <ul>
-            {% for detalle in practica.practica_servicios.all %}
-            <li> {{ detalle.cantidad }}: {{ detalle.servicio.nombre }} </li>
-            {% endfor %}
-        </ul>
-        <p> Productos: </p>
-        <ul>
-            {% for detalle in practica.practica_productos.all %}
-            <li> {{ detalle.cantidad }}: {{ detalle.producto.nombre }} </li>
-            {% endfor %}
-        </ul>
-
-
-        {% if practica.estado.realizada_servicios %}
-        <p> Servicios realizados: </p>
-        <ul>
-            {% for detalle in practica.estado.realizada_servicios.all %}
-            <li> {{ detalle.cantidad }}: {{ detalle.servicio.nombre }} </li>
-            {% endfor %}
-        </ul>
+<div class="fila-acciones">
+    {% for accion in acciones %}
+        {% if accion in practica.estado.accionesPosibles %}
+            <a  class="btn btn-sm btn-default" href="{% practicaUrl practica.nombreTipo accion.name id=practica.id %}">{{ accion.name }}</a>
         {% endif %}
-        {% if practica.estado.realizada_productos %}
-        <p> Productos utilizados: </p>
-        <ul>
-            {% for detalle in practica.estado.realizada_productos.all %}
-            <li> {{ detalle.cantidad }}: {{ detalle.producto.nombre }} </li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-
-    </div>
+    {% endfor %}
 </div>
+
+<table width="100%">
+    <tbody valign="top">
+    <tr>
+        <td width="60%">
+        <div class="marco">
+            <h4>Resumen</h4>
+            <p>
+                <strong>{{ practica.nombreTipo|capfirst }}:</strong>
+                {{ practica.id }}
+            </p>
+            <p>
+                <strong>Cliente:</strong>
+                {{ practica.cliente.nombres }}{% if practica.cliente.apellidos %} {{ practica.cliente.apellidos }}{% endif %} ({{ practica.cliente.dniCuit }})
+            </p>
+            {% if practica.mascota %}
+            <p>
+                <strong>Mascota:</strong>
+                {{ practica.mascota.nombre }} ({{ practica.mascota.patente }})
+            </p>
+            {% endif %}
+            <p>
+                <strong>Tipo de Atencion:</strong>
+                {{ practica.tipoDeAtencion.nombre }}
+            </p>
+            <p>
+                <strong>Estado:</strong>
+                {{ practica.nombreEstado|capfirst }}
+            </p>
+            <p>
+                <strong>Creacion:</strong>
+                {{ practica.estados.inicial.marca|date:"d/m/y" }}
+            </p>
+            <p>
+                <strong>Ultima modificacion:</strong>
+                {{ practica.estado.marca|date:"d/m/y" }}
+            </p>
+            <p>
+                <strong>Duracion estimada:</strong>
+                {{ practica.duracion }} min
+            </p>
+            <p>
+                <strong>Precio:</strong>
+                ${{ practica.total }}
+            </p>
+
+            <p><a href="{% practicaUrl practica.nombreTipo "detalles" id=practica.id %}">Ver detalles</a></p>
+        </div>
+        </td>
+
+        <td>
+        <div class="marco">
+            <h4>Historial</h4>
+            <ul>
+                {% for estado in practica.estados.all %}
+                    {% if not forloop.first %}
+                        <li><a href="{{ request.path }}?estado={{ forloop.counter0 }}">{{ estado.related }} el {{ estado.marca|date:"d/m/y" }}{% if estado.usuario %}por {{ estado.usuario }}{% endif %}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        </td>
+    </tr>
+
+    <tr><td colspan="2">
+        {% block estado %}
+        {% endblock %}
+    </td></tr>
+
+    </tbody>
+</table>
+
+
+
 {% endblock %}

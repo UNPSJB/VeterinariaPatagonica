@@ -1,0 +1,19 @@
+<div class="formset-form">
+
+    {% for field in form.visible_fields %}
+    <div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
+        {{ field }}
+    </div>
+    {% endfor %}
+
+    <div class="form-group eliminar">
+        <a role="button" href="javascript:;" onclick="eliminar(event);" class="pull-right"><i class="glyphicon glyphicon-remove"></i></a>
+    </div>
+
+    {% for field in form.hidden_fields %}
+    <div class="form-group {{ field.name }} hidden">
+        {{ field }}
+    </div>
+    {% endfor %}
+
+</div>
