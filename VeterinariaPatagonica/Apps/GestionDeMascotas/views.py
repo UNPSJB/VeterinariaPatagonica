@@ -27,6 +27,8 @@ def modificar(request, id= None, cliente_id=None):
 
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
+        print(formulario.is_valid())
+        print(formulario)
         if formulario.is_valid():
             mascota = formulario.save()
             return HttpResponseRedirect("/GestionDeMascotas/ver/{}".format(mascota.id))

@@ -44,6 +44,11 @@ def paramsToFilter(params, Modelo):
             filters &= name(value) if callable(name) else Q(**{name: value})
     return filters
 
+
+class R(models.Q):
+    default=models.Q.OR
+
+
 '''
 class productoAutocomplete(autocomplete.Select2QuerySetView):
 

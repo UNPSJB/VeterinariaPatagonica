@@ -1,0 +1,19 @@
+<div id="filtrar-practicas">
+    <a role="button" href="#formulario-filtrar-practicas" data-toggle="collapse">
+        <i class="glyphicon glyphicon-tasks"></i>
+        <span>Opciones de filtrado</span>
+    </a>
+    <div id="formulario-filtrar-practicas" class="collapse{% if request.GET %} in{% endif %}">
+        <form class="form-horizontal filtrado" action="{{ action }}" method="GET">
+            {% include "snippets/form.html" with accion="" %}
+            <div class="form-group">
+                <div class=row>
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <button type="submit" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+                        <button type="reset" class="btn btn-sm btn-default">Reestablecer</button>
+                    </div>
+                 </div>
+            </div>
+        </form>
+    </div>
+</div>

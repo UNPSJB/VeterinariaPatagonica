@@ -1,41 +1,55 @@
 from django.urls import path, include
-from . import views
+from .settings import APP_NAME
+from . import views as practicas
+from . import viewsConsultas as consultas
+from . import viewsCirugias as cirugias
 
-app_name = 'practicas'
+app_name = APP_NAME
 
 urlpatterns = [
 
     path("consultas/", include(([
-        path('', views.listarConsultas, name="listar"),
-        path('<int:id>/', views.verConsulta, name="ver"),
+        path("", consultas.listar, name="listar"),
+        path("<int:pagina>/", consultas.listar, name="listar"),
+        path("ver/<int:id>/", consultas.ver, name="ver"),
         path("crear/", include(([
-            path('', views.crearConsulta, name="nueva"),
-            path('productos/<int:idCreacion>/', views.crearProductos, name="productos"),
-            path('presupuestada/<int:idCreacion>/', views.crearPresupuestada, name="presupuestada"),
-            path('programada/<int:idCreacion>/', views.crearProgramada, name="programada"),
-            path('realizada/<int:idCreacion>/', views.crearRealizada, name="realizada"),
+            path("", consultas.crear, name="nueva"),
+            path("<int:idCreacion>/", consultas.modificar, name="modificar"),
+            path("productos/<int:idCreacion>/", consultas.modificarProductos, name="modificarProductos"),
+            path("presupuestar/<int:idCreacion>/", consultas.crearPresupuestada, name="presupuestar"),
+            path("realizar/<int:idCreacion>/", consultas.crearRealizada, name="realizar"),
+            path("terminar/<int:idCreacion>/", consultas.terminar, name="terminar"),
         ], "crear"))),
-        path('detalles/<int:id>/', views.detallesConsulta, name="detalles"),
-        path('realizar/', views.realizarConsulta, name="realizar"),
-        path('cancelar/', views.cancelarConsulta, name="cancelar"),
+        path("realizacion/<int:id>/", consultas.detallarRealizacion, name="realizacion"),
+        path("realizar/<int:id>/", consultas.realizar, name="realizar"),
+        path("cancelar/<int:id>/", consultas.cancelar, name="cancelar"),
+        path("facturar/<int:id>/", consultas.facturar, name="facturar"),
+        path("completarPresupuesto/<int:id>/<int:accion>/", practicas.completarPresupuesto, name="completarPresupuesto"),
+        path("detalles/<int:id>/", consultas.detalles, name="detalles"),
     ], "consulta"))),
 
     path("cirugias/", include(([
-        path('', views.listarCirugias, name="listar"),
-        path('<int:id>/', views.verCirugia, name="ver"),
+        path("", cirugias.listar, name="listar"),
+        path("<int:pagina>/", cirugias.listar, name="listar"),
+        path("ver/<int:id>/", cirugias.ver, name="ver"),
         path("crear/", include(([
-            path('', views.crearCirugia, name="nueva"),
-            path('productos/<int:idCreacion>/', views.crearProductos, name="productos"),
-            path('presupuestada/<int:idCreacion>/', views.crearPresupuestada, name="presupuestada"),
-            path('programada/<int:idCreacion>/', views.crearProgramada, name="programada"),
-            path('realizada/<int:idCreacion>/', views.crearRealizada, name="realizada"),
+            path("", cirugias.crear, name="nueva"),
+            path("<int:idCreacion>/", cirugias.modificar, name="modificar"),
+            path("productos/<int:idCreacion>/", cirugias.modificarProductos, name="modificarProductos"),
+            path("presupuestar/<int:idCreacion>/", cirugias.crearPresupuestada, name="presupuestar"),
+            path("programar/<int:idCreacion>/", cirugias.crearProgramada, name="programar"),
+            path("realizar/<int:idCreacion>/", cirugias.crearRealizada, name="realizar"),
+            path("terminar/<int:idCreacion>/", cirugias.terminar, name="terminar"),
         ], "crear"))),
-        path('detalles/<int:id>/', views.detallesCirugia, name="detalles"),
-        path('realizar/', views.realizarCirugia, name="realizar"),
-        path('cancelar/', views.cancelarCirugia, name="cancelar"),
-        path('programar/', views.programarCirugia, name="programar"),
-        path('verAgenda/', views.verAgendaCirugia, name="verAgendaCirugia")
+        path("realizacion/<int:id>/", cirugias.detallarRealizacion, name="realizacion"),
+        path("realizar/<int:id>/", cirugias.realizar, name="realizar"),
+        path("cancelar/<int:id>/", cirugias.cancelar, name="cancelar"),
+        path("facturar/<int:id>/", cirugias.facturar, name="facturar"),
+        path("programar/<int:id>/", cirugias.programar, name="programar"),
+        path("reprogramar/<int:id>/", cirugias.reprogramar, name="reprogramar"),
+        path('completarPresupuesto/<int:id>/<int:accion>/', practicas.completarPresupuesto, name="completarPresupuesto"),
+        path("detalles/<int:id>/", cirugias.detalles, name="detalles"),
+        path('verAgenda/', cirugias.verAgendaCirugia, name="verAgendaCirugia"),
     ], "cirugia")))
 
 ]
-

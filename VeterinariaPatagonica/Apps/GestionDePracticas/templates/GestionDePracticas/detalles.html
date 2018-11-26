@@ -1,0 +1,156 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load practicaUrl %}
+
+{% block titulo %}
+Detalles de {{ practica.get_tipo_display }}
+{% endblock %}
+
+{% block practica-titulo %}
+Detalles de {{ practica.get_tipo_display }}
+{% endblock %}
+
+{% block practica-subtitulo %}
+Practica en estado {{ practica.nombreEstado }}
+{% endblock %}
+
+
+{% block practica-contenido %}
+
+<p><a href="{% practicaUrl practica.nombreTipo "ver" id=practica.id %}">Ver {{ tipo }}</a></p>
+
+{% if practica.estado.esRealizada %}
+{% with estado=practica.estado %}
+<div class="marco">
+        <h5><strong>Servicios realizados</strong></h5>
+        <table class="detalles" id="servicios_realizados">
+            <colgroup>
+                <col class="cantidad">
+                <col class="precio">
+                <col class="servicio">
+                <col class="importe">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Servicio</th>
+                    <th>Importe</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for detalle in estado.realizada_servicios.all %}
+                <tr>
+                    <td>{{ detalle.cantidad }}</td>
+                    <td>{{ detalle.precio }}</td>
+                    <td>{{ detalle.servicio.nombre }}</td>
+                    <td>{{ detalle.precioTotal }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="3">Total</td>
+                    <td>$ {{ estado.totalServicios }}</td>
+                </tr>
+            </tbody>
+        </table>
+    <h5><strong>Productos utilizados</strong></h5>
+    <table class="detalles" id="productos_utilizados">
+        <colgroup>
+            <col class="cantidad">
+            <col class="precio">
+            <col class="producto">
+            <col class="importe">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Producto</th>
+                <th>Importe</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in estado.realizada_productos.all %}
+            <tr>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.precio }}</td>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td>{{ detalle.precioTotal }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3">Total</td>
+                <td>$ {{ estado.totalProductos }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endwith %}
+{% endif %}
+
+
+<div class="marco">
+    <h5><strong>Servicios</strong></h5>
+    <table class="detalles" id="servicios_previstos">
+        <colgroup>
+            <col class="cantidad">
+            <col class="precio">
+            <col class="servicio">
+            <col class="importe">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Cantidad</th>
+                <th>Precio</th>
+                <th>Servicio</th>
+                <th>Importe</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for detalle in practica.practica_servicios.all %}
+            <tr>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.precio }}</td>
+                <td>{{ detalle.servicio.nombre }}</td>
+                <td>{{ detalle.precioTotal }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="3">Total</td>
+                <td>$ {{ practica.totalServicios }}</td>
+            </tr>
+        </tbody>
+    </table>
+    <h5><strong>Productos</strong></h5>
+    <table class="detalles" id="productos_previstos">
+    <colgroup>
+        <col class="cantidad">
+        <col class="precio">
+        <col class="producto">
+        <col class="importe">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Cantidad</th>
+            <th>Precio</th>
+            <th>Producto</th>
+            <th>Importe</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in practica.practica_productos.all %}
+        <tr>
+            <td>{{ detalle.cantidad }}</td>
+            <td>{{ detalle.precio }}</td>
+            <td>{{ detalle.producto.nombre }}</td>
+            <td>{{ detalle.precioTotal }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3">Total</td>
+            <td>$ {{ practica.totalProductos }}</td>
+        </tr>
+    </tbody>
+    </table>
+</div>
+
+{% endblock %}

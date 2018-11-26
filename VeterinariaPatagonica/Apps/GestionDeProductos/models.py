@@ -3,14 +3,20 @@ from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from Apps.GestionDeRubros import models as grmodels
 from VeterinariaPatagonica import tools
+from decimal import Decimal
 
 
 # Create your models here.
 
+
+class ProductoQuerySet(tools.BajasLogicasQuerySet):
+    def insumos(self):
+        return self.filter(precioPorUnidad__lte=Decimal(0))
+
 class BaseProductoManager(models.Manager):
     pass
 
-ProductoManager = BaseProductoManager.from_queryset(tools.BajasLogicasQuerySet)
+ProductoManager = BaseProductoManager.from_queryset(ProductoQuerySet)
 
 class Producto (models.Model):
     MAPPER = {

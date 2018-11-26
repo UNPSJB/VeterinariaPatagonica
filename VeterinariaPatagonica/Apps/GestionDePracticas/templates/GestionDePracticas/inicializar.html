@@ -1,4 +1,4 @@
-{% extends 'GestionDePracticas/practicas.html' %}
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
 {% load static %}
 
 {% block titulo %}
@@ -11,20 +11,26 @@ Inicializar {{ tipo }}
 
 {% block practica-contenido %}
 
-    <div class="practica-cuerpo">
+    {% include "./snippets/errores.html" %}
 
-        <form class="form-horizontal formulario" action="{{ formAction }}" method="post">
+    {% if accion %}
 
-            {% csrf_token %}
-            {% include "formularios/snippet.html" with formulario=formEstado accion="Guardar datos" %}
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
 
-            <div class="col-sm-12 acciones">
-                <button type="submit" class="btn btn-sm btn-default center-block">
-                    {{ accion }}
-                </button>
-            </div>
-        </form>
+        {% csrf_token %}
 
-    </div>
+        {% if form.errors %}
+        <div class="errores">
+            <strong>Por favor revise los siguientes errores:</strong>
+            <ul>
+                {% include 'snippets/formErrores.html' %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% include "snippets/form.html" %}
+
+    </form>
+    {% endif %}
 
 {% endblock %}

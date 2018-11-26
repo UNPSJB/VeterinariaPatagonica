@@ -3,11 +3,13 @@
 {% block paginaSeccionGeneral %}
 
 <section>
-    <div class="alerta">
-        <h4 class="titulo">{{ titulo }}</h4>
-        <p class="subtitulo"> </p>
-        <p> {{ descripcion }} </p>
+
+    <div class="errores">
+        {% for excepcion in excepciones %}
+            {% include "snippets/excepcion.html" %}
+        {% endfor %}
     </div>
+
 </section>
 
 {% endblock %}

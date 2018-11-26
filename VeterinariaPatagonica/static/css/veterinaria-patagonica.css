@@ -1,5 +1,6 @@
-@media (min-width: 750px) {
 
+@media (min-width: 750px) {
+    
     #sitio_seccion_principal {
         min-height: 100px;
     }
@@ -37,6 +38,7 @@
     }
 }
 
+
 body {
     font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
     font-size: 13px;
@@ -44,88 +46,6 @@ body {
     line-height: 1.471;
     color: #73879C;
     background-color: #f7f7f7;
-}
-
-input[type=email],
-input[type=password],
-input[type=number],
-input[type=checkbox],
-input[type=radio],
-input[type=text],
-textarea,
-select {
-    border-radius: 0px !important;
-    -ms-box-shadow: 0 1px 0 #fff, 0 -2px 5px rgba(0, 0, 0, 0.08) inset !important;
-    -o-box-shadow: 0 1px 0 #fff, 0 -2px 5px rgba(0, 0, 0, 0.08) inset !important;
-    box-shadow: 0 1px 0 #fff, 0 -2px 5px rgba(0, 0, 0, 0.08) inset !important;
-    border: 1px solid #c8c8c8 !important;
-
-    color: #555 !important;
-    font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
-}
-
-input[type=email]:focus,
-input[type=password]:focus,
-input[type=number]:focus,
-input[type=checkbox]:focus,
-input[type=radio]:focus,
-input[type=text]:focus,
-textarea:focus,
-select:focus {
-    -ms-box-shadow: 0 0 2px #777 inset !important;
-    -o-box-shadow: 0 0 2px #777 inset !important;
-    box-shadow: 0 0 2px #777 inset !important;
-    border: 1px solid #777 !important;
-    outline: none !important;
-    background-color: #fff;
-}
-
-.has-error input[type=email],
-.has-error input[type=password],
-.has-error input[type=number],
-.has-error input[type=checkbox],
-.has-error input[type=radio],
-.has-error input[type=text],
-.has-error textarea,
-.has-error select {
-    border: 1px solid #A94442 !important;
-    color: #A94442 !important;
-}
-
-.has-error input[type=email]:focus,
-.has-error input[type=password]:focus,
-.has-error input[type=number]:focus,
-.has-error input[type=checkbox]:focus,
-.has-error input[type=radio]:focus,
-.has-error input[type=text]:focus,
-.has-error textarea:focus,
-.has-error select:focus {
-    border: 1px solid #A94442 !important;
-    color: #A94442 !important;
-}
-
-input[type=email],
-input[type=password],
-input[type=number],
-input[type=text],
-textarea,
-select {
-    width: 100%;
-}
-
-input,
-textarea,
-select,
-.form-control {
-    padding: 4px 6px 4px 6px;
-    font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    line-height: 1.471;
-}
-
-.btn {
-    border-radius: 0px !important;
 }
 
 .row-eq-height {
@@ -140,7 +60,7 @@ a {
     text-decoration: none;
     color: #337ab7;
 }
-
+ 
  a:hover,
  a:focus {
     text-decoration: none;
@@ -161,7 +81,87 @@ a {
 }
 
 /*
-                    Bloques del layout general
+                    Controles
+*/
+
+input,
+textarea,
+select {
+    border-radius: 0px !important;
+    border: 1px solid #DDD !important;
+
+    -ms-box-shadow: 0 1px 0 #FFF, 0 -2px 5px rgba(0, 0, 0, 0.08) inset !important;
+    -o-box-shadow: 0 1px 0 #FFF, 0 -2px 5px rgba(0, 0, 0, 0.08) inset !important;
+    box-shadow: 0 1px 0 #FFF, 0 -2px 5px rgba(0, 0, 0, 0.08) inset !important;
+
+    color: #555 !important;
+    font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif !important;
+    font-size: 13px !important;
+    padding: 4px 6px 4px 6px !important;
+    margin: 0px !important;
+}
+
+input[type=text],
+input[type=email],
+input[type=password],
+input[type=number],
+select,
+textarea {
+    width: 100% !important;
+}
+
+input[type=text],
+input[type=email],
+input[type=password],
+input[type=number],
+select {
+    height: 27px !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border: 1px solid #777 !important;
+    
+    -ms-box-shadow: 0 0 2px #777 inset !important;
+    -o-box-shadow: 0 0 2px #777 inset !important;
+    box-shadow: 0 0 2px #777 inset !important;
+
+    color: #000 !important;
+}
+
+.has-error input,
+.has-error textarea,
+.has-error select {
+    border: 1px solid #A94442 !important;
+    color: #A94442 !important;
+}
+
+.has-error input:focus,
+.has-error textarea:focus,
+.has-error select:focus {
+    -ms-box-shadow: 0 0 2px #A94442 inset !important;
+    -o-box-shadow: 0 0 2px #A94442 inset !important;
+    box-shadow: 0 0 2px #A94442 inset !important;
+
+    border: 1px solid #A94442 !important;
+    color: #A94442 !important;
+}
+
+.btn {
+    border-radius: 0px !important;    
+}
+
+.form-group {
+    margin-bottom: 10px;
+}
+
+.form-horizontal input[type=checkbox] {
+    margin-top: 10px !important;
+}
+
+/*
+                    Layout general
 */
 
 /* Header */
@@ -227,9 +227,8 @@ ul.nav>li>i {
 
 /* Seccion general */
 
-#sitio_seccion_principal .contenedor {
-  margin: 0px;
-  padding: 15px 0px 0px 0px;
+#sitio_seccion_principal {
+  padding-top: 15px;
 }
 
 #sitio_seccion_principal section {
@@ -237,77 +236,29 @@ ul.nav>li>i {
     padding: 10px;
     display: inline-block;
     background: #fff;
-    border: 1px solid #E6E9ED;
+    border: 1px solid #E6E9ED;    
     opacity: 1;
     transition: all .2s ease;
     margin: 0px;
     color: #2D2D2D;
 }
-
+/*
 #sitio_seccion_principal h3,
 #sitio_seccion_principal h4,
 #sitio_seccion_principal h5 {
     margin: 0px;
 }
-
-#sitio_seccion_principal .contenedor {
-    padding: 5px;
-    margin-top: 10px;
-}
-
-/*
-.panel{
-    width: 100%;
-    padding: 10px;
-    display: inline-block;
-    background: #fff;
-    border: 1px solid #E6E9ED;
-    opacity: 1;
-    transition: all .2s ease;
-    margin: 0px;
-    color: #2D2D2D;
-}
-
-.titulo-panel{
-    margin: 0px;
-}
-
-.contenido-panel {
-    padding: 5px;
-    margin-top: 10px;
-}
 */
 .cuadradito {
-    height : 100px;
-    width : 100px;
+    height : 100px; 
+    width : 100px; 
     display:table-cell;
-    vertical-align:center;
     border: 1px solid black;
-    background-color: red;
+    background-color: #FFF;
 }
 
 .cuadradito:hover {
-    background-color: black;
-}
-
-/* Menu derecha */
-
-#sitio_menu_dch {
-    padding: 10px 0px 10px 0px;
-}
-
-#sitio_menu_dch .panel span.float-dch {
-    float: right;
-}
-
-#sitio_menu_dch .panel-heading {
-    background-color: #2A3F54;
-    color: #F7F7F7;
-}
-
-#sitio_menu_dch .panel-heading,
-#sitio_menu_dch .panel .list-group .list-group-item {
-    padding: 10px 10px 10px 10px;
+    background-color: #EEE;
 }
 
 /* Footer */
@@ -327,29 +278,7 @@ ul.nav>li>i {
 }
 
 /*
-                    Pagina de error
-*/
-
-.error {
-    background-color: #2A3F54;
-}
-
-.error .mensaje {
-    margin-top: 7%;
-    text-align: center;
-}
-
-.error .mensaje h1{
-    font-size: 7em;
-}
-
-.error .mensaje a:hover,
-.error .mensaje a:focus{
-    color: #f7f7f7;
-}
-
-/*
-                    Pagina de log-in
+                    Login
 */
 
 .login {
@@ -425,45 +354,13 @@ ul.nav>li>i {
     width: 100%;
 }
 
-
-
-#imagenServicio {
-  background-image: url('../images/servicio.jpg');
-  background-size: contain;
-}
-#imagenProducto {
-  background-image: url('../images/hueso.jpg');
-  background-size: contain;
-}
-#imagenCliente {
-  background-image: url('../images/cliente.jpg');
-  background-size: contain;
-}
-#imagenMascota {
-  background-image: url('../images/perro.jpg');
-  background-size: contain;
-}
-#imagenCirugia {
-  background-image: url('../images/cirugia.jpg');
-  background-size: contain;
-}
-#imagenConsulta {
-  background-image: url('../images/vacuna.jpg');
-  background-size: contain;
-}
-#imagenTipoDeAtencion {
-  background-image: url('../images/casa.jpg');
-  background-size: contain;
-}
-#imagenFactura {
-  background-image: url('../images/factura.jpg');
-  background-size: contain;
-}
-
 /*
-*******************************************************************************
+                    Secciones
 */
 
+.fila-acciones {
+  padding: 10px 0px 10px 0px;
+}
 
 
 .secciones {
@@ -472,7 +369,11 @@ ul.nav>li>i {
   text-align: right;
 }
 
-.titulo {
+section>h1.titulo,
+section>h2.titulo,
+section>h3.titulo,
+section>h4.titulo,
+section>h5.titulo {
   margin-top: 10px;
   margin-bottom:3px;
   font-weight: normal;
@@ -486,11 +387,6 @@ ul.nav>li>i {
 
 .linea-titulo {
   border-bottom: 1px solid #DDD;
-}
-
-.cuerpo {
-  padding: 0px;
-  margin-top: 5px;
 }
 
 .formulario-etiqueta {
@@ -534,8 +430,62 @@ table.table.listado {
     border-top: 1px solid #DDD !important;
 }
 
-.alerta {
+/*
+                    Dashboard
+*/
+
+#imagenServicio {
+  background-image: url('../images/servicio.jpg');
+  background-size: contain;
+}
+#imagenProducto {
+  background-image: url('../images/hueso.jpg');
+  background-size: contain;
+}
+#imagenCliente {
+  background-image: url('../images/cliente.jpg');
+  background-size: contain;
+}
+#imagenMascota {
+  background-image: url('../images/perro.jpg');
+  background-size: contain;
+}
+#imagenCirugia {
+  background-image: url('../images/cirugia.jpg');
+  background-size: contain;
+}
+#imagenConsulta {
+  background-image: url('../images/vacuna.jpg');
+  background-size: contain;
+}
+#imagenTipoDeAtencion {
+  background-image: url('../images/casa.jpg');
+  background-size: contain;
+}
+
+
+/*****************************************************************************/
+
+.errores {
+    padding: 15px 15px 5px;
+    margin: 15px;
+    background-color: #EDC;
     color: #A94442;
+    border: solid 1px #A94442;
+}
+
+.errores ul {
+    list-style-type: disc;
+    padding-left: 15px;
+}
+
+.errores a {
+    font-style: oblique;
+    color: #A94442;
+}
+
+.errores a:hover {
+    color: #670200;
 }
 
 .x_content {

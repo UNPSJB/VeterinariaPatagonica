@@ -1,11 +1,7 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Tipo de Atencion
-{% endblock %}
-
-{% block secciones %}
-    {% include './secciones_snippet.html' with pagina='default' %}
 {% endblock %}
 
 {% block tituloSeccion %}
@@ -18,32 +14,17 @@ Muestra datos del tipo de atencion
 
 {% block contenido %}
 
-    {% include './acciones_snippet.html' with item=tipoDeAtencion seccion='ver' %}
+    {% include './snippets/acciones.html' with item=tipoDeAtencion seccion='ver' %}
 
-    <div class="cuerpo">
-
-        {% if tipoDeAtencion %}
-        <div class="well">
-            <p>Identificador: {{ tipoDeAtencion.id }}</p>
-            <p>Nombre: {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
-            <p>Descripcion: {{ tipoDeAtencion.descripcion }}</p>
-            <p>Lugar de atencion: {{ tipoDeAtencion.get_lugar_display }}</p>
-            <p>Emergencia: {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
-            <p>Tipo de servicio: {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
-            <p>Franja horaria: de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
-            <p>Recargo: {{ tipoDeAtencion.recargo|floatformat:"-2" }}%</p>
-        </div>
-        {% else %}
-
-            <p> El tipo de atencion no existe </p>
-
-        {% endif %}
-
-
+    <div class="well">
+        <p>Identificador: {{ tipoDeAtencion.id }}</p>
+        <p>Nombre: {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+        <p>Descripcion: {{ tipoDeAtencion.descripcion }}</p>
+        <p>Lugar de atencion: {{ tipoDeAtencion.get_lugar_display }}</p>
+        <p>Emergencia: {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
+        <p>Tipo de servicio: {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
+        <p>Franja horaria: de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
+        <p>Recargo: {{ tipoDeAtencion.recargo|floatformat:"-2" }}%</p>
     </div>
-    <div class= "col-sm-offset-11">
-      <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
-    </div>
-
 
 {% endblock %}

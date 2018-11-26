@@ -1,4 +1,4 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Crear Tipo de Atencion
@@ -14,24 +14,21 @@ Agrega un tipo de atencion al listado
 
 {% block contenido %}
 
-    <div class="cuerpo">
-
-        <form class="form-horizontal formulario" action="{% url 'tiposDeAtencion:crear' %}" method="post">
+        <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
 
             {% csrf_token %}
 
-            {% include "formularios/snippet.html" with formulario=formulario accion="Guardar datos" %}
-
-            {% comment %}
-            {% include './formulario_snippet.html' with campos=formulario %}
-            <div class="form-group">
-                <div class="col-sm-offset-4 col-sm-8">
-                    <button type="submit" class="btn btn-sm btn-default">Crear</button>
+            {% if form.errors %}
+                <div class="errores">
+                    <strong>Por favor revise los siguientes errores:</strong>
+                    <ul>
+                        {% include "snippets/formErrores.html" %}
+                    </ul>
                 </div>
-            </div>
-            {% endcomment %}
+            {% endif %}
+
+            {% include "snippets/form.html" with accion="Modificar" %}
 
         </form>
-    </div>
 
 {% endblock %}

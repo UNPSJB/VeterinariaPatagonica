@@ -1,4 +1,4 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Ver Deshabilitados
@@ -13,90 +13,55 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
 {% endblock %}
 
 {% block secciones %}
-{% include './secciones_snippet.html' with pagina='ver_deshabilitados' %}
+{% include './snippets/secciones.html' with pagina='ver_deshabilitados' %}
 {% endblock %}
 
 {% block contenido %}
 
-<!-- Listado -->
-<div class="cuerpo" >
+    <p> Los siguientes tipos de servicio pueden ser habilitados o eliminados.  </p>
 
-
-    <div id="filtrarTiposDeAtencionDeshabilitados">
-        <a role="button" href="#filtrarTiposDeAtencion" data-toggle="collapse">
-            <i class="glyphicon glyphicon-tasks"></i>
-            <span>Criterios de busqueda</span>
-        </a>
-        <div id="filtrarTiposDeAtencion" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                            <input name="nombre" placeholder="Nombre">
-                            <input name="emergencia" placeholder="Emergencia">
-                            <input name="lugar" placeholder="Lugar">
-
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
-
-                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
-
-                            </button>
-                        </form>
-                    </div>
-            </form>
-        </div>
+{% if tiposDeAtencion %}
+    <div class="table-responsive" id="tabla">
+        <table class="table listado">
+            <thead>
+                <tr>
+                    <th id="deshabilitados-nombre">Nombre</th>
+                    <th id="deshabilitados-descripcion">Descripcion </th>
+                    <th id="deshabilitados-acciones">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tipoDeAtencion in tiposDeAtencion %}
+                <tr>
+                    <td>
+                        <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}">
+                            {{ tipoDeAtencion.nombre }}
+                        </a>
+                    </td>
+                    <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
+                    <td >
+                        <p align="center">
+                            <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                <i class="glyphicon glyphicon-edit"> </i>
+                            </a>
+                            <a href="{% url 'tiposDeAtencion:habilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                <i class="glyphicon glyphicon-plus"> </i>
+                            </a>
+                            <a href="{% url 'tiposDeAtencion:eliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
+                                <i class="glyphicon glyphicon-remove"> </i>
+                            </a>
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-    <br>
-    <div class="linea-titulo"> </div>
-    <br>
-  <p> Los siguientes tipos de servicio pueden ser habilitados o eliminados.  </p>
 
-    {% if tiposDeAtencion %}
-            <div class="table-responsive" id="tabla">
-                <table class="table listado">
-                    <thead>
-                        <tr>
-                            <th id="deshabilitados-nombre">Nombre</th>
-                            <th id="deshabilitados-emergencia">Emergencia </th>
-                            <th id="deshabilitados-lugar">Lugar </th>
-                            <th id="deshabilitados-acciones">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for tipoDeAtencion in tiposDeAtencion %}
-                            <tr>
-                                <td>{{ tipoDeAtencion.nombre }}</td>
-                                <td>{{ tipoDeAtencion.emergencia }}</td>
-                                <td>{{ tipoDeAtencion.lugar }}</td>
-                                <!--<td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>-->
-                                <td> <p align="justify">
-                                            <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-placement="bottom" title="Ver Tipo De Atencion">
-                                                <i class="glyphicon glyphicon-eye-open"> </i>
-                                            </a>
-                                            <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-placement="bottom" title="Modificar Tipo De Atencion">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a>
-                                            <a href="{% url 'tiposDeAtencion:habilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-placement="bottom" title="Habilitar Tipo De Atencion">
-                                                <i class="glyphicon glyphicon-plus"> </i>
-                                            </a>
-                                            <a href="{% url 'tiposDeAtencion:eliminar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-placement="bottom" title="Eliminar Tipo De Atencion">
-                                                <i class="glyphicon glyphicon-remove"> </i>
-                                            </a>
-			                    </p> </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+{% else %}
 
-    {% else %}
+    <p> No hay tipos de atencion habilitados</p>
 
-        <p> No hay tipos de atencion habilitados</p>
-
-    {% endif %}
-
-</div>
+{% endif %}
 
 {% endblock %}
