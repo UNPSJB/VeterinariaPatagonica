@@ -14,6 +14,7 @@ from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
 from Apps.GestionDePracticas.models import Practica
 from Apps.GestionDeProductos.models import Producto
+from django.urls import reverse
 
 def facturas(request):
 
@@ -75,7 +76,26 @@ def crearFacturaPractica(request, id):
     template = loader.get_template('GestionDeFacturas/formulario.html')
     return HttpResponse(template.render(context, request))
 
-def ver(request, id):
+
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
+def eliminar(request, id):
+    try:
+        factura = Factura.objects.get(id=id)
+    except ObjectDoesNotExist:
+        raise Http404()
+    if request.method == 'POST':
+        factura.delete()
+        return HttpResponseRedirect( "/GestionDeFacturas/listar" )
+    else:
+        template = loader.get_template('GestionDeFacturas/eliminar.html')
+        context = {
+            'usuario' : request.user,
+            'id' : id
+        }
+        return HttpResponse( template.render( context, request) )
+
+def ver(request, id):  #, irAPagar=1
 #[TODO] ACA PINCHA. no arma el render.
 #    import ipdb
 #    ipdb.set_trace()
@@ -83,13 +103,21 @@ def ver(request, id):
         factura = Factura.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404("No encontrado", "El factura con id={} no existe.".format(id))
+
     template = loader.get_template('GestionDeFacturas/ver.html')
-    context = {
+    contexto = {
         'factura': factura,
         'usuario': request.user
     }
+    return HttpResponse(template.render(contexto, request))
 
-    return HttpResponse(template.render(context, request))
+
+
+    '''if irAPagar:
+        print("Quiere ir a crear pago")
+        return HttpResponseRedirect(reverse('pagos:pagoCrearConFactura', kwargs={'factura_id': factura.id}))'''
+
+
 
 
 def listar(request):
@@ -101,7 +129,7 @@ def listar(request):
         'usuario' : request.user,
     }
 
-    return  HttpResponse(template.render(contexto,request))
+    return  HttpResponse(template.render(contexto, request))
 
 def verPractica(request, id):
     factura = Factura.objects.get(id=id) if id is not None else None

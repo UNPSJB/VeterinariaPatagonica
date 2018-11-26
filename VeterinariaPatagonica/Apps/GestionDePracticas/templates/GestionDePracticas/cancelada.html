@@ -1,0 +1,9 @@
+{% extends 'GestionDePracticas/ver.html' %}
+
+{% block estado %}
+<div class="marco">
+    <h4>Cancelacion</h4>
+    <p><strong>Fecha de cancelacion:</strong> {{ estado.marca|date:"d/m/y" }}</p>
+    <p><strong>Motivo:</strong> {{ estado.motivo|default:"Sin motivo registrado." }}</p>
+</div>
+{% endblock %}

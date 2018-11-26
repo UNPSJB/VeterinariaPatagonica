@@ -76,3 +76,17 @@ def logout(peticion):
 
     auth_logout(peticion)
     return HttpResponseRedirect('/login/')
+
+
+def noEncontrado(request):
+
+    template = loader.get_template("error.html")
+    context = {
+        "excepciones" : [VeterinariaPatagonicaError(
+            "No encontrado",
+            "La direccion solicitada no corresponde al sitio."
+        )]
+    }
+
+    return HttpResponse(template.render( context, request ))
+

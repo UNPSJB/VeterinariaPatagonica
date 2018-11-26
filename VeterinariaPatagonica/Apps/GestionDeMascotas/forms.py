@@ -32,7 +32,8 @@ def MascotaFormFactory(mascota=None, cliente=None):
             fields = campos
             widget_cliente = autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete')
             if cliente:
-                widget_cliente = forms.TextInput(attrs={'value': str(cliente), 'disabled': 'disabled'})
+                #widget_cliente = forms.TextInput(attrs={'value': cliente})
+                widget_cliente = autocomplete.ModelSelect2(url='/GestionDeMascotas/clienteAutocomplete/?q={}'.format(cliente.dniCuit))
 
             labels = {
                 'patente':'Patente:',

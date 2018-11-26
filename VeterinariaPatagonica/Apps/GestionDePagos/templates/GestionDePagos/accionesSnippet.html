@@ -8,10 +8,4 @@
         <a  class="btn btn-sm btn-default" href="{% url 'pagos:pagoModificar' item.id %}">Modificar</a>
         {% endif %}
 
-        {% if item.baja == False %}
-            <a  class="btn btn-sm btn-default" href="{% url 'pagos:pagoDeshabilitar' item.id %}">Deshabilitar</a>
-        {% else %}
-            <a  class="btn btn-sm btn-default" href="{% url 'pagos:pagoHabilitar' item.id %}">Habilitar</a>
-        {% endif %}
-
 </div>

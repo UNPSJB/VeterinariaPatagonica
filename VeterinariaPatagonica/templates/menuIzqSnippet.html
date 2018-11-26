@@ -1,94 +1,100 @@
-            <div class="menu_section">
-              <h1 class="menu-subtitulo"><a>General</a></h1>
-              <ul class="nav side-menu">
-                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Clientes </a>
-    							<ul class="nav child_menu">
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:clienteVerHabilitados' %}">Listar</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:clienteCrear' %}">Crear Cliente</a></li>
-    							</ul>
-				</li>
-                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Mascotas </a>
-    							<ul class="nav child_menu">
-									<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascotaVerHabilitados' %}">Listar</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascotaCrear' %}">Crear Mascota </a></li>
-    								</ul>
+<div class="menu_section">
+   <h1 class="menu-subtitulo"><a>General</a></h1>
+   <ul class="nav side-menu">
+     <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Clientes </a>
+       <ul class="nav child_menu">
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:clienteVerHabilitados' %}">Listar</a></li>
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'clientes:clienteCrear' %}">Crear Cliente</a></li>
+       </ul>
+</li>
+     <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Mascotas </a>
+       <ul class="nav child_menu">
+       <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascotaVerHabilitados' %}">Listar</a></li>
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'mascotas:mascotaCrear' %}">Crear Mascota </a></li>
+         </ul>
 
-    						</li>
-                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Productos </a>
-    							<ul class="nav child_menu">
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'productos:productoVerHabilitados' %}">Listar</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'productos:productoCrear' %}">Crear Producto</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'rubros:rubroVerHabilitados' %}"> Listar Rubros </a></li>
-									<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'rubros:rubroCrear' %}"> Crear Rubro </a></li>
-    							</ul>
-				</li>
-                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Servicios </a>
-    							<ul class="nav child_menu">
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioVerHabilitados' %}">Listar</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioCrear' %}">Crear Servicio</a></li>
-    							</ul>
-                </li>
-                <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Tipos de Atención </a>
-    							<ul class="nav child_menu">
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tiposdeatencion:habilitados' %}">Listar</a></li>
-    								<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tiposdeatencion:crear' %}">Crear Tipo de Atención</a></li>
-    							</ul>
-                </li>
+     </li>
+     <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Productos </a>
+       <ul class="nav child_menu">
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'productos:productoVerHabilitados' %}">Listar</a></li>
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'productos:productoCrear' %}">Crear Producto</a></li>
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'rubros:rubroVerHabilitados' %}"> Listar Rubros </a></li>
+       <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'rubros:rubroCrear' %}"> Crear Rubro </a></li>
+       </ul>
+</li>
+     <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Servicios </a>
+       <ul class="nav child_menu">
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioVerHabilitados' %}">Listar</a></li>
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'servicios:servicioCrear' %}">Crear Servicio</a></li>
+       </ul>
+     </li>
+     <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Tipos de Atención </a>
+       <ul class="nav child_menu">
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tiposdeatencion:habilitados' %}">Listar</a></li>
+         <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'tiposdeatencion:crear' %}">Crear Tipo de Atención</a></li>
+       </ul>
+     </li>
 
-			  	<li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cobros </a>
-					<ul class="nav child_menu">
-						<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoVerHabilitados' %}">Listar Formas de Pagos</a></li>
-						<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoCrear' %}">Crear Forma De Pago</a></li>
-						<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'facturas:facturaListar' %}"> Listar Facturas </a></li>
-						<li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'facturas:facturaCrear' %}"> Crear Factura </a></li>
-					</ul>
-				</li>
+<li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cobros </a>
+<ul class="nav child_menu">
+ <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoVerHabilitados' %}">Listar Formas de Pagos</a></li>
+ <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoCrear' %}">Crear Forma De Pago</a></li>
+ <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'facturas:facturaListar' %}"> Listar Facturas </a></li>
+ <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'facturas:facturaCrear' %}"> Crear Factura </a></li>
+</ul>
+</li>
 
 
-        <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Consultas </a>
-            <ul class="nav child_menu">
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:consulta:listar' %}">Listar</a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:consulta:crear:nueva' %}">Crear</a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:consulta:realizar' %}">Realizar </a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:consulta:cancelar' %}">Cancelar </a>
-                </li>
-            </ul>
-        </li>
-        <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cirugias </a>
-            <ul class="nav child_menu">
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:cirugia:listar' %}">Listar</a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:cirugia:crear:nueva' %}">Crear</a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:cirugia:programar' %}">Programar </a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:cirugia:realizar' %}">Realizar </a>
-                </li>
-                <li>
-                    <i class="glyphicon glyphicon-chevron-right"></i>
-                    <a href="{% url 'practicas:cirugia:cancelar' %}">Cancelar </a>
-                </li>
-            </ul>
-        </li>
+<li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Consultas </a>
+ <ul class="nav child_menu">
 
-              </ul>
-            </div>
+     <li>
+         <i class="glyphicon glyphicon-chevron-right"></i>
+         <a href="{% url 'practicas:consulta:listar' %}">Listar</a>
+     </li>
+{% comment %}
+     <li>
+         <i class="glyphicon glyphicon-chevron-right"></i>
+         <a href="{% url 'practicas:consulta:crear:nueva' %}">Crear</a>
+     </li>
+     <li>
+         <i class="glyphicon glyphicon-chevron-right"></i>
+         <a href="{% url 'practicas:consulta:realizar' %}">Realizar </a>
+     </li>
+     <li>
+         <i class="glyphicon glyphicon-chevron-right"></i>
+         <a href="{% url 'practicas:consulta:cancelar' %}">Cancelar </a>
+     </li>
+{% endcomment %}
+ </ul>
+</li>
+<li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cirugias </a>
+ <ul class="nav child_menu">
+
+      <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url 'practicas:cirugia:listar' %}">Listar</a>
+      </li>
+{% comment %}
+      <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url 'practicas:cirugia:crear:nueva' %}">Crear</a>
+      </li>
+      <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url 'practicas:cirugia:programar' %}">Programar </a>
+      </li>
+     <li>
+         <i class="glyphicon glyphicon-chevron-right"></i>
+         <a href="{% url 'practicas:cirugia:realizar' %}">Realizar </a>
+     </li>
+     <li>
+         <i class="glyphicon glyphicon-chevron-right"></i>
+         <a href="{% url 'practicas:cirugia:cancelar' %}">Cancelar </a>
+     </li>
+{% endcomment %}
+ </ul>
+</li>
+
+   </ul>
+ </div>

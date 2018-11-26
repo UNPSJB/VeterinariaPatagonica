@@ -1,24 +1,5 @@
 import copy
-from django.forms import Widget, TextInput, HiddenInput
-
-
-
-class BooleanHiddenInput(HiddenInput):
-
-    def format_value(self, value):
-        if value:
-            return "true"
-        else:
-            return ""
-
-    def value_from_datadict(self, data, files, name):
-        if not name in data:
-            return False
-        value = data.get(name)
-        if len(value) > 0:
-            return True
-        else:
-            return False
+from django.forms import Widget, TextInput
 
 
 
@@ -39,7 +20,7 @@ class SubmitSelect(Widget):
 
 
 
-    def __init__(self, choices, attrs=None, option_attrs=None, inherit_attrs=False, *args, **kwargs):
+    def __init__(self, choices=(), attrs=None, option_attrs=None, inherit_attrs=False, *args, **kwargs):
         self.choices = tuple(choices)
         self.option_attrs = {} if option_attrs is None else option_attrs
         self.option_inherits_attrs = inherit_attrs

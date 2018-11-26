@@ -10,7 +10,7 @@
 
 """
 
-PERMISOS_DETALLES = [
+PERMISOS_DETALLES = (
     'GestionDePracticas.change_practica',
     'GestionDePracticas.change_realizada',
     'GestionDePracticas.add_realizadaservicio',
@@ -19,26 +19,30 @@ PERMISOS_DETALLES = [
     'GestionDePracticas.add_realizadaproducto',
     'GestionDePracticas.change_realizadaproducto',
     'GestionDePracticas.delete_realizadaproducto',
-]
-PERMISOS_CREAR = [
+)
+PERMISOS_CREAR = (
     'GestionDePracticas.add_creada',
     'GestionDePracticas.add_practica',
     'GestionDePracticas.add_practicaservicio',
     'GestionDePracticas.add_practicaproducto',
-]
-PERMISOS_PRESUPUESTAR = [
+)
+PERMISOS_PRESUPUESTAR = (
     'GestionDePracticas.change_practica',
     'GestionDePracticas.add_presupuestada',
-]
-PERMISOS_PROGRAMAR = [
+)
+PERMISOS_PROGRAMAR = (
     'GestionDePracticas.change_practica',
     'GestionDePracticas.add_programada',
-]
-PERMISOS_REALIZAR = [
+)
+PERMISOS_REALIZAR = (
     'GestionDePracticas.change_practica',
     'GestionDePracticas.add_realizada',
-]
-PERMISOS_CANCELAR = [
+)
+PERMISOS_FACTURAR = (
+    'GestionDePracticas.change_practica',
+    'GestionDePracticas.add_facturada',
+)
+PERMISOS_CANCELAR = (
     'GestionDePracticas.change_practica',
     'GestionDePracticas.add_cancelada',
-]
+)

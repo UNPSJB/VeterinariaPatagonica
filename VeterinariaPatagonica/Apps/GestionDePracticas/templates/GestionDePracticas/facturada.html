@@ -1,0 +1,9 @@
+{% extends 'GestionDePracticas/ver.html' %}
+
+{% block estado %}
+<div class="marco">
+    <h4>Facturacion</h4>
+    <p><strong>Fecha de facturacion:</strong> {{ estado.marca|date:"d/m/y" }}</p>
+    <p><a href="#">Ver factura</a></p>
+</div>
+{% endblock %}

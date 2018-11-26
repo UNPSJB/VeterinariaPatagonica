@@ -1,4 +1,4 @@
-{% extends 'GestionDePracticas/practicas.html' %}
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
 {% load static %}
 
 {% block titulo %}
@@ -11,22 +11,23 @@
 
 {% block practica-contenido %}
 
-    <div class="practica-cuerpo">
+    {% include "./snippets/errores.html" %}
 
-    {% include "./filtradoSnippet.html" with form=filtrado accion="Filtrar" %}
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="POST">
 
-        <form class="form-horizontal formulario" action="{{ formAction }}" method="POST">
+        {% csrf_token %}
 
-            {% csrf_token %}
+        {% if form.errors %}
+        <div class="errores">
+            <strong>Por favor revise los siguientes errores:</strong>
+            <ul>
+                {% include 'snippets/formErrores.html' %}
+            </ul>
+        </div>
+        {% endif %}
 
-            {% include "formularios/snippet.html" with formulario=practica accion=None %}
-            {% include "formularios/snippet.html" with formulario=estado accion=estado.accion %}
-        </form>
-    </div>
+        {% include "snippets/form.html" %}
 
-{% endblock %}
+    </form>
 
-{% block paginaJavascript %}
-    {{ block.super }}
-    <script src="{% static 'GestionDePracticas/js/practicas.js' %}"></script>
 {% endblock %}

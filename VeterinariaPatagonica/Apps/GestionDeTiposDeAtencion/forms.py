@@ -1,160 +1,116 @@
 from django import forms
-from django.apps import apps
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator, DecimalValidator
+
 from .models import TipoDeAtencion
+from VeterinariaPatagonica.areas import Areas
 
 
 
 # Para el argumento input_formats de los TimeField:
-TIMEINPUT_FMTS = [ "%H:%M" ]
-
-
-
-class TimeTextInput(forms.TextInput):
-    """ TextInput para objetos datetime.time """
-
-    def format_value(self, value):
-        """
-        Si el value del TextInput es un datetime.time,
-        mostrarlo segun el primer formato en TIMEINPUT_FMTS
-        """
-        if value is None:
-            return ''
-
-        try:
-            ret = value.strftime( TIMEINPUT_FMTS[0] )
-        except AttributeError:
-            ret = str(value)
-
-        return ret
+TIME_INPUT_FMTS = [ "%H:%M" ]
 
 
 
 class TipoDeAtencionForm(forms.ModelForm):
-    """ ModelForm para creacion de Tipos de Atencion """
+    """ ModelForm para tipos de atencion """
 
+    class Meta:
 
-    #---------------------- Form Fields  ----------------------
-    nombre = forms.CharField(
-        required = True,
-        label = 'Nombre:',
-        widget = forms.TextInput(attrs={"class" : "form-control"}),
-        help_text="Nombre del tipo de atencion",
+        model = TipoDeAtencion
+
+        fields = [
+            "nombre",
+            "descripcion",
+            "tipoDeServicio",
+            "lugar",
+            "emergencia",
+            "inicioFranjaHoraria",
+            "finFranjaHoraria",
+            "recargo"
+        ]
+
+        labels = {
+            "tipoDeServicio" : "Tipo de servicio",
+            "inicioFranjaHoraria" : "Inicio de franja horaria",
+            "finFranjaHoraria" : "Fin de franja horaria",
+        }
+
         error_messages = {
-            'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(TipoDeAtencion.MAX_NOMBRE),
-            'min_length' : "El nombre debe tener por lo menos {} caracteres".format(TipoDeAtencion.MIN_NOMBRE),
-            'required' : "El nombre es obligatorio"
-        },
-        validators = [
+            "nombre" : {
+                "max_length" : "El nombre puede tener a lo sumo {} caracteres".format(TipoDeAtencion.MAX_NOMBRE),
+                "min_length" : "El nombre debe tener por lo menos {} caracteres".format(TipoDeAtencion.MIN_NOMBRE),
+                "required" : "El nombre es obligatorio"
+            },
+            "tipoDeServicio" : {
+                "invalid_choice" : "Tipo de servicio no valido",
+                "required" : "El tipo de servicio es obligatorio"
+            },
+            "lugar" : {
+                "invalid_choice" : "Lugar de atencion no valido",
+                "required" : "El lugar de atencion es obligatorio"
+            },
+            "inicioFranjaHoraria" : {
+                "invalid" : "El formato debe ser <horas>:<minutos>, por ejemplo 01:23",
+                "required" : "El inicio de horario de atencion es obligatorio"
+            },
+            "finFranjaHoraria" : {
+                "invalid" : "El formato debe ser <horas>:<minutos>, por ejemplo 01:23",
+                "required" : "El fin de horario de atencion es obligatorio"
+            },
+            "recargo" : {
+                "required" : "El recargo es obligatorio",
+                "invalid" : "Debe ingresar un valor entero o decimal, ejemplo: 100 o 99,9",
+                "min_value" : ("Debe ingresar un valor no menor que {:.%df}" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL)).format(TipoDeAtencion.RECARGO_MIN_VALUE),
+                "max_value" : ("Debe ingresar un valor no mayor que {:.%df}" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL)).format(TipoDeAtencion.RECARGO_MAX_VALUE),
+                "max_digits" : "Debe ingresar a lo sumo %d digitos para la parte entera" % (TipoDeAtencion.RECARGO_PARTE_ENTERA),
+                "max_decimal_places" : "Debe ingresar a lo sumo %d digitos para la parte decimal" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL),
+                "max_whole_digits" : "Debe ingresar a lo sumo %d digitos en total" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL+TipoDeAtencion.RECARGO_PARTE_ENTERA),
+            }
+        }
+
+        widgets = {
+            "descripcion" : forms.Textarea,
+            "inicioFranjaHoraria" : forms.TimeInput,
+            "finFranjaHoraria" : forms.TimeInput,
+        }
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        self.fields["descripcion"].required = False
+        self.fields["emergencia"].required = False
+        self.fields["nombre"].validators.insert(0,
             RegexValidator(
                 TipoDeAtencion.REGEX_NOMBRE,
-                message="El nombre debe construirse de numeros, letras, espacios y guiones ('_' y '-')"
+                message="El nombre puede tener numeros, letras, espacios y guiones"
             )
-        ],
-        max_length = TipoDeAtencion.MAX_NOMBRE,
-        min_length =  TipoDeAtencion.MIN_NOMBRE,
-    )
+        )
+        self.fields["recargo"].validators.extend([
+            MaxValueValidator(
+                TipoDeAtencion.RECARGO_MAX_VALUE
+            ),
+            MinValueValidator(
+                TipoDeAtencion.RECARGO_MIN_VALUE
+            ),
+            DecimalValidator(
+                TipoDeAtencion.RECARGO_PARTE_ENTERA+TipoDeAtencion.RECARGO_PARTE_DECIMAL,
+                TipoDeAtencion.RECARGO_PARTE_DECIMAL
+            )
+        ])
 
-    descripcion = forms.CharField(
-        required = False,
-        label = 'Descripción:',
-        widget = forms.Textarea(attrs={ "cols" : 60, "rows" : 4, "class" : "form-control" }),
-        help_text="Descripcion del tipo de atencion",
-        error_messages = {},
-        validators = [],
-        max_length = 200,
-        min_length = None,
-    )
+        self.fields["inicioFranjaHoraria"].input_formats = TIME_INPUT_FMTS
+        self.fields["finFranjaHoraria"].input_formats = TIME_INPUT_FMTS
+        self.fields["inicioFranjaHoraria"].widget.format = TIME_INPUT_FMTS[0]
+        self.fields["finFranjaHoraria"].widget.format = TIME_INPUT_FMTS[0]
 
-    emergencia = forms.BooleanField(
-        required = False,
-        label = 'Emergencia:',
-        widget = forms.CheckboxInput,
-        help_text="Determina el grado de urgencia del tipo de atencion",
-        error_messages = {},
-        validators = [],
-    )
+        self.fields["tipoDeServicio"].choices = Areas.choices()
+        self.fields["lugar"].choices = TipoDeAtencion.LUGARES_DE_ATENCION
 
-    tipoDeServicio = forms.ChoiceField(
-        required = True,
-        label = 'Tipo de Servicio:',
-        widget = forms.Select(attrs={"class" : "form-control"}),
-        help_text='Tipo de servicio',
-        error_messages = {
-            'invalid_choice' : "La opcion no es valida",
-            'required' : "El tipo de servicio es obligatorio"
-        },
-        validators = [],
-        choices = apps.get_model('GestionDeServicios', 'Servicio', require_ready=False).TIPO,
-    )
-
-    lugar = forms.ChoiceField(
-        required = True,
-        label = 'Lugar:',
-        widget = forms.Select(attrs={"class" : "form-control"}),
-        help_text="Lugar en donde se realiza el tipo de atencion",
-        error_messages = {
-            'invalid_choice' : "La opcion no es valida",
-            'required' : "El lugar de atencion es obligatorio"
-        },
-        validators = [],
-        choices = TipoDeAtencion.LUGARES_DE_ATENCION,
-    )
-
-    inicioFranjaHoraria = forms.TimeField(
-        required = True,
-        label = 'Inicio Horario de Atención:',
-        widget = TimeTextInput(attrs={"class" : "form-control"}),
-        help_text='Hora de inicio del tipo de atencion',
-        error_messages = {
-            'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
-            'required' : 'El inicio de horario de atencion es obligatorio'
-        },
-        validators = [],
-        input_formats = TIMEINPUT_FMTS,
-    )
-
-    finFranjaHoraria = forms.TimeField(
-        required = True,
-        label = 'Fin Horario de Atención:',
-        widget = TimeTextInput(attrs={"class" : "form-control"}),
-        help_text='Hora de finalizacion del tipo de atencion',
-        error_messages = {
-            'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
-            'required' : 'El inicio de horario de atencion es obligatorio'
-        },
-        validators = [],
-        input_formats = TIMEINPUT_FMTS,
-    )
-
-    recargo = forms.DecimalField(
-        required = True,
-        label = 'Recargo:',
-        widget = forms.TextInput(attrs={"class" : "form-control"}),
-        help_text="Porcentaje de recargo sobre el costo del servicio a aplicar",
-        error_messages = {
-            "required" : "El recargo es obligatorio",
-            "invalid" : "Debe ingresar un valor entero o decimal, ejemplo: 100 ó 99,9",
-            "min_value" : ("Debe ingresar un valor no menor que {:.%df}" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL)).format(TipoDeAtencion.RECARGO_MIN_VALUE),
-            "max_value" : ("Debe ingresar un valor no mayor que {:.%df}" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL)).format(TipoDeAtencion.RECARGO_MAX_VALUE),
-            "max_digits" : "Debe ingresar a lo sumo %d digitos para la parte entera" % (TipoDeAtencion.RECARGO_PARTE_ENTERA),
-            "max_decimal_places" : "Debe ingresar a lo sumo %d digitos para la parte decimal" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL),
-            "max_whole_digits" : "Debe ingresar a lo sumo %d digitos en total" % (TipoDeAtencion.RECARGO_PARTE_DECIMAL+TipoDeAtencion.RECARGO_PARTE_ENTERA),
-        },
-        max_value=TipoDeAtencion.RECARGO_MAX_VALUE,
-        min_value=TipoDeAtencion.RECARGO_MIN_VALUE,
-        max_digits=TipoDeAtencion.RECARGO_PARTE_ENTERA+TipoDeAtencion.RECARGO_PARTE_DECIMAL,
-        decimal_places=TipoDeAtencion.RECARGO_PARTE_DECIMAL,
-        validators = [],
-    )
-
-
-
-    #---------------------- Modelo del ModelForm ----------------------
-    class Meta:
-        model = TipoDeAtencion
-        fields = [  "tipoDeServicio", "nombre",
-                    "emergencia", "lugar",
-                    "inicioFranjaHoraria",
-                    "finFranjaHoraria",
-                    "descripcion", "recargo"   ]
+        self.fields["nombre"].widget.attrs.update({ "class" : "form-control" })
+        self.fields["descripcion"].widget.attrs.update({ "class" : "form-control", "cols" : 60, "rows" : 4 })
+        self.fields["tipoDeServicio"].widget.attrs.update({ "class" : "form-control" })
+        self.fields["lugar"].widget.attrs.update({ "class" : "form-control" })
+        self.fields["inicioFranjaHoraria"].widget.attrs.update({ "class" : "form-control" })
+        self.fields["finFranjaHoraria"].widget.attrs.update({ "class" : "form-control" })
+        self.fields["recargo"].widget.attrs.update({ "class" : "form-control" })
