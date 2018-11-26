@@ -25,7 +25,12 @@ Datos del factura
             <p>Tipo: {{factura.tipo}}</p>
             <p>Fecha: {{factura.fecha}}</p>
             <p>Cliente: {{ factura.cliente }} </p>
-            <p>Pago: {{factura.pago}}</p>
+            {% if factura.pago %}
+                <p>Pago: Pagada</p>
+                <p>Fecha Pago: {{factura.pago.fecha}}</p>
+            {%else%}
+                <p> Pago: No Pagada</p>
+            {%endif%}
             <!-- Tabla para mostrar los detalles de la factura. -->
             <table class="table listado">
               <thead>
@@ -81,7 +86,7 @@ Datos del factura
 
 
     <div>
-        <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Pagar </a>
+        <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' idFactura=factura.id %}"> Pagar </a>
     </div>
 
 {% endblock facturaContenido %}
