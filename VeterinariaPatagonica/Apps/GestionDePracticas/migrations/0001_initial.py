@@ -137,6 +137,7 @@ class Migration(migrations.Migration):
                 ('duracion', models.PositiveSmallIntegerField()),
                 ('condicionPreviaMascota', models.TextField(blank=True, default='')),
                 ('resultados', models.TextField(blank=True, default='')),
+                ('precioTotal', models.DecimalField(decimal_places=2, max_digits=8, null=True, validators=[django.core.validators.MinValueValidator(Decimal('0'), message='El precio no puede ser menor a 0.00'), django.core.validators.DecimalValidator(decimal_places=2, max_digits=8)])),
             ],
             options={
                 'abstract': False,

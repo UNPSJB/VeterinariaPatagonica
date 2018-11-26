@@ -1,4 +1,5 @@
-{% extends 'GestionDePracticas/practicas.html' %}
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load practicaUrl %}
 
 {% block titulo %}
 Practicas de tipo: {{ tipo }}
@@ -10,11 +11,11 @@ Practicas de tipo: {{ tipo }}
 
 {% block practica-contenido %}
 
-    <div class="practica-cuerpo">
-
-    {% include "./filtradoSnippet.html" with form=filtrado accion="Filtrar" %}
+    {% include "./snippets/filtrado.html" with form=filtrado accion="Filtrar" %}
 
     {% if practicas %}
+
+
         <div class="table-responsive" id="tabla">
             <table class="table listado">
                 <thead>
@@ -24,34 +25,45 @@ Practicas de tipo: {{ tipo }}
                         <th>Estado</th>
                         <th>Creacion</th>
                         <th>Ultima actualizacion</th>
-                        <!--<th>Ver</th>-->
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for practica in practicas %}
                         <tr>
-                            <td>{{ practica.id }}</td>
+                            <td><a href="{% practicaUrl tipo "ver" id=practica.id %}">{{ practica.id }}</a></td>
                             <td>{{ practica.cliente }}</td>
                             <td>{{ practica.estado }}</td>
                             <td>{{ practica.estados.inicial.marca|date:"d/m/y" }}</td>
                             <td>{{ practica.estado.marca|date:"d/m/y" }}</td>
-                            <td><a  href="{% url 'practicas:consulta:ver' practica.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta consulta en detalle.">
-                                <i class="glyphicon glyphicon-eye-open"> </i>
-                            </a></td>
-
-                            <td><a  href="{% url 'practicas:cirugia:ver' practica.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta cirugía en detalle.">
-                                <i class="glyphicon glyphicon-eye-open"> </i>
-                            </a></td>
-                        
+                            <td>
+                                {% for accion in acciones %}
+                                    {% if accion in practica.estado.accionesPosibles %}
+                                        <a href="{% practicaUrl tipo accion.name id=practica.id %}">{{ accion.name }}</a>
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        <div class="paginas">
+
+            {% for item in paginas %}
+                {% if pagina != item %}
+                    <a class="numero-pagina" href="{% practicaUrl tipo "listar" pagina=item %}">{{ item }}</a>
+                {% else %}
+                    <span class="numero-pagina actual">{{ item }}</span>
+                {% endif %}
+            {% endfor %}
+
+        </div>
 
     {% else %}
-        <p>Sin resultados</p>
+
+        <p>No hay practicas que mostrar</p>
+
     {% endif %}
-    </div>
 
 {% endblock %}

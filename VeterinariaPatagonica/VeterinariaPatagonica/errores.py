@@ -1,15 +1,17 @@
 from django.template import loader
+from django.urls import reverse
 from django.http import HttpResponse
 
 
+
 class VeterinariaPatagonicaError(Exception):
-
-    def __init__(self, titulo="Error", descripcion="No se pudo completar la accion solicitada", *args, **kwargs):
-
-        super().__init__(*args, **kwargs)
-
+    def __init__(self, titulo="Error", descripcion="No se pudo completar la accion solicitada", **kwargs):
+        super().__init__()
         self.titulo = titulo
         self.descripcion = descripcion
+        self.kwargs = {}
+        self.kwargs.update(kwargs)
+
 
 
 class ManejadorErrores:
@@ -26,8 +28,7 @@ class ManejadorErrores:
 
             template = loader.get_template("error.html")
             context = {
-                "titulo" : exception.titulo,
-                "descripcion" : exception.descripcion,
+                "excepciones" : [ exception ]
             }
 
             return HttpResponse(template.render( context, request ))

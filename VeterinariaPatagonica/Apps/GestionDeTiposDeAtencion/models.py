@@ -4,16 +4,12 @@ from datetime import date, timedelta, time, datetime
 from django.core.validators import MinValueValidator, MaxValueValidator, RegexValidator, DecimalValidator
 
 from VeterinariaPatagonica.tools import BajasLogicasQuerySet
-from Apps.GestionDeServicios.models import Servicio
-from VeterinariaPatagonica import tools
+from VeterinariaPatagonica.areas import Areas
+
 
 
 class FranjaHoraria():
-    """
-
-    Clase auxiliar para lidiar con los horarios (si si es una exageracion)
-
-    """
+    """ Clase para franjas horarias """
 
     def __init__(self, inicio, fin):
         """ Crea una franja a partir de dos datetime.time """
@@ -21,15 +17,15 @@ class FranjaHoraria():
         self._fin = fin
 
     def __eq__(self, otra):
-        """ Compara igualdad/desigualdad de franjas horarias """
+        """ Compara igualdad de franjas horarias """
         return (
             self._inicio == otra._inicio and
             self._fin == otra._fin
         )
 
     def __str__(self):
-        """ Strings de franjas horarias """
-        return '{} hs. a {} hs.'.format(
+        """ Representacion en string de franjas horarias """
+        return "{} hs. a {} hs.".format(
             self._inicio.strftime("%H:%M"),
             self._fin.strftime("%H:%M")
         )
@@ -56,26 +52,27 @@ class FranjaHoraria():
         """ datetime.time que representa el momento de fin de la franja horaria """
         return self._fin
 
-    def abarca(self, t):
-        """ True si <t> pertenece al rango de la franja horaria """
-        return self._inicio <= t and self._fin >= t
 
-class BaseTiposDeAtencion(models.Manager):
-    pass
 
-TiposDeAtencionManager = BaseTiposDeAtencion.from_queryset(tools.BajasLogicasQuerySet)
-#TipoDeAtencionManager = models.Manager.from_queryset(BajasLogicasQuerySet)
+class TipoDeAtencionQueryset(BajasLogicasQuerySet):
+
+    def paraConsultas(self):
+        return self.filter(tipoDeServicio=Areas.C.codigo)
+
+    def paraCirugias(self):
+        return self.filter(tipoDeServicio=Areas.Q.codigo)
+
+    def paraInternaciones(self):
+        return self.filter(tipoDeServicio=Areas.I.codigo)
+
+
+
+TipoDeAtencionManager = models.Manager.from_queryset(TipoDeAtencionQueryset)
 
 
 class TipoDeAtencion(models.Model):
-    """
 
-    Model para los Tipos de Atencion
-
-    """
-
-    # Manager para Tipos de Atencion
-    objects = TiposDeAtencionManager()
+    objects = TipoDeAtencionManager()
 
     RECARGO_PARTE_ENTERA = 3
     RECARGO_PARTE_DECIMAL = 2
@@ -83,11 +80,11 @@ class TipoDeAtencion(models.Model):
     RECARGO_MAX_VALUE = Decimal(900.00)
 
     MAX_NOMBRE = 100
-    MIN_NOMBRE = 3
-    REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
+    MIN_NOMBRE = 1
+    REGEX_NOMBRE = "^[0-9áéíóúÁÉÍÓÚñÑa-zA-Z-_ .]{%d,%d}$" % (MIN_NOMBRE, MAX_NOMBRE)
 
-    EN_VETERINARIA = 'VET'
-    EN_DOMICILIO = 'DOM'
+    EN_VETERINARIA = "V"
+    EN_DOMICILIO = "D"
 
     LUGARES_DE_ATENCION = (
         (EN_VETERINARIA, "Veterinaria"),
@@ -97,13 +94,7 @@ class TipoDeAtencion(models.Model):
     RECARGO_DEFAULT = Decimal(0)
     LUGAR_DEFAULT = EN_VETERINARIA
 
-    MAPPER = {
-        "nombre": "nombre__icontains",
-        "emergencia": "emergencia__icontains",
-        "lugar": "lugar__icontains",
-    }
 
-    #---------------------- Model Fields ----------------------
 
     id = models.AutoField(
         primary_key=True,
@@ -118,14 +109,14 @@ class TipoDeAtencion(models.Model):
             RegexValidator(regex=REGEX_NOMBRE)
         ],
         error_messages = {
-            'unique' : "Otro tipo de atencion tiene ese nombre",
-            'max_length' : "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
-            'blank' : "El nombre es obligatorio"
+            "unique" : "Otro tipo de atencion tiene ese nombre",
+            "max_length" : "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
+            "blank" : "El nombre es obligatorio"
         }
     )
 
     descripcion = models.TextField(
-        blank=True
+        blank=True,
     )
 
     emergencia = models.BooleanField(
@@ -133,12 +124,12 @@ class TipoDeAtencion(models.Model):
     )
 
     lugar = models.CharField(
-        max_length=3,
+        max_length=1,
         default=LUGAR_DEFAULT,
         choices=LUGARES_DE_ATENCION,
         error_messages = {
-            'invalid_choice' : "Opcion invalida",
-            'blank' : "El lugar de atencion es obligatorio"
+            "invalid_choice" : "La opcion no es valida",
+            "blank" : "El lugar de atencion es obligatorio"
         }
     )
 
@@ -153,27 +144,26 @@ class TipoDeAtencion(models.Model):
         ]
     )
 
-
     tipoDeServicio = models.CharField(
-        max_length=25,
-        choices=Servicio.TIPO,
+        max_length=Areas.caracteresCodigo(),
+        choices=Areas.choices(),
         error_messages = {
-            'invalid_choice' : "Opcion invalida",
-            'blank' : "El tipo de servicio es obligatorio"
+            "invalid_choice" : "La opcion no es valida",
+            "blank" : "El tipo de servicio es obligatorio"
         }
     )
 
     inicioFranjaHoraria = models.TimeField(
         error_messages = {
-            'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
-            'blank' : 'El inicio de horario de atencion es obligatorio'
+            "invalid" : "El formato debe ser <horas>:<minutos>, por ejemplo 01:23",
+            "blank" : "El inicio de horario de atencion es obligatorio"
         }
     )
 
     finFranjaHoraria = models.TimeField(
         error_messages = {
-            'invalid' : 'El formato debe ser HH:MM, por ejemplo "01:23"',
-            'blank' : 'El inicio de horario de atencion es obligatorio'
+            "invalid" : "El formato debe ser <horas>:<minutos>, por ejemplo 01:23",
+            "blank" : "El inicio de horario de atencion es obligatorio"
         }
     )
 
@@ -184,10 +174,9 @@ class TipoDeAtencion(models.Model):
 
 
 
-    #---------------------- Metodos ----------------------
     def __str__(self):
         """ String para Tipos de Atencion """
-        return "{0}, ({1} | {2})".format(self.nombre,self.inicioFranjaHoraria,self.finFranjaHoraria)
+        return self.nombre
 
 
 

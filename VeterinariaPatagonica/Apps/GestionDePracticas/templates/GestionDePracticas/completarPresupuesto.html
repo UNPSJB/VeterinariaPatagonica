@@ -1,0 +1,65 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% load practicaUrl %}
+
+{% block titulo %}
+Completar presupuesto
+{% endblock %}
+
+{% block practica-titulo %}
+Completar presupuesto
+{% endblock %}
+
+{% block practica-contenido %}
+
+    {% include "./snippets/errores.html" %}
+    {% if not errores %}
+
+        <p>Faltan datos de la mascota quien recibira la atencion</p>
+        <p><a href="{% practicaUrl practica.nombreTipo "ver" id=practica.id %}" >Ver practica</a></p>
+
+        {% include "snippets/formErrores.html" %}
+
+        <form id="completar-presupuesto" class="form-horizontal" action="{{ request.path }}" method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-sm-4">
+                    <strong>Cliente</strong>
+                </div>
+                <div class="col-sm-8">
+                    {% if practica.cliente.apellidos %}{{ practica.cliente.apellidos }}, {% endif %}{{ practica.cliente.nombres }}
+                </div>
+                <div class="col-sm-4">
+                    <strong>Fecha de emision</strong>
+                </div>
+                <div class="col-sm-8">
+                    {{ practica.estado.marca|date:"d/m/y" }}
+                </div>
+                <div class="col-sm-4">
+                    <strong>Tipo de practica</strong>
+                </div>
+                <div class="col-sm-8">
+                    {{ practica.nombreTipo|capfirst }}
+                </div>
+                <div class="col-sm-4">
+                    <strong>Total</strong>
+                </div>
+                <div class="col-sm-8">
+                    ${{ practica.total }}
+                </div>
+                <div class="col-sm-4">
+                    <strong>{{ form.mascota.label }}</strong>
+                </div>
+                <div class="col-sm-8">
+                    {{ form.mascota }}
+                </div>
+                <div class="col-sm-offset-4 col-sm-8">
+                    <button type="submit" class="btn btn-sm btn-default"> Guardar </button>
+                </div>
+            </div>
+
+        </form>
+    {% endif %}
+
+{% endblock %}

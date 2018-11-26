@@ -1,0 +1,54 @@
+{% if formset.total_error_count %}
+
+    {% if formset.non_form_errors %}
+        {% for error in formset.non_form_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    {% endif %}
+
+    {% for item in formset.labeled_forms %}
+        {% if item.form.errors %}
+
+            {% if item.form.non_field_errors %}
+                <li>{{ item.label }}:
+                    {% for error in item.form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </li>
+            {% endif %}
+
+            {% for campo in item.form %}
+                {% if campo.errors %}
+                    <li>{{ item.label }}, {{ campo.label|lower }}:
+                        {% for error in campo.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+
+        {% endif %}
+    {% endfor %}
+
+{% endif %}
+
+
+{% comment %}
+{% for item in formset.labeled_forms %}
+    {% if item.form.errors %}
+        <li> {{ item.label }}:
+            <ul>
+                {% include "snippets/formErrores.html" with form=item.form %}
+            </ul>
+        </li>
+    {% endif %}
+{% endfor %}
+{% endcomment %}
+{% comment %}
+        <li>{{ formset.label }}:
+            {% for error in formset.non_form_errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </li>
+{% endcomment %}

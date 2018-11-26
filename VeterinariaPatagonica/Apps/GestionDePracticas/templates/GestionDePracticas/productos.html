@@ -1,4 +1,4 @@
-{% extends 'GestionDePracticas/practicas.html' %}
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
 {% load static %}
 
 {% block titulo %}
@@ -11,43 +11,65 @@ Modificar productos de {{ tipo }}
 
 {% block practica-contenido %}
 
-    <div class="practica-cuerpo">
+    {% include "./snippets/errores.html" %}
 
-        <form class="form formulario" action="{{ formAction }}" method="POST" onsubmit="validar(event);">
+    {% if accion %}
+    <form class="form formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+        <div class="row">
 
-            {% csrf_token %}
-            {% include "./formsetSnippet.html" with formset=formset label="Productos" %}
+            <div class="col-sm-12 hidden">
+                {% csrf_token %}
+            </div>
+
+            <div id="formset-{{ formset.prefix }}-errores">
+                {% if formset.total_error_count %}
+                    <div class="col-sm-12">
+                        <div class="errores">
+                            <strong>Por favor revise los siguientes errores:</strong>
+                            <ul>
+                                {% include './snippets/formsetErrores.html' %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-sm-12">
+                {% include "./snippets/formset.html" with titulo="Productos" %}
+            </div>
 
             <div class="col-sm-12 acciones">
                 <button type="submit" class="btn btn-sm btn-default center-block">
-                    Modificar
+                    {{ accion|capfirst }}
                 </button>
             </div>
 
-        </form>
-
-    </div>
-
-    <div id="empty-form-{{ formset.prefix }}" class="hidden" >
-        {% include "./formsetFormSnippet.html" with prefix=formset.prefix form=formset.empty_form %}
-    </div>
+        </div>
+    </form>
+    {% endif %}
 
 {% endblock %}
 
 {% block paginaJavascript %}
     {{ block.super }}
-    <script src="{% static 'GestionDePracticas/js/practicas.js' %}"></script>
+    <script src="{% static 'GestionDePracticas/js/GestionDePracticas.js' %}"></script>
     <script type="text/javascript">
         var validadores = [
             {
                 "validador" : validarFormset,
                 "argumentos" : {
-                    "reemplazador" : reemplazarProductos,
                     "comparador" : compararProductos,
-                    "formset_id" : "div-{{ formset.prefix }}",
-                    "error" : "duplicados"
+                    "formset_id" : "{{ formset.prefix }}-formset",
+                    "errores" : document.getElementById("formset-{{ formset.prefix }}-errores"),
+                    "objeto" : "{{ formset.label.lower }}",
                 }
             }
         ]
+
+        document.onreadystatechange = function(){
+            var productos = document.getElementById('{{ formset.prefix }}-formset');
+            actualizarEliminar(productos);
+        }
+
     </script>
 {% endblock %}

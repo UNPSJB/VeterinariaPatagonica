@@ -1,0 +1,29 @@
+{% extends 'sitioBase.html' %}
+{% load static %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static 'GestionDePracticas/css/GestionDePracticas.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block paginaSeccionGeneral %}
+
+    <section>
+
+        <h4 class="titulo">
+        {% block practica-titulo %}
+        {% endblock %}
+        </h4>
+        <p class="subtitulo">
+        {% block practica-subtitulo %}
+        {% endblock %}
+        </p>
+
+    {% block practica-contenido %}
+    {% endblock %}
+
+    </section>
+
+{% endblock %}
+

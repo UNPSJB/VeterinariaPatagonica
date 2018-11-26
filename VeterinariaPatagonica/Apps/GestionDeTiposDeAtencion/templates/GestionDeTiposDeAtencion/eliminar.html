@@ -1,4 +1,4 @@
-{% extends 'GestionDeTiposDeAtencion/tda.html' %}
+{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Eliminar Tipo de Atencion
@@ -14,17 +14,11 @@ Elimina permanentemente los datos del tipo de atencion del sistema
 
 {% block contenido %}
 
-<div class="cuerpo">
+    <p> Confirmar eliminacion: </p>
 
-    <form class="form" action="{% url 'tiposDeAtencion:eliminar' tipoDeAtencion.id %}" method="post">
+    <form class="form" action="{{ request.path }}" method="post">
         {% csrf_token %}
-
-		<p class="aviso-eliminacion"> Confirmar eliminacion: </p>
-
         <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
-
     </form>
-
-</div>
 
 {% endblock %}

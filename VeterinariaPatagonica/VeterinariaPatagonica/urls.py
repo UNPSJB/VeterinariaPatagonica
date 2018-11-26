@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path, re_path, include
 from django.conf.urls import url
 from django.contrib import admin
 from . import views
@@ -45,6 +45,8 @@ urlpatterns = [
     path(r'GestionDeFacturas/', include('Apps.GestionDeFacturas.urls', namespace='facturas'))
 
     path("", include('Apps.GestionDePracticas.urls', namespace="practicas")),
+
+    re_path(r'.+', views.noEncontrado, name='noEncontrado'),
 
 
 

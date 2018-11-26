@@ -1,0 +1,21 @@
+{% extends 'GestionDePracticas/ver.html' %}
+
+{% block estado %}
+<div class="marco">
+    <h4>Presupuesto</h4>
+
+    <p><strong>Dias de mantenimiento del presupuesto:</strong> {{ estado.diasMantenimiento }}</p>
+    <p><strong>Validez:</strong> desde el {{ estado.marca|date:"d/m/y" }} hasta el {{ estado.vencimiento|date:"d/m/y" }}</p>
+    <p><strong>Estado:</strong>
+    {% if estado.diasVigencia %}
+        Vigente por {{ estado.diasVigencia }} dias mas
+    {% elif estado.haExpirado %}
+        Expirado
+    {% elif estado.fueConfirmado %}
+        Confirmado
+    {% elif estado.fueCancelado %}
+        Cancelado
+    {% endif %}
+    </p>
+    </div>
+{% endblock %}
