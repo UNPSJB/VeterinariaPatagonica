@@ -9,7 +9,7 @@ class PagoForm(forms.ModelForm):
     class Meta:
         model = Pago
         fields = {
-            'fecha',
+            #'fecha',
             'importeTotal',
         }
 
@@ -23,12 +23,12 @@ class PagoForm(forms.ModelForm):
         }
 
         widgets = {
-            'fecha' : forms.TextInput(),
+            #'fecha' : forms.TextInput(),
             'importeTotal': forms.TextInput()
         }
 
         field_order = [
-            'fecha',
+            #'fecha',
             'importeTotal',
         ]
 

@@ -1,18 +1,15 @@
 from django.db import models
-#from Apps.GestionDePagos import models as pagModel
 from Apps.GestionDeProductos import models as proModel
 from Apps.GestionDeClientes import models as cliModel
 from django.core.validators import RegexValidator
 from decimal import Decimal
 from django.db.models import Q
 from django.utils import timezone as djangotimezone
-
 from Apps.GestionDePracticas import models as praModel
-
-from Apps.GestionDePagos import models as pagModel
-# Create your models here.
+#from Apps.GestionDePagos import models as pagModel
 
 # Create your models here.
+
 
 REGEXTIPO = '^[A-B-C]{1}$'
 MAXTIPO = 1
@@ -106,12 +103,12 @@ class Factura(models.Model):
             validators = []
     )
 
-    pago = models.OneToOneField(
+    '''pago = models.OneToOneField(
         pagModel.Pago,
         on_delete = models.CASCADE,
         null = True,
         blank = True
-    )
+    )'''
 
     practica = models.ForeignKey(
         praModel.Practica,
@@ -146,6 +143,7 @@ class Factura(models.Model):
         return self.total'''
 
 class DetalleFactura(models.Model):
+
     factura = models.ForeignKey(
         Factura,
         on_delete=models.CASCADE,

@@ -1,7 +1,7 @@
 {% extends 'GestionDePagos/GestionDePagos.html' %}
 
 {% block titulo %}
-Gestion Pagos | Ver Pagos
+Gestion Pagos | Ver Ticket
 {% endblock %}
 
 {% block secciones %}
@@ -9,7 +9,7 @@ Gestion Pagos | Ver Pagos
 {% endblock %}
 
 {% block pagosTitulo %}
-Ver Pagos
+Ver Ticket
 {% endblock %}
 
 {% block pagosSubtitulo %}
@@ -27,6 +27,7 @@ Muestra datos del pago
             <p>Identificador: {{ pago.id }}</p>
             <p>Fecha: {{ pago.fecha }} </p>
             <p>Importe Total: {{ pago.importeTotal}}</p>
+            <p>Factura: {{pago.factura}}</p>
 
         </div>
         {% else %}
