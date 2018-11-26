@@ -80,21 +80,23 @@
       console.log(tipo);
       console.log(identificador);
       if (tipo = "consulta"){
+        let myUrl = new String("/consultas/ver/" + identificador + "/");
         $.ajax({
-          url: "/consultas/ver/",
-          data: {consulta: `${identificador}`},
+          url: myUrl,
+          data: {id: `${identificador}`},
           success: function(data){
-            console.log("Llegué acá");
-            console.log(data);
+            let precio =$(`#id_precio`, data);
+            console.log(precio);
             //$itemTotal = $"(#id_total");
           }
         });
       }else{
+        let myUrl = new String("/cirugias/ver/" + identificador +"/");
         $.ajax({
-          url: "cirugia/",
-          data: {practica: `ver/${identificador}/`},
+          url: myUrl,
+          data: {id: `${identificador}`},
           success: function(data){
-            console.log("Llegué acá");
+
           }
         });
       }

@@ -42,7 +42,7 @@ class PracticaQuerySet(VeterinariaPatagonicaQuerySet):
         if type(estados) != list:
             estados = [estados]
 
-        return self.annotate(max_id=models.models.Max('estado__id')).filter(
+        return self.annotate(max_id=models.Max('estado__id')).filter(
             estado__id=models.F('max_id'),
             estado__tipo__in=[ e.TIPO for e in estados])
 

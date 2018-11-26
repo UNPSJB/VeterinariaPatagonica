@@ -172,8 +172,6 @@ class EstadoRealizable(Estado):
 
         return realizada
 
-    def programar(self, inicio, finalizacion, adelanto):
-
 
 
 class EstadoProgramable(Estado):
@@ -317,36 +315,73 @@ class Programada(EstadoCancelable, EstadoRealizable):
         ).exclude(id=self.id)
 
 
-    def esReprogramacion(self):
-        return isinstance(self.anteriorEstado(), Programada)
 
 class Presupuestada(EstadoCancelable, EstadoRealizable, EstadoProgramable):
     TIPO = 3
 
+    @classmethod
+    def acciones(cls):
+        return set([
+            Practica.Acciones.programar,
+            Practica.Acciones.cancelar,
+            Practica.Acciones.realizar,
+        ])
+
+    diasMantenimiento = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1,"Los dias de mantenimiento del presupuesto deben ser mas que cero")
+        ],
+    )
+
+    def vencimiento(self):
+        return self.marca.date() + timedelta(days=self.diasMantenimiento)
+
+    def diasVigencia(self):
+        if not self.esUltimo():
+            return 0
+        dias = (self.vencimiento() - date.today()).days
+        return int( max(dias,0) )
+
+    def fueConfirmado(self):
+        siguiente = self.siguienteEstado()
+        if siguiente is None:
+            return False
+        return isinstance(siguiente, (Programada, Realizada))
+
+    def fueCancelado(self):
+        siguiente = self.siguienteEstado()
+        if siguiente is None:
+            return False
+        return isinstance(siguiente, Cancelada)
+
+    def haExpirado(self):
+        return not (
+            self.fueConfirmado() or
+            self.fueCancelado() or
+            (self.diasVigencia() > 0)
+        )
+
+    def estaCompleto(self):
+        if self.practica.cliente is None or self.practica.mascota is None:
+            return False
+        return True
+
+    def accionesPosibles(self):
+        if (self.diasVigencia() == 0):
+            return set([Practica.Acciones.cancelar])
+        return super().accionesPosibles()
 
 
-class Presupuestada(EstadoCancelable, EstadoRealizable, EstadoProgramable):
-    TIPO = 3
 
 
 class Realizada(Estado):
     TIPO = 5
 
-
-    inicio = models.DateTimeField()
-
-
-    inicio = models.DateTimeField()
-
-    finalizacion = models.DateTimeField()
-
-    condicionPreviaMascota = models.TextField(
-        blank=True
-    )
-
-    resultados = models.TextField(
-        blank=True
-    )
+    @classmethod
+    def acciones(cls):
+        return set([
+            Practica.Acciones.facturar,
+        ])
 
     inicio = models.DateTimeField()
 
@@ -374,15 +409,6 @@ class Realizada(Estado):
         through_fields=('realizada','producto'),
         related_name='realizadas',
         related_query_name='practica_realizada',
-    )
-    precioTotal = models.DecimalField(
-        null = True,
-        max_digits=Practica.MAX_DIGITOS,
-        decimal_places=Practica.MAX_DECIMALES,
-        validators = [
-            MinValueValidator(Practica.MIN_PRECIO, message=("El precio no puede ser menor a {:.%df}" % (Practica.MAX_DECIMALES)).format(Practica.MIN_PRECIO)),
-            DecimalValidator(max_digits=Practica.MAX_DIGITOS, decimal_places=Practica.MAX_DECIMALES)
-        ]
     )
 
     def pagar(self, monto):
