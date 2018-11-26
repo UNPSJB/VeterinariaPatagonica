@@ -112,7 +112,10 @@ class EstadoRealizable(Estado):
     class Meta:
         abstract = True
 
-    def realizar(self, inicio, duracion, condicionPreviaMascota="", resultados=""):
+    #import ipdb
+    #ipdb.set_trace()
+
+    def realizar(self, inicio, duracion, condicionPreviaMascota="", resultados="", precioTotal=0):
 
         realizada = Realizada.objects.create(
             practica=self.practica,
@@ -120,6 +123,7 @@ class EstadoRealizable(Estado):
             duracion=duracion,
             condicionPreviaMascota=condicionPreviaMascota,
             resultados=resultados,
+            precioTotal=precioTotal,
         )
 
         with transaction.atomic():
@@ -142,8 +146,24 @@ class EstadoRealizable(Estado):
                     precio=detalle.precio,
                 )
 
-        return realizada
+            #Parte que calcula el total de la práctica.
+            #El total lo ponemos en el ver, luego se oculta.
+            #Esto es hecho para poder tomar en el cliente
+            #el total de los servicios hechos + producots usados
+            # en una práctica y poner el trabajo en el servidor.
 
+            #import ipdb
+            #ipdb.set_trace()
+
+            preciosManosdeObraUsadas = 0
+            preciosProductosUsados = 0
+            precioFinal = 0
+            for detalle in detallesServicios:
+                preciosManosdeObraUsadas += detalle.precio
+            for detalle in detallesProductos:
+                preciosProductosUsados += (detalle.precio * detalle.cantidad)
+            realizada.precioTotal =  preciosManosdeObraUsadas + preciosProductosUsados
+        return realizada
 
 
 class Creada(EstadoRealizable):
@@ -161,7 +181,6 @@ class Creada(EstadoRealizable):
             practica = self.practica,
             diasMantenimiento=diasMantenimiento,
         )
-
 
 
 class Programada(EstadoCancelable, EstadoRealizable):
@@ -197,7 +216,6 @@ class Programada(EstadoCancelable, EstadoRealizable):
         pass
 
 
-
 class Presupuestada(EstadoRealizable, EstadoCancelable):
     TIPO = 3
 
@@ -226,7 +244,6 @@ class Presupuestada(EstadoRealizable, EstadoCancelable):
         return Programada.objects.create(practica=self.practica, inicio=inicio, duracion=duracion)
 
 
-
 class Realizada(EstadoCancelable):
     TIPO = 5
 
@@ -245,6 +262,15 @@ class Realizada(EstadoCancelable):
         through='RealizadaProducto',
         through_fields=('realizada','producto'),
         related_name='realizadas'
+    )
+    precioTotal = models.DecimalField(
+        null = True,
+        max_digits=Practica.MAX_DIGITOS,
+        decimal_places=Practica.MAX_DECIMALES,
+        validators = [
+            MinValueValidator(Practica.MIN_PRECIO, message=("El precio no puede ser menor a {:.%df}" % (Practica.MAX_DECIMALES)).format(Practica.MIN_PRECIO)),
+            DecimalValidator(max_digits=Practica.MAX_DIGITOS, decimal_places=Practica.MAX_DECIMALES)
+        ]
     )
 
     def agregarServicio(self, servicio=None, cantidad=None, precio=None):

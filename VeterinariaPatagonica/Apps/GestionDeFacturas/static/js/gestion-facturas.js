@@ -73,13 +73,30 @@
 
     let sumarPractica = function(){
       let elementoSeleccionado = $inputPractica.find(":selected");
-      $.ajax({
-        url: "/verPractica",
-        data: {practica: `${$inputPractica.ajaxStart()}`},
-        success: function(data){
-          console.log("Llegué acá");
-        }
-      })
+      let texto = $inputPractica.find(":selected").text();
+      let arrayTexto = texto.split(" ");
+      let tipo = arrayTexto[0];
+      let identificador = parseInt(arrayTexto[1]);
+      if (tipo = "Consulta"){
+        $.ajax({
+          url: "/consultas/",
+          data: {id: `${identificador}`},
+          success: function(data){
+            console.log("Llegué acá");
+            console.log(data);
+            //$itemTotal = $"(#id_total");
+          }
+        });
+      }else{
+        $.ajax({
+          url: "cirugia/",
+          data: {practica: `${identificador}`},
+          success: function(data){
+            console.log("Llegué acá");
+          }
+        });
+      }
+
       console.log(elementoSeleccionado);
     }
 

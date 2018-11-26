@@ -102,27 +102,6 @@ class Practica(models.Model):
             },
             validators = [],
     )
-    '''
-    recargo = models.DecimalField(
-            blank=False,
-            null = False,
-            default=Decimal(0),
-            max_digits = MAX_DIGITOS_AJUSTES,
-            decimal_places = MAX_DECIMALES_AJUSTES,
-            error_messages = {},
-            validators = []
-    )
-
-    descuento = models.DecimalField(
-            blank=False,
-            null = False,
-            default=Decimal(0),
-            max_digits = MAX_DIGITOS_AJUSTES,
-            decimal_places = MAX_DECIMALES_AJUSTES,
-            error_messages = {},
-            validators = []
-    )
-    '''
     cliente = models.ForeignKey(
         Cliente,
         related_name='practicas',
@@ -168,21 +147,16 @@ class Practica(models.Model):
         through_fields=('practica','producto'),
         related_name='practicas'
     )
-    '''
-    factura = models.ForeignKey(
-        Factura,
-        related_name='practicas',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
-    '''
+
     turno = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
         null=True,
     )
 
+    senia = models.PositiveSmallIntegerField(
+        null = True
+    )
 
     def __str__(self):
         return "{} {}".format(self.tipoDeAtencion.get_tipoDeServicio_display(), self.id)
