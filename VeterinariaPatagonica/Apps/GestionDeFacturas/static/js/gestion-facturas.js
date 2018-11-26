@@ -75,12 +75,14 @@
       let elementoSeleccionado = $inputPractica.find(":selected");
       let texto = $inputPractica.find(":selected").text();
       let arrayTexto = texto.split(" ");
-      let tipo = arrayTexto[0];
-      let identificador = parseInt(arrayTexto[1]);
-      if (tipo = "Consulta"){
+      let tipo = arrayTexto[4];
+      let identificador = parseInt(arrayTexto[2]);
+      console.log(tipo);
+      console.log(identificador);
+      if (tipo = "consulta"){
         $.ajax({
-          url: "/consultas/",
-          data: {id: `${identificador}`},
+          url: "/consultas/ver/",
+          data: {consulta: `${identificador}`},
           success: function(data){
             console.log("Llegué acá");
             console.log(data);
@@ -90,7 +92,7 @@
       }else{
         $.ajax({
           url: "cirugia/",
-          data: {practica: `${identificador}`},
+          data: {practica: `ver/${identificador}/`},
           success: function(data){
             console.log("Llegué acá");
           }
