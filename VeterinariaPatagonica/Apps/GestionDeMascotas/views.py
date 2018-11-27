@@ -31,6 +31,8 @@ def modificar(request, id= None, cliente_id=None):
         print(formulario)
         if formulario.is_valid():
             mascota = formulario.save()
+            mascota.generadorDePatente(mascota.id)
+            mascota = formulario.save()
             return HttpResponseRedirect("/GestionDeMascotas/ver/{}".format(mascota.id))
         else:
             context['formulario'] = formulario
