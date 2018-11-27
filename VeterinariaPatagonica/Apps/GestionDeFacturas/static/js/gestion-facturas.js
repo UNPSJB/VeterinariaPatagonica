@@ -63,51 +63,62 @@
         }
       }
 
-      //[TODO] poner una funcion de "agregar precio de practica" y llamarla para incrementar el acumulador antes de actualizarlo.
-
       document.getElementById("id_total").value = acumulador;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
+      let $inputPractica = $("#id_practica");
+      if ($inputPractica.is(":visible")){
+        sumarPractica();//Llamo la función que incrementa el valor del input total con respecto al costo de la práctica seleccionada.
+      }
       console.log("OBTENER TOTAL - finalizando la función.");
     }
 
 
-
+    //Función que toma el valor del input total y le suma el costo de la práctica seleccionada.
     let sumarPractica = function(){
-      let elementoSeleccionado = $inputPractica.find(":selected");
+      let elementoSeleccionado = $inputPractica.find(":selected");//Consigo el elemento seleccionado.
       let texto = $inputPractica.find(":selected").text();
-      let arrayTexto = texto.split(" ");
+      let arrayTexto = texto.split(" ");//Parseo el __str__ de la práctica seleccionada.
       let tipo = arrayTexto[4];
       let identificador = parseInt(arrayTexto[2]);
-      console.log(tipo);
-      console.log(identificador);
-      if (tipo = "consulta"){
-        let myUrl = new String("/consultas/ver/" + identificador + "/");
+      let $inputTotal = $("#id_total");//Obtengo el input Total.
+      let precioInputTotal = parseInt($inputTotal[0].value);//Consigo el valor numérico del input total.
+
+      //Si es una consulta, uso ajax con respecto a las url de consultas, sinó con respecto las url de cirugía.
+      if (tipo == "consulta"){
+        let myUrl = new String("/consultas/ver/" + identificador + "/");//Defino la url que voy a conseguir.
         $.ajax({
           url: myUrl,
           data: {id: `${identificador}`},
           success: function(data){
-            let precio =$(`#id_precio`, data);
-            console.log(precio);
+            let $precio =$(`#id_precio`, data);//Consigo el precio de la práctica, del ver.html traido por ajax.
+            texto = $precio[0].textContent;
+            arrayTexto = texto.split("$");
+            let precioPractica=parseInt(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            let nuevoPrecio = precioPractica + precioInputTotal;
+            document.getElementById("id_total").value = nuevoPrecio;//Seteo el precio total actualizado.
             //$itemTotal = $"(#id_total");
           }
         });
       }else{
-        let myUrl = new String("/cirugias/ver/" + identificador +"/");
+        let myUrl = new String("/cirugias/ver/" + identificador +"/");//Defino la url que voy a conseguir.
         $.ajax({
           url: myUrl,
           data: {id: `${identificador}`},
           success: function(data){
-
+            let $precio =$(`#id_precio`, data);//Consigo el precio de la práctica, del ver.html traido por ajax.
+            texto = $precio[0].textContent;
+            arrayTexto = texto.split("$");
+            let precioPractica=parseInt(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            let nuevoPrecio = precioPractica + precioInputTotal;
+            document.getElementById("id_total").value = nuevoPrecio;//Seteo el precio total actualizado.
           }
         });
       }
-
-      console.log(elementoSeleccionado);
     }
 
     let addPractica = function(){
       divPractica.show();
       $buttonAddPractica.hide();
-      $inputPractica.on("change", function() { sumarPractica() });
+      $inputPractica.on("change", function() { calcularTotal() });
     }
 
 
@@ -133,6 +144,12 @@
   		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",totalTuplas)}
   		console.log("ADD - Total al finalizar = %d",totalTuplas);
   	}
+
+    let borrarTuplasVacias = function(){
+
+    }
+
+
 
 
   	$("#button-add").click(add);
