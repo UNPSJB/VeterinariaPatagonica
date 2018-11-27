@@ -17,9 +17,10 @@
   
   Tomczuk Miguel.
   
+  Torres Nelson.
+  
   Lopez Fernando.
   
-  Torres Nelson.
 ##
 
 ### Elementos necesarios:
