@@ -35,12 +35,6 @@
        </ul>
      </li>
 
-        <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cobros </a>
-            <ul class="nav child_menu">
-                <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'facturas:facturaListar' %}"> Listar Facturas </a></li>
-                <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'facturas:facturaCrear' %}"> Crear Factura </a></li>
-            </ul>
-        </li>
 <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cobros </a>
 <ul class="nav child_menu">
  <li><i class="glyphicon glyphicon-chevron-right"></i><a href="{% url 'formasDePagos:formaDePagoVerHabilitados' %}">Listar Formas de Pagos</a></li>
@@ -58,11 +52,11 @@
          <i class="glyphicon glyphicon-chevron-right"></i>
          <a href="{% url 'practicas:consulta:listar' %}">Listar</a>
      </li>
-{% comment %}
      <li>
          <i class="glyphicon glyphicon-chevron-right"></i>
          <a href="{% url 'practicas:consulta:crear:nueva' %}">Crear</a>
      </li>
+{% comment %}
      <li>
          <i class="glyphicon glyphicon-chevron-right"></i>
          <a href="{% url 'practicas:consulta:realizar' %}">Realizar </a>
@@ -81,11 +75,11 @@
           <i class="glyphicon glyphicon-chevron-right"></i>
           <a href="{% url 'practicas:cirugia:listar' %}">Listar</a>
       </li>
-{% comment %}
       <li>
           <i class="glyphicon glyphicon-chevron-right"></i>
           <a href="{% url 'practicas:cirugia:crear:nueva' %}">Crear</a>
       </li>
+{% comment %}
       <li>
           <i class="glyphicon glyphicon-chevron-right"></i>
           <a href="{% url 'practicas:cirugia:programar' %}">Programar </a>
