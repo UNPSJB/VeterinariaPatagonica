@@ -8,6 +8,7 @@ from .models import Pago
 from .forms import PagoForm
 from Apps.GestionDeFacturas.models import Factura
 from VeterinariaPatagonica import tools
+from django.utils import timezone
 
 
 
@@ -20,21 +21,27 @@ def pago(request):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDePagos.add_Pago', raise_exception=True)
-def modificar(request, id = None): #, factura_id=None
+def crear(request, idFactura = None): #, factura_id=None
 
-    pago = Pago.objects.get(id=id) if id is not None else None
+    factura = Factura.objects.get(id=idFactura)
     context = {'usuario': request.user}
 
-    if request.method == 'POST':
-        formulario = PagoForm(request.POST, instance=pago)
-        #print(formulario)
-        if formulario.is_valid():
-            pago = formulario.save()
-            return HttpResponseRedirect("/GestionDePagos/ver/{}".format(pago.id))
+    pagos= len(Pago.objects.filter(factura=idFactura))
+
+    if not pagos:
+
+        pago=Pago(importeTotal=factura.total, factura=factura)
+        if request.method == 'POST':
+            formulario = PagoForm(request.POST, instance=pago)
+            if formulario.is_valid():
+                pago = formulario.save()
+                return HttpResponseRedirect("/GestionDePagos/ver/{}".format(pago.id))
+            else:
+                context['formulario'] = formulario
         else:
-            context['formulario'] = formulario
+            context['formulario'] = PagoForm(instance=pago)
     else:
-        context['formulario'] = PagoForm(instance=pago)
+        print("Error, ya hay Pagos")
     template = loader.get_template('GestionDePagos/formulario.html')
     return HttpResponse(template.render(context, request))
 

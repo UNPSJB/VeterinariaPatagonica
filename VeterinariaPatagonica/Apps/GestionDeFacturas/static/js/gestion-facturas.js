@@ -10,7 +10,14 @@
     let template = $(`#item-${totalTuplas}`).html().replace(RegExp(`form-${totalTuplas - 1}`,"g"), `form-ITEM`);//Selecciono lo que es un item completo (producto+cantidad+checkBox).
 
     let $buttonAddPractica = $("#button-add-practica");
-//    let $item1 = $("#item-1");
+
+    let $inputDescuento = $("#id_descuento").on("input", function () {calcularTotal();});
+    let $inputRecargo = $("#id_recargo").on("input", function () {calcularTotal();});
+    //let $inputCliente = $("#select2-id_cliente-container").on("select", function () {console.log("AAA");});
+    let $inputCliente = document.querySelector(`#id_cliente`);
+    $inputCliente.onchange=function() {
+      actualizarDescuento();
+    };
 
     let $inputPractica = $("#id_practica");
     let divPractica = $inputPractica.parent().parent();
@@ -24,6 +31,25 @@
         calcularTotal();
       };
       let borrar = $(`#id_form-${iterador}-DELETE`).on("change", function() { calcularTotal(); });//Obtengo el checkBox eliminar del item y le doy comportamiento(llama a la funcion calcularTotal cuando cambia).
+    }
+
+
+    let actualizarDescuento = function (){
+      let $cliente = $("#id_cliente");
+      let identificador = $cliente.val();
+      let myUrl = new String ("/GestionDeClientes/ver/" + identificador + "/");
+      $.ajax({
+        url: myUrl,
+        data: {id: `${identificador}`},
+        success: function(data){
+          let $porcentajeDescuento =$(`#porcentajeDescuentoServicio`, data);//Consigo el porcentaje de descuentodel cliente, del ver.html traido por ajax.
+          texto = $porcentajeDescuento[0].textContent;
+          arrayTexto = texto.split(" ");
+          let porcentajeDescuento=parseInt(arrayTexto[2]);//Obtengo el valor numérico del porcentaje de descuento del cliente.
+          document.getElementById("id_descuento").value = porcentajeDescuento;//Seteo el porcentaje de descuento.
+          calcularTotal();
+        }
+      });
     }
 
 
@@ -63,49 +89,95 @@
         }
       }
 
-      //[TODO] poner una funcion de "agregar precio de practica" y llamarla para incrementar el acumulador antes de actualizarlo.
-
       document.getElementById("id_total").value = acumulador;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
+      let $inputPractica = $("#id_practica");
+      if ($inputPractica.is(":visible")){
+        sumarPractica();//Llamo la función que incrementa el valor del input total con respecto al costo de la práctica seleccionada.
+      }
       console.log("OBTENER TOTAL - finalizando la función.");
     }
 
 
-
+    //Función que toma el valor del input total y le suma el costo de la práctica seleccionada.
     let sumarPractica = function(){
-      let elementoSeleccionado = $inputPractica.find(":selected");
+      let elementoSeleccionado = $inputPractica.find(":selected");//Consigo el elemento seleccionado.
       let texto = $inputPractica.find(":selected").text();
-      let arrayTexto = texto.split(" ");
+      let arrayTexto = texto.split(" ");//Parseo el __str__ de la práctica seleccionada.
       let tipo = arrayTexto[4];
       let identificador = parseInt(arrayTexto[2]);
-      console.log(tipo);
-      console.log(identificador);
-      if (tipo = "consulta"){
+      let $inputTotal = $("#id_total");//Obtengo el input Total.
+      let precioInputTotal = parseInt($inputTotal[0].value);//Consigo el valor numérico del input total.
+      let $descuento = $("#id_descuento");
+      let porcentajeDescuento = parseInt($descuento.val());//Consigo el valor del porcentaje de descuento.
+      let $recargo = $("#id_recargo");
+      let porcentajeRecargo = parseInt($recargo.val());//Consigo el valor del porcentaje de recargo.
+      console.log(porcentajeRecargo);
+
+      //Si es una consulta, uso ajax con respecto a las url de consultas, sinó con respecto las url de cirugía.
+      if (tipo == "consulta"){
+        let myUrl = new String("/consultas/ver/" + identificador + "/");//Defino la url que voy a conseguir.
         $.ajax({
-          url: "/consultas/ver/",
-          data: {consulta: `${identificador}`},
+          url: myUrl,
+          data: {id: `${identificador}`},
           success: function(data){
-            console.log("Llegué acá");
-            console.log(data);
+            let descuentoPractica = 0;
+            let recargoPractica = 0;
+
+            let $precio =$(`#id_precio`, data);//Consigo el precio de la práctica, del ver.html traido por ajax.
+            texto = $precio[0].textContent;
+            arrayTexto = texto.split("$");
+            let precioPractica=parseInt(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            if (porcentajeDescuento != 0){
+              descuentoPractica = (precioPractica*porcentajeDescuento)/100;
+            }
+            if (porcentajeRecargo != 0){
+              recargoPractica = (precioPractica*porcentajeRecargo)/100;
+            }
+            precioPractica -= descuentoPractica;
+            precioPractica += recargoPractica;
+            let nuevoPrecio = precioPractica + precioInputTotal;
+            if (nuevoPrecio < 0){
+              nuevoPrecio = 0;
+            }
+            document.getElementById("id_total").value = nuevoPrecio;//Seteo el precio total actualizado.
             //$itemTotal = $"(#id_total");
           }
         });
       }else{
+        let myUrl = new String("/cirugias/ver/" + identificador +"/");//Defino la url que voy a conseguir.
         $.ajax({
-          url: "cirugia/",
-          data: {practica: `ver/${identificador}/`},
+          url: myUrl,
+          data: {id: `${identificador}`},
           success: function(data){
-            console.log("Llegué acá");
+            let descuentoPractica = 0;
+            let recargoPractica = 0;
+
+            let $precio =$(`#id_precio`, data);//Consigo el precio de la práctica, del ver.html traido por ajax.
+            texto = $precio[0].textContent;
+            arrayTexto = texto.split("$");
+            let precioPractica=parseInt(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            if (porcentajeDescuento != 0){
+              descuentoPractica = (precioPractica*porcentajeDescuento)/100;
+            }
+            if (porcentajeRecargo != 0){
+              recargoPractica = (precioPractica*porcentajeRecargo)/100;
+            }
+            precioPractica -= descuentoPractica;
+            precioPractica += recargoPractica;
+            let nuevoPrecio = precioPractica + precioInputTotal;
+            if (nuevoPrecio <0){
+              nuevoPrecio = 0;
+            }
+            document.getElementById("id_total").value = nuevoPrecio;//Seteo el precio total actualizado.
           }
         });
       }
-
-      console.log(elementoSeleccionado);
     }
 
     let addPractica = function(){
       divPractica.show();
       $buttonAddPractica.hide();
-      $inputPractica.on("change", function() { sumarPractica() });
+      $inputPractica.on("change", function() { calcularTotal() });
     }
 
 
@@ -124,13 +196,19 @@
         $buttons.before($field);
         let cantidad =$(`#id_form-${id}-cantidad`, $field).on("input", function() { calcularTotal(); });//Obtengo el input cantidad del elemento a agregar, dandole ademas dinamismo (que llame a la funcion calcularTotal al ser modificado).
         let producto = document.querySelector(`select[name="form-${id}-producto"]`, $field);//Obtengo el input producto del elemento a agregar, dondele ademas dinamismo (que llame a la funcion calcularTotal al cambiar).
-        producto.onchange=function(e) {
+        producto.onchange=function() {
           calcularTotal();
         };
         let borrar = $(`#id_form-${id}-DELETE`, $field).on("change", function() { calcularTotal(); });//Obtengo el checkBox del elemento a agregar, dandole ademas dinamismo (que llame a la funcion calcularTotal al cambiar).
   		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",totalTuplas)}
   		console.log("ADD - Total al finalizar = %d",totalTuplas);
   	}
+
+    let borrarTuplasVacias = function(){
+      //[TODO]Función que coloca en verdadero el checkbox eliminar de las tuplas vacías.
+    }
+
+
 
 
   	$("#button-add").click(add);

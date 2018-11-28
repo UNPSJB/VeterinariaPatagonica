@@ -1,7 +1,8 @@
 from .models import Factura, DetalleFactura
 from django import forms
 from dal import autocomplete
-
+from Apps.GestionDePracticas.models.practica import Practica
+from Apps.GestionDePracticas.models.estado import Realizada
 def FacturaFormFactory(practica):
     class FacturaForm(forms.ModelForm):
         class Meta:
@@ -46,6 +47,7 @@ def FacturaFormFactory(practica):
                     field.widget.attrs.update({
                         'class': 'form-control'
                     })
+
 
         field_order = [
             'tipo',
@@ -106,6 +108,7 @@ class FacturaForm(forms.ModelForm):
                 field.widget.attrs.update({
                     'class': 'form-control'
                 })
+        self.fields["practica"].queryset = Practica.objects.enEstado(Realizada)
 
     field_order=[
             'tipo',

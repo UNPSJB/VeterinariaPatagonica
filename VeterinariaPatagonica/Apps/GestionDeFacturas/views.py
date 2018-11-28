@@ -47,6 +47,8 @@ def modificar(request, id = None):
             for detalle in instances:
                 detalle.factura = factura
                 detalle.save()
+            if factura.practica.esPosible(Practica.Acciones.facturar):#Transiciona la practica seleccionada a facturada.
+                factura.practica.hacer("facturar")
             return HttpResponseRedirect("/GestionDeFacturas/ver/{}".format(factura.id))
             print(factura, instances)
         context['formulario'] = form
