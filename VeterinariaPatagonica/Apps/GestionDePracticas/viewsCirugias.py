@@ -1,5 +1,5 @@
 from django.db.utils import Error as ErrorBD
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.template import loader
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils import timezone as djangotimezone
@@ -621,6 +621,8 @@ def detallarRealizacion(request, id):
                 try:
                     servicios = servicios.save()
                     productos = productos.save()
+                    practica.precio= realizada.total()
+                    practica.save()
                 except ErrorBD as error:
                     context["errores"] = [ errorBD() ]
                 else:
@@ -668,10 +670,13 @@ def verAgendaCirugia(request):
 
     practicas = Practica.quirurgicas.filter(turno__date=fecha)
 
+    print("quiero ver agenda")
+
     turnos = [{
         "turno": practica.turno,
         "duracion": practica.duracion(),
         "servicios": [servicio.nombre for servicio in practica.servicios.all()]
     } for practica in practicas]
-
-    return JsonResponse({ 'turnos':  turnos})
+    json = JsonResponse({ 'turnos':  turnos})
+    print(json)
+    return json

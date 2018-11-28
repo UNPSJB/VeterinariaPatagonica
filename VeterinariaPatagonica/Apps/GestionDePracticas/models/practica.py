@@ -290,10 +290,10 @@ class Practica(models.Model):
 
 
 
-    turno = models.DateTimeField(
+    '''turno = models.DateTimeField(
         blank=True,
         null=True,
-    )
+    )'''
 
 
     def __str__(self):
@@ -386,7 +386,12 @@ class Practica(models.Model):
 
 
     def total(self):
-        return self.totalProductos() + self.totalServicios()
+        subtotal = self.totalProductos() + self.totalServicios()
+        porcentajeRecargo= self.tipoDeAtencion.recargo
+        valorRecargo= (subtotal*porcentajeRecargo)/100
+        total = subtotal + valorRecargo
+        print("Desde practica total",total)
+        return total
 
 
     """

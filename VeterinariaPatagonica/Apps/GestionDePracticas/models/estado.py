@@ -159,6 +159,8 @@ class EstadoRealizable(Estado):
             ) for detalle in self.practica.practica_productos.all()
         ]
 
+
+
         with transaction.atomic():
             realizada = Realizada.objects.create(
                 practica=self.practica,
@@ -169,7 +171,9 @@ class EstadoRealizable(Estado):
             )
             realizada.realizada_servicios.set(servicios, bulk=False)
             realizada.realizada_productos.set(productos, bulk=False)
-
+            self.practica.precio = realizada.total()
+            self.practica.save()
+            print("DESDE PRACTICA", self.practica.precio)
         return realizada
 
 
@@ -434,7 +438,12 @@ class Realizada(Estado):
         return sum([ detalle.precioTotal() for detalle in productos ])
 
     def total(self):
-        return self.totalProductos() + self.totalServicios()
+        subtotal = self.totalProductos() + self.totalServicios()
+        porcentajeRecargo = self.practica.tipoDeAtencion.recargo
+        valorRecargo = (subtotal * porcentajeRecargo) / 100
+        total = subtotal + valorRecargo
+        print("Desde practica total", total)
+        return total
 
 
 

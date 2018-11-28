@@ -123,11 +123,31 @@ class Factura(models.Model):
         cadena = 'Tipo de Factura: {0}, Cliente: {1} Total: {2}.'
         return cadena.format(self.tipo, self.cliente, self.total)
 
-    def precioTotal(self):
-        total = Decimal("0")
-        for detalle in self.detalles.all():
-            total += detalle.subtotal
-        return total
+    def precioTotal(self, detalles):
+
+        productos = Decimal("0")
+        adelanto = Decimal("0")
+        practica = self.practica.precio
+
+        print("PRECIO PRACTICA", practica)
+
+        if (self.descuento!=0):
+            descuentoPractica = practica/self.descuento
+            practica = practica-descuentoPractica
+
+        if (self.recargo!=0):
+            recargoPractica = practica/self.recargo
+            practica = practica+recargoPractica
+
+        '''if self.practica:
+            adelanto = self.practica.adelanto'''
+
+        for detalle in detalles:
+            productos += detalle.subtotal
+
+        self.total = practica + productos - adelanto
+        print("DESDE FACTURA",self.total)
+        return self.total
 
     def calcular_subtotales(self, detalles):
         self.total = Decimal("0")
