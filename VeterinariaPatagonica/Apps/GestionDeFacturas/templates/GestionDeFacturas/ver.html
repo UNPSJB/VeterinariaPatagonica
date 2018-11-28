@@ -26,10 +26,10 @@ Datos del factura
             <p>Fecha: {{factura.fecha}}</p>
             <p>Cliente: {{ factura.cliente }} </p>
             {% if factura.pago %}
-                <p>Pago: Pagada</p>
+                <p id = "esPagada">Pago: Pagada</p>
                 <p>Fecha Pago: {{factura.pago.fecha}}</p>
             {%else%}
-                <p> Pago: No Pagada</p>
+                <p id = "esPagada"> Pago: No Pagada</p>
             {%endif%}
             <!-- Tabla para mostrar los detalles de la factura. -->
             <table class="table listado">
@@ -67,6 +67,17 @@ Datos del factura
             </tr>
             {% endfor %}
           <thead>
+            <tr>
+              <th>Porcentaje de Descuento: {{factura.descuento}}</th>
+            </tr>
+            <tr>
+              <th>Porcentaje de Recargo: {{factura.recargo}}</th>
+            </tr>
+            {% if factura.practica %}
+              <tr>
+                <th>Adelanto: {{factura.practica.adelanto.importe}}</th>
+              </tr>
+            {% endif %}
             <tr>
               <th>Total: {{ factura.total}}</th>
             </tr>

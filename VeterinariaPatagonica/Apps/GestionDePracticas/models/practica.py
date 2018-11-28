@@ -289,13 +289,6 @@ class Practica(models.Model):
     )
 
 
-
-    turno = models.DateTimeField(
-        blank=True,
-        null=True,
-    )
-
-
     def __str__(self):
         return "Practica numero {} tipo {}".format( self.id, Areas[self.tipo].nombre )
 
