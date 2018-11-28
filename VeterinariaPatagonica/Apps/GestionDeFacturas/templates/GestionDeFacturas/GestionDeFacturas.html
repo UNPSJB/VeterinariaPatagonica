@@ -29,7 +29,7 @@
   {% endblock facturaContenido %}
 
   </section>
-  
+
 
 {% endblock paginaSeccionGeneral %}
 
@@ -40,8 +40,9 @@
 
 {% block paginaJavascript %}
     {{block.super}}
-    <script src="{% static 'js/gestion-facturas.js' %}"></script>
+    <script src="{% static 'js/gestion-facturas.js' %}"></script> 
     <script src="{% static 'js/moment.min.js' %}"></script>
     <script src="{% static 'js/es.js' %}"></script>
     <script src="{% static 'js/bootstrap-datetimepicker.min.js'%}"></script>
+    <script src="{% static 'js/ver.js' %}"></script>
 {% endblock paginaJavascript%}
