@@ -17,9 +17,10 @@
   
   Tomczuk Miguel.
   
+  Torres Nelson.
+  
   Lopez Fernando.
   
-  Torres Nelson.
 ##
 
 ### Elementos necesarios:
@@ -34,9 +35,11 @@ django-autocomplete-light (dal)
 #### Cómo instalar los elementos necesarios:
 
 sudo apt-get update
+
 sudo apt-get install python3
 
 sudo apt-get install python-pip python-dev build-essential
+
 sudo pip install --upgrade pip
 
 pip install Django==2.0.8

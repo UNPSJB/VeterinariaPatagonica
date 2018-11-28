@@ -37,7 +37,7 @@ class Mascota(models.Model):
         max_length= MAXPATENTE,
         unique= True,
         null= False,
-        blank= False,
+        blank= True,
         error_messages= {
             'max_length': "la patente puede tener a lo sumo {} caracteres".format(MAXPATENTE),
             'unique': "Otra mascota tiene esa patente",
@@ -116,3 +116,8 @@ class Mascota(models.Model):
         return "{0}, {1}".format(self.nombre, self.especie)
 
 
+    def generadorDePatente(self, id):
+         print(id)
+         if self.patente is '':
+             self.patente= "Vet-" + str(id)
+         return self.patente
