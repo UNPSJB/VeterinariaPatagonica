@@ -23,7 +23,11 @@ def modificar(request, id= None, cliente_id=None):
     if cliente_id:
         cliente = Cliente.objects.get(pk=cliente_id)
     MascotaForm = MascotaFormFactory(mascota, cliente)
-    context = {'usuario': request.user}
+
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
 
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)

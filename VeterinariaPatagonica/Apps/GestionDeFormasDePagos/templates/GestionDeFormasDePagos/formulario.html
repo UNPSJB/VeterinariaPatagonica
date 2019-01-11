@@ -6,11 +6,22 @@ Gestion de Formas De Pagos | Crear Formas De Pagos
 {% endblock %}
 
 {% block formaDePagoTitulo %}
-Nuevo Forma De Pago
+{% if titulo == 1 %}
+    Nueva Forma de Pago
+{% endif %}
+{% if titulo == 2 %}
+    Modificar Forma de Pago
+{% endif %}
 {% endblock %}
 
 {% block formaDePagoSubtitulo %}
-Agrega un Forma De Pago al listado
+
+{% if titulo == 1 %}
+    Agrega una Forma De Pago al listado
+{% endif %}
+{% if titulo == 2 %}
+    Modificar datos de una Forma de Pago
+{% endif %}
 {% endblock %}
 
 {% block formaDePagoContenido %}

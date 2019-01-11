@@ -6,11 +6,22 @@ Gestion de Rubros | Crear Rubros
 {% endblock %}
 
 {% block rubroTitulo %}
-Nuevo Rubro
+{% if titulo == 1 %}
+    Nuevo Rubro
+{% endif %}
+{% if titulo == 2 %}
+    Modificar Rubro
+{% endif %}
 {% endblock %}
 
 {% block rubroSubtitulo %}
-Agrega un Rubro al listado
+
+{% if titulo == 1 %}
+    Agrega un Rubro al listado
+{% endif %}
+{% if titulo == 2 %}
+    Modifica datos del Rubro
+{% endif %}
 {% endblock %}
 
 {% block rubroContenido %}

@@ -21,7 +21,12 @@ def formasDePagos(request):
 def modificar(request, id = None):
 
     formaDePago = FormaDePago.objects.get(id=id) if id is not None else None
-    context = {'usuario': request.user}
+
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
+
     if request.method == 'POST':
         formulario = FormaDePagoForm(request.POST, instance=formaDePago)
         print(formulario)

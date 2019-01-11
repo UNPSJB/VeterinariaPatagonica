@@ -101,6 +101,7 @@ class Cliente (models.Model):
             'max_length': "La localidad puede tener a lo sumo {} caracteres".format(MAXLOCALIDAD),
         }
     )
+
     celular = models.CharField(
         help_text="Celular del Cliente sin el 0",
         max_length=MAXCELULAR,

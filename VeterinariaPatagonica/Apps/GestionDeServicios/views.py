@@ -13,7 +13,10 @@ from VeterinariaPatagonica import tools
 @permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
 def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
-    context = {'usuario': request.user}
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,#          Defino la forma del formset. Van a tener el checkbox eliminar, la cantidad mínima de forms en el formset
         fields=("producto", "cantidad"), min_num=1, extra=0, can_delete=True,# es de 1 y la máxima es la determinada por django (1000),

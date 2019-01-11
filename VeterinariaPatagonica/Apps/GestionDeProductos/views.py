@@ -20,7 +20,11 @@ def producto(request):
 def modificar(request, id = None):
     producto = Producto.objects.get(id=id) if id is not None else None
     ProductoForm = ProductoFormFactory(producto)
-    context = {'usuario' : request.user}
+
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
 
     if request.method == 'POST':
         formulario = ProductoForm(request.POST, instance=producto)

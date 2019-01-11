@@ -17,21 +17,21 @@ def clientes(request):
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.add_Cliente', raise_exception=True)
 def modificar(request, id = None, irAMascotas=1): #irAMascotas=1 -> False, irAMasotas=0 -> True
+
     cliente = Cliente.objects.get(id=id) if id is not None else None
     ClienteForm = ClienteFormFactory(cliente)
-    context = {'usuario': request.user}
+
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
 
     if request.method == 'POST':
         formulario = ClienteForm(request.POST, instance=cliente)
         print(formulario)
         if formulario.is_valid():
             cliente = formulario.save()
-            if irAMascotas:
-                print("Quiere ir a crear mascota")
-                return HttpResponseRedirect(reverse('mascotas:mascotaCrearConCliente', kwargs={'cliente_id': cliente.id}))
-            else:
-                #return HttpResponseRedirect("/GestionDeMascotas/crear/{}".format(cliente.id))
-                return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
+            return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
             context['formulario'] = formulario
     else:
