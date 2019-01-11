@@ -12,7 +12,7 @@ $(document).ready(function() {
     });
 
 
-    function deshabilitarControles(e){
+    function deshabilitarControlesC(e){
         var tipoDeCliente = document.querySelector('#id_tipoDeCliente').value;
         if (tipoDeCliente === "C") {
 
@@ -23,8 +23,16 @@ $(document).ready(function() {
         }
     }
 
-    document.querySelector('#id_tipoDeCliente').onchange=deshabilitarControles;
-    $('input[data-tipo=especial]').parent().parent().hide()
 
+    var tipoCliente = document.querySelector('#id_tipoDeCliente').value
+
+    if (tipoCliente === "C"){
+            document.querySelector('#id_tipoDeCliente').onchange=deshabilitarControlesC;
+            $('input[data-tipo=especial]').parent().parent().hide()
+    }
+    else if (tipoCliente === "E"){
+        document.querySelector('#id_tipoDeCliente').onchange=deshabilitarControlesC;
+         $('input[data-tipo=especial]').parent().parent().show()
+    }
 
 });
