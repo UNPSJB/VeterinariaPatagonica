@@ -37,6 +37,7 @@ Clientes Habilitados
                             <input name="dniCuit" placeholder="DNI/CUIT">
                             <input name="nombres" placeholder="Nombres">
                             <input name="apellidos" placeholder="Apellidos">
+                            <input name="mascotas" placeholder="Mascotas">
 
                             <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
 
@@ -95,8 +96,15 @@ Clientes Habilitados
         <p> No hay clientes habilitados</p>
 
     {% endif %}
-
-    <a  id ="clienteHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'clientes:clienteCrear' %}"> Crear </a>
+    <div>
+        <a id ="clienteHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'clientes:clienteCrear' %}" data-toggle="tooltip" data-placement="bottom" title="Crear nuevo Cliente"> Crear </a>
+        <a id ="clienteHabiltadosExcel" class="btn btn-sm btn-default" href="{% url 'clientes:clientesReporteEXCEL' %}" data-toggle="tooltip" data-placement="bottom" title="Imprimir listado en Excel">
+            <i class="glyphicon glyphicon-list-alt" > </i>
+        </a>
+        <a id ="clienteHabiltadosPdf" class="btn btn-sm btn-default" href="{% url 'clientes:clientesReportePDF' %}" data-toggle="tooltip" data-placement="bottom" title="Imprimir listado en Pdf">
+            <i class="glyphicon glyphicon-file" > </i>
+        </a>
+    </div>
 
 </div>
 
