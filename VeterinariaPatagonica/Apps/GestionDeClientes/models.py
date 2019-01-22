@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, DecimalValidator
 from VeterinariaPatagonica import tools
 from decimal import Decimal
+from django.db.models import Q
 
 # Create your models here.
 
@@ -17,7 +18,7 @@ class Cliente (models.Model):
         "dniCuit": "dniCuit__icontains",
         "nombres": "nombres__icontains",
         "apellidos": "apellidos__icontains",
-        #"duenio": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+        "mascotas": lambda value: Q(mascota__nombre__icontains=value),
     }
 
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
