@@ -17,5 +17,11 @@ urlpatterns = [
     path('ver/<int:id>/', clientes_views.ver, name="clienteVer"),
     path('verHabilitados/', clientes_views.verHabilitados, name="clienteVerHabilitados"),
     path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
+    #path('verHabilitados/<int:irA> ', clientes_views.verHabilitados, name="clienteVerHabilitados"),
+    #path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
+    path('reporte_clientes_excel/', clientes_views.ReporteClientesExcel, name="clientesReporteEXCEL"),
+    path('reporte_clientes_pdf/', clientes_views.ReporteClientesPDF, name="clientesReportePDF"),
     #path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
+    path('documentacion/', clientes_views.documentation, name="clienteManual"),
+    path('documentacionCliente/<int:tipo>', clientes_views.documentationCliente, name="clienteManual"),
 ]
