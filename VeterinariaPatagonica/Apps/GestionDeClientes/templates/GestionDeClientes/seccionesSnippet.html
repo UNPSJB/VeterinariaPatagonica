@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <div class="clienteSecciones">
 
+        <a id="clienteAyuda" class="btn btn-sm btn-default" href="{% url 'clientes:clienteManual'%}"  data-toggle="tooltip" data-placement="bottom" title="Ayuda">
+                  <i class="glyphicon glyphicon-book"> </i>
+        </a>
+
         <a id="clienteLinkHabilitados" class="btn btn-sm btn-default {% if pagina == 'verHabilitados' %} disabled {% endif %}"  href="{% url 'clientes:clienteVerHabilitados' %}"> Habilitados </a>
 
         <a id="clienteLinkDeshabilitados" class="btn btn-sm btn-default {% if pagina == 'verDeshabilitados' %} disabled {% endif %}"  href="{% url 'clientes:clienteVerDeshabilitados' %}"> Deshabilitados </a>
 
 </div>
+
