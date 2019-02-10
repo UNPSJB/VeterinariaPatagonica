@@ -10,7 +10,63 @@ from django.db.models import Q
 class BaseClienteManager(models.Manager):
     pass
 
-ClienteManager = BaseClienteManager.from_queryset(tools.BajasLogicasQuerySet)
+class ClienteQuerySet(tools.VeterinariaPatagonicaQuerySet):
+
+
+    def habilitados(self):
+        return self.filter(baja=False)
+
+    def deshabilitados(self):
+        return self.filter(baja=True)
+
+    def ordenarPorDniCuit(self, ascendente=True):
+
+        orden = ["cliente__nombres"]
+        if not ascendente:
+            orden = ["-" + field for field in orden ]
+
+        return self.order_by(*orden)
+
+    def ordenarPorNombre(self, ascendente=True):
+
+        orden = ["cliente__nombres"]
+        if not ascendente:
+            orden = ["-" + field for field in orden ]
+
+        return self.order_by(*orden)
+
+    def ordenarPorApellido(self, ascendente=True):
+
+        orden = ["cliente__apellidos"]
+        if not ascendente:
+            orden = ["-" + field for field in orden ]
+
+        return self.order_by(*orden)
+
+    def ordenarPorMascota(self, ascendente=True):
+
+        orden = ["mascota__nombre"]
+        if not ascendente:
+            orden = ["-" + field for field in orden ]
+
+        return self.order_by(*orden)
+
+    def ordenar(self, criterio, ascendente):
+
+        funciones = {
+            "dniCuit" : "ordenarPorDniCuit",
+            "nombres" : "ordenarPorNombre",
+            "apellidos" : "ordenarPorApellido",
+            "mascota" : "ordenarPorMascota",
+        }
+
+        if criterio:
+            funcion = getattr(self, funciones[criterio])
+            return funcion(ascendente)
+
+        return self
+
+ClienteManager = BaseClienteManager.from_queryset(ClienteQuerySet)
 
 class Cliente (models.Model):
 
@@ -38,6 +94,19 @@ class Cliente (models.Model):
         ("Gaiman", "Gaiman"),
         ("Dovalon", "Dovalon")
     ]
+
+
+    PARTE_ENTERA = 3
+    PARTE_DECIMAL = 2
+    DESC_MIN = Decimal(0)
+    DESC_MAX = Decimal(100.00)
+    DEFAULT = Decimal(0)
+    DESCUENTO = PARTE_ENTERA + PARTE_DECIMAL
+
+
+    CC_MIN_PRECIO = Decimal(0)
+    CC_MAX_PRECIO = Decimal(3000.00)
+    PRECIO = PARTE_ENTERA + PARTE_DECIMAL
 
     dniCuit = models.CharField(
         help_text= "Dni/Cuit del Cliente",
@@ -153,13 +222,6 @@ class Cliente (models.Model):
         }
     )
 
-    PARTE_ENTERA = 3
-    PARTE_DECIMAL = 2
-    DESC_MIN = Decimal(0)
-    DESC_MAX = Decimal(100.00)
-    DEFAULT = Decimal(0)
-    DESCUENTO = PARTE_ENTERA + PARTE_DECIMAL
-
     descuentoServicio = models.DecimalField(
         max_digits= DESCUENTO,
         decimal_places= PARTE_DECIMAL,
@@ -182,10 +244,6 @@ class Cliente (models.Model):
         ]
     )
 
-    CC_MIN_PRECIO = Decimal(0)
-    CC_MAX_PRECIO = Decimal(3000.00)
-    PRECIO = PARTE_ENTERA + PARTE_DECIMAL
-
     cuentaCorriente = models.DecimalField(
         max_digits = PRECIO,
         decimal_places = PARTE_DECIMAL,
@@ -205,4 +263,3 @@ class Cliente (models.Model):
         return "{0}, {1}".format(self.nombres,self.apellidos)
 
 
-    

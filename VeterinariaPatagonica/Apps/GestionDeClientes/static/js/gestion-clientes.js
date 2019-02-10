@@ -35,4 +35,8 @@ $(document).ready(function() {
          $('input[data-tipo=especial]').parent().parent().show()
     }
 
+    //$('#tablaCliente').tablesorter({
+	//	sortColumn: 'apellidos'	//Índice de la columna o nombre (en minúsculas) que hemos dado a la columna, para ordenar.
+	//});
+
 });

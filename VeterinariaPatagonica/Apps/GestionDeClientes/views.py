@@ -4,9 +4,12 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
+
+
 from .models import Cliente
-from .forms import ClienteFormFactory
+from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
+from .gestionDeClientes import *
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
@@ -251,6 +254,29 @@ def verHabilitados(request, irA=0):
     }
 
     return HttpResponse(template.render(contexto,request))
+
+@login_required(redirect_field_name='proxima')
+def listar(request, pagina=1):
+    clientes = Cliente.objects.habilitados()
+    formFiltrado = FiltradoForm(request.GET)
+    if formFiltrado.is_valid():
+        clientes = clientes.ordenar(formFiltrado.criterio(), formFiltrado.ascendente())
+
+    paginas = calcularPaginas(clientes)
+    clientes = clientesParaPagina(clientes, pagina, paginas)
+
+    template = loader.get_template('GestionDeClientes/verHabilitados.html')
+    contexto = {
+        "filtrado" : formFiltrado,
+        "pagina" : pagina,
+        "clientes" : clientes,
+        "paginas" : [ i+1 for i in range(paginas)],
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
+
+
 
 def verDeshabilitados(request):
     clientes = Cliente.objects.deshabilitados()

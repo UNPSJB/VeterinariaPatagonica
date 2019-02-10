@@ -8,10 +8,6 @@ Gestion de Clientes | Ver Habilitados
 Clientes Habilitados
 {% endblock %}
 
-{% block clienteSubtitulo %}
-<!--Actualmente disponibles-->
-{% endblock %}
-
 {% block secciones %}
 {% include './seccionesSnippet.html' with pagina='verHabilitados' %}
 {% endblock %}
@@ -21,50 +17,21 @@ Clientes Habilitados
 <!-- Listado -->
 <div class="clienteCuerpo" >
 
-    <!--<p> Los siguientes clientes estan habilitados.  </p>-->
+    {% include "./snippets/filtrado.html" with form=filtrado accion="Filtrar" %}
 
-    <div id="filtrarClientesHabilitados">
-        <a role="button" href="#filtrarClientes" data-toggle="collapse">
-            <i class="glyphicon glyphicon-tasks"></i>
-            <span>Criterios de busqueda</span>
-        </a>
-        <div id="filtrarClientes" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                            <input name="dniCuit" placeholder="DNI/CUIT">
-                            <input name="nombres" placeholder="Nombres">
-                            <input name="apellidos" placeholder="Apellidos">
-                            <input name="mascotas" placeholder="Mascotas">
-
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
-
-                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
-
-                            </button>
-                        </form>
-                    </div>
-            </form>
-        </div>
-    </div>
-    <br>
     <div class="clienteLineaTitulo"> </div>
-
     <br>
 
     {% if clientes %}
             <div class="table-responsive" id="tabla">
-                <table class="table clienteListado">
+                <table id="tabla-cliente" class="table clienteListado tablesorter">
                     <thead>
                         <tr>
-                            <th id="deshabilitados-dni"> DNI/CUIT </th>
-                            <th id="deshabilitados-apellido"> Apellidos </th>
-                            <th id="deshabilitados-nombre"> Nombres </th>
+                            <th id="habilitados-dni"> DNI/CUIT </th>
+                            <th id="habilitados-apellido"> Apellidos </th>
+                            <th id="habilitados-nombre"> Nombres </th>
 
-                            <th id="deshabilitados-acciones"> Acciones </th>
+                            <th id="habilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -72,7 +39,7 @@ Clientes Habilitados
                             <tr>
                                 <td> <p>{{cliente.dniCuit}}</p></td>
                                 <td> <p>{{cliente.apellidos}}</p></td>
-                                <td><p>{{cliente.nombres }}</p></td>
+                                <td> <p>{{cliente.nombres }}</p></td>
 
                                 <td> <p align="justify">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
@@ -90,6 +57,8 @@ Clientes Habilitados
                     </tbody>
                 </table>
             </div>
+
+
 
     {% else %}
 
@@ -109,3 +78,14 @@ Clientes Habilitados
 </div>
 
 {% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script>
+    $(document).ready(function() {
+    //cuando la página se cargue convertimos la tabla con id "simple" en una tabla ordenable
+	$("#tabla-cliente").tableSorter();
+    });
+    </script>
+{% endblock paginaJavascript %}
+

@@ -1,0 +1,2 @@
+APP_NAME = "clientes"
+CLIENTES_POR_PAGINA = 20
