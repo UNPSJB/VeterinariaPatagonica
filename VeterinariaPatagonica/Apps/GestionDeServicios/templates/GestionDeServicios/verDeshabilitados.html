@@ -64,8 +64,8 @@ Actualmente <strong>no</strong> disponibles
                   <tbody>
                     {% for servicio in servicios %}
                       <tr>
-                        <td> <p>{{ servicio.nombre }} </p> </td>
                         <td> <p>{{ servicio.tipo }} </p> </td>
+                        <td> <p>{{ servicio.nombre }} </p> </td>
                         <td> <p>{{ servicio.precioManoDeObra }} </p> </td>
                         <td> <p align="justify">
                               <a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Servicio">
