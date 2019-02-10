@@ -51,7 +51,6 @@ Mascotas Habilitadas
     <div class="mascotaLineaTitulo"> </div>
 
     <br>
-    <!--<p> Las siguientes mascotas estan habilitadas:  </p>-->
 
     {% if mascotas %}
             <div class="table-responsive" id="tabla">
@@ -76,12 +75,16 @@ Mascotas Habilitadas
                                             <a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Mascota">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a>
+                                            {% if perms.mascota.change_mascota %}
                                             <a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Mascota">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a>
+                                            {% endif %}
+                                            {% if perms.mascota.deshabilitar_mascota %}
                                             <a href="{% url 'mascotas:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Mascota">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a>
+                                            {% endif %}
                                 </p> </td>
                             </tr>
                         {% endfor %}

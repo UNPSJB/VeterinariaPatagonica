@@ -121,3 +121,7 @@ class Mascota(models.Model):
          if self.patente is '':
              self.patente= "Vet-" + str(id)
          return self.patente
+
+    class Meta:
+        permissions = (('deshabilitar_mascota', 'Puede deshabilitar una Mascota'),)
+        ordering = ["patente"]

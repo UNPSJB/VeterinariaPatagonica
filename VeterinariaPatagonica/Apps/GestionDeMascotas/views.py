@@ -3,17 +3,24 @@ from django.template import loader
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 from .models import Mascota
 from .forms import MascotaFormFactory
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
+from django.urls import reverse_lazy
 
 def mascota(request):
     context = {}
     template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')
     return HttpResponse(template.render(context, request))
+
+
+@permission_required('GestionDeMascotas.deshabilitar_mascota', raise_exception=True)
+def dispatch(self, *args, **kwargs):
+    return super(Mascota, self).dispatch(*args, **kwargs)
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
