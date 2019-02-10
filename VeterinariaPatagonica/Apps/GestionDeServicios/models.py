@@ -115,6 +115,9 @@ class Servicio(models.Model):
             productos += sproducto.precioTotal()
         return self.precioManoDeObra + productos
 
+    class Meta:
+        ordering = ["tipo", "nombre"]
+
     # def precioSegunProductos(self, productos):
     #     precioTotal = Decimal("0")
     #     for producto in productos:
@@ -141,3 +144,4 @@ class ServicioProducto(models.Model):
 
     def precioTotal(self):
         return self.producto.precioEnUnidad(self.cantidad)
+

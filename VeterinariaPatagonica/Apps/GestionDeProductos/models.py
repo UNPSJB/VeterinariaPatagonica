@@ -195,3 +195,6 @@ class Producto (models.Model):
 
     def precioEnUnidad(self, cantidad):
         return Producto.CONVERT[self.formaDePresentacion](self.precioPorUnidad) * cantidad
+
+    class Meta:
+        ordering = ["nombre", "marca"]
