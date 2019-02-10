@@ -161,5 +161,4 @@ AUTH_USER_MODEL = 'Usuarios.Usuario'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#DOCUMENTATION_CLIENTE = os.path.join(BASE_DIR, 'documentacion_sistema/manual_ayuda_cliente')
-#DOCUMENTATION_HTML_ROOT_PROPIETARIO = os.path.join(BASE_DIR, 'documentacion_sistema/manual_ayuda_cliente', 'build' ,'html')
+
