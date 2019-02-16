@@ -21,7 +21,7 @@ PLANTILLAS = {
 }
 
 def plantilla(nombre):
-    return join( "GestionDeTiposDeAtencion", PLANTILLAS[nombre]+".html")
+    return join( "GestionDeTiposDeAtencion/", PLANTILLAS[nombre]+".html")
 
 
 
