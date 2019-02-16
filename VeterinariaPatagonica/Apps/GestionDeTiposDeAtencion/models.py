@@ -178,7 +178,8 @@ class TipoDeAtencion(models.Model):
         """ String para Tipos de Atencion """
         return self.nombre
 
-
+    class Meta:
+        ordering = ["nombre"]
 
     @property
     def franjaHoraria(self):
