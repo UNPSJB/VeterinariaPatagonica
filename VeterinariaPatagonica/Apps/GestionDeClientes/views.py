@@ -235,13 +235,6 @@ def ReporteClientesPDF(request):
         return response
     return HttpResponse(template.render(contexto,request))
 
-
-
-def guardar(session, etiqueta, datos):
-
-    clave = "filtro_crear_%s" % (etiqueta)
-    session[clave] = datos
-
 def verHabilitados(request, irA=0):
     clientes = Cliente.objects.habilitados()
     clientes = clientes.filter(tools.paramsToFilter(request.GET, Cliente))
@@ -252,31 +245,8 @@ def verHabilitados(request, irA=0):
         'clientes' : clientes,
         'usuario' : request.user,
     }
-
+    #clientesParaPagina(8)
     return HttpResponse(template.render(contexto,request))
-
-@login_required(redirect_field_name='proxima')
-def listar(request, pagina=1):
-    clientes = Cliente.objects.habilitados()
-    formFiltrado = FiltradoForm(request.GET)
-    if formFiltrado.is_valid():
-        clientes = clientes.ordenar(formFiltrado.criterio(), formFiltrado.ascendente())
-
-    paginas = calcularPaginas(clientes)
-    clientes = clientesParaPagina(clientes, pagina, paginas)
-
-    template = loader.get_template('GestionDeClientes/verHabilitados.html')
-    contexto = {
-        "filtrado" : formFiltrado,
-        "pagina" : pagina,
-        "clientes" : clientes,
-        "paginas" : [ i+1 for i in range(paginas)],
-    }
-
-    return HttpResponse(template.render(contexto, request))
-
-
-
 
 def verDeshabilitados(request):
     clientes = Cliente.objects.deshabilitados()

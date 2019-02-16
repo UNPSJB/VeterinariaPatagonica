@@ -17,7 +17,33 @@ Clientes Habilitados
 <!-- Listado -->
 <div class="clienteCuerpo" >
 
-    {% include "./snippets/filtrado.html" with form=filtrado accion="Filtrar" %}
+    <div id="filtrarClientesHabilitados">
+        <a role="button" href="#filtrarClientes" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarClientes" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="dniCuit" placeholder="DNI/CUIT">
+                            <input name="nombres" placeholder="Nombres">
+                            <input name="apellidos" placeholder="Apellidos">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
 
     <div class="clienteLineaTitulo"> </div>
     <br>
@@ -30,7 +56,6 @@ Clientes Habilitados
                             <th id="habilitados-dni"> DNI/CUIT </th>
                             <th id="habilitados-apellido"> Apellidos </th>
                             <th id="habilitados-nombre"> Nombres </th>
-
                             <th id="habilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
@@ -40,7 +65,6 @@ Clientes Habilitados
                                 <td> <p>{{cliente.dniCuit}}</p></td>
                                 <td> <p>{{cliente.apellidos}}</p></td>
                                 <td> <p>{{cliente.nombres }}</p></td>
-
                                 <td> <p align="justify">
                                         <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
@@ -57,9 +81,6 @@ Clientes Habilitados
                     </tbody>
                 </table>
             </div>
-
-
-
     {% else %}
 
         <p> No hay clientes habilitados</p>

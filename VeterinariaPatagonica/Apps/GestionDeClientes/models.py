@@ -10,63 +10,7 @@ from django.db.models import Q
 class BaseClienteManager(models.Manager):
     pass
 
-class ClienteQuerySet(tools.VeterinariaPatagonicaQuerySet):
-
-
-    def habilitados(self):
-        return self.filter(baja=False)
-
-    def deshabilitados(self):
-        return self.filter(baja=True)
-
-    def ordenarPorDniCuit(self, ascendente=True):
-
-        orden = ["cliente__nombres"]
-        if not ascendente:
-            orden = ["-" + field for field in orden ]
-
-        return self.order_by(*orden)
-
-    def ordenarPorNombre(self, ascendente=True):
-
-        orden = ["cliente__nombres"]
-        if not ascendente:
-            orden = ["-" + field for field in orden ]
-
-        return self.order_by(*orden)
-
-    def ordenarPorApellido(self, ascendente=True):
-
-        orden = ["cliente__apellidos"]
-        if not ascendente:
-            orden = ["-" + field for field in orden ]
-
-        return self.order_by(*orden)
-
-    def ordenarPorMascota(self, ascendente=True):
-
-        orden = ["mascota__nombre"]
-        if not ascendente:
-            orden = ["-" + field for field in orden ]
-
-        return self.order_by(*orden)
-
-    def ordenar(self, criterio, ascendente):
-
-        funciones = {
-            "dniCuit" : "ordenarPorDniCuit",
-            "nombres" : "ordenarPorNombre",
-            "apellidos" : "ordenarPorApellido",
-            "mascota" : "ordenarPorMascota",
-        }
-
-        if criterio:
-            funcion = getattr(self, funciones[criterio])
-            return funcion(ascendente)
-
-        return self
-
-ClienteManager = BaseClienteManager.from_queryset(ClienteQuerySet)
+ClienteManager = BaseClienteManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Cliente (models.Model):
 
