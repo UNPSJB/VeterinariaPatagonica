@@ -12,6 +12,8 @@ from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
 from django.urls import reverse_lazy
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def mascota(request):
     context = {}
     template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')
@@ -116,23 +118,51 @@ def ver(request, id):
 
 
 def verHabilitados(request):
-    mascotas = Mascota.objects.habilitados()
-    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
+    mascotasQuery = Mascota.objects.habilitados()
+    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
+
+    paginator = Paginator(mascotasQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        mascotas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        mascotas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        mascotas = paginator.page(paginator.num_pages)
+
     contexto = {
-        'mascotas': mascotas,
+        'mascotasQuery': mascotasQuery,
         'usuario': request.user,
+        'mascotas': mascotas,
     }
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    mascotas = Mascota.objects.deshabilitados()
-    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
+    mascotasQuery = Mascota.objects.deshabilitados()
+    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
 
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
+
+    paginator = Paginator(mascotasQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        mascotas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        mascotas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        mascotas = paginator.page(paginator.num_pages)
+
     contexto = {
-        'mascotas': mascotas,
+        'mascotasQuery': mascotasQuery,
         'usuario': request.user,
+        'mascotas': mascotas,
     }
     return HttpResponse(template.render(contexto, request))
 

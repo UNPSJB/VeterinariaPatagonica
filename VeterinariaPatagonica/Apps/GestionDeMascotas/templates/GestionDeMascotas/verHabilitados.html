@@ -95,6 +95,30 @@ Mascotas Habilitadas
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}
-    <a  id="mascotaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaCrear' %}"> Crear </a>
+    <div>
+        <a  id="mascotaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaCrear' %}"> Crear </a>
+    </div>
+    <br>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if mascotas.has_previous %}
+                <li><a href="?page={{ mascotas.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in mascotas.paginator.page_range %}
+                <li class="{% if mascotas.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if mascotas.has_next %}
+                <li>
+                    <a href="?page={{ mascotas.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock %}
