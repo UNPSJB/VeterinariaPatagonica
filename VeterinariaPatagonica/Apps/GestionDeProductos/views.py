@@ -10,6 +10,9 @@ from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeRubros.models import Rubro
 
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def producto(request):
     context = {}#Defino un contexto.
     template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
@@ -40,22 +43,49 @@ def modificar(request, id = None):
     return HttpResponse(template.render(context, request))
 
 def verHabilitados(request):
-    productos = Producto.objects.habilitados()
-    productos = productos.filter(tools.paramsToFilter(request.GET, Producto))
+    productosQuery = Producto.objects.habilitados()
+    productosQuery = productosQuery.filter(tools.paramsToFilter(request.GET, Producto))
     template = loader.get_template('GestionDeProductos/verHabilitados.html')
+
+    paginator = Paginator(productosQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        productos = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        productos = paginator.page(paginator.num_pages)
+
     context = {
+        'productosQuery': productosQuery,
+        'usuario': request.user,
         'productos': productos,
-        'usuario': request.user
     }
     return HttpResponse(template.render( context, request ))
 
 def verDeshabilitados(request):
-    productos = Producto.objects.deshabilitados()
-    productos = productos.filter(tools.paramsToFilter(request.GET, Producto))
+    productosQuery = Producto.objects.deshabilitados()
+    productosQuery = productosQuery.filter(tools.paramsToFilter(request.GET, Producto))
     template = loader.get_template('GestionDeProductos/verDeshabilitados.html')
+    paginator = Paginator(productosQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        productos = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        productos = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        productos = paginator.page(paginator.num_pages)
+
     context = {
-        'productos' : productos,
-        'usuario' : request.user
+        'productosQuery': productosQuery,
+        'usuario': request.user,
+        'productos': productos,
     }
     return HttpResponse(template.render( context, request ))
 
