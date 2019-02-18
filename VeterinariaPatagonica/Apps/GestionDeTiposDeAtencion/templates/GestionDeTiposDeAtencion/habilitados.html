@@ -58,8 +58,30 @@ Actualmente disponibles para ser asignados a practicas
     <p> No hay tipos de atencion habilitados</p>
 
 {% endif %}
+    <div>
+        <a class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:crear' %}"> Crear </a>
+    </div>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if tiposDeAtencion.has_previous %}
+                <li><a href="?page={{ tiposDeAtencion.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
 
-    <a class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:crear' %}"> Crear </a>
+            {% for page in tiposDeAtencion.paginator.page_range %}
+                <li class="{% if tiposDeAtencion.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if tiposDeAtencion.has_next %}
+                <li>
+                    <a href="?page={{ tiposDeAtencion.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 {% endblock %}
 
