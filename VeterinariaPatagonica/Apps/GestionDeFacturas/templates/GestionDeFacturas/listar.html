@@ -83,8 +83,32 @@ Facturas Emitidas
         <p> No hay facturas emitidas</p>
 
     {% endif %}
+    <div>
+        <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
+    </div>
 
-    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
+
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if facturas.has_previous %}
+                <li><a href="?page={{ facturas.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in facturas.paginator.page_range %}
+                <li class="{% if facturas.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if facturas.has_next %}
+                <li>
+                    <a href="?page={{ facturas.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 

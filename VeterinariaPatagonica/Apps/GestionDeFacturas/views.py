@@ -15,6 +15,7 @@ from Apps.GestionDeClientes.models import Cliente
 from Apps.GestionDePracticas.models import Practica
 from Apps.GestionDeProductos.models import Producto
 from django.urls import reverse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def facturas(request):
 
@@ -125,12 +126,26 @@ def ver(request, id):  #, irAPagar=1
 
 
 def listar(request):
-    facturas = Factura.objects.all()
-    facturas = facturas.filter(tools.paramsToFilter(request.GET, Factura))
+    facturasQuery = Factura.objects.all()
+    facturasQuery = facturasQuery.filter(tools.paramsToFilter(request.GET, Factura))
     template = loader.get_template('GestionDeFacturas/listar.html')
+
+    paginator = Paginator(facturasQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        facturas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        facturas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        facturas = paginator.page(paginator.num_pages)
+
     contexto = {
-        'facturas' : facturas,
+        'facturasQuery' : facturasQuery,
         'usuario' : request.user,
+        'facturas': facturas,
     }
 
     return  HttpResponse(template.render(contexto, request))
