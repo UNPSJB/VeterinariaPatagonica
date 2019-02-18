@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'dal_select2',
     'dal_select2.widgets',
     'Apps.GestionDeClientes',
+    'Apps.GestionDeClientes.templatetags',
     'Apps.GestionDeFormasDePagos',
     'Apps.GestionDeFacturas',
     'Apps.GestionDeMascotas',
