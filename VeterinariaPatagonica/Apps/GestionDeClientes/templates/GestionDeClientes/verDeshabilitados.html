@@ -18,6 +18,8 @@ Actualmente <strong>no</strong> disponibles
 
 {% block clienteContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="clienteCuerpo" >
 
@@ -97,6 +99,27 @@ Actualmente <strong>no</strong> disponibles
         <p> No hay clientes deshabilitados</p>
 
     {% endif %}
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if clientes.has_previous %}
+                <li><a href="?page={{ clientes.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in clientes.paginator.page_range|page_filter:clientes %}
+                <li class="{% if clientes.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if clientes.has_next %}
+                <li>
+                    <a href="?page={{ clientes.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.template import loader
+from django.template import loader, RequestContext
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
@@ -24,6 +24,9 @@ from django.views.generic import View
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
+
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def clientes(request):
     context = {}#Defino el contexto.
@@ -236,26 +239,52 @@ def ReporteClientesPDF(request):
     return HttpResponse(template.render(contexto,request))
 
 def verHabilitados(request, irA=0):
-    clientes = Cliente.objects.habilitados()
-    clientes = clientes.filter(tools.paramsToFilter(request.GET, Cliente))
-    print("DESDE HABILITADOS",clientes)
-    #guardar(request.session, "filtrar", clientes)
+    clientesQuery = Cliente.objects.habilitados()
+    clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
+    #print("DESDE HABILITADOS",clientes)
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
+
+    paginator = Paginator(clientesQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        clientes = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        clientes = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        clientes = paginator.page(paginator.num_pages)
+
     contexto = {
-        'clientes' : clientes,
+        'clientesQuery' : clientesQuery,
         'usuario' : request.user,
+        'clientes': clientes,
     }
-    #clientesParaPagina(8)
-    return HttpResponse(template.render(contexto,request))
+    return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    clientes = Cliente.objects.deshabilitados()
-    clientes = clientes.filter(tools.paramsToFilter(request.GET, Cliente))
-    print(clientes)
+    clientesQuery = Cliente.objects.deshabilitados()
+    clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
+    #print(clientes)
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
+
+    paginator = Paginator(clientesQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        clientes = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        clientes = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        clientes = paginator.page(paginator.num_pages)
+
     contexto = {
-        'clientes' : clientes,
+        'clientesQuery' : clientesQuery,
         'usuario' : request.user,
+        'clientes': clientes,
     }
 
     return HttpResponse(template.render(contexto, request))

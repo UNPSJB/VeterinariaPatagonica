@@ -208,3 +208,5 @@ class Cliente (models.Model):
 
     class Meta:
         ordering = ["apellidos", "nombres"]
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"
