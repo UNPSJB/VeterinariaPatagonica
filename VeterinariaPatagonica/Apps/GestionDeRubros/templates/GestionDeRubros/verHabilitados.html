@@ -18,6 +18,8 @@ Rubros Habilitados
 
 {% block rubroContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="rubroCuerpo" >
 
@@ -100,7 +102,7 @@ Rubros Habilitados
                     <i class="glyphicon glyphicon-chevron-left"></i></a></li>
             {% endif %}
 
-            {% for page in rubros.paginator.page_range %}
+            {% for page in rubros.paginator.page_range|page_filter:rubros %}
                 <li class="{% if rubros.number == page %}active{% endif %}">
                     <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
             {% endfor %}
