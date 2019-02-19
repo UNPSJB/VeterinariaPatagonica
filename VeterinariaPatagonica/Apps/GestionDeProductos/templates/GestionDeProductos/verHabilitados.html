@@ -18,6 +18,8 @@ Productos Habilitados
 
 {% block productoContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="productoCuerpo" >
     <!--<p> Los siguientes Productos estan habilitados.  </p>-->
@@ -106,7 +108,7 @@ Productos Habilitados
                     <i class="glyphicon glyphicon-chevron-left"></i></a></li>
             {% endif %}
 
-            {% for page in productos.paginator.page_range %}
+            {% for page in productos.paginator.page_range|page_filter:productos %}
                 <li class="{% if productos.number == page %}active{% endif %}">
                     <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
             {% endfor %}

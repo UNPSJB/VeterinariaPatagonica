@@ -18,6 +18,8 @@ Actualmente <strong>no</strong> disponibles
 
 {% block productoContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="productoCuerpo" >
 
@@ -105,7 +107,7 @@ Actualmente <strong>no</strong> disponibles
                     <i class="glyphicon glyphicon-chevron-left"></i></a></li>
             {% endif %}
 
-            {% for page in productos.paginator.page_range %}
+            {% for page in productos.paginator.page_range|page_filter:productos %}
                 <li class="{% if productos.number == page %}active{% endif %}">
                     <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
             {% endfor %}
