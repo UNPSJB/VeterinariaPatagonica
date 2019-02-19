@@ -1,7 +1,8 @@
 from django import template
 register = template.Library()
 
-
+#@register.inclusion_tag("GestionDeClientes/verHabilitados.html")
+#@register.simple_tag
 @register.filter(name='page_filter')
 def page_filter(self, items):
     current_value = items.number

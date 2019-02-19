@@ -244,7 +244,7 @@ def verHabilitados(request, irA=0):
     #print("DESDE HABILITADOS",clientes)
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
 
-    paginator = Paginator(clientesQuery, 3)
+    paginator = Paginator(clientesQuery, 1)
     page = request.GET.get('page')
 
     try:
@@ -269,7 +269,7 @@ def verDeshabilitados(request):
     #print(clientes)
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
 
-    paginator = Paginator(clientesQuery, 3)
+    paginator = Paginator(clientesQuery, 15)
     page = request.GET.get('page')
 
     try:
