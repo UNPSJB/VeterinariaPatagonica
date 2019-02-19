@@ -29,6 +29,9 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                 <tr>
                     <th id="deshabilitados-nombre">Nombre</th>
                     <th id="deshabilitados-descripcion">Descripcion </th>
+                    <th id="deshabilitados-lugar">Lugar </th>
+                    <th id="deshabilitados-franjaHoraria">Franja Horaria </th>
+                    <th id="deshabilitados-emergencia">Emergencia </th>
                     <th id="deshabilitados-acciones">Acciones</th>
                 </tr>
             </thead>
@@ -41,6 +44,9 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                         </a>
                     </td>
                     <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
+                    <td>{{ tipoDeAtencion.lugar}}</td>
+                    <td>{{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</td>
+                    <td> {% if tipoDeAtencion.emergencia == True %} Si {% else %} No {% endif %}</td>
                     <td >
                         <p align="center">
                             <a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default">
