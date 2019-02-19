@@ -17,6 +17,9 @@ Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
 {% block servicioContenido %}
+
+{% load navigation_filters %}
+
 <!-- Listado -->
 
 <div class="servicioCuerpo" >
@@ -90,5 +93,27 @@ Actualmente <strong>no</strong> disponibles
     {% else %}
         <p> No hay servicios deshabilitados</p>
     {% endif %}
+
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if servicios.has_previous %}
+                <li><a href="?page={{ servicios.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in servicios.paginator.page_range|page_filter:servicios %}
+                <li class="{% if servicios.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if servicios.has_next %}
+                <li>
+                    <a href="?page={{ servicios.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock %}
