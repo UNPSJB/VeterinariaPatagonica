@@ -93,7 +93,7 @@ def verDeshabilitados(request):
         'usuario': request.user,
         'servicios': servicios,
     }
-    
+
     return  HttpResponse(template.render(context,request))
 
 def ver(request, id):
