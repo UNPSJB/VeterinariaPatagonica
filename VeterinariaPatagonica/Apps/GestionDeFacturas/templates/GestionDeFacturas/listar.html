@@ -16,6 +16,7 @@ Facturas Emitidas
 
 {% block facturaContenido %}
 
+{% load navigation_filters %}
 <!-- Listado -->
 <div class="facturaCuerpo" >
 
@@ -27,7 +28,7 @@ Facturas Emitidas
         <div id="filtrarFacturas" class="collapse in">
             <form class="form-horizontal filtrado" action="" method="GET">
                 <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
+                    <div align="justify">
                         <form action="" method="GET">
                             <br>
                             <input name="tipo" placeholder="Tipo">
@@ -83,7 +84,7 @@ Facturas Emitidas
         <p> No hay facturas emitidas</p>
 
     {% endif %}
-    <div>
+    <div align="center">
         <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
     </div>
 
@@ -95,7 +96,7 @@ Facturas Emitidas
                     <i class="glyphicon glyphicon-chevron-left"></i></a></li>
             {% endif %}
 
-            {% for page in facturas.paginator.page_range %}
+            {% for page in facturas.paginator.page_range|page_filter:facturas %}
                 <li class="{% if facturas.number == page %}active{% endif %}">
                     <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
             {% endfor %}
