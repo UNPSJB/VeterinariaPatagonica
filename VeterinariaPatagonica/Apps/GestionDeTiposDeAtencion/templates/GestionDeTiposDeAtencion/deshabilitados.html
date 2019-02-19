@@ -18,6 +18,8 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
 
 {% block contenido %}
 
+{% load navigation_filters %}
+
     <p> Los siguientes tipos de servicio pueden ser habilitados o eliminados.  </p>
 
 {% if tiposDeAtencion %}
@@ -70,7 +72,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a practicas
                     <i class="glyphicon glyphicon-chevron-left"></i></a></li>
             {% endif %}
 
-            {% for page in tiposDeAtencion.paginator.page_range %}
+            {% for page in tiposDeAtencion.paginator.page_range|page_filter:tiposDeAtencion %}
                 <li class="{% if tiposDeAtencion.number == page %}active{% endif %}">
                     <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
             {% endfor %}
