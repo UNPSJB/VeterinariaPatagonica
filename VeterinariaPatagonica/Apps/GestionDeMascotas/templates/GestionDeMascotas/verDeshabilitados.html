@@ -18,6 +18,8 @@ Actualmente <strong>no</strong> disponibles para ser asignados a clientes
 
 {% block mascotaContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="mascotaCuerpo" >
 
@@ -108,7 +110,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a clientes
                     <i class="glyphicon glyphicon-chevron-left"></i></a></li>
             {% endif %}
 
-            {% for page in mascotas.paginator.page_range %}
+            {% for page in mascotas.paginator.page_range|page_filter:mascotas %}
                 <li class="{% if mascotas.number == page %}active{% endif %}">
                     <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
             {% endfor %}
