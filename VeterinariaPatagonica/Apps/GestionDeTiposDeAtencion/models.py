@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 from VeterinariaPatagonica.areas import Areas
 
-
+from VeterinariaPatagonica import tools
 
 class FranjaHoraria():
     """ Clase para franjas horarias """
@@ -70,9 +70,23 @@ class TipoDeAtencionQueryset(BajasLogicasQuerySet):
 TipoDeAtencionManager = models.Manager.from_queryset(TipoDeAtencionQueryset)
 
 
+#Esta clase se comunica con la BD
+class BaseTipoDeAtencionManager(models.Manager):
+    pass
+
+TipoDeAtencionManagerDos = BaseTipoDeAtencionManager.from_queryset(tools.BajasLogicasQuerySet)
+
 class TipoDeAtencion(models.Model):
 
+
+    MAPPER = {
+        "nombre": "nombre__icontains",
+        "lugar": "lugar__icontains",
+    }
+
     objects = TipoDeAtencionManager()
+
+    objects = TipoDeAtencionManagerDos()
 
     RECARGO_PARTE_ENTERA = 3
     RECARGO_PARTE_DECIMAL = 2

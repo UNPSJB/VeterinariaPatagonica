@@ -32,7 +32,7 @@ def habilitados(request):
 
     template = loader.get_template( plantilla("habilitados") )
 
-    paginator = Paginator(tiposDeAtencionQuery, 3)
+    paginator = Paginator(tiposDeAtencionQuery, 10)
     page = request.GET.get('page')
 
     try:
@@ -60,7 +60,7 @@ def deshabilitados(request):
 
     template = loader.get_template(plantilla("deshabilitados"))
 
-    paginator = Paginator(tiposDeAtencionQuery, 3)
+    paginator = Paginator(tiposDeAtencionQuery, 10)
     page = request.GET.get('page')
 
     try:
