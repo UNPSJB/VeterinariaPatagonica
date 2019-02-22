@@ -5,11 +5,10 @@ Gestion de Pagos | Ver Pagos
 {% endblock %}
 
 {% block pagosTitulo %}
-Pagos
+Pagos de Facturas
 {% endblock %}
 
 {% block pagosSubtitulo %}
-Actualmente disponibles
 {% endblock %}
 
 {% block pagosContenido %}
@@ -21,7 +20,9 @@ Actualmente disponibles
                 <table class="table pagosListado">
                     <thead>
                         <tr>
-                            <th id="listar-nombre"> Pagos </th>
+                            <th id="listar-fecha"> Fecha </th>
+                            <th id="listar-cliente"> Cliente </th>
+                            <th id="listar-importe"> Importe </th>
                             <th id="listar-acciones"> Acciones </th>
                         </tr>
                     </thead>
@@ -29,6 +30,8 @@ Actualmente disponibles
                         {% for pago in pagos %}
                             <tr>
                                 <td> <p>{{pago.fecha }}</p></td>
+                                <td> <p>{{pago.factura.cliente }}</p></td>
+                                <td> <p>{{pago.factura.total }}</p></td>
                                 <td> <p align="justify">
                                         <a  href="{% url 'pagos:pagoVer' pago.id %}" class="btn btn-xs btn-default">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
@@ -45,8 +48,6 @@ Actualmente disponibles
         <p> No hay pagos habilitados</p>
 
     {% endif %}
-
-    <a  id ="pagosHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' %}"> Crear </a>
 
 </div>
 

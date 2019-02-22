@@ -101,4 +101,4 @@ def listar(request):
         'pagos' : pagos,
         'usuario' : request.user,
     }
-    return  HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(contexto, request))
