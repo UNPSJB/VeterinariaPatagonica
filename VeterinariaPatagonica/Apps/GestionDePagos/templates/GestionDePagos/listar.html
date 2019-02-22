@@ -13,6 +13,8 @@ Pagos de Facturas
 
 {% block pagosContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="pagosCuerpo" >
 
@@ -80,6 +82,28 @@ Pagos de Facturas
         <p> No hay pagos </p>
 
     {% endif %}
+
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if pagos.has_previous %}
+                <li><a href="?page={{ pagos.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in pagos.paginator.page_range|page_filter:pagos %}
+                <li class="{% if pagos.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if pagos.has_next %}
+                <li>
+                    <a href="?page={{ pagos.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 
