@@ -44,8 +44,6 @@ class Pago (models.Model):
         blank = True
     )
 
-
-
     baja = models.BooleanField(default=False)
 
     objects = PagoManager()
@@ -53,6 +51,9 @@ class Pago (models.Model):
     def __str__(self):
         #return "%s La factura%" % self.factura.tipo
         return "{0}".format(self.importeTotal)
+
+    class Meta:
+        ordering = ["fecha",]
 
 '''
 In [1]: from Apps.GestionDeFacturas.models import Factura
