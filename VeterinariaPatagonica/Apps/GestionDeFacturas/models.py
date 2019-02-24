@@ -158,6 +158,8 @@ class Factura(models.Model):
             self.total += detalle.subtotal
         self.save()
 
+    class Meta:
+        ordering = ["tipo", "fecha"]
 
     '''def  __unicode__(self):
         return self.total'''

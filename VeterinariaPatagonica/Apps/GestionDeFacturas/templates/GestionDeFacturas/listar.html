@@ -59,6 +59,8 @@ Facturas Emitidas
                             <th id="deshabilitados-tipo"> Tipo </th>
                             <th id="deshabilitados-cliente"> Cliente </th>
                             <th id="deshabilitados-fecha"> Fecha </th>
+                            <th id="deshabilitados-total"> Total </th>
+                            <th id="deshabilitados-pagada"> Pagada </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
@@ -68,6 +70,8 @@ Facturas Emitidas
                                 <td> <p>{{ factura.tipo}}</p></td>
                                 <td> <p>{{ factura.cliente }}</p></td>
                                 <td> <p>{{ factura.fecha }}</p></td>
+                                <td> <p>{{ factura.total }}</p></td>
+                                <td> {% if factura.pago %} Si {% else %} No {% endif %}</td>
                                 <td> <p align="justify">
                                         <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta factura.">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
