@@ -72,20 +72,27 @@ Actualmente <strong>no</strong> disponibles
                                 <td> <p>{{cliente.dniCuit}}</p></td>
                                 <td> <p>{{cliente.apellidos}}</p></td>
                                 <td><p>{{cliente.nombres }}</p></td>
-                                <td> <p align="justify">
-                                        <a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
-                                            <i class="glyphicon glyphicon-eye-open" ></i>
-                                        </a>
-                                        <a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Cliente">
-                                            <i class="glyphicon glyphicon-edit"> </i>
-                                        </a>
-                                        <a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Cliente">
-                                            <i class="glyphicon glyphicon-plus"> </i>
-                                        </a>
-                                        <a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Cliente">
-                                            <i class="glyphicon glyphicon-remove"> </i>
-                                        </a>
-                                </p> </td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
+                                            Acción <span class="caret"></span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <li><a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
+                                                <i class="glyphicon glyphicon-eye-open" ></i>
+                                            </a></li>
+                                            <li><a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Cliente">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Cliente">
+                                                <i class="glyphicon glyphicon-plus"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Cliente">
+                                                <i class="glyphicon glyphicon-remove"> </i>
+                                            </a></li>
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

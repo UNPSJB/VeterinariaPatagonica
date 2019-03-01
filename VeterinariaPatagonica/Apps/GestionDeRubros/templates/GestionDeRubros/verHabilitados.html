@@ -68,15 +68,22 @@ Rubros Habilitados
                                 <td> <p>{{rubro.nombre }}</p></td>
                                 <td> <p>{{rubro.descripcion|truncatechars:40 }}</p></td>
                                 <td> <p align="justify">
-                                        <a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Rubro">
-                                            <i class="glyphicon glyphicon-eye-open"> </i>
-                                        </a>
-                                        <a href="{% url 'rubros:rubroModificar' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Rubro">
-                                            <i class="glyphicon glyphicon-edit"> </i>
-                                        </a>
-                                        <a href="{% url 'rubros:rubroDeshabilitar' rubro.id%}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Rubro">
-                                            <i class="glyphicon glyphicon-minus"> </i>
-                                        </a>
+                                    <div class="dropdown">
+                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
+                                            Acción <span class="caret"></span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <li><a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Rubro">
+                                                <i class="glyphicon glyphicon-eye-open"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'rubros:rubroModificar' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Rubro">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'rubros:rubroDeshabilitar' rubro.id%}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Rubro">
+                                                <i class="glyphicon glyphicon-minus"> </i>
+                                            </a></li>
+                                        </div>
+                                    </div>
                                 </p> </td>
                             </tr>
                         {% endfor %}

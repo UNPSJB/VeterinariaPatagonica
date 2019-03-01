@@ -73,20 +73,27 @@ Actualmente <strong>no</strong> disponibles
                             <td>{{ producto.marca }}</td>
                             <td>{{ producto.formaDePresentacion }}</td>
                             <td>$ {{ producto.precioPorUnidad }}</td>
-                            <td> <p align="justify">
-                                    <a  href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
-                                        <i class="glyphicon glyphicon-eye-open"></i>
-                                    </a>
-                                    <a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto">
-                                        <i class="glyphicon glyphicon-edit"></i>
-                                    </a>
-                                    <a href="{% url 'productos:productoHabilitar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Producto">
-                                        <i class="glyphicon glyphicon-plus"></i>
-                                    </a>
-                                    <a href="{% url 'productos:productoEliminar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Producto">
-                                        <i class="glyphicon glyphicon-remove"></i>
-                                    </a>
-                            </p> </td>
+                            <td>
+                                <div class="dropdown">
+                                    <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
+                                        Acción <span class="caret"></span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <li><a href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
+                                            <i class="glyphicon glyphicon-eye-open"></i>
+                                        </a></li>
+                                        <li><a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto">
+                                            <i class="glyphicon glyphicon-edit"></i>
+                                        </a></li>
+                                        <li><a href="{% url 'productos:productoHabilitar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Producto">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                        </a></li>
+                                        <li><a href="{% url 'productos:productoEliminar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Producto">
+                                            <i class="glyphicon glyphicon-remove"></i>
+                                        </a></li>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
