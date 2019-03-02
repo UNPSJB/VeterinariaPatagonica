@@ -1,0 +1,39 @@
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
+{% load static %}
+
+{% block titulo %}
+Gestion de Facturas | Crear Facturas
+{% endblock %}
+
+{% block facturaTitulo %}
+Nueva Factura
+{% endblock %}
+
+{% block facturaSubtitulo %}
+Agrega una Factura al listado
+{% endblock %}
+
+<!--{% block paginaEstilos %}
+{{ block.super }}
+{{formulario.media.css}}
+{% endblock %}
+
+{% block paginaJavascript %}
+{{ block.super }}
+{{formulario.media.js}}
+{% endblock %}-->
+
+
+{% block facturaContenido %}
+
+    <div class="facturaCuerpo">
+        <form class="form-horizontal formulario" action="" method="post">
+
+            {% csrf_token %}
+
+            {% include './snippetFacturas.html' with form=formulario formset=formset accion="Guardar Datos" %}
+
+        </form>
+    </div>
+
+{% endblock %}

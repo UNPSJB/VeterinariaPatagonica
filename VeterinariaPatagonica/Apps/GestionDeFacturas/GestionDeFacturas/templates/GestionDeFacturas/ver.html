@@ -1,0 +1,205 @@
+{% extends 'GestionDeFacturas/GestionDeFacturas.html' %}
+
+{% block titulo %}
+Gestion de Facturas | Ver Factura
+{% endblock %}
+
+{% block secciones %}
+{% endblock %}
+
+{% block facturaTitulo %}
+Ver Factura
+{% endblock %}
+
+{% block facturaSubtitulo %}
+Datos de la factura
+{% endblock %}
+
+{% block facturaContenido %}
+
+    <div class="facturaCuerpo">
+
+        {% if factura %}
+        <div class=" col-md-12 well">
+            <p> <b> Número de Factura:</b> {{ factura.id }}</p>
+            <p> <b>Tipo:</b> {{factura.tipo}}</p>
+            <p> <b>Fecha:</b> {{factura.fecha}}</p>
+            <p> <b>Cliente:</b> {{ factura.cliente }} </p>
+            {% if factura.pago %}
+                <p id = "esPagada"> <b>Pago:</b> Pagada</p>
+                <p> <b>Fecha Pago:</b> {{factura.pago.fecha}}</p>
+            {%else%}
+                <p id = "esPagada"> <b>Pago:</b> No Pagada</p>
+            {%endif%}
+            {% if factura.practica %}
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    {% if factura.practica.tipo == "Q" %}
+                      <th>Cirugía</th>
+                    {% else %}
+                      {% if factura.practica.tipo == "C" %}
+                        <th>Consulta</th>
+                      {% else %}
+                        <th>Internación</th>
+                      {% endif %}
+                    {% endif %}
+                    <th>Precio</th>
+                  </tr>
+                </thead>
+                  <div class="pull-left col-md-11">
+                    <td> <p>{{factura.practica}}</p> </td>
+                  </div>
+                  <div class="pull-right col-md-1">
+                    <td> <p>${{factura.practica.precio}}</p> </td>
+                  </div>
+              </table>
+            {% endif %}
+
+              <!-- Tabla para mostrar los detalles de la factura. -->
+              <div class= "tabla-de-productos">
+                <table class="table table-bordered">
+                  <div class="col-md-12">
+                    <thead>
+                      <tr>
+                        <div class="col-md-9">
+                          <th>Producto</th>
+                        </div>
+                        <div class="col-md-1">
+                          <th>Cantidad</th>
+                        </div>
+                        <div class="col-md-1">
+                          <th>Precio por Unidad</th>
+                        </div>
+                        <div class="col-md-1">
+                          <th>Subtotal</th>
+                        </div>
+                      </tr>
+                    </thead>
+                  </div>
+                  <div class="col-md-12">
+                  {% for detalle in factura.detalles_producto.all %}
+                  <tr>
+                    {% if detalle.cantidad != 0 %}
+                      <div class="col-md-9">
+                        <td><p class="pull-left" align="justify">{{detalle.producto.nombre}}
+                          </p>
+                        </td>
+                      </div>
+                      <div class="col-md-1">
+                        <td><p class="pull-right" align="justify">{{detalle.cantidad}}
+                          </p>
+                        </td>
+                      </div>
+                      <div class="col-md-1">
+                        <td><p class="pull-right" align="justify">${{detalle.precio}}
+                          </p>
+                        </td>
+                      </div>
+                      <div class="col-md-1">
+                         <td><p class="pull-right" align="justify">${{detalle.subtotal}}
+                          </p>
+                        </td>
+                      </div>
+                    {% endif %}
+                  </tr>
+                  {% endfor %}
+                </div>
+                </table>
+              </div>
+
+            <table class="table table-bordered">
+              <thead>
+                {% if factura.practica %}
+                <div class="col-md-12">
+                  <tr>
+                    <div class="col-md-10">
+                      <th><p>Porcentaje de Descuento Aplicado al Servicio</p></th>
+                    </div>
+                    <div class="col-md-1">
+                      <td><p class="pull-right">{{factura.descuento}}%</p></td>
+                    </div>
+                    <div class="col-md-1">
+                      <td> <p class="pull-right">${{factura.calcular_descuento_practica}}</p> </td>
+                    </div>
+                  </tr>
+                </div>
+                {% endif %}
+                <div class="col-md-12">
+                  <tr>
+                    <div class="col-md-10">
+                      <th><p>Porcentaje de Recargo</p></th>
+                    </div>
+                    <div class="col-md-1">
+                      <td><p class="pull-right">{{factura.recargo}}%</p></td>
+                    </div>
+                    <div class="col-md-1">
+                        <td> <p class="pull-right">${{factura.calcular_recargo_practica}}</p> </td>
+                    </div>
+                  </tr>
+                </div>
+              </thead>
+            </table>
+
+            <table class="table table-bordered">
+              <div class="col-md-12">
+                <thead>
+                  {% if factura.practica %}
+                  {% if factura.tipo == "A" or factura.tipo == "C" %}
+                    <tr>
+                        <div class="col-md-11">
+                          <th> <p>IVA</p> </th>
+                        </div>
+                        <div class="col-md-1">
+                          <td> <p class="pull-right">${{factura.calcular_iva}}</p> </td>
+                        </div>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                      <div class="col-md-11">
+                        <th><p>Adelanto</p></th>
+                      </div>
+                      {% if factura.practica.adelanto %}
+                        <div class="col-md-1">
+                          <td><p class="pull-right" align="justify">${{factura.practica.adelanto.importe}}</p></td>
+                        </div>
+                      {% else %}
+                        <div class="col-md-1">
+                          <td><p class="pull-right" align="justify">$0 </p></td>
+                        </div>
+                      {% endif %}
+                    </tr>
+                  {% endif %}
+                  <tr>
+                    <div class="col-md-11">
+                      <th><big>Total</big></th>
+                    </div>
+                    <div class="col-md-1">
+                      {% if factura.tipo == "C" %}
+                        <td> <big class="pull-right"><b>${{factura.restar_iva}}</b></big> </td>
+                      {% else %}
+                        <td><big class="pull-right"><b>${{ factura.total}} </b></big></td>
+                      {% endif %}
+                    </div>
+                  </tr>
+                </thead>
+              </div>
+            </table>
+          </div>
+        {% else %}
+
+            <p> La factura no existe </p>
+
+        {% endif %}
+
+    </div>
+    <!-- <div class= "col-sm-offset-11">
+      <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."> </span></a>
+    </div> -->
+
+
+    <div>
+        <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'pagos:pagoCrear' idFactura=factura.id %}"> Pagar </a>
+    </div>
+
+{% endblock facturaContenido %}
