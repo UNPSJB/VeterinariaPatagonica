@@ -9,3 +9,10 @@ $(function() {
     $botonPagar.hide();
   }
 });
+
+
+
+$(function(){
+  let acumuladorDetalles = 0;
+
+});

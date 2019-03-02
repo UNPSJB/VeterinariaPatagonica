@@ -27,9 +27,19 @@
     for (iterador ; iterador<totalTuplas; iterador++){//Este ciclo for es para darle comportamiento a todas las tuplas creadas por el formulario.
       let cantidad =$(`#id_form-${iterador}-cantidad`).on("input", function() { calcularTotal(); });//Obtengo la cantidad del item y le doy comportamiento (llama a la funcion calcularTotal cuando lo modifican).
       let producto = document.querySelector(`select[name="form-${iterador}-producto"]`);//Obtengo el producto del item y le doy comportamiento (llama a la funcion calcularTotal cuando cambia).
+
       producto.onchange=function(e) {
         calcularTotal();
       };
+
+            // if (producto.selectedOptions[0].index == 0) {
+            //     console.log("TUPLA VACIA, SE BORRA");
+            //     let checkBoxBorrar = $(`#id_form-${iterador}-DELETE`);
+            //     if (checkBoxBorrar.checked == false){
+            //       checkBoxBorrar.checked == true;
+            //     }
+            //
+            // }
       let borrar = $(`#id_form-${iterador}-DELETE`).on("change", function() { calcularTotal(); });//Obtengo el checkBox eliminar del item y le doy comportamiento(llama a la funcion calcularTotal cuando cambia).
     }
 
@@ -45,7 +55,8 @@
           let $porcentajeDescuento =$(`#porcentajeDescuentoServicio`, data);//Consigo el porcentaje de descuentodel cliente, del ver.html traido por ajax.
           texto = $porcentajeDescuento[0].textContent;
           arrayTexto = texto.split(" ");
-          let porcentajeDescuento=parseInt(arrayTexto[2]);//Obtengo el valor numérico del porcentaje de descuento del cliente.
+          let porcentajeDescuento=parseFloat(arrayTexto[2]);//Obtengo el valor numérico del porcentaje de descuento del cliente.
+          Number(porcentajeDescuento);
           document.getElementById("id_descuento").value = porcentajeDescuento;//Seteo el porcentaje de descuento.
           calcularTotal();
         }
@@ -79,7 +90,8 @@
             varParseo = varParseo[2];
             varParseo = varParseo.split(" ");
             varParseo = varParseo[2];
-            let precioProducto = parseInt(varParseo);//Ya se consiguió el precio, pero está en cadena, lo transformo a entero.
+            let precioProducto = parseFloat(varParseo);//Ya se consiguió el precio, pero está en cadena, lo transformo a entero.
+            Number(precioProducto);
             let precioFinalTupla = precioProducto * cantidad//Calculo el precio de la tupla.
             console.log("El precio de la tupla completa es: %s",precioFinalTupla);
             acumulador +=precioFinalTupla;//Sumo el total hasta ahora.
@@ -88,8 +100,8 @@
           }
         }
       }
-
-      document.getElementById("id_total").value = acumulador;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
+      precioTotalRedondeado = Math.round(acumulador);
+      document.getElementById("id_total").value = precioTotalRedondeado;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
       let $inputPractica = $("#id_practica");
       if ($inputPractica.is(":visible")){
         sumarPractica();//Llamo la función que incrementa el valor del input total con respecto al costo de la práctica seleccionada.
@@ -104,14 +116,18 @@
       let texto = $inputPractica.find(":selected").text();
       let arrayTexto = texto.split(" ");//Parseo el __str__ de la práctica seleccionada.
       let tipo = arrayTexto[4];
-      let identificador = parseInt(arrayTexto[2]);
+      let identificador = parseFloat(arrayTexto[2]);
+      Number(identificador);
       let $inputTotal = $("#id_total");//Obtengo el input Total.
-      let precioInputTotal = parseInt($inputTotal[0].value);//Consigo el valor numérico del input total.
+      let precioInputTotal = parseFloat($inputTotal[0].value);//Consigo el valor numérico del input total.
+      Number(precioInputTotal);
       let $descuento = $("#id_descuento");
-      let porcentajeDescuento = parseInt($descuento.val());//Consigo el valor del porcentaje de descuento.
+      let porcentajeDescuento = parseFloat($descuento.val());//Consigo el valor del porcentaje de descuento.
+      Number(porcentajeDescuento);
       let $recargo = $("#id_recargo");
-      let porcentajeRecargo = parseInt($recargo.val());//Consigo el valor del porcentaje de recargo.
-      console.log(porcentajeRecargo);
+      let porcentajeRecargo = parseFloat($recargo.val());//Consigo el valor del porcentaje de recargo.
+      Number(porcentajeRecargo);
+      // console.log(porcentajeRecargo);
 
       //Si es una consulta, uso ajax con respecto a las url de consultas, sinó con respecto las url de cirugía.
       if (tipo == "consulta"){
@@ -122,11 +138,11 @@
           success: function(data){
             let descuentoPractica = 0;
             let recargoPractica = 0;
-
             let $precio =$(`#id_precio`, data);//Consigo el precio de la práctica, del ver.html traido por ajax.
             texto = $precio[0].textContent;
             arrayTexto = texto.split("$");
-            let precioPractica=parseInt(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            let precioPractica=parseFloat(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            Number(precioPractica);
             if (porcentajeDescuento != 0){
               descuentoPractica = (precioPractica*porcentajeDescuento)/100;
             }
@@ -139,7 +155,8 @@
             if (nuevoPrecio < 0){
               nuevoPrecio = 0;
             }
-            document.getElementById("id_total").value = nuevoPrecio;//Seteo el precio total actualizado.
+            precioTotalRedondeado = Math.round(nuevoPrecio);
+            document.getElementById("id_total").value = precioTotalRedondeado;//Seteo el precio total actualizado.
             //$itemTotal = $"(#id_total");
           }
         });
@@ -155,7 +172,8 @@
             let $precio =$(`#id_precio`, data);//Consigo el precio de la práctica, del ver.html traido por ajax.
             texto = $precio[0].textContent;
             arrayTexto = texto.split("$");
-            let precioPractica=parseInt(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            let precioPractica=parseFloat(arrayTexto[1]);//Obtengo el valor numérico del costo de la práctica.
+            Number(precioPractica);
             if (porcentajeDescuento != 0){
               descuentoPractica = (precioPractica*porcentajeDescuento)/100;
             }
@@ -206,11 +224,31 @@
 
     let borrarTuplasVacias = function(){
       //[TODO]Función que coloca en verdadero el checkbox eliminar de las tuplas vacías.
+      console.log("INGRESO A BORRAR TUPLAS");
+      let iterador = 0;
+      let cantidad =$(`#id_form-${iterador}-cantidad`).on("input", function() { calcularTotal(); });//Obtengo la cantidad del item y le doy comportamiento (llama a la funcion calcularTotal cuando lo modifican).
+      let producto = document.querySelector(`select[name="form-${iterador}-producto"]`);//Obtengo el producto del item y le doy comportamiento (llama a la funcion calcularTotal cuando cambia).
+      let $producto = $(producto);
+
+      let inputProducto = $(producto)[0];
+      let item = producto.selectedOptions[0];    //Variable usada para mejor lectura.
+
+      for (iterador ; iterador<totalTuplas; iterador++){//Este ciclo for es para darle comportamiento a todas las tuplas creadas por el formulario.
+
+        if (item.index == 0) {
+          console.log("TUPLA VACIA, "+iterador+ " SE BORRA");
+
+          producto[0].value = "1";//Coloco un valor cualquiera en producto como si hubiece sido seleccionado.
+          cantidad[0].value = "0";
+          let checkBoxBorrar = $(`#id_form-${iterador}-DELETE`);
+          if (checkBoxBorrar.checked == false){
+            checkBoxBorrar.checked = true;
+          }
+        }
+      }
+      console.log("FIN- Borrar Tuplas");
     }
-
-
-
-
+    $("#button-submit").click(borrarTuplasVacias);
   	$("#button-add").click(add);
     $("#button-add-practica").click(addPractica);
 })();
