@@ -18,6 +18,8 @@ Actualmente <strong>no</strong> disponibles para ser asignados a clientes
 
 {% block mascotaContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="mascotaCuerpo" >
 
@@ -62,7 +64,7 @@ Actualmente <strong>no</strong> disponibles para ser asignados a clientes
                         <tr>
                             <th id="deshabilitados-patente"> Patente </th>
                             <th id="deshabilitados-nombre"> Nombre </th>
-                            <th id="deshabilitados-cliente"> Cliente </th>
+                            <th id="deshabilitados-cliente"> Dueño </th>
                             <th id="deshabilitados-especie"> Especie </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
@@ -106,7 +108,27 @@ Actualmente <strong>no</strong> disponibles para ser asignados a clientes
         <p> No hay mascotas Deshabilitadas</p>
 
     {% endif %}
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if mascotas.has_previous %}
+                <li><a href="?page={{ mascotas.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
 
+            {% for page in mascotas.paginator.page_range|page_filter:mascotas %}
+                <li class="{% if mascotas.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if mascotas.has_next %}
+                <li>
+                    <a href="?page={{ mascotas.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 
 {% endblock %}

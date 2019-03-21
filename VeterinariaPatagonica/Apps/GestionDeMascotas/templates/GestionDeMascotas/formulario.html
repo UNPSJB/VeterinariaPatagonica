@@ -1,6 +1,7 @@
 {% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
 
 {% block paginaEstilos %}
+
     {{ block.super }}
     {{formulario.media.css}}
 
@@ -11,11 +12,21 @@ Gestion de Mascotas | Crear mascota
 {% endblock %}
 
 {% block mascotaTitulo %}
-Nueva Mascota
+{% if titulo == 1 %}
+    Nueva Mascota
+{% endif %}
+{% if titulo == 2 %}
+    Modificar Mascota
+{% endif %}
 {% endblock %}
 
 {% block mascotaSubtitulo %}
-Agrega una Mascota al listado
+{% if titulo == 1 %}
+    Agrega una Mascota al listado
+{% endif %}
+{% if titulo == 2 %}
+    Modifica datos de la Mascota
+{% endif %}
 {% endblock %}
 
 

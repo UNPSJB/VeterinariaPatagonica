@@ -11,11 +11,21 @@ Gestion de Productos | Crear Producto
 {% endblock %}
 
 {% block productoTitulo %}
-Nuevo Producto
+{% if titulo == 1 %}
+    Nuevo Producto
+{% endif %}
+{% if titulo == 2 %}
+    Modificar Producto
+{% endif %}
 {% endblock %}
 
 {% block productoSubtitulo %}
-Agrega un Producto al listado
+{% if titulo == 1 %}
+    Agrega un Producto al listado
+{% endif %}
+{% if titulo == 2 %}
+    Modifica datos del Producto
+{% endif %}
 {% endblock %}
 
 {% block productoContenido %}

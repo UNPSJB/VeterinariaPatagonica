@@ -9,11 +9,16 @@ from .models import Servicio, ServicioProducto
 from .forms import ServicioForm, ServicioProductoForm, ServicioProductoBaseFormSet
 from VeterinariaPatagonica import tools
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
 def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
-    context = {'usuario': request.user}
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,#          Defino la forma del formset. Van a tener el checkbox eliminar, la cantidad mínima de forms en el formset
         fields=("producto", "cantidad"), min_num=1, extra=0, can_delete=True,# es de 1 y la máxima es la determinada por django (1000),
@@ -42,24 +47,53 @@ def modificar(request, id = None):
 
 
 def verHabilitados(request):
-    servicios = Servicio.objects.habilitados()
-    servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
+    serviciosQuery = Servicio.objects.habilitados()
+    serviciosQuery = serviciosQuery.filter(tools.paramsToFilter(request.GET, Servicio))
     template = loader.get_template('GestionDeServicios/verHabilitados.html')
+
+    paginator = Paginator(serviciosQuery, 1)
+    page = request.GET.get('page')
+
+    try:
+        servicios = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        servicios = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        servicios = paginator.page(paginator.num_pages)
+
     context = {
-        'servicios' : servicios,
+        'serviciosQuery' : serviciosQuery,
         'usuario' : request.user,
+        'servicios': servicios,
     }
 
     return  HttpResponse(template.render(context,request))
 
 def verDeshabilitados(request):
-    servicios = Servicio.objects.deshabilitados()
-    servicios = servicios.filter(tools.paramsToFilter(request.GET, Servicio))
+    serviciosQuery = Servicio.objects.deshabilitados()
+    serviciosQuery = serviciosQuery.filter(tools.paramsToFilter(request.GET, Servicio))
     template = loader.get_template('GestionDeServicios/verDeshabilitados.html')
+
+    paginator = Paginator(serviciosQuery, 1)
+    page = request.GET.get('page')
+
+    try:
+        servicios = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        servicios = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        servicios = paginator.page(paginator.num_pages)
+
     context = {
-        'servicios' : servicios,
-        'usuario' : request.user,
+        'serviciosQuery': serviciosQuery,
+        'usuario': request.user,
+        'servicios': servicios,
     }
+
     return  HttpResponse(template.render(context,request))
 
 def ver(request, id):

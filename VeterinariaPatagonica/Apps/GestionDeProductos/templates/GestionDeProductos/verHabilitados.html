@@ -18,6 +18,8 @@ Productos Habilitados
 
 {% block productoContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="productoCuerpo" >
     <!--<p> Los siguientes Productos estan habilitados.  </p>-->
@@ -103,8 +105,30 @@ Productos Habilitados
         <p> No hay Productos habilitados </p>
 
     {% endif %}
+    <div>
+        <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Crear </a>
+    </div>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if productos.has_previous %}
+                <li><a href="?page={{ productos.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
 
-    <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Crear </a>
+            {% for page in productos.paginator.page_range|page_filter:productos %}
+                <li class="{% if productos.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if productos.has_next %}
+                <li>
+                    <a href="?page={{ productos.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 

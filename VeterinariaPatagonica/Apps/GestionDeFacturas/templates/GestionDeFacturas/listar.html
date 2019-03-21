@@ -16,6 +16,7 @@ Facturas Emitidas
 
 {% block facturaContenido %}
 
+{% load navigation_filters %}
 <!-- Listado -->
 <div class="facturaCuerpo" >
 
@@ -27,7 +28,7 @@ Facturas Emitidas
         <div id="filtrarFacturas" class="collapse in">
             <form class="form-horizontal filtrado" action="" method="GET">
                 <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
+                    <div align="justify">
                         <form action="" method="GET">
                             <br>
                             <input name="tipo" placeholder="Tipo">
@@ -58,6 +59,8 @@ Facturas Emitidas
                             <th id="deshabilitados-tipo"> Tipo </th>
                             <th id="deshabilitados-cliente"> Cliente </th>
                             <th id="deshabilitados-fecha"> Fecha </th>
+                            <th id="deshabilitados-total"> Total </th>
+                            <th id="deshabilitados-pagada"> Pagada </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
                     </thead>
@@ -67,6 +70,8 @@ Facturas Emitidas
                                 <td> <p>{{ factura.tipo}}</p></td>
                                 <td> <p>{{ factura.cliente }}</p></td>
                                 <td> <p>{{ factura.fecha }}</p></td>
+                                <td> <p>{{ factura.total }}</p></td>
+                                <td> {% if factura.pago %} Si {% else %} No {% endif %}</td>
                                 <td> <p align="justify">
                                         <a  href="{% url 'facturas:facturaVer' factura.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver esta factura.">
                                             <i class="glyphicon glyphicon-eye-open"> </i>
@@ -83,8 +88,32 @@ Facturas Emitidas
         <p> No hay facturas emitidas</p>
 
     {% endif %}
+    <div align="center">
+        <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
+    </div>
 
-    <a  id ="facturaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'facturas:facturaCrear' %}"> Crear </a>
+
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if facturas.has_previous %}
+                <li><a href="?page={{ facturas.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in facturas.paginator.page_range|page_filter:facturas %}
+                <li class="{% if facturas.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if facturas.has_next %}
+                <li>
+                    <a href="?page={{ facturas.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 
 </div>
 

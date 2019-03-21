@@ -18,6 +18,8 @@ Rubros Habilitados
 
 {% block rubroContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="rubroCuerpo" >
 
@@ -96,9 +98,31 @@ Rubros Habilitados
         <p> No hay rubros habilitados</p>
 
     {% endif %}
+    <div>
+         <a  id ="rubroHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'rubros:rubroCrear' %}"> Crear </a>
+    </div>
 
-    <a  id ="rubroHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'rubros:rubroCrear' %}"> Crear </a>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if rubros.has_previous %}
+                <li><a href="?page={{ rubros.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
 
+            {% for page in rubros.paginator.page_range|page_filter:rubros %}
+                <li class="{% if rubros.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if rubros.has_next %}
+                <li>
+                    <a href="?page={{ rubros.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 
 {% endblock %}

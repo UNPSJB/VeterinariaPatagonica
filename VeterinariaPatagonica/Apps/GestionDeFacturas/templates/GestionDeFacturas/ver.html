@@ -29,7 +29,7 @@ Datos del factura
                 <p id = "esPagada">Pago: Pagada</p>
                 <p>Fecha Pago: {{factura.pago.fecha}}</p>
             {%else%}
-                <p id = "esPagada"> Pago: No Pagada</p>
+                <p id = "esNoPagada"> Pago: No Pagada</p>
             {%endif%}
             <!-- Tabla para mostrar los detalles de la factura. -->
             <table class="table listado">
@@ -79,7 +79,7 @@ Datos del factura
               </tr>
             {% endif %}
             <tr>
-              <th>Total: {{ factura.total}}</th>
+              <th>Total: {{ factura.practica.precio}}</th>
             </tr>
           </thead>
         </table>

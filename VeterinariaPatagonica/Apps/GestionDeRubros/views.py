@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from .models import Rubro
 from .forms import RubroForm
 from VeterinariaPatagonica import tools
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def rubros(request):
 
@@ -22,7 +22,10 @@ def rubros(request):
 def modificar(request, id = None):
 
     rubro = Rubro.objects.get(id=id) if id is not None else None
-    context = {'usuario': request.user}
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
     if request.method == 'POST':
         formulario = RubroForm(request.POST, instance=rubro)
         print(formulario)
@@ -98,24 +101,52 @@ def ver(request, id):
     return HttpResponse(template.render(contexto, request))
 
 def verHabilitados(request):
-    rubros = Rubro.objects.habilitados()
-    rubros = rubros.filter(tools.paramsToFilter(request.GET, Rubro))
+    rubrosQuery = Rubro.objects.habilitados()
+    rubrosQuery = rubrosQuery.filter(tools.paramsToFilter(request.GET, Rubro))
     template = loader.get_template('GestionDeRubros/verHabilitados.html')
+
+    paginator = Paginator(rubrosQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        rubros = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        rubros = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        rubros = paginator.page(paginator.num_pages)
+
     contexto = {
-        'rubros' : rubros,
+        'rubrosQuery' : rubrosQuery,
         'usuario' : request.user,
+        'rubros': rubros,
     }
 
     return  HttpResponse(template.render(contexto,request))
 
 
 def verDeshabilitados(request):
-    rubros = Rubro.objects.deshabilitados()
-    rubros = rubros.filter(tools.paramsToFilter(request.GET, Rubro))
+    rubrosQuery = Rubro.objects.deshabilitados()
+    rubrosQuery = rubrosQuery.filter(tools.paramsToFilter(request.GET, Rubro))
     template = loader.get_template('GestionDeRubros/verDeshabilitados.html')
+
+    paginator = Paginator(rubrosQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        rubros = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        rubros = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        rubros = paginator.page(paginator.num_pages)
+
     contexto = {
-        'rubros' : rubros,
-        'usuario' : request.user,
+        'rubrosQuery': rubrosQuery,
+        'usuario': request.user,
+        'rubros': rubros,
     }
 
     return  HttpResponse(template.render(contexto,request))

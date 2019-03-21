@@ -8,7 +8,7 @@ from django import forms
 
 from .models import TipoDeAtencion
 from .forms import TipoDeAtencionForm
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 PLANTILLAS = {
@@ -21,19 +21,32 @@ PLANTILLAS = {
 }
 
 def plantilla(nombre):
-    return join( "GestionDeTiposDeAtencion", PLANTILLAS[nombre]+".html")
+    return join( "GestionDeTiposDeAtencion/", PLANTILLAS[nombre]+".html")
 
 
 
 def habilitados(request):
     """ Listado de tipos de atencion habilitados """
 
-    tiposDeAtencion = TipoDeAtencion.objects.habilitados()
+    tiposDeAtencionQuery = TipoDeAtencion.objects.habilitados()
 
     template = loader.get_template( plantilla("habilitados") )
 
+    paginator = Paginator(tiposDeAtencionQuery, 10)
+    page = request.GET.get('page')
+
+    try:
+        tiposDeAtencion = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        tiposDeAtencion = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        tiposDeAtencion = paginator.page(paginator.num_pages)
+
     context = {
-        "tiposDeAtencion" : tiposDeAtencion
+        "tiposDeAtencionQuery" : tiposDeAtencionQuery,
+        "tiposDeAtencion": tiposDeAtencion,
     }
 
     return HttpResponse(template.render( context, request ))
@@ -43,14 +56,26 @@ def habilitados(request):
 def deshabilitados(request):
     """ Listado de tipos de atencion deshabilitados """
 
-    tiposDeAtencion = TipoDeAtencion.objects.deshabilitados()
+    tiposDeAtencionQuery = TipoDeAtencion.objects.deshabilitados()
 
     template = loader.get_template(plantilla("deshabilitados"))
 
-    context = {
-        "tiposDeAtencion" : tiposDeAtencion
-    }
+    paginator = Paginator(tiposDeAtencionQuery, 10)
+    page = request.GET.get('page')
 
+    try:
+        tiposDeAtencion = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        tiposDeAtencion = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        tiposDeAtencion = paginator.page(paginator.num_pages)
+
+    context = {
+        "tiposDeAtencionQuery": tiposDeAtencionQuery,
+        "tiposDeAtencion": tiposDeAtencion,
+    }
     return HttpResponse(template.render( context, request ))
 
 

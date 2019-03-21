@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator, DecimalValidator
 from VeterinariaPatagonica import tools
 from decimal import Decimal
+from django.db.models import Q
 
 # Create your models here.
 
@@ -17,7 +18,7 @@ class Cliente (models.Model):
         "dniCuit": "dniCuit__icontains",
         "nombres": "nombres__icontains",
         "apellidos": "apellidos__icontains",
-        #"duenio": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
+        "mascotas": lambda value: Q(mascota__nombre__icontains=value),
     }
 
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -37,6 +38,19 @@ class Cliente (models.Model):
         ("Gaiman", "Gaiman"),
         ("Dovalon", "Dovalon")
     ]
+
+
+    PARTE_ENTERA = 3
+    PARTE_DECIMAL = 2
+    DESC_MIN = Decimal(0)
+    DESC_MAX = Decimal(100.00)
+    DEFAULT = Decimal(0)
+    DESCUENTO = PARTE_ENTERA + PARTE_DECIMAL
+
+
+    CC_MIN_PRECIO = Decimal(0)
+    CC_MAX_PRECIO = Decimal(3000.00)
+    PRECIO = PARTE_ENTERA + PARTE_DECIMAL
 
     dniCuit = models.CharField(
         help_text= "Dni/Cuit del Cliente",
@@ -101,6 +115,7 @@ class Cliente (models.Model):
             'max_length': "La localidad puede tener a lo sumo {} caracteres".format(MAXLOCALIDAD),
         }
     )
+
     celular = models.CharField(
         help_text="Celular del Cliente sin el 0",
         max_length=MAXCELULAR,
@@ -151,6 +166,7 @@ class Cliente (models.Model):
         }
     )
 
+
     DESC_PARTE_ENTERA = 3
     PARTE_DECIMAL = 2
     DESC_MIN = Decimal(0)
@@ -180,6 +196,7 @@ class Cliente (models.Model):
         ]
     )
 
+
     CC_PARTE_ENTERA = 4
     CC_MIN_PRECIO = Decimal(0)
     CC_MAX_PRECIO = Decimal(3000.00)
@@ -203,5 +220,7 @@ class Cliente (models.Model):
     def __str__ (self):
         return "{0}, {1}".format(self.nombres,self.apellidos)
 
-
-    
+    class Meta:
+        ordering = ["apellidos", "nombres"]
+        verbose_name = "Cliente"
+        verbose_name_plural = "Clientes"

@@ -2,15 +2,25 @@
 {% load static %}
 
 {% block titulo %}
-Gestion de Clientes | Crear Cliente
+Gestion de Clientes | {{titulo}}
 {% endblock %}
 
 {% block clienteTitulo %}
-Nuevo Cliente
+{% if titulo == 1 %}
+    Nuevo Cliente
+{% endif %}
+{% if titulo == 2 %}
+    Modificar Cliente
+{% endif %}
 {% endblock %}
 
 {% block clienteSubtitulo %}
-Agrega un Cliente al listado
+{% if titulo == 1 %}
+    Agrega un Cliente al listado
+{% endif %}
+{% if titulo == 2 %}
+    Modifica datos del Cliente
+{% endif %}
 {% endblock %}
 
 {% block clienteContenido %}

@@ -17,6 +17,8 @@ Mascotas Habilitadas
 
 {% block mascotaContenido %}
 
+{% load navigation_filters %}
+
 <!-- Listado -->
 <div class="mascotaCuerpo" >
 
@@ -51,7 +53,6 @@ Mascotas Habilitadas
     <div class="mascotaLineaTitulo"> </div>
 
     <br>
-    <!--<p> Las siguientes mascotas estan habilitadas:  </p>-->
 
     {% if mascotas %}
             <div class="table-responsive" id="tabla">
@@ -60,7 +61,7 @@ Mascotas Habilitadas
                         <tr>
                             <th id="deshabilitados-patente"> Patente </th>
                             <th id="deshabilitados-nombre"> Nombre </th>
-                            <th id="deshabilitados-cliente"> Cliente </th>
+                            <th id="deshabilitados-cliente"> Dueño </th>
                             <th id="deshabilitados-especie"> Especie </th>
                             <th id="deshabilitados-acciones"> Acciones </th>
                         </tr>
@@ -81,12 +82,16 @@ Mascotas Habilitadas
                                             <li><a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Mascota">
                                                 <i class="glyphicon glyphicon-eye-open"> </i>
                                             </a></li>
+                                            {% if perms.mascota.change_mascota %}
                                             <li><a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Mascota">
                                                 <i class="glyphicon glyphicon-edit"> </i>
                                             </a></li>
+                                            {% endif %}
+                                            {% if perms.mascota.deshabilitar_mascota %}
                                             <li><a href="{% url 'mascotas:mascotaDeshabilitar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Mascota">
                                                 <i class="glyphicon glyphicon-minus"> </i>
                                             </a></li>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </td>
@@ -99,6 +104,30 @@ Mascotas Habilitadas
     {% else %}
         <p> No hay mascota habilitadas</p>
     {% endif %}
-    <a  id="mascotaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaCrear' %}"> Crear </a>
+    <div>
+        <a  id="mascotaHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaCrear' %}"> Crear </a>
+    </div>
+    <br>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if mascotas.has_previous %}
+                <li><a href="?page={{ mascotas.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in mascotas.paginator.page_range|page_filter:mascotas %}
+                <li class="{% if mascotas.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if mascotas.has_next %}
+                <li>
+                    <a href="?page={{ mascotas.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

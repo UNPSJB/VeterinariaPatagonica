@@ -1,4 +1,4 @@
-# Desarrollo de Software 2018
+﻿# Desarrollo de Software 2018
 
 # Sistema de Información de la Veterinaria Patagónica
 
@@ -47,6 +47,12 @@ pip install Django==2.0.8
 pip install django-localflavor
 
 pip install django-autocomplete-light
+
+pip install Sphinx
+
+pip install openpyxl
+
+pip install reportlab
 
 ##### Páginas de ayuda:
 https://www.quora.com/Why-is-it-very-difficult-to-install-Python-3-5-for-Ubuntu

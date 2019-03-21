@@ -52,3 +52,5 @@ class Rubro (models.Model):
     def __str__ (self):
         return "{0}, {1}".format(self.nombre,self.descripcion)
 
+    class Meta:
+        ordering = ["nombre"]

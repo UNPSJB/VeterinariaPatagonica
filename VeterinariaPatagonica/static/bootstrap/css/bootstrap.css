@@ -4673,6 +4673,7 @@ input[type="button"].btn-block {
   padding-left: 0;
   list-style: none;
   border-radius: 0.25rem;
+  color: orange;
 }
 
 .page-link {
@@ -4750,6 +4751,7 @@ input[type="button"].btn-block {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
+  color: orange;
 }
 
 .pagination-sm .page-item:first-child .page-link {

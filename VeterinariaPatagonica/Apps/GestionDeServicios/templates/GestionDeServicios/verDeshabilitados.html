@@ -17,6 +17,9 @@ Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
 {% block servicioContenido %}
+
+{% load navigation_filters %}
+
 <!-- Listado -->
 
 <div class="servicioCuerpo" >
@@ -34,7 +37,7 @@ Actualmente <strong>no</strong> disponibles
                             <br>
                             <input name="nombre" placeholder="Nombre">
                             <input name="tipo" placeholder="Tipo">
-
+                            <input name="precioManoDeObra" placeholder="Precio Mano de Obra">
                             <button type="submit" class="" >
 
                                 <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
@@ -55,14 +58,18 @@ Actualmente <strong>no</strong> disponibles
                 <table class="table servicioListado">
                   <thead>
                       <tr>
-                          <th id="deshabilitados-nombre"> Nombre </th>
-                          <th id="deshabilitados-acciones"> Acciones </th>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-tipo"> Tipo </th>
+                            <th id="deshabilitados-manoObra"> Mano de Obra ($) </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
                       </tr>
                   </thead>
                   <tbody>
                     {% for servicio in servicios %}
                         <tr>
+                            <td> <p>{{ servicio.tipo }} </p> </td>
                             <td> <p> {{ servicio.nombre }} </p> </td>
+                            <td> <p>{{ servicio.precioManoDeObra }} </p> </td>
                             <td>
                                 <div class="dropdown">
                                     <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
@@ -93,5 +100,27 @@ Actualmente <strong>no</strong> disponibles
     {% else %}
         <p> No hay servicios deshabilitados</p>
     {% endif %}
+
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if servicios.has_previous %}
+                <li><a href="?page={{ servicios.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in servicios.paginator.page_range|page_filter:servicios %}
+                <li class="{% if servicios.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if servicios.has_next %}
+                <li>
+                    <a href="?page={{ servicios.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

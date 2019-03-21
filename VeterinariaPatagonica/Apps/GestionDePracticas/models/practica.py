@@ -288,7 +288,6 @@ class Practica(models.Model):
         null=True,
     )
 
-
     def __str__(self):
         return "Practica numero {} tipo {}".format( self.id, Areas[self.tipo].nombre )
 
@@ -379,7 +378,12 @@ class Practica(models.Model):
 
 
     def total(self):
-        return self.totalProductos() + self.totalServicios()
+        subtotal = self.totalProductos() + self.totalServicios()
+        porcentajeRecargo= self.tipoDeAtencion.recargo
+        valorRecargo= (subtotal*porcentajeRecargo)/100
+        total = subtotal + valorRecargo
+        print("Desde practica total",total)
+        return total
 
 
     """

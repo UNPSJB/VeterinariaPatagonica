@@ -490,6 +490,8 @@ def detallarRealizacion(request, id):
                 try:
                     servicios = servicios.save()
                     productos = productos.save()
+                    practica.precio= realizada.total()
+                    practica.save()
                 except ErrorBD as error:
                     context["errores"] = [ errorBD() ]
                 else:

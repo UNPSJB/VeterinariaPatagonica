@@ -7,11 +7,21 @@ Gestion de Servicios | Crear Servicios
 {% endblock %}
 
 {% block servicioTitulo %}
-Nuevo Servicio
+{% if titulo == 1 %}
+    Nuevo Servicio
+{% endif %}
+{% if titulo == 2 %}
+    Modificar Servicio
+{% endif %}
 {% endblock %}
 
 {% block servicioSubtitulo %}
-Agrega un Servicio al listado
+{% if titulo == 1 %}
+    Agrega un Servicio al listado
+{% endif %}
+{% if titulo == 2 %}
+    Modifica datos del Servicio
+{% endif %}
 {% endblock %}
 
 {% block servicioContenido %}

@@ -3,17 +3,26 @@ from django.template import loader
 from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
+from django.utils.decorators import method_decorator
 from .models import Mascota
 from .forms import MascotaFormFactory
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
+from django.urls import reverse_lazy
+
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def mascota(request):
     context = {}
     template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')
     return HttpResponse(template.render(context, request))
+
+
+@permission_required('GestionDeMascotas.deshabilitar_mascota', raise_exception=True)
+def dispatch(self, *args, **kwargs):
+    return super(Mascota, self).dispatch(*args, **kwargs)
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
@@ -23,7 +32,11 @@ def modificar(request, id= None, cliente_id=None):
     if cliente_id:
         cliente = Cliente.objects.get(pk=cliente_id)
     MascotaForm = MascotaFormFactory(mascota, cliente)
-    context = {'usuario': request.user}
+
+    if (id==None):
+        context = {"titulo": 1, 'usuario': request.user}
+    else:
+        context = {"titulo": 2, 'usuario': request.user}
 
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
@@ -105,23 +118,51 @@ def ver(request, id):
 
 
 def verHabilitados(request):
-    mascotas = Mascota.objects.habilitados()
-    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
+    mascotasQuery = Mascota.objects.habilitados()
+    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
+
+    paginator = Paginator(mascotasQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        mascotas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        mascotas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        mascotas = paginator.page(paginator.num_pages)
+
     contexto = {
-        'mascotas': mascotas,
+        'mascotasQuery': mascotasQuery,
         'usuario': request.user,
+        'mascotas': mascotas,
     }
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    mascotas = Mascota.objects.deshabilitados()
-    mascotas = mascotas.filter(tools.paramsToFilter(request.GET, Mascota))
+    mascotasQuery = Mascota.objects.deshabilitados()
+    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
 
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
+
+    paginator = Paginator(mascotasQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        mascotas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        mascotas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        mascotas = paginator.page(paginator.num_pages)
+
     contexto = {
-        'mascotas': mascotas,
+        'mascotasQuery': mascotasQuery,
         'usuario': request.user,
+        'mascotas': mascotas,
     }
     return HttpResponse(template.render(contexto, request))
 

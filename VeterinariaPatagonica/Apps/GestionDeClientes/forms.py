@@ -14,7 +14,7 @@ def ClienteFormFactory(cliente=None):
                 'email',
                 'descuentoServicio', 'descuentoProducto', 'cuentaCorriente']
 
-    if cliente is  None:
+    if cliente is None:
         campos.insert(1, 'dniCuit')
 
     class ClienteForm(forms.ModelForm):
@@ -97,3 +97,70 @@ def ClienteFormFactory(cliente=None):
                     })
 
     return ClienteForm
+
+class FiltradoForm(forms.Form):
+
+    ordenes = (
+        ("d", "Descendente"),
+        ("a", "Ascendente"),
+    )
+
+    criterios = (
+        ("dniCuit", "DNI/CUIT"),
+        ("nombres", "Nombres"),
+        ("apellidos", "Apellidos"),
+        ("mascota", "Mascota"),
+    )
+
+    dniCuit = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class":"form-control"})
+    )
+
+    nombres = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class":"form-control"})
+    )
+
+    mascota = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class":"form-control"})
+    )
+
+    apellidos = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Terminos a buscar...",
+            "class":"form-control",
+        })
+    )
+
+    segun = forms.ChoiceField(
+        label="Ordenar segun",
+        choices=criterios,
+        required=False,
+        widget=forms.Select(attrs={"class":"form-control"}),
+    )
+
+    orden = forms.ChoiceField(
+        label="Orden",
+        choices=ordenes,
+        required=False,
+        widget=forms.Select(attrs={"class":"form-control"}),
+    )
+
+    def filtros(self):
+        if self.cleaned_data:
+            fields = ("dniCuit", "nombres", "apellidos", "mascota")
+            datos = { k : self.cleaned_data[k] for k in fields }
+        return datos
+
+    def criterio(self):
+        if self.cleaned_data and "segun" in self.cleaned_data:
+            return self.cleaned_data["segun"]
+        return None
+
+    def ascendente(self):
+        if self.cleaned_data and "orden" in self.cleaned_data:
+            return (self.cleaned_data["orden"] == "a")
+        return None

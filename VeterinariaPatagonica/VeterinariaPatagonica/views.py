@@ -24,6 +24,7 @@ from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
 from django.core.exceptions import PermissionDenied
 from .forms import LoginForm
+from .errores import VeterinariaPatagonicaError
 
 def verdemo(request):
     template = request.path.split('/')[-1]

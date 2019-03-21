@@ -10,7 +10,7 @@ from Apps.GestionDeFacturas.models import Factura
 from VeterinariaPatagonica import tools
 from django.utils import timezone
 
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 def pago(request):
 
@@ -94,11 +94,26 @@ def ver(request, id):
     return HttpResponse(template.render(contexto, request))
 
 def listar(request):
-    pagos = Pago.objects.all()
-    pagos = pagos.filter(tools.paramsToFilter(request.GET, Pago))
+    pagosQuery = Pago.objects.all()
+    pagos = pagosQuery.filter(tools.paramsToFilter(request.GET, Pago))
     template = loader.get_template('GestionDePagos/listar.html')
+
+
+    paginator = Paginator(pagosQuery, 1)
+    page = request.GET.get('page')
+
+    try:
+        pagos = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        pagos = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        pagos = paginator.page(paginator.num_pages)
+
     contexto = {
-        'pagos' : pagos,
+        'pagosQuery' : pagosQuery,
         'usuario' : request.user,
+        'pagos': pagos,
     }
-    return  HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(contexto, request))
