@@ -7,7 +7,6 @@ from django.db.models import Q
 from django.utils import timezone as djangotimezone
 from Apps.GestionDePracticas import models as praModel
 #from Apps.GestionDePagos import models as pagModel
-
 # Create your models here.
 
 
@@ -127,36 +126,74 @@ class Factura(models.Model):
 
         productos = Decimal("0")
         adelanto = Decimal("0")
-        practica = self.practica.precio
+        if not self.practica == None:
+            practica = self.practica.precio
+            print("PRECIO PRACTICA", practica)
+            if self.practica.adelanto:
+                adelanto = self.practica.adelanto.importe
+            if (self.descuento!=0):
+                descuentoPractica = (practica*self.descuento)/100
+                practica = practica-descuentoPractica
 
-        print("PRECIO PRACTICA", practica)
-
-        if (self.descuento!=0):
-            descuentoPractica = practica/self.descuento
-            practica = practica-descuentoPractica
-
-        if (self.recargo!=0):
-            recargoPractica = practica/self.recargo
-            practica = practica+recargoPractica
-
-        '''if self.practica:
-            adelanto = self.practica.adelanto'''
-
+                if (self.recargo!=0):
+                    recargoPractica = practica/self.recargo
+                    practica = practica+recargoPractica
+        else:
+            practica = 0
         for detalle in detalles:
             productos += detalle.subtotal
-
-        self.total = practica + productos - adelanto
+        print(practica,productos,adelanto)
+        total = practica + productos - adelanto
+        self.total = total
+        # if self.tipo == "C":
+        #     iva = round((total*21)/100)
+        #     self.total = total-iva
+        self.save()
         print("DESDE FACTURA",self.total)
         return self.total
 
     def calcular_subtotales(self, detalles):
+
+        totalGuardado = self.total
         self.total = Decimal("0")
-        self.save()
+        # self.save()
         for detalle in detalles:
             detalle.factura = self
             detalle.save()
             self.total += detalle.subtotal
-        self.save()
+        # self.save()
+
+    def calcular_descuento_practica(self):
+        if not self.practica == None:
+            practica = self.practica.precio
+
+            if (self.descuento!=0):
+                descuentoPractica = (practica*self.descuento)/100
+                return descuentoPractica
+            else:
+                return 0
+        else:
+            return 0
+
+    def calcular_recargo_practica(self):
+        if not self.practica == None:
+            practica = self.practica.precio
+            if (self.recargo!=0):
+                recargoPractica = (practica*self.recargo)/100
+                return recargoPractica
+            else:
+                return 0
+        else:
+            return 0
+
+    def calcular_iva(self):
+        iva = round((self.total*21)/100)
+        return iva
+
+    def restar_iva(self):
+        iva = Factura.calcular_iva(self)
+        nuevoTotal = self.total - iva
+        return nuevoTotal
 
     class Meta:
         ordering = ["tipo", "fecha"]
@@ -204,9 +241,11 @@ class DetalleFactura(models.Model):
         return self.subtotal
 
     def precio(self):
-        return self.subtotal // self.cantidad
+        if self.cantidad != 0:
+            return self.subtotal // self.cantidad
 
     def save(self, *args, **kwargs):
+        print("GUARDANDO...........")
         if (not "commit" in kwargs) or (kwargs["commit"]):
             if (self.subtotal is None):
                 precio = self.producto.precioPorUnidad
