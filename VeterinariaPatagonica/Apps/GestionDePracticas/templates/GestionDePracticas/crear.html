@@ -10,13 +10,14 @@ Crear {{ tipo }}
 {% endblock %}
 
 {% block paginaEstilos %}
+{{formPractica.media.css}}
 {{ block.super }}
-{{practica.media.css}}
 {% endblock %}
+
 
 {% block practica-contenido %}
 
-    {% include "./snippets/errores.html" %}
+    {% include "snippets/errores.html" %}
 
     {% if acciones %}
     <form id="form-creacion" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
@@ -24,31 +25,37 @@ Crear {{ tipo }}
             {% csrf_token %}
 
             <div id="form-creacion-errores">
-                {% if practica.errors or servicios.total_error_count %}
+                {% if formPractica.errors or formsetServicios.total_error_count %}
                     <div class="errores">
                         <strong>Por favor revise los siguientes errores:</strong>
                         <ul>
-                            {% include 'snippets/formErrores.html' with form=practica %}
-                            {% include './snippets/formsetErrores.html' with formset=servicios %}
+                            {% include 'snippets/formErrores.html' with form=formPractica %}
+                            {% include 'snippets/formsetErrores.html' with formset=formsetServicios %}
                         </ul>
                     </div>
                 {% endif %}
             </div>
 
-            {% include "snippets/form.html" with form=practica accion=None %}
+            {% include "snippets/form.html" with form=formPractica accion=None %}
 
-            <div class="form-group servicios">
+            <div class="servicios">
                 <div class="row servicios">
                     <label for="formset-servicios" class="col-sm-4 control-label etiqueta">
                         Servicios
                     </label>
                     <div class="col-sm-8" id="formset-servicios">
-                        {% include "./snippets/formset.html" with formset=servicios titulo="" %}
+                        {% include "snippets/formset.html" with formset=formsetServicios titulo="" %}
                     </div>
                 </div>
             </div>
 
-            {% include "snippets/form.html" with form=acciones accion=None %}
+            <div class="btn-toolbar center-block">
+                {% block acciones %}
+                    <div class="btn-group creacion">
+                    {{ acciones.acciones }}
+                    </div>
+                {% endblock %}
+            </div>
 
     </form>
     {% endif %}
@@ -57,24 +64,22 @@ Crear {{ tipo }}
 
 {% block paginaJavascript %}
     {{ block.super }}
-    <script src="{% static 'GestionDePracticas/js/GestionDePracticas.js' %}"></script>
     <script type="text/javascript">
         var validadores = [
             {
                 "validador" : validarFormset,
                 "argumentos" : {
                     "comparador" : compararServicios,
-                    "formset_id" : "{{ servicios.prefix }}-formset",
+                    "formset_id" : "{{ formsetServicios.prefix }}-formset",
                     "errores" : document.getElementById("form-creacion-errores"),
-                    "objeto" : "{{ servicios.label.lower }}",
                 }
             }
         ]
 
         document.onreadystatechange = function(){
-            var servicios = document.getElementById('{{ servicios.prefix }}-formset');
+            var servicios = document.getElementById('{{ formsetServicios.prefix }}-formset');
             actualizarEliminar(servicios);
         }
     </script>
-{{practica.media.js}}
+{{formPractica.media.js}}
 {% endblock %}

@@ -1,68 +1,104 @@
 {% extends 'GestionDePracticas/GestionDePracticas.html' %}
-{% load practicaUrl %}
 
 {% block titulo %}
-Practicas de tipo: {{ tipo }}
+{{ tipo|capfirst }}s
 {% endblock %}
 
 {% block practica-titulo %}
-Practicas de tipo: {{ tipo }}
+{{ tipo|capfirst }}s
 {% endblock %}
+{% block practica-subtitulo %}
+Cantidad de {{ tipo }}s al dia de la fecha: {{ gestor.numero_items }}
+{% endblock %}
+
 
 {% block practica-contenido %}
 
-    {% include "./snippets/filtrado.html" with form=filtrado accion="Filtrar" %}
+    <form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
 
-    {% if practicas %}
-
-
-        <div class="table-responsive" id="tabla">
-            <table class="table listado">
-                <thead>
-                    <tr>
-                        <th>Id</th>
-                        <th>Cliente</th>
-                        <th>Estado</th>
-                        <th>Creacion</th>
-                        <th>Ultima actualizacion</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for practica in practicas %}
-                        <tr>
-                            <td><a href="{% practicaUrl tipo "ver" id=practica.id %}">{{ practica.id }}</a></td>
-                            <td>{{ practica.cliente }}</td>
-                            <td>{{ practica.estado }}</td>
-                            <td>{{ practica.estados.inicial.marca|date:"d/m/y" }}</td>
-                            <td>{{ practica.estado.marca|date:"d/m/y" }}</td>
-                            <td>
-                                {% for accion in acciones %}
-                                    {% if accion in practica.estado.accionesPosibles %}
-                                        <a href="{% practicaUrl tipo accion.name id=practica.id %}">{{ accion.name }}</a>
-                                    {% endif %}
-                                {% endfor %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="paginas">
-
-            {% for item in paginas %}
-                {% if pagina != item %}
-                    <a class="numero-pagina" href="{% practicaUrl tipo "listar" pagina=item %}">{{ item }}</a>
-                {% else %}
-                    <span class="numero-pagina actual">{{ item }}</span>
-                {% endif %}
+        <div class="hidden orden-listado">
+            {% for field in gestor.formOrden %}
+                {{ field }}
             {% endfor %}
-
+            {{ gestor.formPagina.desde }}
         </div>
+
+        <div class="sombreado" id="filtrar-practicas">
+            {{ gestor.formFiltros.cliente }}
+            {{ gestor.formFiltros.mascota }}
+            {{ gestor.formFiltros.estado }}
+            {{ gestor.formPagina.resultados }}
+            <button class="btn btn-default filtrar" type="submit">Filtrar</button>
+        </div>
+
+    {% if gestor.numero_items %}
+        <table class="table table-bordered table-responsive items">
+            <colgroup>
+                <col class="columna{% if gestor.encabezado.orden_id.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_cliente.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_mascota.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_actualizacion.activa %} activa{% endif %}"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_id %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_cliente %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_mascota %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_actualizacion %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for practica in gestor.items_actuales %}
+                {% with path="practicas:"|add:tipo|add:":ver:practica" %}
+
+                    <tr>
+                        <td>
+                            <a href="{% url path id=practica.id %}">
+                                {{ practica.get_tipo_display }} nº {{ practica.id }}: {{ practica.estado }}
+                            </a>
+                        </td>
+                        <td>{{ practica.cliente }}</td>
+                        {% if practica.mascota %}
+                        <td>{{ practica.mascota.nombre }} ({{ practica.mascota.patente }})</td>
+                        {% else %}
+                        <td>Ninguna</td>
+                        {% endif %}
+                        <td>{{ practica.estado.marca|date:"d/m/y" }}</td>
+                    </tr>
+
+                {% endwith %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+        {% include "snippets/paginacion.html" with links=gestor.paginas%}
+        </div>
+
+    </form>
+
+    <div class="menu-colapsable" >
+        <div class="item-colapsable" >
+            <a role="button" href="#practicas-acciones" data-toggle="collapse">
+                <i class="glyphicon glyphicon-tasks"></i>
+                <span>Acciones</span>
+            </a>
+            <div class="contenido-colapsable collapse in" id="practicas-acciones">
+                <ul class="acciones sinestilo">
+                    {% with path="practicas:"|add:tipo|add:":crear:practica" %}
+                    <li><a class="btn btn-sm btn-default" href="{% url path %}">Crear {{ tipo }}</a></li>
+                    {% endwith %}
+                    {% with path="practicas:"|add:tipo|add:":buscar" %}
+                    <li><a class="btn btn-sm btn-default" href="{% url path %}">Buscar {{ tipo }}</a></li>
+                    {% endwith %}
+                </ul>
+            </div>
+        </div>
+    </div>
 
     {% else %}
 
-        <p>No hay practicas que mostrar</p>
+        <p><strong>No hay practicas que mostrar</strong></p>
 
     {% endif %}
 

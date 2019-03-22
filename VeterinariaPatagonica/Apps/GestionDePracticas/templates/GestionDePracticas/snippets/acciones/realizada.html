@@ -1,0 +1,29 @@
+{% extends "./acciones.html" %}
+
+{% block items %}
+
+    {% with path="practicas:"|add:practica.nombreTipo|add:":modificar:detalles" %}
+    <li>
+        <a  class="btn btn-sm btn-default" href="{% url path id=practica.id %}">
+            Modificar servicios y productos
+        </a>
+    </li>
+    {% endwith %}
+
+    {% with path="practicas:"|add:practica.nombreTipo|add:":modificar:observaciones" %}
+    <li>
+        <a  class="btn btn-sm btn-default" href="{% url path id=practica.id %}">
+            Modificar informacion clinica
+        </a>
+    </li>
+    {% endwith %}
+
+    {% with path="practicas:"|add:practica.nombreTipo|add:":ver:observaciones" %}
+    <li>
+        <a  class="btn btn-sm btn-default" href="{% url path id=practica.id %}">
+            Ver informacion clinica
+        </a>
+    </li>
+    {% endwith %}
+
+{% endblock %}

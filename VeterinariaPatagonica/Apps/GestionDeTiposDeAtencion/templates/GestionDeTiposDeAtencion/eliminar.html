@@ -14,11 +14,13 @@ Elimina permanentemente los datos del tipo de atencion del sistema
 
 {% block contenido %}
 
-    <p> Confirmar eliminacion: </p>
+    <p>Tipo de atencion eliminado.</p>
 
-    <form class="form" action="{{ request.path }}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-sm btn-default center-block">Eliminar</button>
-    </form>
+    <ul>
+        <li><a href="{% url "tiposDeAtencion:habilitados" %}">Ver tipos de atencion habilitados</a></li>
+
+        <li><a href="{% url "tiposDeAtencion:crear" %}">Crear nuevo tipo de atencion</a></li>
+    </ul>
+
 
 {% endblock %}

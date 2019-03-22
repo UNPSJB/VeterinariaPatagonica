@@ -1,0 +1,57 @@
+<div class="form-group {{ form.nombre.name }} {% if form.nombre.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.nombre %}
+</div>
+<div class="form-group {{ form.descripcion.name }} {% if form.descripcion.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.descripcion %}
+</div>
+<div class="form-group {{ form.tipoDeServicio.name }} {% if form.tipoDeServicio.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.tipoDeServicio %}
+</div>
+<div class="form-group {{ form.lugar.name }} {% if form.lugar.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.lugar %}
+</div>
+<div class="form-group {{ form.emergencia.name }} {% if form.emergencia.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.emergencia %}
+</div>
+<div class="form-group inicioFranjaHoraria {% if form.inicioFranjaHoraria.errors %}has-error{% endif %}">
+    <div class=row>
+        <label for="{{ form.inicioFranjaHoraria.id_for_label }}" class="col-sm-4 control-label etiqueta">
+            {{ form.inicioFranjaHoraria.label }}
+        </label>
+        <div class="col-sm-8 control">
+            <div class="input-group date" id="inicioFranjaHoraria">
+                {{ form.inicioFranjaHoraria }}
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group finFranjaHoraria {% if form.finFranjaHoraria.errors %}has-error{% endif %}">
+    <div class=row>
+        <label for="{{ form.finFranjaHoraria.id_for_label }}" class="col-sm-4 control-label etiqueta">
+            {{ form.finFranjaHoraria.label }}
+        </label>
+        <div class="col-sm-8 control">
+            <div class="input-group date" id="finFranjaHoraria">
+                {{ form.finFranjaHoraria }}
+                <span class="input-group-addon">
+                    <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="form-group {{ form.recargo.name }} {% if form.recargo.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.recargo %}
+</div>
+{% if accion %}
+<div class="form-group">
+    <div class=row>
+        <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+        </div>
+     </div>
+</div>
+{% endif %}

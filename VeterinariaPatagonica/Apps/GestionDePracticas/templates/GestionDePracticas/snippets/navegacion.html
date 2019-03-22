@@ -1,0 +1,25 @@
+<div style="float:left;">
+
+{% with path="practicas:"|add:tipo|add:":crear:terminar" %}
+    <a class="btn btn-sm btn-default" href="{% url path id %}">
+        Cancelar
+    </a>
+{% endwith %}
+
+{% if pagina != "modificar" %}
+{% with path="practicas:"|add:tipo|add:":crear:modificarPractica" %}
+    <a class="btn btn-sm btn-default" href="{% url path id %}">
+        Modificar {{ tipo }}
+    </a>
+{% endwith %}
+{% endif %}
+
+{% if pagina != "productos" %}
+{% with path="practicas:"|add:tipo|add:":crear:modificarProductos" %}
+    <a class="btn btn-sm btn-default" href="{% url path id %}">
+        Modificar productos
+    </a>
+{% endwith %}
+{% endif %}
+
+</div>

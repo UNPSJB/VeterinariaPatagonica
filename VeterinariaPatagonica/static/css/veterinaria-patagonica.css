@@ -1,6 +1,6 @@
 
 @media (min-width: 750px) {
-
+    
     #sitio_seccion_principal {
         min-height: 100px;
     }
@@ -60,7 +60,7 @@ a {
     text-decoration: none;
     color: #337ab7;
 }
-
+ 
  a:hover,
  a:focus {
     text-decoration: none;
@@ -101,13 +101,22 @@ select {
     margin: 0px !important;
 }
 
+.form-horizontal input[type=text],
+.form-horizontal input[type=email],
+.form-horizontal input[type=password],
+.form-horizontal input[type=number],
+.form-horizontal select,
+.form-horizontal textarea {
+    width: 100% !important;
+}
+
 input[type=text],
 input[type=email],
 input[type=password],
 input[type=number],
 select,
 textarea {
-    width: 100% !important;
+    width: auto !important;
 }
 
 input[type=text],
@@ -118,11 +127,15 @@ select {
     height: 27px !important;
 }
 
+select[multiple] {
+    height: auto !important;
+}
+
 input:focus,
 textarea:focus,
 select:focus {
     border: 1px solid #777 !important;
-
+    
     -ms-box-shadow: 0 0 2px #777 inset !important;
     -o-box-shadow: 0 0 2px #777 inset !important;
     box-shadow: 0 0 2px #777 inset !important;
@@ -149,7 +162,7 @@ select:focus {
 }
 
 .btn {
-    border-radius: 0px !important;
+    border-radius: 0px !important;    
 }
 
 .form-group {
@@ -158,6 +171,42 @@ select:focus {
 
 .form-horizontal input[type=checkbox] {
     margin-top: 10px !important;
+}
+
+.form-inline button {
+    height: 27px !important;
+    color: #555 !important;
+    font-family: "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif !important;
+    font-size: 13px !important;
+    padding: 4px 6px 4px 6px !important;
+    margin: 0px !important;
+}
+
+.form-horizontal .form-group {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+ul.form-control {
+    height: auto !important;
+    border-radius: 0px;
+    list-style: none;
+    padding: 0px;
+    
+}
+ul.form-control label {
+    margin: 5px 0px 0px 0px !important;
+    font-weight: normal;
+}
+ul.form-control input.form-control[type="checkbox"] {
+    width: auto !important;
+    height: auto !important;
+    margin: 0px 0px 0px 5px !important;
+    display: inherit !important;
+}
+
+.input-group.date span.input-group-addon {
+    padding: 0px 10px 0px 10px;
 }
 
 /*
@@ -236,7 +285,7 @@ ul.nav>li>i {
     padding: 10px;
     display: inline-block;
     background: #fff;
-    border: 1px solid #E6E9ED;
+    border: 1px solid #E6E9ED;    
     opacity: 1;
     transition: all .2s ease;
     margin: 0px;
@@ -250,8 +299,8 @@ ul.nav>li>i {
 }
 */
 .cuadradito {
-    height : 100px;
-    width : 100px;
+    height : 100px; 
+    width : 100px; 
     display:table-cell;
     border: 1px solid black;
     background-color: #FFF;
@@ -281,15 +330,15 @@ ul.nav>li>i {
                     Login
 */
 
-.login {
+body.login {
     background: #F7F7F7
 }
 
-.login .fa-paw {
+body.login .fa-paw {
     font-size: 26px
 }
 
-.fila {
+body.login .fila {
     right: 0px;
     margin: 0px auto;
     margin-top: 5%;
@@ -297,7 +346,7 @@ ul.nav>li>i {
     position: relative
 }
 
-.columna {
+body.login section.columna {
     margin: 0 auto;
     padding: 25px 0 0;
     position: relative;
@@ -306,52 +355,48 @@ ul.nav>li>i {
     min-width: 280px
 }
 
-.columna a,
-.columna .btn-default:hover {
+body.login section.columna a,
+body.login section.columna .btn-default:hover {
     text-decoration: none
 }
 
-.columna h1 {
+body.login section.columna h1 {
     font: normal 25px "Helvetica Neue",Roboto,Arial,"Droid Sans",sans-serif;
     letter-spacing: -0.05em;
     line-height: 20px;
     margin: 10px 0 30px
 }
 
-.columna form {
+body.login section.columna form {
     margin: 20px 0;
     position: relative
 }
 
-.columna form div a {
+body.login section.columna form div a {
     margin: 10px 15px 0 0
 }
 
-.reset_pass {
+body.login .reset_pass {
     margin-top: 10px !important
 }
 
-.columna div .reset_pass {
+body.login section.columna div .reset_pass {
     margin-top: 13px !important;
     margin-right: 39px;
     float: right
 }
 
-.seccion-footer {
+body.login .seccion-footer {
     margin-top: 10px;
     padding-top: 10px
 }
 
-#seccion-submit {
+body.login #seccion-submit {
     margin-top: 25px;
 }
 
-#seccion-inputs input {
+body.login #seccion-inputs input {
     margin-bottom: 10px;
-}
-
-.form-group {
-    width: 100%;
 }
 
 /*
@@ -405,34 +450,41 @@ section>h5.titulo {
   text-decoration: none;
 }
 
-.listado thead {
-  background-color: transparent;
-  color: #2A3F54;
+table.detalles {
+    width: 100%;
+}
+table.detalles caption {
+    padding-left: 5px;
+    font-weight: 700;
+    color: #BBB;
+    border-top: 1px solid #DDD;
+    border-left: 1px solid #DDD;
+    border-right: 1px solid #DDD;
+}
+table.detalles th {
+    text-align: center;
+}
+table.detalles th,
+table.detalles td{
+    padding: 5px;
+}
+table.detalles col.cantidad,
+table.detalles col.precio,
+table.detalles col.importe {
+    width: 13%;
+}
+table.detalles td:nth-child(1),
+table.detalles td:nth-child(3),
+table.detalles td:nth-child(4){
+    text-align: right;
+}
+table.detalles tr.breve td:nth-child(1),
+table.detalles tr.breve td:nth-child(2) {
+    text-align: right;
 }
 
-.listado,
-.listado thead,
-.listado thead tr,
-.listado thead tr th,
-.listado tbody,
-.listado tbody tr,
-.listado tbody tr {
-  border: 0px solid #FFF;
-}
 
-table.table.listado {
-  border: 0px solid #FFF;
-}
-
-.listado>tbody>tr>td {
-    padding-top: 9px;
-    padding-left: 4px;
-    border-top: 1px solid #DDD !important;
-}
-
-/*
-                    Dashboard
-*/
+/* Dashboard */
 
 #imagenServicio {
   background-image: url('../images/servicio.jpg');
@@ -462,13 +514,57 @@ table.table.listado {
   background-image: url('../images/casa.jpg');
   background-size: contain;
 }
-#imagenFactura {
-  background-image: url('../images/factura.jpg');
-  background-size: contain;
+
+
+/* Menus colapsables */
+
+.menu-colapsable {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 0px;
+}
+.sombreado,
+.menu-colapsable .item-colapsable {
+    background-color: #FDFDFD;
+    border: 0.5px solid #DDD;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+.menu-colapsable .item-colapsable .contenido-colapsable {
+    margin-top: 10px;
 }
 
 
-/*****************************************************************************/
+/* Formset para detalles */
+
+.formset .forms .form-group {
+    margin: 0px !important;
+    padding: 2px !important;
+}
+.formset .forms .formset-form{ 
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.formset .acciones {
+    padding: 2px;
+}
+.formset .forms .form-group.eliminar a {
+    color: #000;
+    width: 100%;
+    height: 27px !important;
+    padding: 3px !important;
+    text-align: center;
+}
+.formset .forms .formset-form .form-group.eliminar a.disabled {
+    color: #AAA; 
+}
+.formset .forms .formset-form .form-group.eliminar a.disabled:hover {
+    cursor: default;
+}
+
+
+/* Otras */
 
 .errores {
     padding: 15px 15px 5px;
@@ -500,3 +596,54 @@ table.table.listado {
     clear: both;
     margin-top: 5px
 }
+
+ul.sinestilo {
+    list-style: none;
+    padding-left: 0px;
+}
+
+.cuadro {
+    border: 0.5px solid #DDD;
+    padding: 0px;
+    margin-bottom: 10px;
+}
+.cuadro-titulo{
+    border-bottom: 0.5px solid #DDD;
+    padding: 6px;
+    font-weight: bold;
+}
+.cuadro-contenido{
+    border-style: none;
+    padding: 6px;
+}
+.cuadro.sinmargenes {
+    margin: 0px;
+}
+
+
+form.listado table.items col.columna.activa {
+    background-color: #FDFDFD;
+}
+form.listado table.items th a.encabezado.activo {
+    color: #13426C;
+}
+
+.btn-toolbar.center-block {
+    display: table;
+}
+
+
+.menu-colapsable ul.timeline {
+    padding-left: 35px;
+}
+.menu-colapsable ul.acciones,
+.menu-colapsable ul.actualizaciones {
+    padding: 0px 5px 0px 5px;
+}
+.menu-colapsable ul.acciones li a.btn,
+.menu-colapsable ul.actualizaciones li a.btn {
+    width: 100%;
+    margin-bottom: 5px;
+    text-align: left;
+}
+

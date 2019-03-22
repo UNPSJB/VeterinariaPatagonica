@@ -3,6 +3,7 @@ from Apps.GestionDeProductos import models as pmodels
 from decimal import Decimal
 from VeterinariaPatagonica import tools
 from django.core.validators import MinValueValidator, MaxValueValidator
+from VeterinariaPatagonica.areas import Areas
 
 
 class BaseServicioManager(models.Manager):
@@ -104,6 +105,14 @@ class Servicio(models.Model):
         )
 
     objects = ServicioManager()
+
+    def describir(self):
+        return "%s: %s $%.2f (%d min.)" % (
+            Areas[self.tipo].nombrePlural.capitalize(),
+            self.nombre,
+            self.precio(),
+            self.tiempoEstimado,
+        )
 
     def __str__(self):
         cadena = 'Nombre de Servicio: {0}, Duración Estimada: {1} Precio: {2}.'

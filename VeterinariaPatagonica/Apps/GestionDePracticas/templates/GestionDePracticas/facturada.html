@@ -1,9 +1,68 @@
 {% extends 'GestionDePracticas/ver.html' %}
 
 {% block estado %}
-<div class="marco">
-    <h4>Facturacion</h4>
-    <p><strong>Fecha de facturacion:</strong> {{ estado.marca|date:"d/m/y" }}</p>
-    <p><a href="#">Ver factura</a></p>
-</div>
+<h4 class="titulo">Facturacion</h4>
+<div class="linea-titulo"></div>
+<p class="subtitulo">Actualizada el dia {{ estado.marca|date:"l d/m/y" }} a las {{ estado.marca|date:"H:i" }}</p>
+
+{% with factura=practica.factura %}
+    <div class="cuadro">
+        <div class="cuadro-contenido">
+            <strong>Factura tipo {{ factura.tipo }}</strong><br/>
+            <strong>Fecha:</strong> {{ factura.fecha|date:"d/m/y" }}<br/>
+            <strong>Cliente:</strong> {{ practica.cliente }}<br/>
+        </div>
+    </div>
+    <table class="table-bordered table-responsive detalles">
+        <colgroup>
+            <col class="cantidad">
+            <col class="descripcion">
+            <col class="precio">
+            <col class="importe">
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Cantidad</th>
+                <th>Item</th>
+                <th>Precio</th>
+                <th>Importe</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Atencion medica</td>
+                <td>{{ practica.estados.realizacion.total|floatformat:2 }}</td>
+                <td>{{ practica.estados.realizacion.total|floatformat:2 }}</td>
+            </tr>
+
+
+            {% for detalle in factura.factura_productos.all %}
+            <tr>
+                <td>{{ detalle.cantidad }}</td>
+                <td>{{ detalle.producto.nombre }}</td>
+                <td>{{ detalle.precioPorUnidad|floatformat:2 }}</td>
+                <td>{{ detalle.subtotal|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+            {% if factura.recargo %}
+                <tr class="breve">
+                    <td colspan="3">Recargos (%{{ factura.recargo|floatformat:2 }})</td>
+                    <td>{{ factura.ajusteRecargo|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
+            {% if factura.descuento %}
+            <tr class="breve">
+                <td colspan="3">Descuentos (%{{ factura.descuento|floatformat:2 }})</td>
+                <td>{{ factura.ajusteDescuento|floatformat:2 }}</td>
+            </tr>
+            {% endif %}
+            <tr class="breve">
+                <td colspan="3">Total</td>
+                <td>{{ factura.importe|floatformat:2 }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endwith %}
+
 {% endblock %}

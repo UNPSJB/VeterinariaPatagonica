@@ -1,4 +1,5 @@
 from datetime import timedelta, date
+from decimal import Decimal
 
 from django.db import models
 from django.conf import settings
@@ -8,6 +9,7 @@ from django.utils import timezone
 
 from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeProductos.models import Producto
+from Apps.GestionDeFacturas.models import Factura
 from .practica import *
 
 
@@ -40,6 +42,21 @@ class EstadoManager(models.Manager):
             queryset = self.get_queryset()
             if queryset.count() != 0:
                 return queryset.get(tipo=Creada.TIPO)
+            else:
+                raise Exception("La practica no fue inicializada, no tiene estados asociados")
+        else:
+            raise Exception("La practica a inicializar no es accesible desde el model manager")
+
+
+
+    def realizacion(self):
+
+        if hasattr(self, "instance") and (not self.instance is None):
+
+            queryset = self.get_queryset()
+
+            if queryset.count() > 0:
+                return queryset.get(tipo=Realizada.TIPO).related()
             else:
                 raise Exception("La practica no fue inicializada, no tiene estados asociados")
         else:
@@ -101,9 +118,6 @@ class Estado(models.Model):
     def related(self):
         return self.__class__ != Estado and self or getattr(self, self.get_tipo_display())
 
-    def esRealizada(self):
-        return self.tipo == Realizada.TIPO or self.tipo == Facturada.TIPO
-
     def esUltimo(self):
         return (self.practica.estado().id == self.related().id)
 
@@ -160,7 +174,6 @@ class EstadoRealizable(Estado):
         ]
 
 
-
         with transaction.atomic():
             realizada = Realizada.objects.create(
                 practica=self.practica,
@@ -171,9 +184,8 @@ class EstadoRealizable(Estado):
             )
             realizada.realizada_servicios.set(servicios, bulk=False)
             realizada.realizada_productos.set(productos, bulk=False)
-            self.practica.precio = realizada.total()
-            self.practica.save()
-            print("DESDE PRACTICA", self.practica.precio)
+            realizada.completarPrecio()
+
         return realizada
 
 
@@ -251,9 +263,21 @@ class ProgramadaManager(EstadoManager):
             id=models.F('max_id'),
         )
 
+
+def intersectan(x, y):
+    a = (y[0] <= x[0] <= y[1]) or (y[0] <= x[1] <= y[1])
+    b = (x[0] <= y[0] <= x[1]) or (x[0] <= y[1] <= x[1])
+    return a or b
+
+def fusionar(x, y):
+    a = min(x[0], y[0])
+    b = max(x[1], y[1])
+    return tuple([a, b])
+
 class Programada(EstadoCancelable, EstadoRealizable):
     TIPO = 2
     objects = ProgramadaManager()
+
 
     @classmethod
     def acciones(cls):
@@ -262,6 +286,58 @@ class Programada(EstadoCancelable, EstadoRealizable):
             Practica.Acciones.realizar,
             Practica.Acciones.cancelar,
         ])
+
+    @classmethod
+    def horariosOcupados(cls, inicio, finalizacion):
+        turnos = cls.objects.enHorario(inicio, finalizacion)
+        if not turnos.count():
+            return []
+
+        horarios = [ tuple([t.inicio, t.finalizacion]) for t in turnos ]
+        nuevos = []
+
+        fusiones = len(horarios)
+        while fusiones:
+            fusiones = 0
+            horario = horarios.pop(0)
+
+            while(len(horarios)):
+                otro = horarios.pop(0)
+                if intersectan(horario, otro):
+                    horario = fusionar(horario, otro)
+                    fusiones += 1
+                else:
+                    nuevos.append(otro)
+
+            nuevos.insert(0,horario)
+            horarios.extend(nuevos)
+            nuevos.clear()
+
+        return horarios
+
+    @classmethod
+    def horariosDisponibles(cls, inicio, finalizacion, minimo=None):
+        disponibles = []
+        ocupados = cls.horariosOcupados(inicio, finalizacion)
+        if len(ocupados) == 0:
+            minimo = timedelta(0) if minimo is None else minimo
+            if (finalizacion - inicio) >= minimo:
+                return [ tuple([inicio, finalizacion]) ]
+            else:
+                return []
+
+        for i in range(len(ocupados)-1):
+            disponibles.append(tuple([ocupados[i][1], ocupados[i+1][0]]))
+
+        if (inicio < ocupados[0][0]):
+            disponibles.insert( 0, tuple([inicio, ocupados[0][0]]) )
+        if (ocupados[-1][1] < finalizacion):
+            disponibles.append( tuple([ocupados[-1][1], finalizacion]) )
+
+        if (minimo is not None):
+            return [ h for h in disponibles if ((h[1]-h[0]) >= minimo) ]
+        else:
+            return disponibles
 
     inicio = models.DateTimeField()
 
@@ -415,9 +491,6 @@ class Realizada(Estado):
         related_query_name='practica_realizada',
     )
 
-    def pagar(self, monto):
-        pass
-
     def facturar(self):
         return Facturada.objects.create(
             practica=self.practica
@@ -427,23 +500,42 @@ class Realizada(Estado):
     def duracion(self):
         return int((self.finalizacion-self.inicio).total_seconds() / 60)
 
-    def totalServicios(self):
+    def importeServicios(self):
+        return sum([
+            detalle.precioTotal() for detalle in self.realizada_servicios.all()
+        ])
 
+    def importeProductos(self):
+        return sum([
+            detalle.precioTotal() for detalle in self.realizada_productos.all()
+        ])
+
+    def ajusteServicios(self):
+        return self.importeServicios() * self.practica.tipoDeAtencion.recargo / Decimal(100)
+
+
+    def ajusteProductos(self):
+        return self.importeProductos() * self.practica.tipoDeAtencion.recargo / Decimal(100)
+
+    def totalServicios(self):
         servicios = [ detalle for detalle in self.realizada_servicios.all() ]
-        return sum([ detalle.precioTotal() for detalle in servicios ])
+        total = sum([ detalle.precioTotal() for detalle in servicios ])
+        ajuste = total * self.practica.tipoDeAtencion.recargo / Decimal(100)
+        return total + ajuste
 
     def totalProductos(self):
-
         productos = [ detalle for detalle in self.realizada_productos.all() ]
-        return sum([ detalle.precioTotal() for detalle in productos ])
+        total = sum([ detalle.precioTotal() for detalle in productos ])
+        ajuste = total * self.practica.tipoDeAtencion.recargo / Decimal(100)
+        return total + ajuste
 
     def total(self):
-        subtotal = self.totalProductos() + self.totalServicios()
-        porcentajeRecargo = self.practica.tipoDeAtencion.recargo
-        valorRecargo = (subtotal * porcentajeRecargo) / 100
-        total = subtotal + valorRecargo
-        print("Desde practica total", total)
-        return total
+        return self.totalProductos() + self.totalServicios()
+
+    def completarPrecio(self):
+        practica = self.practica
+        practica.precio = self.total()
+        practica.save(force_update=True)
 
 
 
@@ -558,6 +650,10 @@ class Cancelada(Estado):
 
 class Facturada(Estado):
     TIPO = 6
+
+    @property
+    def factura(self):
+        return Factura.objects.get(practica=self.practica.id)
 
 
 

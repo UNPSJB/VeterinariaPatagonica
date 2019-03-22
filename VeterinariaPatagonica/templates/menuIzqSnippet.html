@@ -47,6 +47,17 @@
 <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Consultas </a>
  <ul class="nav child_menu">
 
+    <li>
+        <i class="glyphicon glyphicon-chevron-right"></i>
+        <a href="{% url 'practicas:consulta:listar' %}">Listar</a>
+    </li>
+    <li>
+        <i class="glyphicon glyphicon-chevron-right"></i>
+        <a href="{% url 'practicas:consulta:crear:practica' %}">Crear</a>
+    </li>
+
+
+{% comment %}
      <li>
          <i class="glyphicon glyphicon-chevron-right"></i>
          <a href="{% url 'practicas:consulta:listar' %}">Listar</a>
@@ -55,7 +66,6 @@
          <i class="glyphicon glyphicon-chevron-right"></i>
          <a href="{% url 'practicas:consulta:crear:nueva' %}">Crear</a>
      </li>
-{% comment %}
      <li>
          <i class="glyphicon glyphicon-chevron-right"></i>
          <a href="{% url 'practicas:consulta:realizar' %}">Realizar </a>
@@ -70,6 +80,17 @@
 <li><i class="glyphicon glyphicon-chevron-down"></i><a href="#"> Cirugias </a>
  <ul class="nav child_menu">
 
+    <li>
+        <i class="glyphicon glyphicon-chevron-right"></i>
+        <a href="{% url 'practicas:cirugia:listar' %}">Listar</a>
+    </li>
+    <li>
+        <i class="glyphicon glyphicon-chevron-right"></i>
+        <a href="{% url 'practicas:cirugia:crear:practica' %}">Crear</a>
+    </li>
+
+
+{% comment %}
       <li>
           <i class="glyphicon glyphicon-chevron-right"></i>
           <a href="{% url 'practicas:cirugia:listar' %}">Listar</a>
@@ -78,7 +99,6 @@
           <i class="glyphicon glyphicon-chevron-right"></i>
           <a href="{% url 'practicas:cirugia:crear:nueva' %}">Crear</a>
       </li>
-{% comment %}
       <li>
           <i class="glyphicon glyphicon-chevron-right"></i>
           <a href="{% url 'practicas:cirugia:programar' %}">Programar </a>

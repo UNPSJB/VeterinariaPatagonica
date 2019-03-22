@@ -1,0 +1,8 @@
+<a class="encabezado{% if columna.activa %} activo{% endif %}" href="{{ columna.url }}">
+    {{ columna.etiqueta }}
+    {% if columna.ascendente %}
+        <i class="glyphicon glyphicon-chevron-down"></i>
+    {% else %}
+        <i class="glyphicon glyphicon-chevron-up"></i>
+    {% endif %}
+</a>

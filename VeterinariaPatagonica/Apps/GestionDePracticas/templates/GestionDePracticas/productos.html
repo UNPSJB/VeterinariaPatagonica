@@ -11,10 +11,15 @@ Modificar productos de {{ tipo }}
 
 {% block practica-contenido %}
 
-    {% include "./snippets/errores.html" %}
+    {% include "snippets/errores.html" %}
 
-    {% if accion %}
-    <form class="form formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+    {% if acciones %}
+
+    <div class="cuadro">
+        {% include "./snippets/resumenPractica.html" %}
+    </div>
+
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
         <div class="row">
 
             <div class="col-sm-12 hidden">
@@ -27,7 +32,7 @@ Modificar productos de {{ tipo }}
                         <div class="errores">
                             <strong>Por favor revise los siguientes errores:</strong>
                             <ul>
-                                {% include './snippets/formsetErrores.html' %}
+                                {% include 'snippets/formsetErrores.html' %}
                             </ul>
                         </div>
                     </div>
@@ -35,15 +40,19 @@ Modificar productos de {{ tipo }}
             </div>
 
             <div class="col-sm-12">
-                {% include "./snippets/formset.html" with titulo="Productos" %}
+                {% include "snippets/formset.html" with titulo="Productos" %}
             </div>
 
-            <div class="col-sm-12 acciones">
-                <button type="submit" class="btn btn-sm btn-default center-block">
-                    {{ accion|capfirst }}
-                </button>
+            <div class="btn-toolbar center-block">
+                {% block acciones %}
+                    <div class="btn-group creacion">
+                        {% include "./snippets/navegacion.html" with pagina="productos" %}
+                    </div>
+                    <div class="btn-group creacion">
+                        {{ acciones.acciones }}
+                    </div>
+                {% endblock %}
             </div>
-
         </div>
     </form>
     {% endif %}
@@ -52,7 +61,6 @@ Modificar productos de {{ tipo }}
 
 {% block paginaJavascript %}
     {{ block.super }}
-    <script src="{% static 'GestionDePracticas/js/GestionDePracticas.js' %}"></script>
     <script type="text/javascript">
         var validadores = [
             {
@@ -61,7 +69,6 @@ Modificar productos de {{ tipo }}
                     "comparador" : compararProductos,
                     "formset_id" : "{{ formset.prefix }}-formset",
                     "errores" : document.getElementById("formset-{{ formset.prefix }}-errores"),
-                    "objeto" : "{{ formset.label.lower }}",
                 }
             }
         ]

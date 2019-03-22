@@ -1,0 +1,46 @@
+{% extends 'GestionDePracticas/programar.html' %}
+
+{% block fields %}
+    <div class="form-group desde {% if form.desde.errors %}has-error{% endif %}">
+        <div class=row>
+            <label for="{{ form.desde.id_for_label }}" class="col-sm-4 control-label etiqueta">
+                {{ form.desde.label }}
+            </label>
+            <div class="col-sm-8 control">
+                <div class="input-group date" id="desde">
+                    {{ form.desde }}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group hasta {% if form.hasta.errors %}has-error{% endif %}">
+        <div class=row>
+            <label for="{{ form.hasta.id_for_label }}" class="col-sm-4 control-label etiqueta">
+                {{ form.hasta.label }}
+            </label>
+            <div class="col-sm-8 control">
+                <div class="input-group date" id="hasta">
+                    {{ form.hasta }}
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group duracion {% if form.duracion.errors %}has-error{% endif %}">
+        {% include "snippets/field.html" with field=form.duracion %}
+    </div>
+    <div class="form-group motivo {% if form.motivo.errors %}has-error{% endif %}">
+        {% include "snippets/field.html" with field=form.motivo %}
+    </div>
+{% endblock %}
+
+{% block acciones %}
+    <button type="submit" class="btn btn-sm btn-default center-block">
+        {{ accion|capfirst }}
+    </button>
+{% endblock %}

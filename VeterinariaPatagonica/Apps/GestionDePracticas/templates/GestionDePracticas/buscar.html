@@ -1,0 +1,164 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block titulo %}
+{{ tipo|capfirst }}s
+{% endblock %}
+
+{% block practica-titulo %}
+Buscar {{ tipo }}s
+{% endblock %}
+
+
+{% block practica-contenido %}
+
+    <div id="form-buscar-errores">
+        {% if gestor.formFiltros.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include 'snippets/formErrores.html' with form=gestor.formFiltros %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+    <form class="form-horizontal" action="{{ request.get_full_path }}" method="GET">
+    {% with form=gestor.formFiltros %}
+        <div class="form-group {{ form.cliente.name }} {% if form.cliente.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.cliente %}
+        </div>
+        <div class="form-group {{ form.mascota.name }} {% if form.mascota.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.mascota %}
+        </div>
+        <div class="form-group {{ form.tipo_de_atencion.name }} {% if form.tipo_de_atencion.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.tipo_de_atencion %}
+        </div>
+
+        <div class="form-group ultima_mod_desde {% if form.ultima_mod_desde.errors %}has-error{% endif %}">
+            <div class=row>
+                <label for="{{ form.ultima_mod_desde.id_for_label }}" class="col-sm-4 control-label etiqueta">
+                    {{ form.ultima_mod_desde.label }}
+                </label>
+                <div class="col-sm-8 control">
+                    <div class="input-group date" id="ultima_mod_desde">
+                        {{ form.ultima_mod_desde }}
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group ultima_mod_hasta {% if form.ultima_mod_hasta.errors %}has-error{% endif %}">
+            <div class=row>
+                <label for="{{ form.ultima_mod_hasta.id_for_label }}" class="col-sm-4 control-label etiqueta">
+                    {{ form.ultima_mod_hasta.label }}
+                </label>
+                <div class="col-sm-8 control">
+                    <div class="input-group date" id="ultima_mod_hasta">
+                        {{ form.ultima_mod_hasta }}
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group {{ form.servicios.name }} {% if form.servicios.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.servicios %}
+        </div>
+        <div class="form-group {{ form.productos.name }} {% if form.productos.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.productos %}
+        </div>
+        <div class="form-group {{ form.servicios_realizados.name }} {% if form.servicios_realizados.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.servicios_realizados %}
+        </div>
+        <div class="form-group {{ form.productos_utilizados.name }} {% if form.productos_utilizados.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.productos_utilizados %}
+        </div>
+        <div class="form-group {{ form.estados.name }} {% if form.estados.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.estados %}
+        </div>
+        {% endwith %}
+
+        {% include "snippets/form.html" with form=gestor.formPagina accion="Buscar" %}
+
+        {% if gestor.formFiltros.filtros %}
+            {% if gestor.numero_items %}
+            {% with primero=gestor.rango_actual.0|add:1 ultimo=gestor.rango_actual.1 total=gestor.numero_items %}
+
+                <div>
+                    <p><strong>
+                        Resultados {{ primero }} al {{ ultimo }} de {{ total }}
+                    </strong></p>
+
+                    {% for practica in gestor.items_actuales %}
+                    {% with path="practicas:"|add:tipo|add:":ver:practica" %}
+
+                    <div class="sombreado">
+                        <p><strong><a href="{% url path id=practica.id %}">
+                            {{ practica.get_tipo_display }} nº {{ practica.id }} (estado: {{ practica.estado }})
+                        </a></strong></p>
+
+                        <p>Realizada a nombre de {{ practica.cliente }}
+                        {% if practica.mascota %}
+                            y para la mascota {{ practica.mascota.nombre }} ({{ practica.mascota.patente }})
+                        {% endif %}</p>
+
+                        <p>Creada el dia {{ practica.estados.inicial.marca|date:"d/m/y" }} con ultima actualizacion el dia {{ practica.estado.marca|date:"d/m/y" }}</p>
+                    </div>
+
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+
+                <div>
+                {% include "snippets/paginacion.html" with links=gestor.paginas %}
+                </div>
+
+            {% endwith %}
+            {% else %}
+                <p><strong>Sin resultados</strong></p>
+            {% endif %}
+        {% endif %}
+
+    </form>
+
+{% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+
+    <script type="text/javascript">
+        document.onreadystatechange = function(){
+            $("#ultima_mod_desde").datetimepicker({
+                locale:"es",
+                format: 'L',
+            });
+            $("#ultima_mod_hasta").datetimepicker({
+                locale:"es",
+                format: 'L',
+                useCurrent: false,
+            });
+            $("#ultima_mod_desde").on("dp.change", function (e) {
+                $('#ultima_mod_hasta').data("DateTimePicker").minDate(e.date);
+            });
+
+            $("#ultima_mod_hasta").on("dp.change", function (e) {
+                $('#ultima_mod_desde').data("DateTimePicker").maxDate(e.date);
+            });
+        }
+    </script>
+
+{% endblock %}

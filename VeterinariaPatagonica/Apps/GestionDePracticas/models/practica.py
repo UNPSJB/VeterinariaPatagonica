@@ -37,100 +37,27 @@ class PracticaBaseManager(models.Manager):
 
 class PracticaQuerySet(VeterinariaPatagonicaQuerySet):
 
+    MAPEO_ORDEN = {
+        "orden_id" : ["id"],
+        "orden_cliente" : ["cliente__apellidos", "cliente__nombres"],
+        "orden_mascota" : ["mascota__nombre"],
+        "orden_actualizacion" : ["ultima_mod"],
+    }
+
+    def conEstadoActual(self):
+        return self.annotate(
+            id_estado_actual=models.Max('estado__id')
+        )
+
     def enEstado(self, estados):
 
         if type(estados) != list:
             estados = [estados]
 
-        return self.annotate(max_id=models.Max('estado__id')).filter(
-            estado__id=models.F('max_id'),
-            estado__tipo__in=[ e.TIPO for e in estados])
-
-    def ordenarPorEstado(self, ascendente=True):
-
-        Estado = Apps.GestionDePracticas.models.estado.Estado
-        orden = "nombre_estado"
-        if not ascendente:
-            orden = "-" + orden
-
-        traducciones = []
-        for tipo, nombre in Estado.TIPOS:
-            traducciones.append(
-                models.When(tipo_estado=tipo, then=models.Value(nombre))
-            )
-
-        practicas = self.annotate(
-            max_id=models.Max("estado__id"),
-            tipo_estado=models.Subquery(
-                Estado.objects.filter(practica=models.OuterRef('pk')).order_by("-id").values("tipo")[:1]
-            )
-        ).filter(
-            estado__id=models.F("max_id")
+        return self.conEstadoActual().filter(
+            estado__id=models.F('id_estado_actual'),
+            estado__tipo__in=[ estado.TIPO for estado in estados]
         )
-
-        practicas = practicas.annotate(
-            nombre_estado=models.Case(*traducciones, output_field=models.CharField())
-        )
-
-        return practicas.order_by(orden)
-
-    def ordenarPorCliente(self, ascendente=True):
-
-        orden = ["cliente__apellidos", "cliente__nombres"]
-        if not ascendente:
-            orden = ["-" + field for field in orden ]
-
-        return self.order_by(*orden)
-
-    def ordenarPorCreacion(self, ascendente=True):
-
-        orden = "primera_mod"
-        if not ascendente:
-            orden = "-" + orden
-
-        return self.annotate(
-            primera_mod=models.Min('estado__marca')
-        ).filter(
-            estado__marca=models.F('primera_mod')
-        ).order_by(orden)
-
-    def ordenarPorModificacion(self, ascendente=True):
-
-        orden = "ultima_mod"
-        if not ascendente:
-            orden = "-" + orden
-
-        return self.annotate(
-            ultima_mod=models.Max('estado__marca')
-        ).filter(
-            estado__marca=models.F('ultima_mod')
-        ).order_by(orden)
-
-    def ordenar(self, criterio, ascendente):
-
-        funciones = {
-            "cliente" : "ordenarPorCliente",
-            "estado" : "ordenarPorEstado",
-            "creacion" : "ordenarPorCreacion",
-            "modificacion" : "ordenarPorModificacion",
-        }
-
-        if criterio:
-            funcion = getattr(self, funciones[criterio])
-            return funcion(ascendente)
-
-        return self
-
-    def filtrar(self, filtros):
-
-        practicas = self
-
-        if ("estado" in filtros and filtros["estado"]) or \
-        ("desde" in filtros and filtros["desde"]) or \
-        ("hasta" in filtros and filtros["hasta"]):
-            practicas = practicas.annotate(max_id=models.Max('estado__id'))
-
-        return practicas.filter(paramsToFilter(filtros, Practica))
 
 
 
@@ -147,13 +74,14 @@ class Practica(models.Model):
 
     class Acciones(Enum):
 
-        presupuestar = 0
-        programar = 1
-        reprogramar = 2
-        realizar = 3
-        cancelar = 4
-        facturar = 5
+        presupuestar = "presupuestar"
+        programar = "programar turno"
+        reprogramar = "reprogramar turno"
+        realizar = "registrar realizacion"
+        cancelar = "cancelar"
+        facturar = "facturar"
 
+        #[TODO]: Crear permisos para las transiciones de estado
         def idPermiso(self):
             return "GestionDePracticas.can_"+self.name
 
@@ -196,12 +124,47 @@ class Practica(models.Model):
     MAX_PRECIO = Decimal( (pow(10,MAX_DIGITOS)-1)/pow(10,MAX_DECIMALES) )
 
     MAPPER = {
-        "cliente" : lambda value: models.Q(cliente__nombres__icontains=value) | models.Q(cliente__apellidos__icontains=value),
-        "tipoDeAtencion" : "tipoDeAtencion__nombre__icontains",
-        "estado" :  lambda value: models.Q(estado__id=models.F('max_id')) & models.Q(estado__tipo=value),
-        "desde" : lambda value: models.Q(estado__id=models.F('max_id')) & models.Q(estado__marca__date__gte=value),
-        "hasta" : lambda value: models.Q(estado__id=models.F('max_id')) & models.Q(estado__marca__date__lte=value),
-        "servicios" : lambda values: R(*[R(**{"servicios__nombre__icontains" : value, "servicios__descripcion__icontains" : value}) for value in values]),
+        "cliente" : lambda value: R(cliente__nombres__icontains=value,
+                                    cliente__apellidos__icontains=value,
+                                    cliente__dniCuit__contains=value) ,
+
+        "mascota" : lambda value: R(mascota__nombre__icontains=value,
+                                    mascota__patente__contains=value),
+
+        "tipo_de_atencion" : "tipoDeAtencion__nombre__icontains",
+
+        "estados" : lambda value:   models.Q(estado__id=models.F('id_estado_actual')) & \
+                                    models.Q(estado__tipo__in=value),
+
+        "ultima_mod_desde" : lambda value:  models.Q(estado__id=models.F('id_estado_actual')) & \
+                                            models.Q(estado__marca__date__gte=value),
+
+        "ultima_mod_hasta" : lambda value:  models.Q(estado__id=models.F('id_estado_actual')) & \
+                                            models.Q(estado__marca__date__lte=value),
+
+        "servicios" : lambda values:    R(*[R(**{
+            "servicios__nombre__icontains" : value,
+            "servicios__descripcion__icontains" : value
+        }) for value in values]),
+
+        "productos" : lambda values:    R(*[R(**{
+            "productos__nombre__icontains" : value,
+            "productos__marca__icontains" : value,
+            "productos__descripcion__icontains" : value,
+            "productos__rubro__nombre__icontains" : value
+        }) for value in values]),
+
+        "servicios_realizados" : lambda values: R(*[R(**{
+            "estado__realizada__servicios__nombre__icontains" : value,
+            "estado__realizada__servicios__descripcion__icontains" : value,
+        }) for value in values]),
+
+        "productos_utilizados" : lambda values: R(*[R(**{
+            "estado__realizada__productos__nombre__icontains" : value,
+            "estado__realizada__productos__marca__icontains" : value,
+            "estado__realizada__productos__descripcion__icontains" : value,
+            "estado__realizada__productos__rubro__nombre__icontains" : value,
+        }) for value in values]),
     }
 
     tipo = models.CharField(
@@ -283,11 +246,6 @@ class Practica(models.Model):
 
 
 
-    turno = models.DateTimeField(
-        blank=True,
-        null=True,
-    )
-
     def __str__(self):
         return "Practica numero {} tipo {}".format( self.id, Areas[self.tipo].nombre )
 
@@ -363,74 +321,57 @@ class Practica(models.Model):
 
 
 
+    def importeServicios(self):
+        return sum([
+            detalle.precioTotal() for detalle in self.practica_servicios.all()
+        ])
+
+
+
+    def importeProductos(self):
+        return sum([
+            detalle.precioTotal() for detalle in self.practica_productos.all()
+        ])
+
+
+
+    def ajusteServicios(self):
+        return self.importeServicios() * self.tipoDeAtencion.recargo / Decimal(100)
+
+
+
+    def ajusteProductos(self):
+        return self.importeProductos() * self.tipoDeAtencion.recargo / Decimal(100)
+
+
+
     def totalServicios(self):
 
         servicios = [ detalle for detalle in self.practica_servicios.all() ]
-        return sum([ detalle.precioTotal() for detalle in servicios ])
+        total = sum([ detalle.precioTotal() for detalle in servicios ])
+        ajuste = total * self.tipoDeAtencion.recargo / Decimal(100)
+        return total + ajuste
 
 
 
     def totalProductos(self):
 
         productos = [ detalle for detalle in self.practica_productos.all() ]
-        return sum([ detalle.precioTotal() for detalle in productos ])
+        total = sum([ detalle.precioTotal() for detalle in productos ])
+        ajuste = total * self.tipoDeAtencion.recargo / Decimal(100)
+        return total + ajuste
 
 
 
     def total(self):
-        subtotal = self.totalProductos() + self.totalServicios()
-        porcentajeRecargo= self.tipoDeAtencion.recargo
-        valorRecargo= (subtotal*porcentajeRecargo)/100
-        total = subtotal + valorRecargo
-        print("Desde practica total",total)
-        return total
-
-
-    """
-    def precios(self):
-
-        # Servicios
-        totalInsumos = Decimal("0")
-        totalServicios = Decimal("0")
-        if self.estado().esRealizada():
-            # Si la practica esta realizada, debo tomar los servicios practicados
-            # y los productos utilizados
-            insumos = self.practica_productos.all()
-            for insumo in insumos:
-                totalInsumos += insumo.precioTotal()
-            servicios = self.practica_servicios.all()
-            for servicio in servicios:
-                totalServicios += servicio.precioTotal()
-        else:
-            # Si no esta realizada, debo tomar el total por los servicios contratados
-            servicios = self.servicios.all()
-            for servicio in servicios:
-                totalServicios += servicio.precioTotal()
-
-        # Recargos tipo de atencion
-        recargo = self.tipoDeAtencion.recargo
-
-        # Descuetos, solo los de servicio, los de producto son para la facturacion de productos
-        descuento = self.cliente.descuentoServicio
-
-        # Faltan los adelantos en concepto de senia o pago antes de realizar la practica
-        adelanto = Decimal("0")
-
-        # Estos campos son tranquilamente de la factura
-        self.precio
-        self.descuento
-        self.recargo
-        return totalInsumos, totalServicios, adelanto, recargo, descuento
+        return self.totalProductos() + self.totalServicios()
 
 
 
-    def precioTotal(self):
-        insumos, servicios, adelanto, recargo, descuento = self.precios()
-        total = insumos + servicios - adelanto
-        totalRecargo = (total * recargo / 100) if recargo else Decimal("0")
-        totalDescuento = (total * descuento / 100) if descuento else Decimal("0")
-        return total + totalRecargo - totalDescuento
-    """
+    def duracionTotalServicios(self):
+        return sum([
+            (detalle.servicio.tiempoEstimado * detalle.cantidad) for detalle in self.practica_servicios.all()
+        ])
 
 
 

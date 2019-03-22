@@ -17,6 +17,15 @@ from Apps.GestionDeProductos.models import Producto
 from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
+from decimal import Decimal
+from django.utils import timezone
+from django.db import transaction
+from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
+from .forms import FacturarPracticaForm, FacturaProductoFormSet
+
+
+
+
 def facturas(request):
 
     context = {}#Defino el contexto.
@@ -189,3 +198,87 @@ class productoAutocomplete(autocomplete.Select2QuerySetView):
            qs = qs.filter(Q(descripcion__icontains=self.q) | Q(nombre__icontains=self.q) | Q(marca__icontains=self.q))
 
         return qs
+
+
+def crearDetalles(datos):
+
+    detalles = []
+    for dato in datos:
+        cantidad = dato["cantidad"]
+        producto = dato["producto"]
+        if cantidad and producto:
+            detalles.append(DetalleFactura(
+                producto = producto,
+                cantidad = cantidad,
+                subtotal = producto.precioPorUnidad * cantidad
+            ))
+
+    return detalles
+
+
+
+def buscarPractica(id):
+
+    practica = Practica.objects.get(id=id)
+
+    if not practica.esPosible(Practica.Acciones.facturar):
+        raise VeterinariaPatagonicaError(
+            "%s no facturable" % practica.nombreTipo().capitalize(),
+            "La %s no puede facturarse" % practica.nombreTipo()
+        )
+
+    if Factura.objects.filter(practica=practica).count():
+        raise VeterinariaPatagonicaError(
+            "%s facturada" % practica.nombreTipo().capitalize(),
+            "No puede volver a facturarse la %s" % practica.nombreTipo()
+        )
+
+    factura = Factura(
+        cliente=practica.cliente,
+        fecha=timezone.now(),
+        total=practica.estados.realizacion().total(),
+        practica=practica,
+        recargo=Decimal(0),
+        descuento=Decimal(0),
+    )
+
+    return practica, factura
+
+
+
+@login_required(redirect_field_name='proxima')
+@permission_required('GestionDeFacturas.add_Factura', raise_exception=True)
+def facturarPractica(request, id):
+
+    practica, factura = buscarPractica(id)
+    context = { "practica" : practica, "factura" : factura }
+
+    if request.method == "POST":
+        form = FacturarPracticaForm(request.POST, instance=factura)
+        formset = FacturaProductoFormSet(request.POST, prefix="producto")
+
+        if form.is_valid() and formset.is_valid():
+            factura = form.save(commit=False)
+            detalles = crearDetalles(formset.completos)
+
+            with transaction.atomic():
+                factura.save()
+                factura.factura_productos.set(detalles, bulk=False)
+                practica.hacer(Practica.Acciones.facturar.name)
+
+            return HttpResponseRedirect(
+                reverse("facturas:facturaVer", args=(factura.id,))
+            )
+
+    else:
+        form = FacturarPracticaForm(instance=factura)
+        formset = FacturaProductoFormSet(prefix="producto")
+
+    context["form"]     = form
+    context['formset']  = formset
+    context["practica"] = practica
+    context["accion"]   = "Guardar"
+
+    template = loader.get_template('GestionDeFacturas/facturarPractica.html')
+    return HttpResponse(template.render(context, request))
+

@@ -17,112 +17,30 @@ Actualmente disponibles para ser asignados a practicas
 {% endblock %}
 
 {% block contenido %}
+    {% if gestor.numero_items %}
 
-{% load navigation_filters %}
+        {% include "./snippets/listado.html" %}
 
-    <p> Los siguientes tipos de servicio estan habilitados.  </p>
-    <br>
-    <div id="filtrarTiposDeAtencionHabilitados">
-        <a role="button" href="#filtrarTiposDeAtencion" data-toggle="collapse">
+    {% else %}
+
+        <p><strong>No hay tipos de atencion habilitados</strong></p>
+
+    {% endif %}
+<div class="menu-colapsable" >
+    <div class="item-colapsable" >
+        <a role="button" href="#tipodeatencion-acciones" data-toggle="collapse">
             <i class="glyphicon glyphicon-tasks"></i>
-            <span>Criterios de busqueda</span>
+            <span>Acciones</span>
         </a>
-        <div id="filtrarTiposDeAtencion" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                            <input name="nombre" placeholder="Nombre">
-                            <input name="lugar" placeholder="Lugar">
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+        <div class="contenido-colapsable collapse in" id="tipodeatencion-acciones">
+            <ul class="acciones sinestilo">
 
-                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+                <li><a  class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:crear' %}">Crear nuevo tipo de atencion</a></li>
 
-                            </button>
-                        </form>
-                    </div>
-            </form>
+            </ul>
         </div>
     </div>
-    <br>
-
-{% if tiposDeAtencion %}
-    <div class="table-responsive" id="tabla">
-        <table class="table listado">
-            <thead>
-                <tr>
-                    <th id="deshabilitados-nombre">Nombre</th>
-                    <th id="deshabilitados-descripcion">Descripcion </th>
-                    <th id="deshabilitados-lugar">Lugar </th>
-                    <th id="deshabilitados-franjaHoraria">Franja Horaria </th>
-                    <th id="deshabilitados-emergencia">Emergencia </th>
-                    <th id="deshabilitados-acciones">Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for tipoDeAtencion in tiposDeAtencion %}
-                <tr>
-                    <td>
-                        <a  href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}">
-                            {{ tipoDeAtencion.nombre }}
-                        </a>
-                    </td>
-                    <td>{{ tipoDeAtencion.descripcion|truncatechars:40 }}</td>
-                    <td>{{ tipoDeAtencion.lugar}}</td>
-                    <td>{{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</td>
-                    <td> {% if tipoDeAtencion.emergencia == True %} Si {% else %} No {% endif %}</td>
-                    <td>
-                        <div class="dropdown">
-                            <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
-                                Acción <span class="caret"></span>
-                            </button>
-                            <div class="dropdown-menu">
-                                <li><a href="{% url 'tiposDeAtencion:modificar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Tipo de Atención">
-                                    <i class="glyphicon glyphicon-edit"> </i>
-                                </a></li>
-                                <li><a href="{% url 'tiposDeAtencion:deshabilitar' tipoDeAtencion.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Tipo de Atención">
-                                    <i class="glyphicon glyphicon-minus"> </i>
-                                </a></li>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-{% else %}
-
-    <p> No hay tipos de atencion habilitados</p>
-
-{% endif %}
-    <div>
-        <a class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:crear' %}"> Crear </a>
-    </div>
-    <div align="center">
-        <ul class="pagination pagination-sm">
-            {% if tiposDeAtencion.has_previous %}
-                <li><a href="?page={{ tiposDeAtencion.previous_page_number }}" class="btn btnpages">
-                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
-            {% endif %}
-
-            {% for page in tiposDeAtencion.paginator.page_range|page_filter:tiposDeAtencion %}
-                <li class="{% if tiposDeAtencion.number == page %}active{% endif %}">
-                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
-            {% endfor %}
-
-            {% if tiposDeAtencion.has_next %}
-                <li>
-                    <a href="?page={{ tiposDeAtencion.next_page_number }}" class="btn btnpages">
-                        <i class="glyphicon glyphicon-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
+</div>
 
 {% endblock %}
 

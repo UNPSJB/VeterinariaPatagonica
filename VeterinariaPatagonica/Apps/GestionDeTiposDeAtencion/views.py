@@ -8,8 +8,7 @@ from django import forms
 
 from .models import TipoDeAtencion
 from .forms import TipoDeAtencionForm
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 PLANTILLAS = {
     "habilitados" : "habilitados",
@@ -21,34 +20,29 @@ PLANTILLAS = {
 }
 
 def plantilla(nombre):
-    return join( "GestionDeTiposDeAtencion/", PLANTILLAS[nombre]+".html")
+    return join( "GestionDeTiposDeAtencion", PLANTILLAS[nombre]+".html")
 
 
 
 def habilitados(request):
     """ Listado de tipos de atencion habilitados """
 
-    tiposDeAtencionQuery = TipoDeAtencion.objects.habilitados()
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_nombre", "Nombre"],
+            ["orden_emergencia", "Emergencia"],
+            ["orden_lugar", "Lugar de atencion"],
+            ["orden_recargo", "Recargo"],
+            ["orden_inicio", "Franja Horaria"],
+        ]
+    )
+
+    tiposDeAtencion = TipoDeAtencion.objects.habilitados()
+    gestor.cargar(request, tiposDeAtencion)
+    gestor.ordenar()
 
     template = loader.get_template( plantilla("habilitados") )
-
-    paginator = Paginator(tiposDeAtencionQuery, 10)
-    page = request.GET.get('page')
-
-    try:
-        tiposDeAtencion = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        tiposDeAtencion = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        tiposDeAtencion = paginator.page(paginator.num_pages)
-
-    context = {
-        "tiposDeAtencionQuery" : tiposDeAtencionQuery,
-        "tiposDeAtencion": tiposDeAtencion,
-    }
-
+    context = {"gestor" : gestor}
     return HttpResponse(template.render( context, request ))
 
 
@@ -56,26 +50,22 @@ def habilitados(request):
 def deshabilitados(request):
     """ Listado de tipos de atencion deshabilitados """
 
-    tiposDeAtencionQuery = TipoDeAtencion.objects.deshabilitados()
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_nombre", "Nombre"],
+            ["orden_emergencia", "Emergencia"],
+            ["orden_lugar", "Lugar de atencion"],
+            ["orden_recargo", "Recargo"],
+            ["orden_inicio", "Franja Horaria"],
+        ]
+    )
 
-    template = loader.get_template(plantilla("deshabilitados"))
+    tiposDeAtencion = TipoDeAtencion.objects.deshabilitados()
+    gestor.cargar(request, tiposDeAtencion)
+    gestor.ordenar()
 
-    paginator = Paginator(tiposDeAtencionQuery, 10)
-    page = request.GET.get('page')
-
-    try:
-        tiposDeAtencion = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        tiposDeAtencion = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        tiposDeAtencion = paginator.page(paginator.num_pages)
-
-    context = {
-        "tiposDeAtencionQuery": tiposDeAtencionQuery,
-        "tiposDeAtencion": tiposDeAtencion,
-    }
+    template = loader.get_template( plantilla("deshabilitados") )
+    context = {"gestor" : gestor}
     return HttpResponse(template.render( context, request ))
 
 
@@ -186,15 +176,7 @@ def eliminar(request, id):
     """ Eliminar el tipo de atencion con clave primaria <id> """
 
     tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
+    tipoDeAtencion.delete()
 
-    if request.method == "POST":
-
-        tipoDeAtencion.delete()
-        return HttpResponseRedirect( reverse("tiposDeAtencion:deshabilitados") )
-
-    else:
-
-        context = { "tipoDeAtencion" : tipoDeAtencion }
-
-        template = loader.get_template(plantilla("eliminar"))
-        return HttpResponse( template.render( context, request) )
+    template = loader.get_template(plantilla("eliminar"))
+    return HttpResponse( template.render({}, request) )

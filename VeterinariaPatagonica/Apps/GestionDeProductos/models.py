@@ -188,6 +188,18 @@ class Producto (models.Model):
 
     objects = ProductoManager()
 
+    def describir(self):
+
+        nombre = self.nombre
+        compra = self.precioDeCompra
+        venta = self.precioPorUnidad
+        presentacion = self.get_formaDePresentacion_display()
+
+        if venta > 0.0:
+            return "Producto: %s X %s $%.2f ($%.2f)" % (nombre, presentacion, venta, compra)
+        else:
+            return "Insumo: %s X %s $%.2f" % (nombre, presentacion, compra)
+
     def __str__(self):
         fp = self.formaDePresentacion
         unidad = list(filter(lambda t: fp in t, Producto.TUPLAS)).pop()
@@ -198,3 +210,4 @@ class Producto (models.Model):
 
     class Meta:
         ordering = ["nombre", "marca"]
+

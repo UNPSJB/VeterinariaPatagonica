@@ -1,0 +1,191 @@
+{% extends 'GestionDePracticas/programar.html' %}
+
+{% block titulo %}
+Programar {{ tipo }}
+{% endblock %}
+
+{% block practica-titulo %}
+Programar {{ tipo }}
+{% endblock %}
+
+{% block acciones %}
+    <div class="btn-group creacion">
+        {% include "./snippets/navegacion.html" with pagina="inicializar" %}
+        <button type="submit" class="btn btn-sm btn-default">
+            {{ accion|capfirst }}
+        </button>
+    </div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %}
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+
+{% block titulo %}
+Programar {{ tipo }}
+{% endblock %}
+
+{% block practica-titulo %}
+Programar {{ tipo }}
+{% endblock %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+
+{% block practica-contenido %}
+
+    {% include "snippets/errores.html" %}
+
+    {% if accion %}
+
+    <div class="cuadro">
+        {% include "./snippets/resumenPractica.html" %}
+    </div>
+
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+
+        {% csrf_token %}
+
+        {% if form.errors %}
+        <div class="errores">
+            <strong>Por favor revise los siguientes errores:</strong>
+            <ul>
+                {% include 'snippets/formErrores.html' %}
+            </ul>
+        </div>
+        {% endif %}
+
+
+
+        {% if form.mascota %}
+        <div class="form-group mascota {% if form.mascota.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.mascota %}
+        </div>
+        {% endif %}
+        <div class="form-group desde {% if form.desde.errors %}has-error{% endif %}">
+            <div class=row>
+                <label for="{{ form.desde.id_for_label }}" class="col-sm-4 control-label etiqueta">
+                    {{ form.desde.label }}
+                </label>
+                <div class="col-sm-8 control">
+                    <div class="input-group date" id="desde">
+                        {{ form.desde }}
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group hasta {% if form.hasta.errors %}has-error{% endif %}">
+            <div class=row>
+                <label for="{{ form.hasta.id_for_label }}" class="col-sm-4 control-label etiqueta">
+                    {{ form.hasta.label }}
+                </label>
+                <div class="col-sm-8 control">
+                    <div class="input-group date" id="hasta">
+                        {{ form.hasta }}
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group duracion {% if form.duracion.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.duracion %}
+        </div>
+
+        <div class="form-group adelanto {% if form.adelanto.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.adelanto %}
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-12 acciones">
+                {% with path="practicas:"|add:tipo|add:":crear:modificarPractica" %}
+                    <a class="btn btn-sm btn-default pull-left" href="{% url path id %}">
+                        Modificar {{ tipo }}
+                    </a>
+                {% endwith %}
+                {% with path="practicas:"|add:tipo|add:":crear:modificarProductos" %}
+                    <a class="btn btn-sm btn-default pull-left" href="{% url path id %}">
+                        Modificar productos
+                    </a>
+                {% endwith %}
+                <button type="submit" class="btn btn-sm btn-default pull-right">
+                    {{ accion|capfirst }}
+                </button>
+                {% with path="practicas:"|add:tipo|add:":crear:terminar" %}
+                    <a class="btn btn-sm btn-default pull-right" href="{% url path id %}">
+                        Cancelar
+                    </a>
+                {% endwith %}
+            </div>
+        </div>
+    </form>
+
+    {% endif %}
+
+{% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+
+    <script type="text/javascript">
+        document.onreadystatechange = function(){
+
+
+            $("#desde").datetimepicker({
+                locale:"es",
+            });
+            $("#hasta").datetimepicker({
+                locale:"es",
+                useCurrent: false,
+            });
+            $("#desde").on("dp.change", function (e) {
+                $('#hasta').data("DateTimePicker").minDate(e.date);
+                duracion = calcularDuracion("desde", "hasta");
+                document.getElementById("id_duracion").value = duracion;
+            });
+            $("#hasta").on("dp.change", function (e) {
+                $('#desde').data("DateTimePicker").maxDate(e.date);
+                duracion = calcularDuracion("desde", "hasta");
+                document.getElementById("id_duracion").value = duracion;
+            });
+
+            document.getElementById("id_duracion").onchange = function(){
+                ajustarDuracion("desde", "hasta", "id_duracion");
+            }
+        }
+    </script>
+
+{% endblock %}
+{% endcomment %}

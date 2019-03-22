@@ -1,0 +1,17 @@
+{% extends "./acciones.html" %}
+
+{% block items %}
+{% with path="practicas:"|add:practica.nombreTipo|add:":ver:observaciones" %}
+<li>
+    <a  class="btn btn-sm btn-default" href="{% url path id=practica.id %}">
+        Ver informacion clinica
+    </a>
+</li>
+{% endwith %}
+
+<li>
+    <a  class="btn btn-sm btn-default" href="{% url "facturas:facturaVer" id=practica.estado.factura.id %}">
+        Ver factura
+    </a>
+</li>
+{% endblock %}

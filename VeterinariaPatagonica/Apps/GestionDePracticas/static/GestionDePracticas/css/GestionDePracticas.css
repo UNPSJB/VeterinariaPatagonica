@@ -1,153 +1,89 @@
-.formset .forms .form-group {
-    width: auto;
-    margin: 0px 0px 4px 0px ;
-}
-.formset.form-inline {
-    padding: 0px 15px;
-}
-.formset .forms .form-group.cantidad {
-    width: 13%;
-}
-.formset .forms .form-group.eliminar {
-    width: auto;
-}
-.formset .forms .form-group.servicio,
-.formset .forms .form-group.producto {
-    width: 83%;
-}
-.formset .forms .form-group.observaciones {
-    width: 97%;
-}
-.formset .titulo{ 
-    border-top: 0.5px solid #DDD;
-    border-left: 0.5px solid #DDD;
-    border-right: 0.5px solid #DDD;
-    padding: 6px;
-}
-.formset .forms .formset-form{ 
-    border-top: 0.5px solid #DDD;
-    border-left:      0.5px solid #DDD;
-    border-right:    0.5px solid #DDD;
-    padding: 6px;
-}
-.formset .acciones { 
-    border-top: 0.5px solid #DDD;
-}
-.formset .acciones .agregar { 
-    margin-top: 4px;
-}
-.formset .forms .form-group.eliminar a {
-    color: #000;
-}
-.formset .forms .formset-form .form-group.eliminar a.disabled {
-    color: #AAA; 
-}
-.formset .forms .formset-form .form-group.eliminar a.disabled:hover {
-    cursor: default;
-}
+/* timeline de gentelella */
 
-
-
-#servicio-formset.form-inline {
-    padding: 0px;
+*, :after, :before {
+    box-sizing: border-box;
 }
-#servicio_realizado-formset .forms .formset-form .form-group.servicio {
-    width: 86%;
+ul.timeline li {
+    position: relative;
+    clear: both
 }
-#producto_utilizado-formset,
-#servicio_realizado-formset {
-    margin-top: 15px;
+.timeline .block {
+    margin: 0;
+    border-left: 3px solid #e8e8e8;
+    overflow: visible;
+    padding: 10px 15px;
+    margin-left: 105px
 }
-#servicio_realizado-formset .forms .formset-form .form-group.observaciones,
-#producto_utilizado-formset .forms .formset-form .form-group {
-    margin-bottom: 0px;
+.timeline.widget {
+    min-width: 0;
+    max-width: inherit
 }
-
-
-.errores ul.sugerencias {
-    list-style-type: none;
+.timeline.widget .block {
+    margin-left: 5px
 }
-
-
-#formulario-filtrar-practicas .form-group {
-    margin-bottom: 5px;
-    width: 90%;
+.timeline .tags {
+    position: absolute;
+    top: 15px;
+    left: 0;
+    width: 84px
 }
-#filtrar-practicas {
-    padding: 10px;
-    border-style: solid;
-    border-color: #DDD;
-    border-width: 0.5px 0px 0.5px 0px;
-    margin-bottom: 15px;
+.timeline .tag {
+    display: block;
+    height: 30px;
+    font-size: 13px;
+    padding: 8px
 }
-
-
-
-
-.detalles {
+.timeline .tag span {
+    display: block;
+    overflow: hidden;
     width: 100%;
-    min-width: 400px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-weight: bold;
 }
-.detalles caption {
-    padding-left: 5px;
-    font-weight: 700;
-    color: #BBB;
-    border-top: 1px solid #BBB;
-    border-left: 1px solid #BBB;
-    border-right: 1px solid #BBB;
+.tag {
+    line-height: 1;
+    background: #1ABB9C;
+    color: #fff !important;
 }
-.detalles col.cantidad,
-.detalles col.precio,
-.detalles col.importe {
-    width: 13%;
-    text-align: right !important;
+.tag:after {
+    content: " ";
+    height: 30px;
+    width: 0;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin: 0;
+    pointer-events: none;
+    border-top: 14px solid transparent;
+    border-bottom: 14px solid transparent;
+    border-left: 11px solid #1ABB9C
 }
-.detalles col.descripcion {
-    text-align: left;
+.timeline h2.title {
+    position: relative;
+    font-size: 16px;
+    margin: 0
 }
-.detalles thead {
-    border-top: 1px solid #BBB;
+.timeline h2.title:before {
+    content: "";
+    position: absolute;
+    left: -23px;
+    top: 3px;
+    display: block;
+    width: 14px;
+    height: 14px;
+    border: 3px solid #d2d3d2;
+    border-radius: 14px;
+    background: #f9f9f9
 }
-.detalles tbody {
-    border-top: 1px solid #BBB;
-    border-bottom: 1px solid #BBB;
-}
-.detalles col {
-    border-left: 1px solid #BBB;
-}
-.detalles col:last-child {
-    border-right: 1px solid #BBB;
-}
-.detalles tr:last-child {
-    border-top: 1px solid #BBB;
-}
-.detalles td:nth-child(1),
-.detalles td:nth-child(2),
-.detalles td:nth-child(4){
-    text-align: right;
-}
-.detalles th {
-    text-align: center;
-}
-.detalles th,
-.detalles td{
-    padding: 5px;
+.timeline .byline {
+    padding: .25em 0
 }
 
-.marco {
-    margin-bottom: 15px;
-    padding: 15px;
-}
 
-.paginas {
-    text-align: center;
-}
 
-form#completar-presupuesto .col-sm-4,
-form#completar-presupuesto .col-sm-8 {
-    padding-top: 5px; 
-    padding-bottom: 5px; 
-}
-form#completar-presupuesto .col-sm-4{
-    text-align: right; 
+
+.btn-group.creacion {
+    margin-left: 25px;
+    margin-right: 25px;
 }

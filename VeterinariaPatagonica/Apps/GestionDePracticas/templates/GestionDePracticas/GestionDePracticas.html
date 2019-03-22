@@ -4,6 +4,7 @@
 {% block paginaEstilos %}
     {{ block.super }}
     <link href="{% static 'GestionDePracticas/css/GestionDePracticas.css' %}" rel="stylesheet">
+    <link href="{% static 'css/tema-select2.css' %}" rel="stylesheet">
 {% endblock %}
 
 
@@ -15,6 +16,7 @@
         {% block practica-titulo %}
         {% endblock %}
         </h4>
+        <div class="linea-titulo"></div>
         <p class="subtitulo">
         {% block practica-subtitulo %}
         {% endblock %}

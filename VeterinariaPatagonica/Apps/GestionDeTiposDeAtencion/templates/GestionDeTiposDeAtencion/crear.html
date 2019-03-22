@@ -1,4 +1,11 @@
 {% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
+{% load static %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
 
 {% block titulo %}
 Gestion de Tipos de Atencion | Crear Tipo de Atencion
@@ -27,8 +34,29 @@ Agrega un tipo de atencion al listado
                 </div>
             {% endif %}
 
-            {% include "snippets/form.html" with accion="Modificar" %}
+            {% include "./snippets/form.html" with accion="Crear" %}
 
         </form>
+
+{% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+
+    <script type="text/javascript">
+        document.onreadystatechange = function(){
+            $("#inicioFranjaHoraria").datetimepicker({
+                locale:"es",
+                format: 'LT',
+            });
+            $("#finFranjaHoraria").datetimepicker({
+                locale:"es",
+                format: 'LT',
+            });
+        }
+    </script>
 
 {% endblock %}

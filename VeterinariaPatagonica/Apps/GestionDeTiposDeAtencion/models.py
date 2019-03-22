@@ -6,7 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator, RegexVa
 from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 from VeterinariaPatagonica.areas import Areas
 
-from VeterinariaPatagonica import tools
+
 
 class FranjaHoraria():
     """ Clase para franjas horarias """
@@ -56,6 +56,15 @@ class FranjaHoraria():
 
 class TipoDeAtencionQueryset(BajasLogicasQuerySet):
 
+    MAPEO_ORDEN = {
+        "orden_id" : ["id"],
+        "orden_nombre" : ["nombre"],
+        "orden_emergencia" : ["emergencia"],
+        "orden_lugar" : ["lugar"],
+        "orden_recargo" : ["recargo"],
+        "orden_inicio" : ["inicioFranjaHoraria"],
+    }
+
     def paraConsultas(self):
         return self.filter(tipoDeServicio=Areas.C.codigo)
 
@@ -70,23 +79,9 @@ class TipoDeAtencionQueryset(BajasLogicasQuerySet):
 TipoDeAtencionManager = models.Manager.from_queryset(TipoDeAtencionQueryset)
 
 
-#Esta clase se comunica con la BD
-class BaseTipoDeAtencionManager(models.Manager):
-    pass
-
-TipoDeAtencionManagerDos = BaseTipoDeAtencionManager.from_queryset(tools.BajasLogicasQuerySet)
-
 class TipoDeAtencion(models.Model):
 
-
-    MAPPER = {
-        "nombre": "nombre__icontains",
-        "lugar": "lugar__icontains",
-    }
-
     objects = TipoDeAtencionManager()
-
-    objects = TipoDeAtencionManagerDos()
 
     RECARGO_PARTE_ENTERA = 3
     RECARGO_PARTE_DECIMAL = 2
@@ -192,8 +187,7 @@ class TipoDeAtencion(models.Model):
         """ String para Tipos de Atencion """
         return self.nombre
 
-    class Meta:
-        ordering = ["nombre"]
+
 
     @property
     def franjaHoraria(self):

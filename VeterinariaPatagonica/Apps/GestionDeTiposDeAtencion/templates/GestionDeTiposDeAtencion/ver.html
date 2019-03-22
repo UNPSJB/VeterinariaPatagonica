@@ -16,15 +16,15 @@ Muestra datos del tipo de atencion
 
     {% include './snippets/acciones.html' with item=tipoDeAtencion seccion='ver' %}
 
-    <div class="well">
-        <p>Identificador: {{ tipoDeAtencion.id }}</p>
-        <p>Nombre: {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
-        <p>Descripcion: {{ tipoDeAtencion.descripcion }}</p>
-        <p>Lugar de atencion: {{ tipoDeAtencion.get_lugar_display }}</p>
-        <p>Emergencia: {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
-        <p>Tipo de servicio: {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
-        <p>Franja horaria: de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
-        <p>Recargo: {{ tipoDeAtencion.recargo|floatformat:"-2" }}%</p>
+    <div>
+        <p><strong>Identificador:</strong> {{ tipoDeAtencion.id }}</p>
+        <p><strong>Nombre:</strong> {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
+        <p><strong>Descripcion:</strong> {{ tipoDeAtencion.descripcion }}</p>
+        <p><strong>Lugar de atencion:</strong> {{ tipoDeAtencion.get_lugar_display }}</p>
+        <p><strong>Emergencia:</strong> {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
+        <p><strong>Tipo de servicio:</strong> {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
+        <p><strong>Franja horaria:</strong> de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
+        <p><strong>Recargo:</strong> {{ tipoDeAtencion.recargo|floatformat:2 }}%</p>
     </div>
 
 {% endblock %}

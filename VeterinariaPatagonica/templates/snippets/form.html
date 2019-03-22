@@ -1,4 +1,4 @@
-{% for field in form %}
+{% for field in form.visible_fields %}
 <div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
     <div class=row>
         <label for="{{ field.id_for_label }}" class="col-sm-4 control-label etiqueta">
@@ -15,7 +15,7 @@
 <div class="form-group">
     <div class=row>
         <div class="col-sm-offset-4 col-sm-8">
-            <button type="submit" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
         </div>
      </div>
 </div>

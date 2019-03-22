@@ -1,0 +1,55 @@
+<form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
+
+    <div class="hidden orden-listado">
+        {% for field in gestor.formOrden %}
+            {{ field }}
+        {% endfor %}
+        {{ gestor.formPagina.desde }}
+    </div>
+
+    <div class="sombreado">
+        {{ gestor.formPagina.resultados }}
+        <button class="btn btn-default filtrar" type="submit">Mostrar</button>
+    </div>
+
+    <table class="table table-bordered table-responsive items">
+        <colgroup>
+            <col class="columna{% if gestor.encabezado.orden_nombre.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_emergencia.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_lugar.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_recargo.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_inicio.activa %} activa{% endif %}"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombre %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_emergencia %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_lugar %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_recargo %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_inicio %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tipoDeAtencion in gestor.items_actuales %}
+                <tr>
+                    <td>
+                        <a href="{% url 'tiposDeAtencion:ver' tipoDeAtencion.id %}">
+                            {{ tipoDeAtencion.nombre }}</a>
+                    </td>
+
+                    <td>{{ tipoDeAtencion.emergencia|yesno:"Si,No,-" }}</td>
+
+                    <td>{{ tipoDeAtencion.get_lugar_display }}</td>
+
+                    <td>% {{ tipoDeAtencion.recargo|floatformat:2 }}</td>
+
+                    <td>{{ tipoDeAtencion.inicioFranjaHoraria|date:"H:i" }} hs. a {{ tipoDeAtencion.finFranjaHoraria|date:"H:i" }} hs.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+    {% include "snippets/paginacion.html" with links=gestor.paginas%}
+    </div>
+</form>

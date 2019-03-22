@@ -1,0 +1,44 @@
+.bootstrap-datetimepicker-widget table td.today:before {
+  border-bottom-color: #555;
+}
+
+.bootstrap-datetimepicker-widget table td.active,
+.bootstrap-datetimepicker-widget table td.active:hover,
+.bootstrap-datetimepicker-widget table td span.active {
+  background-color: #555;
+}
+
+.bootstrap-datetimepicker-widget.dropdown-menu.bottom:before {
+  border: 0px solid transparent;
+  top: 0px;
+  left: 0px;
+}
+.bootstrap-datetimepicker-widget.dropdown-menu.bottom:after {
+  border: 0px solid transparent;
+  top: 0px;
+  left: 0px;
+}
+.bootstrap-datetimepicker-widget.dropdown-menu.top:before {
+  border: 0px solid transparent;
+  bottom: 0px;
+  left: 0px;
+}
+.bootstrap-datetimepicker-widget.dropdown-menu.top:after {
+  border: 0px solid transparent;
+  bottom: 0px;
+  left: 0px;
+}
+
+.bootstrap-datetimepicker-widget table td span,
+.bootstrap-datetimepicker-widget table td,
+.bootstrap-datetimepicker-widget table th,
+.bootstrap-datetimepicker-widget.dropdown-menu,
+.bootstrap-datetimepicker-widget table td,
+.bootstrap-datetimepicker-widget table th {
+  border-radius: 0px;
+}
+
+.bootstrap-datetimepicker-widget .btn,
+.bootstrap-datetimepicker-widget a {
+  color: #555;
+}

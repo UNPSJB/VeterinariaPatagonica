@@ -9,6 +9,7 @@ from Apps.GestionDePracticas import models as praModel
 #from Apps.GestionDePagos import models as pagModel
 # Create your models here.
 
+from Apps.GestionDePracticas.models.practica import Practica
 
 REGEXTIPO = '^[A-B-C]{1}$'
 MAXTIPO = 1
@@ -195,6 +196,29 @@ class Factura(models.Model):
         nuevoTotal = self.total - iva
         return nuevoTotal
 
+    def importeVentas(self):
+        return sum([
+            detalle.subtotal for detalle in self.factura_productos.all()
+        ])
+
+    def importeServicios(self):
+        return self.practica.estados.realizacion().total()
+
+    def ajusteDescuento(self):
+        importe = self.importeVentas() + self.importeServicios()
+        return -( importe * self.descuento / Decimal(100) )
+
+    def ajusteRecargo(self):
+        importe = self.importeVentas() + self.importeServicios()
+        return importe * self.recargo / Decimal(100)
+
+    def importe(self):
+        importe = self.importeVentas() + self.importeServicios()
+        recargo = importe * self.recargo / Decimal(100)
+        descuento = -(importe * self.descuento / Decimal(100))
+        return importe + recargo + descuento
+
+
     class Meta:
         ordering = ["tipo", "fecha"]
 
@@ -202,6 +226,10 @@ class Factura(models.Model):
         return self.total'''
 
 class DetalleFactura(models.Model):
+
+    class Meta:
+        unique_together = ("factura", "producto")
+        index_together = ["factura", "producto"]
 
     factura = models.ForeignKey(
         Factura,
@@ -244,7 +272,7 @@ class DetalleFactura(models.Model):
         if self.cantidad != 0:
             return self.subtotal // self.cantidad
 
-    def save(self, *args, **kwargs):
+    """def save(self, *args, **kwargs):
         print("GUARDANDO...........")
         if (not "commit" in kwargs) or (kwargs["commit"]):
             if (self.subtotal is None):
@@ -252,4 +280,12 @@ class DetalleFactura(models.Model):
                 self.subtotal = precio * self.cantidad
                 print("Precio: {}, Cantidad: {}, Subtotal: {}".format(precio, self.cantidad, self.subtotal))
 
+        super().save(*args, **kwargs)"""
+
+    def precioPorUnidad(self):
+        return self.subtotal / Decimal(self.cantidad)
+
+    def save(self, *args, **kwargs):
+        if (not "commit" in kwargs) or kwargs["commit"]:
+            self.subtotal = self.cantidad * self.producto.precioPorUnidad
         super().save(*args, **kwargs)

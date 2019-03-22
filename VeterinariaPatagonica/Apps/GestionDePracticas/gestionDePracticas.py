@@ -1,11 +1,13 @@
-from math import ceil
 from os.path import join
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 
 from django.urls import reverse
 from django.db import transaction
+from django.db.models import Max as dbMax
+from django.db.models import F as dbF
 from django.utils import timezone
 
+from VeterinariaPatagonica.tools import GestorListadoQueryset
 from VeterinariaPatagonica.areas import Areas
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from Apps.GestionDeProductos.models import Producto
@@ -14,12 +16,21 @@ from Apps.GestionDeClientes.models import Cliente
 from Apps.GestionDeTiposDeAtencion.models import TipoDeAtencion
 from .forms import *
 from .models import *
-from .settings import *
-
-
+from .config import config
 
 PLANTILLAS = {
+    "error" : "error",
+
+    "buscar" : "buscar",
     "listar" : "listar",
+
+    "crear" : "crear",
+    "modificar" : "modificar",
+    "crearPresupuestada" : "crearPresupuestada",
+    "crearProgramada" : "crearProgramada",
+    "crearRealizada" : "crearRealizada",
+    "productos" : "productos",
+
     "ver" : "ver",
     "creada" : "ver",
     "presupuestada" : "presupuestada",
@@ -27,85 +38,87 @@ PLANTILLAS = {
     "realizada" : "realizada",
     "cancelada" : "cancelada",
     "facturada" : "facturada",
-    "actualizar" : "actualizar",
-    "crear" : "crear",
-    "inicializar" : "inicializar",
-    "realizacion" : "realizacion",
-    "productos" : "productos",
-    "completarPresupuesto" : "completarPresupuesto",
-    "detalles" : "detalles",
+
+    "programar" : "programar",
+    "reprogramar" : "reprogramar",
+    "realizar" : "realizar",
+    "cancelar" : "cancelar",
+
+    "modificarDetalles" : "modificarDetalles",
+    "modificarObservaciones" : "modificarObservaciones",
+    "verObservaciones" : "verObservaciones",
 }
 def plantilla(nombre, subdirectorio=""):
-    return join( "GestionDePracticas/", subdirectorio, PLANTILLAS[nombre]+".html")
+    return join( "GestionDePracticas", subdirectorio, PLANTILLAS[nombre]+".html")
 
 
 
 def pathModificar(tipo, id):
     return reverse(
-        "%s:%s:crear:modificar" % (APP_NAME, tipo), args=(id,)
+        "%s:%s:crear:modificarPractica" % (config("app_name"), tipo), args=(id,)
     )
 
 
 
 def pathTerminar(tipo, id):
     return reverse(
-        "%s:%s:crear:terminar" % (APP_NAME, tipo), args=(id,)
+        "%s:%s:crear:terminar" % (config("app_name"), tipo), args=(id,)
     )
 
 
 
 def pathModificarProductos(tipo, id):
     return reverse(
-        "%s:%s:crear:modificarProductos" % (APP_NAME, tipo), args=(id,)
+        "%s:%s:crear:modificarProductos" % (config("app_name"), tipo), args=(id,)
     )
 
 
 
 def pathInicializar(tipo, accion, id):
     return reverse(
-        "%s:%s:crear:%s" %(APP_NAME, tipo, accion), args=(id,)
+        "%s:%s:crear:%s" %(config("app_name"), tipo, accion), args=(id,)
     )
 
 
 
 def pathVer(tipo, id):
     return reverse(
-        "%s:%s:ver" % (APP_NAME, tipo), args=(id,)
+        "%s:%s:ver:practica" % (config("app_name"), tipo), args=(id,)
     )
 
 
 
 def pathListar(tipo):
     return reverse(
-        "%s:%s:listar" % (APP_NAME, tipo)
+        "%s:%s:listar" % (config("app_name"), tipo)
     )
 
 
 
 def pathCrear(tipo):
     return reverse(
-        "%s:%s:crear:nueva" % (APP_NAME, tipo)
+        "%s:%s:crear:practica" % (config("app_name"), tipo)
     )
 
 
 
 def pathDetallarRealizacion(tipo, id):
     return reverse(
-        "%s:%s:realizacion" % (APP_NAME, tipo), args=(id,)
-    )
-
-
-
-def pathCompletarPresupuesto(tipo, id, accion):
-    return reverse(
-        "%s:%s:completarPresupuesto" % (APP_NAME, tipo), args=(id, accion)
+        "%s:%s:modificar:detalles" % (config("app_name"), tipo), args=(id,)
     )
 
 
 
 def pathActualizar(tipo, accion, id):
     return reverse(
-        "%s:%s:%s" % (APP_NAME, tipo, accion), args=(id,)
+        "%s:%s:actualizaciones:%s" % (config("app_name"), tipo, accion), args=(id,)
+    )
+
+
+
+def pathFacturar(id):
+    return reverse(
+        "facturas:facturarPractica", args=(id,)
     )
 
 
@@ -248,7 +261,6 @@ def eliminar(session, id):
     claves = []
     etiquetas = (
         "tipo",
-        "accion",
         "practicaData",
         "serviciosData",
         "productosData"
@@ -264,15 +276,8 @@ def eliminar(session, id):
 def crearContexto(request, idCreacion, tipoPractica=None, accion=None):
 
     tipo = obtener(request.session, idCreacion, "tipo")
-    accion = obtener(request.session, idCreacion, "accion")
 
     if (tipoPractica is not None) and (tipo != tipoPractica):
-        raise VeterinariaPatagonicaError(
-            "Solicitud erronea",
-            "El pedido de creacion no es valido, no existe ninguna %s con esas caracteristicas siendo creada en esta sesion" % tipoPractica,
-        )
-
-    if (accion is not None) and (accion != accion):
         raise VeterinariaPatagonicaError(
             "Solicitud erronea",
             "El pedido de creacion no es valido, no existe ninguna %s con esas caracteristicas siendo creada en esta sesion" % tipoPractica,
@@ -281,17 +286,27 @@ def crearContexto(request, idCreacion, tipoPractica=None, accion=None):
     return {
         "id" : idCreacion,
         "tipo" : tipo,
-        "accion" : accion,
         "errores" : [],
     }
 
 
 
-def calcularPrecio(practica, detalles):
+def calcularPrecio(detalles, tipoDeAtencion=None):
 
+    ajuste = 0
     precioServicios = sum([ detalle.precioTotal() for detalle in detalles["servicios"] ])
     precioProductos = sum([ detalle.precioTotal() for detalle in detalles["productos"] ])
-    return precioProductos + precioServicios
+    if tipoDeAtencion is not None:
+        ajuste = (precioProductos + precioServicios) * tipoDeAtencion / Decimal(100)
+    return precioProductos + precioServicios + ajuste
+
+
+
+def calcularDuracion(servicios):
+
+    return sum([
+        (detalle.servicio.tiempoEstimado * detalle.cantidad) for detalle in servicios
+    ])
 
 
 
@@ -428,31 +443,6 @@ def persistir(practica, detalles, accion, argumentos):
 
 
 
-def calcularPaginas(queryset):
-    cantidad = ceil(queryset.count() / PRACTICAS_POR_PAGINA)
-    return max(cantidad, 1)
-
-
-
-def practicasParaPagina(queryset, pagina, paginas):
-
-    if not (1 <= pagina <= paginas):
-        raise VeterinariaPatagonicaError("Pagina no existe", "Numero de pagina %s no valido" % str(pagina))
-
-    n = (pagina-1) * PRACTICAS_POR_PAGINA
-    m = pagina * PRACTICAS_POR_PAGINA
-
-    return queryset[n:m]
-
-
-
-def proximaHora():
-    ahora = datetime.now()
-    ahora = ahora.replace(minute=0, second=0, microsecond=0)
-    return ahora + timedelta(hours=1)
-
-
-
 def accionesIniciales(user, area):
 
     usuario = user.acciones()
@@ -470,13 +460,16 @@ def accionesIniciales(user, area):
 
 
 
-def verificarCreacion(formPractica, formsetServicios, formCreacion):
+def verificarCreacion(practica, accion):
 
-    cliente = formPractica.cleaned_data["cliente"]
+    cliente = practica.cliente
     mascotas = cliente.mascota_set.habilitados()
-    noPresupuesto = (formCreacion.accion != Practica.Acciones.presupuestar.name)
+    mascotaObligatoria = accion in (
+        Practica.Acciones.programar.name,
+        Practica.Acciones.realizar.name,
+    )
 
-    if noPresupuesto and (mascotas.count() == 0):
+    if mascotaObligatoria and (mascotas.count() == 0):
         descripcion = "El cliente %s %s (%s) no tiene mascotas habilitadas en este momento"
         descripcion = descripcion % (cliente.nombres, cliente.apellidos, cliente.dniCuit)
         raise VeterinariaPatagonicaError(
@@ -530,43 +523,6 @@ def verificarEstado(practica, estados):
 
 
 
-def verificarPresupuesto(practica, accion):
-
-    try:
-        accion = Practica.Acciones(accion)
-    except ValueError:
-        raise VeterinariaPatagonicaError(titulo="Solicitud erronea", descripcion="La accion solicitada no es valida")
-
-    verificarEstado(practica, [Presupuestada])
-    verificarAccion(practica, accion)
-
-    presupuesto = practica.estado()
-    if presupuesto.haExpirado():
-        raise VeterinariaPatagonicaError(
-            titulo="Solicitud erronea",
-            descripcion="El presupuesto ha expirado el dia %s" % presupuesto.vencimiento().strftime("%d/%m/%Y"),
-        )
-
-    cliente = practica.cliente
-    if Cliente.objects.habilitados().filter(id=cliente.id).count() == 0:
-        descripcion = "El cliente %s %s (%s) no esta habilitado"
-        descripcion = descripcion % (cliente.nombres, cliente.apellidos, cliente.dniCuit)
-        raise VeterinariaPatagonicaError(
-            titulo="Solicitud erronea",
-            descripcion=descripcion,
-        )
-
-    mascotas = cliente.mascota_set.habilitados()
-    if mascotas.count() == 0:
-        descripcion = "El cliente %s %s (%s) no tiene mascotas habilitadas a quienes asociar el presupuesto"
-        descripcion = descripcion % (cliente.nombres, cliente.apellidos, cliente.dniCuit)
-        raise VeterinariaPatagonicaError(
-            titulo="Solicitud erronea",
-            descripcion=descripcion,
-        )
-
-
-
 def verificarAccion(practica, accion):
 
     if not practica.esPosible(accion):
@@ -577,123 +533,143 @@ def verificarAccion(practica, accion):
 
 
 
-def turnoInitial(precio=None, duracion=None, cuando=None):
+def formPresupuestar(*args, vigencia=config("vigencia"), **kwargs):
 
-    if precio is None:
-        precio = 0
-    if duracion is None:
-        duracion = DURACION
+    hoy = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    initial = {
+        "duracion" : vigencia,
+        "desde" : hoy,
+        "hasta" : hoy + timedelta(days=vigencia),
+    }
+
+    if ("initial" in kwargs) and (kwargs["initial"] is not None):
+        initial.update(kwargs["initial"])
+    kwargs["initial"] = initial
+
+    return PresupuestadaForm(*args, mascota_required=False, **kwargs)
+
+
+
+def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None, **kwargs):
+
+    adelanto = int(float(precio) * config("adelanto"))
+
+    rango = timedelta(minutes=duracion*20)
+    busquedas = 100
+    inicio = timezone.now().replace(second=0, microsecond=0)
+    finalizacion = inicio + rango
+
+    cuando = None
+    while (cuando is None) and busquedas:
+        horarios = Programada.horariosDisponibles(inicio, finalizacion, minimo=timedelta(minutes=duracion))
+        if len(horarios):
+            cuando = horarios[0][0]
+        else:
+            finalizacion = finalizacion + rango
+            inicio = inicio + rango
+            busquedas -= 1
+
     if cuando is None:
-        cuando = proximaHora()
+        cuando = timezone.now().replace(second=0, microsecond=0)
 
-    adelanto = int(float(precio) * FACTOR_ADELANTO)
-
-    return {
-        "fecha" : cuando.date(),
-        "hora" : cuando.time(),
+    initial = {
+        "desde" : cuando,
+        "hasta" : cuando + timedelta(minutes=duracion),
         "duracion" : duracion,
         "adelanto" : adelanto,
     }
 
-
-
-def formNuevoPresupuesto(practica, *args, **kwargs):
-
-    initial = {
-        "diasMantenimiento" : MANTENIMIENTO,
-    }
-
     if ("initial" in kwargs) and (kwargs["initial"] is not None):
         initial.update(kwargs["initial"])
     kwargs["initial"] = initial
 
-    return NuevaPresupuestadaForm(practica, *args, **kwargs)
+    return ProgramadaForm(*args, precio=precio, practica=practica, **kwargs)
 
 
-
-def formProgramacion(precio, *args, **kwargs):
-
-    initial = turnoInitial(precio)
-
-    if ("initial" in kwargs) and (kwargs["initial"] is not None):
-        initial.update(kwargs["initial"])
-
-    kwargs["initial"] = initial
-
-    return ProgramadaForm(*args, precio=precio, **kwargs)
-
-
-
-def formNuevaProgramacion(practica, precio, *args, **kwargs):
-
-    initial = turnoInitial(precio)
-
-    if ("initial" in kwargs) and (kwargs["initial"] is not None):
-        initial.update(kwargs["initial"])
-    kwargs["initial"] = initial
-
-    return NuevaProgramadaForm(practica, *args, precio=precio, **kwargs)
-
-
-
-def formReprogramacion(practica, *args, **kwargs):
+def formReprogramar(*args, practica=None, **kwargs):
 
     if practica is not None:
         estado = practica.estado()
-        inicio = timezone.localtime(estado.inicio)
-
-        initial = {
-            "fecha" : inicio.date(),
-            "hora" : inicio.time(),
-            "duracion" : estado.duracion,
-        }
-        if not "initial" in kwargs:
-            kwargs["initial"] = {}
-        kwargs["initial"].update(initial)
-
-    return ReprogramadaForm(*args, **kwargs)
-
-
-
-def formRealizacion(practica, *args, **kwargs):
-
-    finalizacion = timezone.now()
-    inicio = finalizacion - timedelta(minutes=DURACION)
-
-    if practica is not None:
-        estado = practica.estado()
-        if isinstance(estado, Programada):
-            inicio = timezone.localtime(estado.inicio)
-            finalizacion = timezone.localtime(estado.finalizacion)
+        cuando = timezone.localtime(estado.inicio)
+        duracion = estado.duracion
+    else:
+        cuando = timezone.now().replace(minute=0,second=0,microsecond=0) + timedelta(hours=1)
+        duracion = config("duracion")
 
     initial = {
-        "fechaInicio" : inicio.date(),
-        "horaInicio" : inicio.time(),
-        "fechaFinalizacion" : finalizacion.date(),
-        "horaFinalizacion" : finalizacion.time(),
+        "desde" : cuando,
+        "hasta" : cuando + timedelta(minutes=duracion),
+        "duracion" : duracion,
     }
+
     if not "initial" in kwargs:
         kwargs["initial"] = {}
     kwargs["initial"].update(initial)
 
-    return RealizadaForm(*args, **kwargs)
+    return ReprogramadaForm(*args, practica=practica, **kwargs)
 
 
 
-def formNuevaRealizacion(practica, *args, **kwargs):
+def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
 
-    finalizacion = timezone.now()
-    inicio = finalizacion - timedelta(minutes=DURACION)
+    finalizacion = None
+    inicio = None
+
+    if practica is not None:
+        estado = practica.estado()
+        if isinstance(estado, Programada):
+            finalizacion = timezone.localtime(estado.finalizacion)
+            inicio = timezone.localtime(estado.inicio)
+            duracion = estado.duracion
+
+    if finalizacion is None:
+        finalizacion = timezone.now()
+    if inicio is None:
+        inicio = finalizacion - timedelta(minutes=duracion)
 
     initial = {
-        "fechaInicio" : inicio.date(),
-        "horaInicio" : inicio.time(),
-        "fechaFinalizacion" : finalizacion.date(),
-        "horaFinalizacion" : finalizacion.time(),
+        "desde" : inicio,
+        "hasta" : finalizacion,
+        "duracion" : duracion,
     }
 
-    if ("initial" in kwargs) and (kwargs["initial"] is not None):
-        initial.update(kwargs["initial"])
-    kwargs["initial"] = initial
+    if not "initial" in kwargs:
+        kwargs["initial"] = {}
+    kwargs["initial"].update(initial)
 
-    return NuevaRealizadaForm(practica, *args, **kwargs)
+    return RealizadaForm(*args, practica=practica, **kwargs)
+
+
+
+def crearUrls(acciones, practica, usuario):
+
+    generadoresUrls = {
+        Practica.Acciones.programar : lambda practica: pathActualizar(practica.nombreTipo(), "programar", practica.id),
+        Practica.Acciones.reprogramar : lambda practica: pathActualizar(practica.nombreTipo(), "reprogramar", practica.id),
+        Practica.Acciones.realizar : lambda practica: pathActualizar(practica.nombreTipo(), "realizar", practica.id),
+        Practica.Acciones.cancelar : lambda practica: pathActualizar(practica.nombreTipo(), "cancelar", practica.id),
+        Practica.Acciones.facturar : lambda practica: pathFacturar(practica.id),
+    }
+
+    permitidas = practica.estado().accionesPosibles().intersection( usuario.acciones() )
+    retorno = []
+
+    for accion in acciones:
+        if accion in permitidas:
+            generador = generadoresUrls[accion]
+            retorno.append([accion, generador(practica)])
+
+    return retorno
+
+
+
+class GestorListadoPractica(GestorListadoQueryset):
+
+    def ordenar(self):
+        self.queryset = self.queryset.annotate(
+            ultima_mod=dbMax('estado__marca')
+        ).filter(
+            estado__marca=dbF('ultima_mod')
+        )
+        super().ordenar()

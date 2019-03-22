@@ -1,39 +1,85 @@
 {% extends 'GestionDePracticas/ver.html' %}
-{% load practicaUrl %}
 
 {% block estado %}
-<div class="marco">
-    <h4>Realizacion</h4>
+<h4 class="titulo">Realizacion</h4>
+<div class="linea-titulo"></div>
+<p class="subtitulo">Actualizada el dia {{ estado.marca|date:"l d/m/y" }} a las {{ estado.marca|date:"H:i" }}</p>
 
-    <p><strong>Fecha de realizacion:</strong> {{ estado.inicio|date:"d/m/y" }}</p>
-    <p><strong>Hora de inicio:</strong> {{ estado.inicio|date:"H:i" }}</p>
-    <p><strong>Hora de finalizacion:</strong> {{ estado.finalizacion|date:"H:i" }}</p>
-    <p><strong>Duracion real:</strong> {{ estado.duracion }} min</p>
-    <p><strong>Importe total:</strong> ${{ estado.total }}</p>
-</div>
-
-<div class="marco">
-    <h4>Datos clinicos de la mascota</h4>
-
-    {% if estado.condicionPreviaMascota %}
-    <strong>Condicion previa a la atencion</strong>
-    <p>{{ estado.condicionPreviaMascota }}</p>
-    {% endif %}
-
-    {% if estado.realizada_servicios.count %}
+<p><strong>Inicio:</strong> {{ estado.inicio|date:"d/m/y" }} a las {{ estado.inicio|date:"H:i" }}hs.</p>
+<p><strong>Finalizacion:</strong> {{ estado.finalizacion|date:"d/m/y" }} a las {{ estado.finalizacion|date:"H:i" }}hs.</p>
+<p><strong>Duracion real:</strong> {{ estado.duracion }} min</p>
+<p><strong>Importe total:</strong> ${{ estado.total|floatformat:2 }}</p>
+<p><strong>Servicios realizados:</strong>
+<table class="table-bordered table-responsive detalles" id="servicios_realizados">
+    <colgroup>
+        <col class="cantidad">
+        <col class="servicio">
+        <col class="precio">
+        <col class="importe">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Cantidad</th>
+            <th>Servicio</th>
+            <th>Precio</th>
+            <th>Importe</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for detalle in estado.realizada_servicios.all %}
-            {% if detalle.observaciones %}
-            <p><strong>{{ detalle.servicio.nombre }}: </strong>{{ detalle.observaciones }}</p>
-            {% endif %}
+        <tr>
+            <td>{{ detalle.cantidad }}</td>
+            <td>{{ detalle.servicio.nombre }}</td>
+            <td>{{ detalle.precio|floatformat:2 }}</td>
+            <td>{{ detalle.precioTotal|floatformat:2 }}</td>
+        </tr>
         {% endfor %}
-    {% endif %}
-
-    {% if estado.resultados %}
-    <strong>Resultados de la atencion</strong>
-    <p>{{ estado.resultados }}</p>
-    {% endif %}
-
-    <p><a href="{% practicaUrl practica.nombreTipo "realizacion" id=practica.id %}">Modificar detalles de la realizacion</a></p>
-</div>
+        <tr class="breve">
+            <td colspan="3">Tipo de atencion {{ practica.tipoDeAtencion.nombre }} (%{{ practica.tipoDeAtencion.recargo|floatformat:2 }})</td>
+            <td>{{ estado.ajusteServicios|floatformat:2 }}</td>
+        </tr>
+        <tr class="breve">
+            <td colspan="3">Total</td>
+            <td>{{ estado.totalServicios|floatformat:2 }}</td>
+        </tr>
+    </tbody>
+</table>
+</p>
+<p><strong>Productos utilizados:</strong>
+<table class="table-bordered table-responsive detalles" id="productos_utilizados">
+    <colgroup>
+        <col class="cantidad">
+        <col class="producto">
+        <col class="precio">
+        <col class="importe">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Cantidad</th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Importe</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in estado.realizada_productos.all %}
+        <tr>
+            <td>{{ detalle.cantidad }}</td>
+            <td>{{ detalle.producto.nombre }}</td>
+            <td>{{ detalle.precio|floatformat:2 }}</td>
+            <td>{{ detalle.precioTotal|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="breve">
+            <td colspan="3">Tipo de atencion {{ practica.tipoDeAtencion.nombre }} (%{{ practica.tipoDeAtencion.recargo|floatformat:2 }})</td>
+            <td>{{ estado.ajusteProductos|floatformat:2 }}</td>
+        </tr>
+        <tr class="breve">
+            <td colspan="3">Total</td>
+            <td>{{ estado.totalProductos|floatformat:2 }}</td>
+        </tr>
+    </tbody>
+</table>
+</p>
 
 {% endblock %}
