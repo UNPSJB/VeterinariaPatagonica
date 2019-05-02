@@ -263,7 +263,7 @@ def facturarPractica(request, id):
 
             with transaction.atomic():
                 factura.save()
-                factura.factura_productos.set(detalles, bulk=False)
+                factura.detalles_producto.set(detalles, bulk=False)
                 practica.hacer(Practica.Acciones.facturar.name)
 
             return HttpResponseRedirect(
@@ -281,4 +281,3 @@ def facturarPractica(request, id):
 
     template = loader.get_template('GestionDeFacturas/facturarPractica.html')
     return HttpResponse(template.render(context, request))
-

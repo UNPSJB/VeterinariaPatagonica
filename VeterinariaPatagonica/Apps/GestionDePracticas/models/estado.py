@@ -9,7 +9,7 @@ from django.utils import timezone
 
 from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeProductos.models import Producto
-from Apps.GestionDeFacturas.models import Factura
+#from Apps.GestionDeFacturas.models import Factura
 from .practica import *
 
 
@@ -492,10 +492,10 @@ class Realizada(Estado):
     )
 
     def facturar(self):
-        return Facturada.objects.create(
-            practica=self.practica
-        )
-
+        # return Facturada.objects.create(
+        #     practica=self.practica
+        # )
+        return 0
     @property
     def duracion(self):
         return int((self.finalizacion-self.inicio).total_seconds() / 60)

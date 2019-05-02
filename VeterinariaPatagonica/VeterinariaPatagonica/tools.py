@@ -87,7 +87,6 @@ class GestorListado:
     def _url(self, orden):
 
         get = self.get.copy()
-
         for posicion,item in enumerate(orden, start=1):
             nombre = item[0]
             ascendente = item[1]
@@ -124,11 +123,12 @@ class GestorListado:
         )
 
         self.path = request.path
+        #raise Exception(str(request.GET))
         self.get = request.GET.copy()
         desde = self.formPagina.desde()
         self.get[self.clave_desde] = "{:d}"
         self.url_pagina = "%s?%s" % (self.path, self.get.urlencode(safe="{}:"))
-        self.get[self.clave_desde] = desde
+        self.get[self.clave_desde] = str(desde)
 
         return (self.formOrden is None or self.formOrden.is_valid()) \
         and (self.formPagina is None or self.formPagina.is_valid())

@@ -311,6 +311,3 @@ class QuerysetFormSet(BaseFormSet):
             item.save(force_update=True, update_fields=update_fields)
         for item in self.para_eliminar:
             item.delete()
-
-
-

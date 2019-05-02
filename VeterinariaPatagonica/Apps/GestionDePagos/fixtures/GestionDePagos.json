@@ -1,1 +1,1 @@
-[]
+[{"model": "GestionDePagos.pago", "pk": 1, "fields": {"fecha": "2019-04-30", "importeTotal": 594, "factura": 1, "baja": false}}]

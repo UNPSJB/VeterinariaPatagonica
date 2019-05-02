@@ -1,1 +1,1 @@
-[]
+[{"model": "GestionDeFacturas.factura", "pk": 1, "fields": {"tipo": "B", "cliente": 2, "fecha": "2019-04-30", "total": 594, "recargo": "0.00", "descuento": "0.00", "practica": 1, "baja": false}}, {"model": "GestionDeFacturas.factura", "pk": 2, "fields": {"tipo": "C", "cliente": 2, "fecha": "2019-04-30", "total": 75108, "recargo": "0.00", "descuento": "0.00", "practica": 3, "baja": false}}]

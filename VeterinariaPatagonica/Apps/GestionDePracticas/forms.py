@@ -187,7 +187,7 @@ class PracticaForm(forms.ModelForm):
 
         self.fields["tipoDeAtencion"].empty_label = None
         self.fields["tipoDeAtencion"].label = "Tipo de atencion"
-        self.fields["tipoDeAtencion"].queryset = TipoDeAtencion.objects.habilitados()
+        self.fields["tipoDeAtencion"].queryset = TipoDeAtencion.objects.habilitados().order_by("nombre")
         self.fields["tipoDeAtencion"].widget.attrs.update({"class":"form-control"})
 
 

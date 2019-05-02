@@ -5,7 +5,7 @@ from django.core.validators import RegexValidator
 from decimal import Decimal
 from django.db.models import Q
 from django.utils import timezone as djangotimezone
-from Apps.GestionDePracticas import models as praModel
+#from Apps.GestionDePracticas import models as praModel
 #from Apps.GestionDePagos import models as pagModel
 # Create your models here.
 
@@ -111,7 +111,7 @@ class Factura(models.Model):
     )'''
 
     practica = models.ForeignKey(
-        praModel.Practica,
+        Practica,
         on_delete = models.CASCADE,
         null = True,
         blank = True

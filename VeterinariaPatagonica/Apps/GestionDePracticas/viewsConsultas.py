@@ -133,7 +133,7 @@ def crear(request):
 
             formCreacion = CreacionForm(acciones, request.POST, vacio="Guardar")
             formPractica = PracticaForm(request.POST)
-            formsetServicios = CirugiaServicioFormSet(request.POST, prefix="servicio")
+            formsetServicios = ConsultaServicioFormSet(request.POST, prefix="servicio")
 
             if formPractica.is_valid() and formsetServicios.is_valid() and formCreacion.is_valid():
 
@@ -160,7 +160,7 @@ def crear(request):
 
             formCreacion = CreacionForm(acciones, vacio="Guardar")
             formPractica = PracticaForm()
-            formsetServicios = CirugiaServicioFormSet(prefix="servicio")
+            formsetServicios = ConsultaServicioFormSet(prefix="servicio")
 
         context["formPractica"] = formPractica
         context["formsetServicios"] = formsetServicios

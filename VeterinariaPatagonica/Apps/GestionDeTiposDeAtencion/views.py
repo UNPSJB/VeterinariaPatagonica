@@ -43,6 +43,7 @@ def habilitados(request):
 
     template = loader.get_template( plantilla("habilitados") )
     context = {"gestor" : gestor}
+    #raise Exception(str(gestor.encabezado))
     return HttpResponse(template.render( context, request ))
 
 

@@ -110,7 +110,7 @@ class Servicio(models.Model):
         return "%s: %s $%.2f (%d min.)" % (
             Areas[self.tipo].nombrePlural.capitalize(),
             self.nombre,
-            self.precio(),
+            self.precioTotal(),
             self.tiempoEstimado,
         )
 
@@ -153,4 +153,3 @@ class ServicioProducto(models.Model):
 
     def precioTotal(self):
         return self.producto.precioEnUnidad(self.cantidad)
-
