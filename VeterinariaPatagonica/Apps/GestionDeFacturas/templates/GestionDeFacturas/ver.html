@@ -28,6 +28,7 @@ Datos de la factura
             {% if factura.pago %}
                 <p id = "esPagada"> <b>Pago:</b> Pagada</p>
                 <p> <b>Fecha Pago:</b> {{factura.pago.fecha}}</p>
+                <p> <b>Valor Abonado:</b> ${{factura.pago.importeTotal}}</p>
             {%else%}
                 <p id = "esPagada"> <b>Pago:</b> No Pagada</p>
             {%endif%}
@@ -57,6 +58,7 @@ Datos de la factura
             {% endif %}
 
               <!-- Tabla para mostrar los detalles de la factura. -->
+
               <div class= "tabla-de-productos">
                 <table class="table table-bordered">
                   <div class="col-md-12">
@@ -107,6 +109,7 @@ Datos de la factura
                 </div>
                 </table>
               </div>
+
 
             <table class="table table-bordered">
               <thead>
@@ -172,11 +175,12 @@ Datos de la factura
                   {% endif %}
                   <tr>
                     <div class="col-md-11">
-                      <th><big>Total</big></th>
+                      <th><big>Total a Pagar</big></th>
                     </div>
                     <div class="col-md-1">
                       {% if factura.tipo == "C" %}
                         <td> <big class="pull-right"><b>${{factura.restar_iva}}</b></big> </td>
+                        <!-- <td> <big class="pull-right">${{factura.total}}</big> </td> -->
                       {% else %}
                         <td><big class="pull-right"><b>${{ factura.total}} </b></big></td>
                       {% endif %}

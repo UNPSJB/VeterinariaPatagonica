@@ -219,6 +219,25 @@ class Factura(models.Model):
         return importe + recargo + descuento
 
 
+    def obtener_adelanto(self):
+        adelanto = self.practica.adelanto.importe
+        return adelanto
+
+    def sumar_total_adelanto(self):
+        if self.practica.adelanto:
+            adelanto = self.practica.adelanto.importe
+        else:
+            adelanto = 0
+        if self.tipo == "C":
+            total = Factura.restar_iva(self)
+        else:
+            total = self.total
+
+        valorFinal = total + adelanto
+        return valorFinal
+
+
+
     class Meta:
         ordering = ["tipo", "fecha"]
 

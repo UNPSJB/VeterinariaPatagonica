@@ -21,12 +21,20 @@ Muestra datos del pago
     <div class="pagosCuerpo">
 
         {% if pago %}
-        <div class="well">
-            <p>Identificador: {{ pago.id }}</p>
-            <p>Fecha: {{ pago.fecha }} </p>
-            <p>Importe Total: {{ pago.importeTotal}}</p>
-            <p>Factura: {{pago.factura}}</p>
-
+        <div class="well col-md-12">
+          <div class="col-md-6">
+            <p><big><b><u>Pago:</u></b></big></p>
+            <p><u>Identificador:</u> <b>{{ pago.id }}</b></p>
+            <p> <u>Fecha de emisión:</u> <b>{{ pago.fecha }}</b></p>
+            <p><u>Importe Total:</u> <b>$ {{ pago.importeTotal}}</b></p>
+          </div>
+          <div class="col-md-6">
+            <p><big><b><u>Factura:</u></b></big></p>
+            <p><u>Tipo:</u> <b>{{pago.factura.tipo}}</b></p>
+            <p><u>Cliente:</u> <b>{{pago.factura.cliente}}</b></p>
+            <p><u>Fecha de emisión:</u> <b>{{pago.factura.fecha}}</b></p>
+            <p><u>Importe Total:</u> <b> $ {{pago.factura.total}}</b></p>
+          </div>
         </div>
         {% else %}
 

@@ -30,7 +30,8 @@ def crear(request, idFactura = None): #, factura_id=None
 
     if not pagos:
 
-        pago=Pago(importeTotal=factura.total, factura=factura)
+        pago=Pago(importeTotal=factura.sumar_total_adelanto, factura=factura)
+
         if request.method == 'POST':
             formulario = PagoForm(request.POST, instance=pago)
             if formulario.is_valid():
