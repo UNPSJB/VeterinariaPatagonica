@@ -3,14 +3,31 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from VeterinariaPatagonica import tools
 from decimal import Decimal
 from django.db.models import Q
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 
 # Create your models here.
 
 #Esta clase se comunica con la BD
-class BaseClienteManager(models.Manager):
+'''class BaseClienteManager(models.Manager):
     pass
 
-ClienteManager = BaseClienteManager.from_queryset(tools.BajasLogicasQuerySet)
+ClienteManager = BaseClienteManager.from_queryset(tools.BajasLogicasQuerySet)'''
+
+
+class ClienteQueryset(BajasLogicasQuerySet):
+
+    MAPEO_ORDEN = {
+        "orden_dniCuit" : ["dniCuit"],
+        "orden_apellidos" : ["apellidos"],
+        "orden_nombres" : ["nombres"],
+        "orden_direccion" : ["direccion"],
+        "orden_localidad" : ["localidad"],
+        "orden_tipoDeCliente" : ["tipoDeCliente"],
+    }
+
+ClienteManager = models.Manager.from_queryset(ClienteQueryset)
+
+
 
 class Cliente (models.Model):
 

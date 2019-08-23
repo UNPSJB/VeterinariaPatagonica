@@ -11,6 +11,8 @@ from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
 
+from VeterinariaPatagonica.tools import GestorListadoQueryset
+
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
 #Workbook nos permite crear libros en excel
@@ -238,8 +240,19 @@ def ReporteClientesPDF(request):
         return response
     return HttpResponse(template.render(contexto,request))
 
-def verHabilitados(request, irA=0):
+'''def verHabilitados(request, irA=0):
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+        ]
+    )
     clientesQuery = Cliente.objects.habilitados()
+    gestor.cargar(request, clientesQuery)
+    gestor.ordenar()
+
     clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
     #print("DESDE HABILITADOS",clientes)
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
@@ -260,8 +273,28 @@ def verHabilitados(request, irA=0):
         'clientesQuery' : clientesQuery,
         'usuario' : request.user,
         'clientes': clientes,
+        "gestor": gestor
     }
-    return HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(contexto, request))'''
+
+def verHabilitados(request):
+    """ Listado de tipos de atencion habilitados """
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+        ]
+    )
+
+    clientes = Cliente.objects.habilitados()
+    gestor.cargar(request, clientes)
+    gestor.ordenar()
+
+    template = loader.get_template('GestionDeClientes/verHabilitados.html')
+    context = {"gestor" : gestor}
+    return HttpResponse(template.render( context, request ))
 
 def verDeshabilitados(request):
     clientesQuery = Cliente.objects.deshabilitados()
