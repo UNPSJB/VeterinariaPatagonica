@@ -1,0 +1,49 @@
+<form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
+
+    <div class="hidden orden-listado">
+        {% for field in gestor.formOrden %}
+            {{ field }}
+        {% endfor %}
+        {{ gestor.formPagina.desde }}
+    </div>
+
+    <div class="sombreado">
+        {{ gestor.formPagina.resultados }}
+        <button class="btn btn-default filtrar" type="submit">Mostrar</button>
+    </div>
+
+    <table class="table table-bordered table-responsive items">
+        <colgroup>
+            <col class="columna{% if gestor.encabezado.orden_dniCuit.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_apellidos.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_nombres.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_direccion.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_tipoDeCliente.activa %} activa{% endif %}"/>
+        </colgroup>
+        <thead>
+            <tr>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_dniCuit %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_apellidos %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombres %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_direccion %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_tipoDeCliente %}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cliente in gestor.items_actuales %}
+                <tr>
+                    <td>
+                        <a href="{% url 'clientes:clienteVer' cliente.id %}">
+                            {{ cliente.dniCuit }}</a>
+                    </td>
+                        <td> <p>{{cliente.apellidos}}</p></td>
+                        <td> <p>{{cliente.nombres }}</p></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div>
+    {% include "snippets/paginacion.html" with links=gestor.paginas%}
+    </div>
+</form>
