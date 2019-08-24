@@ -75,12 +75,11 @@ def ClienteFormFactory(cliente=None):
 
         def clean_dniCuit(self):
             dato = self.data["dniCuit"]
-            return dato
-            '''try:
+            try:
                 return lforms.ARDNIField().clean(dato)
             except forms.ValidationError:
                 pass
-            return lforms.ARCUITField().clean(dato)'''
+            return lforms.ARCUITField().clean(dato)
 
         def clean(self):
             cleaned_data = super().clean()
