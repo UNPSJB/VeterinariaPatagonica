@@ -4,7 +4,7 @@
 Gestion de Clientes | Ver Habilitados
 {% endblock %}
 
-{% block clienteTitulo %}
+{% block tituloSeccion %}
 Clientes Habilitados
 {% endblock %}
 
@@ -25,14 +25,14 @@ Clientes Habilitados
 
     <div class="menu-colapsable" >
         <div class="item-colapsable" >
-            <a role="button" href="#tipodeatencion-acciones" data-toggle="collapse">
+            <a role="button" href="#cliente-acciones" data-toggle="collapse">
                 <i class="glyphicon glyphicon-tasks"></i>
                 <span>Acciones</span>
             </a>
-            <div class="contenido-colapsable collapse in" id="tipodeatencion-acciones">
+            <div class="contenido-colapsable collapse in" id="cliente-acciones">
                 <ul class="acciones sinestilo">
     
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'tiposDeAtencion:crear' %}">Crear nuevo tipo de atencion</a></li>
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'clientes:clienteCrear' %}">Crear nuevo cliente</a></li>
     
                 </ul>
             </div>

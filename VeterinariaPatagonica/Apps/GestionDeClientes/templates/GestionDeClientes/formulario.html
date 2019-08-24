@@ -1,11 +1,17 @@
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
 {% load static %}
 
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+
 {% block titulo %}
 Gestion de Clientes | {{titulo}}
 {% endblock %}
 
-{% block clienteTitulo %}
+{% block tituloSeccion %}
 {% if titulo == 1 %}
     Nuevo Cliente
 {% endif %}
@@ -14,7 +20,7 @@ Gestion de Clientes | {{titulo}}
 {% endif %}
 {% endblock %}
 
-{% block clienteSubtitulo %}
+{% block subtitulo %}
 {% if titulo == 1 %}
     Agrega un Cliente al listado
 {% endif %}
@@ -23,7 +29,7 @@ Gestion de Clientes | {{titulo}}
 {% endif %}
 {% endblock %}
 
-{% block clienteContenido %}
+{% block contenido %}
 
     <div class="clienteCuerpo">
         <form class="form-horizontal formulario" action="" method="post">
