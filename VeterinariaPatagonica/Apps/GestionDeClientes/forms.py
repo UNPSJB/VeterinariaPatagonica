@@ -2,6 +2,7 @@ from django import forms
 from .models import Cliente
 from localflavor.ar import forms as lforms
 
+
 from django.core.validators import RegexValidator
 #Para que no pinche instalar -> pip install django-localflavor
 
@@ -74,12 +75,12 @@ def ClienteFormFactory(cliente=None):
 
         def clean_dniCuit(self):
             dato = self.data["dniCuit"]
-            try:
+            return dato
+            '''try:
                 return lforms.ARDNIField().clean(dato)
             except forms.ValidationError:
                 pass
-
-            return lforms.ARCUITField().clean(dato)
+            return lforms.ARCUITField().clean(dato)'''
 
         def clean(self):
             cleaned_data = super().clean()
