@@ -278,13 +278,14 @@ def ReporteClientesPDF(request):
     return HttpResponse(template.render(contexto, request))'''
 
 def verHabilitados(request):
-    """ Listado de tipos de atencion habilitados """
+    """ Listado de clientes habilitados """
 
     gestor = GestorListadoQueryset(
         orden=[
             ["orden_dniCuit", "DNI/CUIT"],
             ["orden_apellidos", "Apellidos"],
             ["orden_nombres", "Nombres"],
+            ["orden_tipoDeCliente", "Tipo De Cliente"],
         ]
     )
 
@@ -296,7 +297,29 @@ def verHabilitados(request):
     context = {"gestor" : gestor}
     return HttpResponse(template.render( context, request ))
 
+
 def verDeshabilitados(request):
+    """ Listado de clientes deshabilitados """
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+            ["orden_tipoDeCliente", "Tipo De Cliente"],
+        ]
+    )
+
+    clientes = Cliente.objects.deshabilitados()
+    gestor.cargar(request, clientes)
+    gestor.ordenar()
+
+    template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
+    context = {"gestor" : gestor}
+    return HttpResponse(template.render( context, request ))
+
+
+'''def verDeshabilitados(request):
     clientesQuery = Cliente.objects.deshabilitados()
     clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
     #print(clientes)
@@ -320,7 +343,7 @@ def verDeshabilitados(request):
         'clientes': clientes,
     }
 
-    return HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(contexto, request))'''
 
 
 
