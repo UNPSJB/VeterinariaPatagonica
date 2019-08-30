@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'Apps.GestionDeServicios',
     'Apps.GestionDeTiposDeAtencion',
     'Apps.Usuarios',
+    'localflavor'
 ]
 
 MIDDLEWARE = [
