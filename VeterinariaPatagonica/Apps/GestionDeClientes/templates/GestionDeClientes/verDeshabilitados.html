@@ -4,130 +4,28 @@
 Gestion de Clientes | Ver Deshabilitados
 {% endblock %}
 
-{% block clienteTitulo %}
+{% block tituloSeccion %}
 Clientes Deshabilitados
 {% endblock %}
 
-{% block clienteSubtitulo %}
+{% block subtitulo %}
 Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
 {% block secciones %}
-{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% include './snippets/secciones.html' with pagina='verDeshabilitados' %}
 {% endblock %}
 
-{% block clienteContenido %}
+{% block contenido %}
 
-{% load navigation_filters %}
+    {% if gestor.numero_items %}
 
-<!-- Listado -->
-<div class="clienteCuerpo" >
-
-    <div id="filtrarClientesDeshabilitados">
-            <a role="button" href="#filtrarClientes" data-toggle="collapse">
-                <i class="glyphicon glyphicon-tasks"></i>
-                <span>Criterios de busqueda</span>
-            </a>
-        <div id="filtrarClientes" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                            <input name="dniCuit" placeholder="DNI/CUIT">
-                            <input name="nombres" placeholder="Nombres">
-                            <input name="apellidos" placeholder="Apellidos">
-
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
-
-                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
-
-                            </button>
-                        </form>
-                    </div>
-            </form>
-        </div>
-    </div>
-    <br>
-    <div class="clienteLineaTitulo"> </div>
-
-    <br>
-
-    <p> Los siguientes clientes pueden ser habilitados o eliminados.  </p>
-
-    {% if clientes %}
-            <div class="table-responsive" id="tabla">
-                <table class="table clienteListado">
-                    <thead>
-                        <tr>
-                            <th id="deshabilitados-dni"> DNI/CUIT </th>
-                            <th id="deshabilitados-apellido"> Apellidos </th>
-                            <th id="deshabilitados-nombre"> Nombres </th>
-
-                            <th id="deshabilitados-acciones"> Acciones </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for cliente in clientes %}
-                            <tr>
-                                <td> <p>{{cliente.dniCuit}}</p></td>
-                                <td> <p>{{cliente.apellidos}}</p></td>
-                                <td><p>{{cliente.nombres }}</p></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
-                                            Acción <span class="caret"></span>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <li><a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
-                                                <i class="glyphicon glyphicon-eye-open" ></i>
-                                            </a></li>
-                                            <li><a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Cliente">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'clientes:clienteHabilitar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Cliente">
-                                                <i class="glyphicon glyphicon-plus"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'clientes:clienteEliminar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Cliente">
-                                                <i class="glyphicon glyphicon-remove"> </i>
-                                            </a></li>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        {% include "./snippets/listado.html" %}
 
     {% else %}
 
-        <p> No hay clientes deshabilitados</p>
+        <p><strong>No hay clientes deshabilitados</strong></p>
 
     {% endif %}
-    <div align="center">
-        <ul class="pagination pagination-sm">
-            {% if clientes.has_previous %}
-                <li><a href="?page={{ clientes.previous_page_number }}" class="btn btnpages">
-                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
-            {% endif %}
-
-            {% for page in clientes.paginator.page_range|page_filter:clientes %}
-                <li class="{% if clientes.number == page %}active{% endif %}">
-                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
-            {% endfor %}
-
-            {% if clientes.has_next %}
-                <li>
-                    <a href="?page={{ clientes.next_page_number }}" class="btn btnpages">
-                        <i class="glyphicon glyphicon-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-
-</div>
 
 {% endblock %}
