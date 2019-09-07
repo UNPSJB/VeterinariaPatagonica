@@ -69,6 +69,20 @@ class Cliente (models.Model):
     CC_MAX_PRECIO = Decimal(3000.00)
     PRECIO = PARTE_ENTERA + PARTE_DECIMAL
 
+    
+    CC_PARTE_ENTERA = 4
+    CC_MIN_PRECIO = Decimal(0)
+    CC_MAX_PRECIO = Decimal(3000.00)
+    PRECIO = CC_PARTE_ENTERA + PARTE_DECIMAL
+
+    
+    DESC_PARTE_ENTERA = 3
+    PARTE_DECIMAL = 2
+    DESC_MIN = Decimal(0)
+    DESC_MAX = Decimal(100.00)
+    DEFAULT = Decimal(0)
+    DESCUENTO = DESC_PARTE_ENTERA + PARTE_DECIMAL
+
     dniCuit = models.CharField(
         help_text= "Dni/Cuit del Cliente",
         max_length = MAXDNICUIT,
@@ -183,14 +197,6 @@ class Cliente (models.Model):
         }
     )
 
-
-    DESC_PARTE_ENTERA = 3
-    PARTE_DECIMAL = 2
-    DESC_MIN = Decimal(0)
-    DESC_MAX = Decimal(100.00)
-    DEFAULT = Decimal(0)
-    DESCUENTO = DESC_PARTE_ENTERA + PARTE_DECIMAL
-
     descuentoServicio = models.DecimalField(
         max_digits= DESCUENTO,
         decimal_places= PARTE_DECIMAL,
@@ -212,12 +218,6 @@ class Cliente (models.Model):
             MaxValueValidator(DESC_MAX, message=("El descuento no puede ser mayor a {:.%df}" % (PARTE_DECIMAL)).format(DESC_MAX)),
         ]
     )
-
-
-    CC_PARTE_ENTERA = 4
-    CC_MIN_PRECIO = Decimal(0)
-    CC_MAX_PRECIO = Decimal(3000.00)
-    PRECIO = CC_PARTE_ENTERA + PARTE_DECIMAL
 
     cuentaCorriente = models.DecimalField(
         max_digits = PRECIO,

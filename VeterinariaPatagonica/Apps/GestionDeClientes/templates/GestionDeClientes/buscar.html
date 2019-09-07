@@ -1,0 +1,91 @@
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+{% load static %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block cliente-titulo %}
+Buscar cliente
+{% endblock %}
+
+
+{% block cliente-contenido %}
+
+    <div id="form-buscar-errores">
+        {% if gestor.formFiltros.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include 'snippets/formErrores.html' with form=gestor.formFiltros %}
+                </ul>
+            </div>
+        {% endif %}
+    </div>
+
+    <form class="form-horizontal" action="{{ request.get_full_path }}" method="GET">
+    {% with form=gestor.formFiltros %}
+        <div class="form-group {{ form.dniCuit.name }} {% if form.dniCuit.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.dniCuit %}
+        </div>
+        <div class="form-group {{ form.apellidos.name }} {% if form.apellidos.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.apellidos %}
+        </div>
+        <div class="form-group {{ form.nombres.name }} {% if form.nombres.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.nombres %}
+        </div>
+        <div class="form-group {{ form.direccion.name }} {% if form.direccion.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.direccion %}
+        </div>
+        <div class="form-group {{ form.localidad.name }} {% if form.localidad.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.localidad %}
+        </div>
+        <div class="form-group {{ form.celular.name }} {% if form.celular.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.celular %}
+        </div>
+        <div class="form-group {{ form.telefono.name }} {% if form.telefono.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.telefono %}
+        </div>
+        <div class="form-group {{ form.email.name }} {% if form.email.errors %}has-error{% endif %}">
+            {% include "snippets/field.html" with field=form.email %}
+        </div>
+        {% endwith %}
+
+        {% include "snippets/form.html" with form=gestor.formPagina accion="Buscar" %}
+
+        {% if gestor.formFiltros.filtros %}
+            {% if gestor.numero_items %}
+            {% with primero=gestor.rango_actual.0|add:1 ultimo=gestor.rango_actual.1 total=gestor.numero_items %}
+
+                <div>
+                    <p><strong>
+                        Resultados {{ primero }} al {{ ultimo }} de {{ total }}
+                    </strong></p>
+
+                    {% for cliente in gestor.items_actuales %}
+
+                    <div class="sombreado">
+                        <p><strong><a href="{% url path id=cliente.id %}">
+                            {{ cliente.get_tipo_display }} nº {{ cliente.id }})
+                    </div>
+
+                    {% endwith %}
+                    {% endfor %}
+                </div>
+
+                <div>
+                {% include "snippets/paginacion.html" with links=gestor.paginas %}
+                </div>
+
+            {% endwith %}
+            {% else %}
+                <p><strong>Sin resultados</strong></p>
+            {% endif %}
+        {% endif %}
+
+    </form>
+
+{% endblock %}

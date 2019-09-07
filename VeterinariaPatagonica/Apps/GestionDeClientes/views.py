@@ -4,13 +4,10 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
-
-
 from .models import Cliente
 from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
-
 from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 #Vista genérica para mostrar resultados
@@ -165,8 +162,6 @@ def ReporteClientesExcel(request):
     return HttpResponse(template.render(contexto,request))
 
 
-
-
 def cabecera(pdf):
     # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
     archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat.png'
@@ -240,43 +235,6 @@ def ReporteClientesPDF(request):
         return response
     return HttpResponse(template.render(contexto,request))
 
-'''def verHabilitados(request, irA=0):
-
-    gestor = GestorListadoQueryset(
-        orden=[
-            ["orden_dniCuit", "DNI/CUIT"],
-            ["orden_apellidos", "Apellidos"],
-            ["orden_nombres", "Nombres"],
-        ]
-    )
-    clientesQuery = Cliente.objects.habilitados()
-    gestor.cargar(request, clientesQuery)
-    gestor.ordenar()
-
-    clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
-    #print("DESDE HABILITADOS",clientes)
-    template = loader.get_template('GestionDeClientes/verHabilitados.html')
-
-    paginator = Paginator(clientesQuery, 1)
-    page = request.GET.get('page')
-
-    try:
-        clientes = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        clientes = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        clientes = paginator.page(paginator.num_pages)
-
-    contexto = {
-        'clientesQuery' : clientesQuery,
-        'usuario' : request.user,
-        'clientes': clientes,
-        "gestor": gestor
-    }
-    return HttpResponse(template.render(contexto, request))'''
-
 def verHabilitados(request):
     """ Listado de clientes habilitados """
 
@@ -286,12 +244,14 @@ def verHabilitados(request):
             ["orden_apellidos", "Apellidos"],
             ["orden_nombres", "Nombres"],
             ["orden_tipoDeCliente", "Tipo De Cliente"],
-        ]
+        ],
+        claseFiltros=FiltradoForm,
     )
 
     clientes = Cliente.objects.habilitados()
     gestor.cargar(request, clientes)
     gestor.ordenar()
+    gestor.filtrar()
 
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
     context = {"gestor" : gestor}
@@ -307,43 +267,34 @@ def verDeshabilitados(request):
             ["orden_apellidos", "Apellidos"],
             ["orden_nombres", "Nombres"],
             ["orden_tipoDeCliente", "Tipo De Cliente"],
-        ]
+        ],
+        claseFiltros=FiltradoForm,
     )
 
     clientes = Cliente.objects.deshabilitados()
     gestor.cargar(request, clientes)
     gestor.ordenar()
+    #if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+    gestor.filtrar()
 
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
     context = {"gestor" : gestor}
     return HttpResponse(template.render( context, request ))
 
 
-'''def verDeshabilitados(request):
-    clientesQuery = Cliente.objects.deshabilitados()
-    clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
-    #print(clientes)
-    template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
+def buscar(request):
 
-    paginator = Paginator(clientesQuery, 15)
-    page = request.GET.get('page')
+    #gestor = GestorListadoPractica(claseFiltros=BusquedaCirugiaForm)
+    gestor = GestorListadoQueryset()
+    gestor.cargar(request, clientes)
 
-    try:
-        clientes = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        clientes = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        clientes = paginator.page(paginator.num_pages)
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
 
-    contexto = {
-        'clientesQuery' : clientesQuery,
-        'usuario' : request.user,
-        'clientes': clientes,
-    }
+    context = {"gestor" : gestor}
 
-    return HttpResponse(template.render(contexto, request))'''
+    template = loader.get_template('GestionDeClientes/buscar.html' )
+    return HttpResponse(template.render( context, request ))
 
 
 

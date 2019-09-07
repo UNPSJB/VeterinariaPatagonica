@@ -150,10 +150,12 @@ class FiltradoForm(forms.Form):
     )
 
     def filtros(self):
-        if self.cleaned_data:
-            fields = ("dniCuit", "nombres", "apellidos", "mascota")
-            datos = { k : self.cleaned_data[k] for k in fields }
-        return datos
+        retorno = {}
+
+        fields = ("dniCuit", "apellidos", "nombres", "mascota")
+        for field in fields:
+            if field in self.cleaned_data and self.cleaned_data[field]:
+                retorno[field] = self.cleaned_data[field]
 
     def criterio(self):
         if self.cleaned_data and "segun" in self.cleaned_data:

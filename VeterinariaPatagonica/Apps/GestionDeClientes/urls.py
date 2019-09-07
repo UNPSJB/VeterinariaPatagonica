@@ -22,4 +22,5 @@ urlpatterns = [
     #path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
     path('documentacion/', clientes_views.documentation, name="clienteManual"),
     path('documentacionCliente/<int:tipo>', clientes_views.documentationCliente, name="clienteManual"),
+    path('buscar/', clientes_views.buscar, name="buscarCliente"),
 ]
