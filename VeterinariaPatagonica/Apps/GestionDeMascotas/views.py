@@ -181,9 +181,9 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
 @login_required
 def documentationMascota(request, tipo):
     if (tipo==1):
-        template = loader.get_template('GestionDeMascotas/manual_ayuda_cliente/build/archivos/botonHD.html')
+        template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/archivos/botonHD.html')
     elif(tipo==2):
-        template = loader.get_template('GestionDeMascotas/manual_ayuda_cliente/build/archivos/criteriosBusqueda.html')
+        template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/archivos/criteriosBusqueda.html')
 
     contexto = {
         'usuario': request.user,
@@ -194,7 +194,7 @@ def documentationMascota(request, tipo):
 @login_required
 def documentation(request):
 
-    template = loader.get_template('GestionDeMascotas/manual_ayuda_cliente/build/index.html')
+    template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/index.html')
     contexto = {
         'usuario': request.user,
     }
