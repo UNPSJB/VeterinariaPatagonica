@@ -1,0 +1,29 @@
+<div class="menu-colapsable" >
+    <div class="item-colapsable" >
+        <a role="button" href="#mascota-acciones" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Acciones</span>
+        </a>
+        <div class="contenido-colapsable collapse in" id="mascota-acciones">
+            <ul class="acciones sinestilo">
+
+                {% if seccion != 'ver' %}
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaVer'  item.id %}">Ver detalles</a></li>
+                {% endif %}
+
+                {% if seccion != 'modificar' %}
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaModificar' item.id %}">Modificar</a></li>
+                {% endif %}
+
+                {% if item.baja == False %}
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaDeshabilitar' item.id %}">Deshabilitar</a></li>
+                {% else %}
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaHabilitar' item.id %}">Habilitar</a></li>
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'mascotas:mascotaEliminar' item.id %}">Eliminar</a></li>
+                {% endif %}
+
+
+            </ul>
+        </div>
+    </div>
+</div>

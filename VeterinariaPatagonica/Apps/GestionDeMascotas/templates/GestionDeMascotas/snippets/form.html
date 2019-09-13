@@ -1,0 +1,27 @@
+<div class="form-group {{ form.patente.name }} {% if form.patente.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.patente %}
+</div>
+<div class="form-group {{ form.nombre.name }} {% if form.nombre.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.nombre %}
+</div>
+<div class="form-group {{ form.cliente.name }} {% if form.cliente.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.cliente %}
+</div>
+<div class="form-group {{ form.fechaNacimiento.name }} {% if form.fechaNacimiento.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.fechaNacimiento %}
+</div>
+<div class="form-group {{ form.especie.name }} {% if form.especie.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.especie %}
+</div>
+<div class="form-group {{ form.raza.name }} {% if form.raza.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.raza %}
+</div>
+{% if accion %}
+<div class="form-group">
+    <div class=row>
+        <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+        </div>
+     </div>
+</div>
+{% endif %}

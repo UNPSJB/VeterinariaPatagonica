@@ -1,134 +1,32 @@
 {% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
 
 {% block titulo %}
-Gestion de Mascota | Ver Deshabilitados
+Gestion de Mascotas | Ver Deshabilitados
 {% endblock %}
 
-{% block mascotaTitulo %}
-Mascotas Deshabilitadas
+{% block tituloSeccion %}
+Mascotas Deshabilitados
 {% endblock %}
 
-{% block mascotaSubtitulo %}
-Actualmente <strong>no</strong> disponibles para ser asignados a clientes
+{% block subtitulo %}
+Actualmente <strong>no</strong> disponibles
 {% endblock %}
 
 {% block secciones %}
-{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% include './snippets/secciones.html' with pagina='verDeshabilitados' %}
 {% endblock %}
 
-{% block mascotaContenido %}
+{% block contenido %}
 
-{% load navigation_filters %}
+    {% if gestor.numero_items %}
 
-<!-- Listado -->
-<div class="mascotaCuerpo" >
-
-    <div id="filtrar-practicas">
-        <a role="button" href="#filtrarMascotas" data-toggle="collapse">
-            <i class="glyphicon glyphicon-tasks"></i>
-            <span>Criterios de busqueda</span>
-        </a>
-        <div id="filtrarMascotas" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                            <input name="nombre" placeholder="Nombre">
-                            <input name="patente" placeholder="Patente">
-                            <input name="duenio" placeholder="Dueño">
-                            <input name="especie" placeholder="Especie">
-
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
-
-                                    <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                    <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
-
-                            </button>
-                        </form>
-                    </div>
-            </form>
-        </div>
-    </div>
-    <br>
-
-    <div class="mascotaLineaTitulo"> </div>
-
-    <br>
-    <p> Las siguientes mascotas  pueden ser habilitadas o eliminadas: </p>
-
-    {% if mascotas %}
-            <div class="table-responsive" id="tabla">
-                <table class="table mascotaListado">
-                    <thead>
-                        <tr>
-                            <th id="deshabilitados-patente"> Patente </th>
-                            <th id="deshabilitados-nombre"> Nombre </th>
-                            <th id="deshabilitados-cliente"> Dueño </th>
-                            <th id="deshabilitados-especie"> Especie </th>
-                            <th id="deshabilitados-acciones"> Acciones </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for mascota in mascotas %}
-                            <tr>
-                                <td> <p>{{ mascota.patente }}</p></td>
-                                <td> <p>{{ mascota.nombre }}</p></td>
-                                <td><p>{{ mascota.cliente }}</p></td>
-                                <td><p>{{ mascota.especie }}</p></td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
-                                            Acción <span class="caret"></span>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <li><a  href="{% url 'mascotas:mascotaVer' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Mascota">
-                                                <i class="glyphicon glyphicon-eye-open"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'mascotas:mascotaModificar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Mascota">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'mascotas:mascotaHabilitar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Mascota">
-                                                <i class="glyphicon glyphicon-plus"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'mascotas:mascotaEliminar' mascota.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Mascota">
-                                                <i class="glyphicon glyphicon-remove"> </i>
-                                            </a></li>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        {% include "./snippets/listado.html" %}
 
     {% else %}
-        <br>
-        <p> No hay mascotas Deshabilitadas</p>
+
+        <p><strong>No hay mascotas deshabilitados</strong></p>
 
     {% endif %}
-    <div align="center">
-        <ul class="pagination pagination-sm">
-            {% if mascotas.has_previous %}
-                <li><a href="?page={{ mascotas.previous_page_number }}" class="btn btnpages">
-                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
-            {% endif %}
-
-            {% for page in mascotas.paginator.page_range|page_filter:mascotas %}
-                <li class="{% if mascotas.number == page %}active{% endif %}">
-                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
-            {% endfor %}
-
-            {% if mascotas.has_next %}
-                <li>
-                    <a href="?page={{ mascotas.next_page_number }}" class="btn btnpages">
-                        <i class="glyphicon glyphicon-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-</div>
 
 {% endblock %}
+

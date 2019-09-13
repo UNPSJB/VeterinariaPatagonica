@@ -1,44 +1,34 @@
 {% extends "sitioBase.html" %}
 {% load static %}
 
-{% block paginaEstilos %}
-  {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/GestionDeMascotas.css' %}">
-    <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}" >
-{% endblock paginaEstilos %}
-
 {% block paginaSeccionGeneral %}
   <section>
-    {% block secciones %}
 
-    {% endblock %}
+      {% block secciones %}
+      {% include './snippets/secciones.html' with pagina='default' %}
+      {% endblock %}
 
-    <h4 class="mascotaTitulo">
-      {% block mascotaTitulo %}
-      {% endblock mascotaTitulo %}
-    </h4>
-    <br>
-    <div class="mascotaLineaTitulo"> </div>
+      <h4 class="titulo">
+        {% block tituloSeccion %}
+        {% endblock %}
+      </h4>
+      <div class="linea-titulo"></div>
+      <p class="subtitulo">
+          {% block subtitulo %}
+          {% endblock %}
+      </p>
 
-    <p class="mascotaSubtitulo">
-      {% block mascotaSubtitulo %}
-      {% endblock mascotaSubtitulo%}
-    </p>
-
-  {% block mascotaContenido %}
-  {% endblock mascotaContenido %}
+      {% block contenido %}
+      {% endblock contenido %}
+      
   </section>
 {% endblock paginaSeccionGeneral %}
 
 
 {% block footer %}
-  <p>Para mas información de las mascotas haga click aquí<p>
+  <p>Para mas información  de los Mascotas haga click aquí<p>
 {% endblock footer %}
 
 {% block paginaJavascript %}
-    {{block.super}}
-    <script src="{% static 'js/GestionDeMascotas.js' %}"></script>
-    <script src="{% static 'js/moment.min.js' %}"></script>
-    <script src="{% static 'js/es.js' %}"></script>
-    <script src="{% static 'js/bootstrap-datetimepicker.min.js'%}"></script>
+    {{ block.super }}
 {% endblock paginaJavascript %}

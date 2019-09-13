@@ -1,17 +1,17 @@
 {% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
+{% load static %}
 
 {% block paginaEstilos %}
-
     {{ block.super }}
-    {{formulario.media.css}}
-
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block titulo %}
-Gestion de Mascotas | Crear mascota
+Gestion de Mascotas | {{titulo}}
 {% endblock %}
 
-{% block mascotaTitulo %}
+{% block tituloSeccion %}
 {% if titulo == 1 %}
     Nueva Mascota
 {% endif %}
@@ -20,35 +20,31 @@ Gestion de Mascotas | Crear mascota
 {% endif %}
 {% endblock %}
 
-{% block mascotaSubtitulo %}
+{% block subtitulo %}
 {% if titulo == 1 %}
-    Agrega una Mascota al listado
+    Agrega un Mascota al listado
 {% endif %}
 {% if titulo == 2 %}
-    Modifica datos de la Mascota
+    Modifica datos del Mascota
 {% endif %}
 {% endblock %}
 
-
-{% block mascotaContenido %}
+{% block contenido %}
 
     <div class="mascotaCuerpo">
-        <form class="form-horizontal" action="" method="post">
+        <form class="form-horizontal formulario" action="" method="post">
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" %}
+            {% include 'GestionDeMascotas/snippetMascota.html' with campos=formulario accion="Guardar Datos"%}
+
 
         </form>
     </div>
 
-    
-
-
 {% endblock %}
-
 
 {% block paginaJavascript %}
-    {{ block.super }}
-    {{formulario.media.js}}
-{% endblock %}
+    {{block.super}}
+    <script src="{% static 'js/gestion-mascotas.js' %}"></script>
+{% endblock paginaJavascript %}
