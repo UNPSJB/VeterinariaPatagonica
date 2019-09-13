@@ -5,12 +5,13 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from .models import Mascota
-from .forms import MascotaFormFactory
+from .forms import MascotaFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
 from django.urls import reverse_lazy
+from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -118,54 +119,53 @@ def ver(request, id):
 
 
 def verHabilitados(request):
-    mascotasQuery = Mascota.objects.habilitados()
-    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_patente", "Patente"],
+            ["orden_nombre", "Nombre"],
+            ["orden_cliente", "Dueño"],
+            ["orden_especie", "Especie"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
+
+    mascotas = Mascota.objects.habilitados()
+    gestor.cargar(request, mascotas)
+    gestor.ordenar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
+
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
-
-    paginator = Paginator(mascotasQuery, 3)
-    page = request.GET.get('page')
-
-    try:
-        mascotas = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        mascotas = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        mascotas = paginator.page(paginator.num_pages)
-
     contexto = {
-        'mascotasQuery': mascotasQuery,
-        'usuario': request.user,
-        'mascotas': mascotas,
+        "gestor" : gestor,
     }
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    mascotasQuery = Mascota.objects.deshabilitados()
-    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_patente", "Patente"],
+            ["orden_nombre", "Nombre"],
+            ["orden_cliente", "Dueño"],
+            ["orden_especie", "Especie"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
+
+    mascotas = Mascota.objects.deshabilitados()
+    gestor.cargar(request, mascotas)
+    gestor.ordenar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
 
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
-
-    paginator = Paginator(mascotasQuery, 3)
-    page = request.GET.get('page')
-
-    try:
-        mascotas = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        mascotas = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        mascotas = paginator.page(paginator.num_pages)
-
     contexto = {
-        'mascotasQuery': mascotasQuery,
         'usuario': request.user,
-        'mascotas': mascotas,
+        "gestor" : gestor,
     }
     return HttpResponse(template.render(contexto, request))
-
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
     def get_queryset(self):
@@ -177,3 +177,26 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
 
         return qs
+
+@login_required
+def documentationMascota(request, tipo):
+    if (tipo==1):
+        template = loader.get_template('GestionDeMascotas/manual_ayuda_cliente/build/archivos/botonHD.html')
+    elif(tipo==2):
+        template = loader.get_template('GestionDeMascotas/manual_ayuda_cliente/build/archivos/criteriosBusqueda.html')
+
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
+@login_required
+def documentation(request):
+
+    template = loader.get_template('GestionDeMascotas/manual_ayuda_cliente/build/index.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))

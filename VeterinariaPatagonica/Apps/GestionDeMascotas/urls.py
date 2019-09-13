@@ -18,5 +18,6 @@ urlpatterns = [
     path('verHabilitados/', mascotas_views.verHabilitados, name='mascotaVerHabilitados'),
     path('verDeshabilitados/', mascotas_views.verDeshabilitados, name='mascotaVerDeshabilitados'),
     path('clienteAutocomplete/', mascotas_views.clienteAutocomplete.as_view(), name='mascotaClienteAutocomplete'),
+    path('documentacionMascota/<int:tipo>', mascotas_views.documentationMascota, name="mascotaManual"),
 
 ]
