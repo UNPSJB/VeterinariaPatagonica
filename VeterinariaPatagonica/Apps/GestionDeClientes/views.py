@@ -251,7 +251,8 @@ def verHabilitados(request):
     clientes = Cliente.objects.habilitados()
     gestor.cargar(request, clientes)
     gestor.ordenar()
-    gestor.filtrar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
 
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
     context = {"gestor" : gestor}
@@ -274,8 +275,8 @@ def verDeshabilitados(request):
     clientes = Cliente.objects.deshabilitados()
     gestor.cargar(request, clientes)
     gestor.ordenar()
-    #if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
-    gestor.filtrar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
 
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
     context = {"gestor" : gestor}

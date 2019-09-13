@@ -114,23 +114,32 @@ class FiltradoForm(forms.Form):
 
     dniCuit = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={"class":"form-control"})
+        widget=forms.TextInput(attrs={
+            "placeholder":"DNI/CUIT...",
+            "class":"form-control"
+        })
     )
 
     nombres = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={"class":"form-control"})
+        widget=forms.TextInput(attrs={
+            "placeholder":"Nombres...",
+            "class":"form-control"
+        })
     )
 
     mascota = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={"class":"form-control"})
+        widget=forms.TextInput(attrs={
+            "placeholder":"Mascota...",
+            "class":"form-control"
+        })
     )
 
     apellidos = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            "placeholder":"Terminos a buscar...",
+            "placeholder":"Apellidos...",
             "class":"form-control",
         })
     )
@@ -156,6 +165,7 @@ class FiltradoForm(forms.Form):
         for field in fields:
             if field in self.cleaned_data and self.cleaned_data[field]:
                 retorno[field] = self.cleaned_data[field]
+        #return retorno
 
     def criterio(self):
         if self.cleaned_data and "segun" in self.cleaned_data:
