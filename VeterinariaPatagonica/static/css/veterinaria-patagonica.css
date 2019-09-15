@@ -1,6 +1,6 @@
 
 @media (min-width: 750px) {
-    
+
     #sitio_seccion_principal {
         min-height: 100px;
     }
@@ -60,7 +60,7 @@ a {
     text-decoration: none;
     color: #337ab7;
 }
- 
+
  a:hover,
  a:focus {
     text-decoration: none;
@@ -135,7 +135,7 @@ input:focus,
 textarea:focus,
 select:focus {
     border: 1px solid #777 !important;
-    
+
     -ms-box-shadow: 0 0 2px #777 inset !important;
     -o-box-shadow: 0 0 2px #777 inset !important;
     box-shadow: 0 0 2px #777 inset !important;
@@ -162,7 +162,7 @@ select:focus {
 }
 
 .btn {
-    border-radius: 0px !important;    
+    border-radius: 0px !important;
 }
 
 .form-group {
@@ -192,7 +192,7 @@ ul.form-control {
     border-radius: 0px;
     list-style: none;
     padding: 0px;
-    
+
 }
 ul.form-control label {
     margin: 5px 0px 0px 0px !important;
@@ -285,7 +285,7 @@ ul.nav>li>i {
     padding: 10px;
     display: inline-block;
     background: #fff;
-    border: 1px solid #E6E9ED;    
+    border: 1px solid #E6E9ED;
     opacity: 1;
     transition: all .2s ease;
     margin: 0px;
@@ -299,8 +299,8 @@ ul.nav>li>i {
 }
 */
 .cuadradito {
-    height : 100px; 
-    width : 100px; 
+    height : 100px;
+    width : 100px;
     display:table-cell;
     border: 1px solid black;
     background-color: #FFF;
@@ -514,6 +514,10 @@ table.detalles tr.breve td:nth-child(2) {
   background-image: url('../images/casa.jpg');
   background-size: contain;
 }
+#imagenFactura {
+  background-image: url('../images/factura.jpg');
+  background-size: contain;
+}
 
 
 /* Menus colapsables */
@@ -541,7 +545,7 @@ table.detalles tr.breve td:nth-child(2) {
     margin: 0px !important;
     padding: 2px !important;
 }
-.formset .forms .formset-form{ 
+.formset .forms .formset-form{
     padding: 0px;
     margin-left: 0px;
     margin-right: 0px;
@@ -557,7 +561,7 @@ table.detalles tr.breve td:nth-child(2) {
     text-align: center;
 }
 .formset .forms .formset-form .form-group.eliminar a.disabled {
-    color: #AAA; 
+    color: #AAA;
 }
 .formset .forms .formset-form .form-group.eliminar a.disabled:hover {
     cursor: default;
@@ -646,4 +650,3 @@ form.listado table.items th a.encabezado.activo {
     margin-bottom: 5px;
     text-align: left;
 }
-
