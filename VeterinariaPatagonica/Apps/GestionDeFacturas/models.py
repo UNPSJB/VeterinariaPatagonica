@@ -25,7 +25,10 @@ class Factura(models.Model):
     MAPPER = {
         "tipo": "tipo__icontains",
         "cliente": lambda value: Q(cliente__nombres__icontains=value) | Q(cliente__apellidos__icontains=value),
-        "fecha": "fecha_icontains"
+        "fecha": "fecha_icontains",
+        "total" : "total__icontains",
+        "recargo" : "recargo__icontains",
+        "descuento" : "descuento__icontains",
     }
 
     TIPODEFACTURA = (('A','A'), ('B','B'), ('C', 'C'))

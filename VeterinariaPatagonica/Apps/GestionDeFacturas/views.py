@@ -23,6 +23,7 @@ from django.db import transaction
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from .forms import FacturarPracticaForm, FacturaProductoFormSet
 
+from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 
 
@@ -135,8 +136,23 @@ def ver(request, id):  #, irAPagar=1
 
 
 def listar(request):
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_tipo", "Tipo"],
+            ["orden_cliente", "Cliente"],
+            ["orden_fecha", "Fecha"],
+            ["orden_total", "Total"],
+            ["orden_recargo", "Recargo"],
+            ["orden_descuento", "Descuento"],
+        ]
+    )
     facturasQuery = Factura.objects.all()
     facturasQuery = facturasQuery.filter(tools.paramsToFilter(request.GET, Factura))
+
+    gestor.cargar(request, facturasQuery)
+    # gestor.ordenar()//[TODO] ARREGLAR.
+
     template = loader.get_template('GestionDeFacturas/listar.html')
 
     paginator = Paginator(facturasQuery, 3)
@@ -155,6 +171,7 @@ def listar(request):
         'facturasQuery' : facturasQuery,
         'usuario' : request.user,
         'facturas': facturas,
+        'gestor' : gestor,
     }
 
     return  HttpResponse(template.render(contexto, request))
