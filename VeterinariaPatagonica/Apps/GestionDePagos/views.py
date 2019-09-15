@@ -11,6 +11,9 @@ from VeterinariaPatagonica import tools
 from django.utils import timezone
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from VeterinariaPatagonica.tools import GestorListadoQueryset
+
+
 
 def pago(request):
 
@@ -95,13 +98,27 @@ def ver(request, id):
     return HttpResponse(template.render(contexto, request))
 
 def listar(request):
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_fecha", "Fecha"],
+            ["orden_importeTotal", "Importe Total"],
+            ["orden_factura", "Factura"],
+            ["orden_baja", "Baja"]
+        ]
+    )
+
     pagosQuery = Pago.objects.all()
     pagos = pagosQuery.filter(tools.paramsToFilter(request.GET, Pago))
+
+    gestor.cargar(request, pagos)
+    # gestor.ordenar()//[TODO] NO ANDA ESTE METODO. 
+
     template = loader.get_template('GestionDePagos/listar.html')
-
-
     paginator = Paginator(pagosQuery, 1)
     page = request.GET.get('page')
+
+
 
     try:
         pagos = paginator.page(page)
@@ -116,5 +133,6 @@ def listar(request):
         'pagosQuery' : pagosQuery,
         'usuario' : request.user,
         'pagos': pagos,
+        'gestor' : gestor,
     }
     return HttpResponse(template.render(contexto, request))
