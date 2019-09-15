@@ -55,7 +55,8 @@
           let $porcentajeDescuento =$(`#porcentajeDescuentoServicio`, data);//Consigo el porcentaje de descuentodel cliente, del ver.html traido por ajax.
           texto = $porcentajeDescuento[0].textContent;
           arrayTexto = texto.split(" ");
-          let porcentajeDescuento=parseFloat(arrayTexto[2]);//Obtengo el valor numérico del porcentaje de descuento del cliente.
+          let porcentajeDescuento=parseFloat(arrayTexto[3]);//Obtengo el valor numérico del porcentaje de descuento del cliente.
+          console.log(porcentajeDescuento);
           Number(porcentajeDescuento);
           document.getElementById("id_descuento").value = porcentajeDescuento;//Seteo el porcentaje de descuento.
           calcularTotal();
@@ -101,6 +102,9 @@
         }
       }
       precioTotalRedondeado = Math.round(acumulador);
+      console.log("++++++++++++++++++++++++++++++++++");
+      console.log(precioTotalRedondeado);
+      console.log("+++++++++++++++++++++++++++++++++");
       document.getElementById("id_total").value = precioTotalRedondeado;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
       let $inputPractica = $("#id_practica");
       if ($inputPractica.is(":visible")){
@@ -155,6 +159,9 @@
             if (nuevoPrecio < 0){
               nuevoPrecio = 0;
             }
+            console.log("------------------------------------------");
+            console.log(nuevoPrecio);
+            console.log("-------------------------------------------");
             precioTotalRedondeado = Math.round(nuevoPrecio);
             document.getElementById("id_total").value = precioTotalRedondeado;//Seteo el precio total actualizado.
             //$itemTotal = $"(#id_total");
@@ -186,7 +193,11 @@
             if (nuevoPrecio <0){
               nuevoPrecio = 0;
             }
-            document.getElementById("id_total").value = nuevoPrecio;//Seteo el precio total actualizado.
+            precioTotalRedondeado = Math.round(nuevoPrecio);
+            console.log("******************");
+            console.log(precioTotalRedondeado);
+            console.log("******************");
+            document.getElementById("id_total").value = precioTotalRedondeado;//Seteo el precio total actualizado.
           }
         });
       }
