@@ -42,9 +42,6 @@ Facturas Emitidas
         </div>
     </div>
     <br>
-    <div class="facturaLineaTitulo"> </div>
-    <br>
-
 
     <form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
       <div class="hidden orden-listado">
@@ -56,6 +53,7 @@ Facturas Emitidas
       <div class="sombreado">
           {{ gestor.formPagina.resultados }}
           <button class="btn btn-default filtrar" type="submit">Mostrar</button>
+      </div>
           <table class="table table-bordered table-responsive items">
             <colgroup>
                <!-- <col span="ID"/> -->

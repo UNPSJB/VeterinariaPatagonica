@@ -12,12 +12,12 @@
     {% block secciones %}
 
     {% endblock %}
-    <br>
+    <!-- <br> -->
     <h4 class="facturaTitulo">
       {% block facturaTitulo %}
       {% endblock facturaTitulo %}
     </h4>
-    <br>
+    <!-- <br> -->
     <div class="facturaLineaTitulo"> </div>
 
     <p class="facturaSubtitulo">
@@ -40,7 +40,7 @@
 
 {% block paginaJavascript %}
     {{block.super}}
-    <script src="{% static 'js/gestion-facturas.js' %}"></script> 
+    <script src="{% static 'js/gestion-facturas.js' %}"></script>
     <script src="{% static 'js/moment.min.js' %}"></script>
     <script src="{% static 'js/es.js' %}"></script>
     <script src="{% static 'js/bootstrap-datetimepicker.min.js'%}"></script>
