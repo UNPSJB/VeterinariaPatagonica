@@ -249,10 +249,14 @@ def verHabilitados(request):
     )
 
     clientes = Cliente.objects.habilitados()
-    gestor.cargar(request, clientes)
-    gestor.ordenar()
+    gestor.cargar(request, clientes, Cliente)
+    # gestor.formFiltros.is_valid()
     if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
         gestor.filtrar()
+        gestor.ordenar()
+        # gestor.filtrar()
+        # gestor.ordenar()
+
 
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
     context = {"gestor" : gestor}
