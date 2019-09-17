@@ -4,130 +4,29 @@
 Gestion de Productos | Ver Deshabilitados
 {% endblock %}
 
-{% block productoTitulo %}
+{% block tituloSeccion %}
 Productos Deshabilitados
 {% endblock %}
 
-{% block productoSubtitulo %}
-Actualmente <strong>no</strong> disponibles
+{% block subtitulo %}
+Actualmente no disponibles
 {% endblock %}
 
 {% block secciones %}
-{% include './seccionesSnippet.html' with pagina='verDeshabilitados' %}
+{% include './snippets/secciones.html' with pagina='verDeshabilitados' %}
 {% endblock %}
 
-{% block productoContenido %}
+{% block contenido %}
 
-{% load navigation_filters %}
+    {% if gestor.numero_items %}
 
-<!-- Listado -->
-<div class="productoCuerpo" >
-
-    <div id="filtrarProductosDeshabilitados">
-        <a role="button" href="#filtrarProductos" data-toggle="collapse">
-            <i class="glyphicon glyphicon-tasks"></i>
-            <span>Criterios de busqueda</span>
-        </a>
-        <div id="filtrarProductos" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                                <input name="nombre" placeholder="Nombre">
-                                <input name="marca" placeholder="Marca">
-                              <!--  <input name="formaDePresentacion" placeholder="Forma De Presentacion"> -->
-                                <input name="precioPorUnidadMayor" placeholder="Precio Por Unidad Mayor a">
-                                <input name="precioPorUnidadMenor" placeholder="Precio Por Unidad Menor a">
-
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
-
-                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
-
-                            </button>
-                        </form>
-                    </div>
-            </form>
-        </div>
-    </div>
-    <br>
-    <div class="productoLineaTitulo"> </div>
-
-    <p> Los siguientes Productos pueden ser habilitados o eliminados.  </p>
-
-    {% if productos %}
-        <div class="table-responsive" id="tabla">
-            <table class="table productoListado">
-                <thead>
-                    <tr>
-                        <th id="deshabilitados-nombre"> Nombre </th>
-                        <th id="deshabilitados-marca"> Marca </th>
-                        <th id="deshabilitados-formaPresentacion"> Forma de Presentacion </th>
-                        <th id="deshabilitados-precio"> Precio </th>
-                        <th id="deshabilitados-acciones"> Acciones </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for producto in productos %}
-                        <tr>
-                            <td>{{ producto.nombre }}</td>
-                            <td>{{ producto.marca }}</td>
-                            <td>{{ producto.formaDePresentacion }}</td>
-                            <td>$ {{ producto.precioPorUnidad }}</td>
-                            <td>
-                                <div class="dropdown">
-                                    <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
-                                        Acción <span class="caret"></span>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                        <li><a href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
-                                            <i class="glyphicon glyphicon-eye-open"></i>
-                                        </a></li>
-                                        <li><a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto">
-                                            <i class="glyphicon glyphicon-edit"></i>
-                                        </a></li>
-                                        <li><a href="{% url 'productos:productoHabilitar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Producto">
-                                            <i class="glyphicon glyphicon-plus"></i>
-                                        </a></li>
-                                        <li><a href="{% url 'productos:productoEliminar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Producto">
-                                            <i class="glyphicon glyphicon-remove"></i>
-                                        </a></li>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+        {% include "./snippets/listado.html" %}
 
     {% else %}
 
-        <p> No hay Productos deshabilitados </p>
+        <p><strong>No hay productos deshabilitados</strong></p>
 
     {% endif %}
-    <div align="center">
-        <ul class="pagination pagination-sm">
-            {% if productos.has_previous %}
-                <li><a href="?page={{ productos.previous_page_number }}" class="btn btnpages">
-                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
-            {% endif %}
-
-            {% for page in productos.paginator.page_range|page_filter:productos %}
-                <li class="{% if productos.number == page %}active{% endif %}">
-                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
-            {% endfor %}
-
-            {% if productos.has_next %}
-                <li>
-                    <a href="?page={{ productos.next_page_number }}" class="btn btnpages">
-                        <i class="glyphicon glyphicon-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-</div>
 
 {% endblock %}
+

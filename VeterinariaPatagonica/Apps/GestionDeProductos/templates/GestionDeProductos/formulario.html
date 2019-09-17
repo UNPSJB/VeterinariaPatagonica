@@ -1,16 +1,17 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
+{% load static %}
 
 {% block paginaEstilos %}
     {{ block.super }}
-    {{formulario.media.css}}
-
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block titulo %}
-Gestion de Productos | Crear Producto
+Gestion de Productos | {{titulo}}
 {% endblock %}
 
-{% block productoTitulo %}
+{% block tituloSeccion %}
 {% if titulo == 1 %}
     Nuevo Producto
 {% endif %}
@@ -19,7 +20,7 @@ Gestion de Productos | Crear Producto
 {% endif %}
 {% endblock %}
 
-{% block productoSubtitulo %}
+{% block subtitulo %}
 {% if titulo == 1 %}
     Agrega un Producto al listado
 {% endif %}
@@ -28,14 +29,14 @@ Gestion de Productos | Crear Producto
 {% endif %}
 {% endblock %}
 
-{% block productoContenido %}
+{% block contenido %}
 
     <div class="productoCuerpo">
         <form class="form-horizontal formulario" action="" method="post">
 
             {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar datos" %}
+            {% include 'GestionDeProductos/snippetProducto.html' with campos=formulario accion="Guardar Datos"%}
 
         </form>
     </div>
@@ -43,7 +44,3 @@ Gestion de Productos | Crear Producto
 {% endblock %}
 
 
-{% block paginaJavascript %}
-    {{ block.super }}
-    {{formulario.media.js}}
-{% endblock %}

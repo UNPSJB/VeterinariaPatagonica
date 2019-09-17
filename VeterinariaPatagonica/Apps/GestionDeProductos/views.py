@@ -3,13 +3,14 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, permission_required
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Producto
-from .forms import ProductoFormFactory
+from .forms import ProductoFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeRubros.models import Rubro
 
+from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
@@ -31,6 +32,8 @@ def modificar(request, id = None):
 
     if request.method == 'POST':
         formulario = ProductoForm(request.POST, instance=producto)
+        print(formulario.is_valid())
+        print(formulario)
         if formulario.is_valid():
             producto = formulario.save()
             return HttpResponseRedirect("/GestionDeProductos/ver/{}".format(producto.id))
@@ -43,51 +46,49 @@ def modificar(request, id = None):
     return HttpResponse(template.render(context, request))
 
 def verHabilitados(request):
-    productosQuery = Producto.objects.habilitados()
-    productosQuery = productosQuery.filter(tools.paramsToFilter(request.GET, Producto))
+
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_nombre", "Nombre"],
+            ["orden_marca", "Marca"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
+
+    productos = Producto.objects.habilitados()
+    gestor.cargar(request, productos)
+    gestor.ordenar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
+
     template = loader.get_template('GestionDeProductos/verHabilitados.html')
-
-    paginator = Paginator(productosQuery, 3)
-    page = request.GET.get('page')
-
-    try:
-        productos = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        productos = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        productos = paginator.page(paginator.num_pages)
-
-    context = {
-        'productosQuery': productosQuery,
-        'usuario': request.user,
-        'productos': productos,
+    contexto = {
+        "gestor": gestor,
     }
-    return HttpResponse(template.render( context, request ))
+    return HttpResponse(template.render(contexto, request))
+
 
 def verDeshabilitados(request):
-    productosQuery = Producto.objects.deshabilitados()
-    productosQuery = productosQuery.filter(tools.paramsToFilter(request.GET, Producto))
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_nombre", "Nombre"],
+            ["orden_marca", "Marca"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
+
+    productos = Producto.objects.deshabilitados()
+    gestor.cargar(request, productos)
+    gestor.ordenar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
+
     template = loader.get_template('GestionDeProductos/verDeshabilitados.html')
-    paginator = Paginator(productosQuery, 3)
-    page = request.GET.get('page')
-
-    try:
-        productos = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        productos = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        productos = paginator.page(paginator.num_pages)
-
-    context = {
-        'productosQuery': productosQuery,
-        'usuario': request.user,
-        'productos': productos,
+    contexto = {
+        "usuario": request.user,
+        "gestor": gestor
     }
-    return HttpResponse(template.render( context, request ))
+    return HttpResponse(template.render(contexto, request))
 
 def ver(request, id):
     try:
@@ -161,4 +162,26 @@ class rubroAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
+""""@login_required
+def documentationProducto(request, tipo):
+    if (tipo==1):
+        template = loader.get_template('GestionDeProductos/manual_ayuda_producto/build/archivos/botonHD.html')
+    elif(tipo==2):
+        template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/archivos/criteriosBusqueda.html')
 
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
+@login_required
+def documentation(request):
+
+    template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/index.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+"""

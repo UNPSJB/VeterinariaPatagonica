@@ -1,0 +1,33 @@
+<div class="form-group {{ form.nombre.name }} {% if form.nombre.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.nombre %}
+</div>
+<div class="form-group {{ form.marca.name }} {% if form.marca.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.marca %}
+</div>
+<div class="form-group {{ form.stock.name }} {% if form.stock.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.stock %}
+</div>
+<div class="form-group {{ form.formaDePresentacion.name }} {% if form.formaDePresentacion.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.formaDePresentacion %}
+</div>
+<div class="form-group {{ form.precioPorUnidad.name }} {% if form.precioPorUnidad.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.precioPorUnidad %}
+</div>
+<div class="form-group {{ form.precioDeCompra.name }} {% if form.precioDeCompra.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.precioDeCompra %}
+</div>
+<div class="form-group {{ form.rubro.name }} {% if form.rubro.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.rubro %}
+</div>
+<div class="form-group {{ form.descripcion.name }} {% if form.descripcion.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.descripcion %}
+</div>
+{% if accion %}
+<div class="form-group">
+    <div class=row>
+        <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+        </div>
+     </div>
+</div>
+{% endif %}

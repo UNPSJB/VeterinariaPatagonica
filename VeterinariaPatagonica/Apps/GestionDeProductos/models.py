@@ -1,31 +1,49 @@
-from decimal import Decimal
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from Apps.GestionDeRubros import models as grmodels
 from VeterinariaPatagonica import tools
 from decimal import Decimal
+from django.db.models import Q
 
+
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
+from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
 
 # Create your models here.
 
-
-class ProductoQuerySet(tools.BajasLogicasQuerySet):
+class ProductoQuerySet(BajasLogicasQuerySet):
     def insumos(self):
         return self.filter(precioPorUnidad__lte=Decimal(0))
 
 class BaseProductoManager(models.Manager):
-    pass
+    def __init__(self, tipo=None):
+        super().__init__()
+        self.tipo = tipo
 
-ProductoManager = BaseProductoManager.from_queryset(ProductoQuerySet)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tipo is not None:
+            qs = qs.filter(tipo=self.tipo)
+        return qs
+
+class ProductoQueryset(BajasLogicasQuerySet):
+        MAPEO_ORDEN = {
+            "orden_nombre": ["nombre"],
+            "orden_marca": ["marca"],
+        }
+
+ProductoManager = models.Manager.from_queryset(ProductoQueryset)
 
 class Producto (models.Model):
-    MAPPER = {
+    """MAPPER = {
         "marca": "marca__icontains",
         "formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
         "precioPorUnidadMayor": "precioPorUnidad__gte",
         "precioPorUnidadMenor": "precioPorUnidad__lte"
-    }
+    }"""
+
+    objects = ProductoManager()
 
     MAX_NOMBRE = 50
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
@@ -184,9 +202,6 @@ class Producto (models.Model):
     )
 
     baja = models.BooleanField(default=False)
-
-
-    objects = ProductoManager()
 
     def describir(self):
 
