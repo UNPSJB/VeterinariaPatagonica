@@ -102,9 +102,7 @@
         }
       }
       precioTotalRedondeado = Math.round(acumulador);
-      console.log("++++++++++++++++++++++++++++++++++");
-      console.log(precioTotalRedondeado);
-      console.log("+++++++++++++++++++++++++++++++++");
+
       document.getElementById("id_total").value = precioTotalRedondeado;//Escribo en el input "total" el precio calculado (imprimo el acumulador en el input "total").
       let $inputPractica = $("#id_practica");
       if ($inputPractica.is(":visible")){
@@ -159,9 +157,7 @@
             if (nuevoPrecio < 0){
               nuevoPrecio = 0;
             }
-            console.log("------------------------------------------");
-            console.log(nuevoPrecio);
-            console.log("-------------------------------------------");
+
             precioTotalRedondeado = Math.round(nuevoPrecio);
             document.getElementById("id_total").value = precioTotalRedondeado;//Seteo el precio total actualizado.
             //$itemTotal = $"(#id_total");
@@ -194,9 +190,7 @@
               nuevoPrecio = 0;
             }
             precioTotalRedondeado = Math.round(nuevoPrecio);
-            console.log("******************");
-            console.log(precioTotalRedondeado);
-            console.log("******************");
+
             document.getElementById("id_total").value = precioTotalRedondeado;//Seteo el precio total actualizado.
           }
         });

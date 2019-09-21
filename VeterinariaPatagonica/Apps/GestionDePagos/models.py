@@ -2,6 +2,7 @@ from django.db import models
 from Apps.GestionDeFacturas import models as facModel
 from VeterinariaPatagonica import tools
 from django.db.models import Q
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 
 
 
@@ -9,7 +10,16 @@ from django.db.models import Q
 class BasePagoManager(models.Manager):
     pass
 
-PagoManager = BasePagoManager.from_queryset(tools.BajasLogicasQuerySet)
+class PagoQueryset(BajasLogicasQuerySet):
+    MAPEO_ORDEN = {
+    "orden_fecha" : ["fecha"],
+    "orden_importeTotal" : ["importeTotal"],
+    "orden_factura" : ["factura"],
+    "orden_baja" : ["baja"],
+    }
+
+PagoManager = models.Manager.from_queryset(PagoQueryset)
+# PagoManager = BasePagoManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Pago (models.Model):
 

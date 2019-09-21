@@ -227,18 +227,24 @@ class Factura(models.Model):
         return adelanto
 
     def sumar_total_adelanto(self):
-        if self.practica.adelanto:
-            adelanto = self.practica.adelanto.importe
+        if self.practica:
+            print("tengo una practica")
+            if self.practica.adelanto:
+                adelanto = self.practica.adelanto.importe
+            else:
+                adelanto = 0
+            if self.tipo == "C":
+                total = Factura.restar_iva(self)
+            else:
+                total = self.total
         else:
-            adelanto = 0
-        if self.tipo == "C":
-            total = Factura.restar_iva(self)
-        else:
+            print("--------------------------")
+            print("no hay practica")
             total = self.total
+            adelanto = 0
 
         valorFinal = total + adelanto
         return valorFinal
-
 
 
     class Meta:

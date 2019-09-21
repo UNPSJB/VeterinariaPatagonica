@@ -104,7 +104,8 @@ def listar(request):
             ["orden_fecha", "Fecha"],
             ["orden_importeTotal", "Importe Total"],
             ["orden_factura", "Factura"],
-            ["orden_baja", "Baja"]
+
+            ["orden_baja", "Baja"],
         ]
     )
 
@@ -112,7 +113,7 @@ def listar(request):
     pagos = pagosQuery.filter(tools.paramsToFilter(request.GET, Pago))
 
     gestor.cargar(request, pagos)
-    # gestor.ordenar()//[TODO] NO ANDA ESTE METODO. 
+    gestor.ordenar()#[TODO] NO ANDA ESTE METODO.
 
     template = loader.get_template('GestionDePagos/listar.html')
     paginator = Paginator(pagosQuery, 1)

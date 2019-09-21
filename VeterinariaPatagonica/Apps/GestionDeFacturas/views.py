@@ -62,6 +62,8 @@ def modificar(request, id = None):
             if factura.practica :
                 if factura.practica.esPosible(Practica.Acciones.facturar):#Transiciona la practica seleccionada a facturada.
                     factura.practica.hacer("facturar")
+            #[TODO] HACER QUE LA PRACTICA ELEGIDA DEJE DE FIGURAR.
+            # factura.practica.
             return HttpResponseRedirect("/GestionDeFacturas/ver/{}".format(factura.id))
             print(factura, instances)
         context['formulario'] = form
