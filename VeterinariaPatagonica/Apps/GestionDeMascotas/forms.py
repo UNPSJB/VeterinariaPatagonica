@@ -146,7 +146,7 @@ class FiltradoForm(forms.Form):
         for field in fields:
             if field in self.cleaned_data and self.cleaned_data[field]:
                 retorno[field] = self.cleaned_data[field]
-        #return retorno
+        return retorno
 
     def criterio(self):
         if self.cleaned_data and "segun" in self.cleaned_data:

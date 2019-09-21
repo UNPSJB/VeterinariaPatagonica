@@ -91,3 +91,5 @@ def noEncontrado(request):
 
     return HttpResponse(template.render( context, request ))
 
+def ayuda(request):
+    return render_to_response('manual/documentacion.html')

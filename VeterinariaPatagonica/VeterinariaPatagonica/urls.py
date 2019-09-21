@@ -14,6 +14,7 @@ urlpatterns = [
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
     #url(r'.*/login.html', views.login),
     #url(r'^$',views.base),#Definimos la url del sitio base.
+    path('ayuda/',views.ayuda, name='ayuda'),
     path(r'GestionDeServicios/', include('Apps.GestionDeServicios.urls', namespace= 'servicios')),#Definimos que la url "GestionDeServicios" incluye todas las url que hay en GestionDeServicios.urls
     path(r'GestionDeClientes/', include('Apps.GestionDeClientes.urls', namespace= 'clientes')),#Definimos que la url "GestionDeClientes" incluye todas las url que hay en GestionDeClientes.urls
     path(r'GestionDeProductos/',include('Apps.GestionDeProductos.urls', namespace='productos')),#Definimos que la url "GestionDeProductos" incluye todas las url que hay en GestionDeProductos.urls
