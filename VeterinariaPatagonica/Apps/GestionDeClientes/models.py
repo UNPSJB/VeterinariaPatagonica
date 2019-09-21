@@ -33,7 +33,6 @@ class ClienteQueryset(VeterinariaPatagonicaQuerySet):
 ClienteManager = ClienteBaseManager.from_queryset(ClienteQueryset)
 
 
-
 class Cliente (models.Model):
 
     MAPPER = {
