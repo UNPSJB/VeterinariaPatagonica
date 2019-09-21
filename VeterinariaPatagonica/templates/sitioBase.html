@@ -25,7 +25,9 @@
   <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
 
   <link rel="shortcut icon" href="/../static/images/iconoBarraNavegacion.jpg">
-
+  
+  <!--Font Awesome 5 para iconos mas lindos -->
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
 {% endblock paginaEstilos %}
 
@@ -51,7 +53,7 @@
               <span class=" fa fa-angle-down"></span>
             </a>
             <ul class="dropdown-menu dropdown-usermenu pull-right">
-              <li><a href="javascript:;">Ayuda</a></li>
+              <li><a href="{% url "ayuda" %}">Ayuda</a></li>
               <li><a href="{% url "login" %}"><i class="fa fa-sign-out pull-right"></i>Cerrar Sesión</a></li>
               <li><a><i class="glyphicon glyphicon-cog pull-right"></i>Configuración</a></li>
             </ul>
