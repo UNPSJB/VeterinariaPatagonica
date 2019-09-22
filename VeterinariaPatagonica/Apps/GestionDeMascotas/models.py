@@ -91,9 +91,6 @@ class Mascota(models.Model):
         unique=False,
         null=False,
         blank=False,
-        #default=date.today(),
-        #default=timezone.now(),
-        #default=now(),
         default=djangotimezone.now,
         error_messages={'required': "la fecha es obligatorio"})
 

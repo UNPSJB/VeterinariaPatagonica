@@ -142,7 +142,7 @@ class FiltradoForm(forms.Form):
     def filtros(self):
         retorno = {}
 
-        fields = ("dniCuit", "apellidos", "nombres", "mascota")
+        fields = ("patente", "nombre", "cliente", "especie")
         for field in fields:
             if field in self.cleaned_data and self.cleaned_data[field]:
                 retorno[field] = self.cleaned_data[field]

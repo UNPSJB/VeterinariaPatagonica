@@ -133,13 +133,12 @@ def verHabilitados(request):
     mascotas = Mascota.objects.habilitados()
     gestor.cargar(request, mascotas)
     gestor.ordenar()
+    
     if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
         gestor.filtrar()
 
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
-    contexto = {
-        "gestor" : gestor,
-    }
+    contexto = {"gestor" : gestor,}
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
