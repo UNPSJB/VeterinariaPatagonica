@@ -109,6 +109,8 @@ class FiltradoForm(forms.Form):
         ("dniCuit", "DNI/CUIT"),
         ("nombres", "Nombres"),
         ("apellidos", "Apellidos"),
+        ("localidad", "Localiad"),
+        ("tipoDeCliente", "TipoDeCliente"),
         ("mascota", "Mascota"),
     )
 
@@ -120,6 +122,14 @@ class FiltradoForm(forms.Form):
         })
     )
 
+    apellidos = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Apellidos...",
+            "class":"form-control",
+        })
+    )
+
     nombres = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
@@ -128,19 +138,27 @@ class FiltradoForm(forms.Form):
         })
     )
 
+    localidad = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Localidad...",
+            "class":"form-control",
+        })
+    )
+
+    tipoDeCliente = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Tipo De Cliente...",
+            "class":"form-control",
+        })
+    )
+
     mascota = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
             "placeholder":"Mascota...",
             "class":"form-control"
-        })
-    )
-
-    apellidos = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Apellidos...",
-            "class":"form-control",
         })
     )
 
@@ -161,7 +179,7 @@ class FiltradoForm(forms.Form):
     def filtros(self):
         retorno = {}
 
-        fields = ("dniCuit", "apellidos", "nombres", "mascota")
+        fields = ("dniCuit", "apellidos", "nombres", "localidad","tipoDeCliente","mascota")
         for field in fields:
             if field in self.cleaned_data and self.cleaned_data[field]:
                 retorno[field] = self.cleaned_data[field]

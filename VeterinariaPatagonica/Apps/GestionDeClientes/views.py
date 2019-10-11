@@ -243,6 +243,7 @@ def verHabilitados(request):
             ["orden_dniCuit", "DNI/CUIT"],
             ["orden_apellidos", "Apellidos"],
             ["orden_nombres", "Nombres"],
+            ["orden_localidad", "Localidad"],
             ["orden_tipoDeCliente", "Tipo De Cliente"],
         ],
         claseFiltros=FiltradoForm,

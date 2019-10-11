@@ -11,6 +11,8 @@
         {{ gestor.formFiltros.dniCuit }}
         {{ gestor.formFiltros.apellidos }}
         {{ gestor.formFiltros.nombres }}
+        {{ gestor.formFiltros.localidad }}
+        {{ gestor.formFiltros.tipoDeCliente }}
         {{ gestor.formPagina.resultados }}
         <button class="btn btn-default filtrar" type="submit">Filtrar</button>
     </div>
@@ -21,6 +23,7 @@
                 <col class="columna{% if gestor.encabezado.orden_dniCuit.activa %} activa{% endif %}"/>
                 <col class="columna{% if gestor.encabezado.orden_apellidos.activa %} activa{% endif %}"/>
                 <col class="columna{% if gestor.encabezado.orden_nombres.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_localidad.activa %} activa{% endif %}"/>
                 <col class="columna{% if gestor.encabezado.orden_tipoDeCliente.activa %} activa{% endif %}"/>
             </colgroup>
             <thead>
@@ -28,6 +31,7 @@
                     <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_dniCuit %}</th>
                     <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_apellidos %}</th>
                     <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombres %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_localidad %}</th>
                     <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_tipoDeCliente %}</th>
                 </tr>
             </thead>
@@ -40,6 +44,7 @@
                         </td>
                             <td> <p>{{cliente.apellidos}}</p></td>
                             <td> <p>{{cliente.nombres }}</p></td>
+                            <td> <p>{{cliente.localidad }}</p></td>
                             <td> <p>{{cliente.tipoDeCliente }}</p></td>
                     </tr>
                 {% endfor %}

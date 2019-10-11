@@ -39,6 +39,8 @@ class Cliente (models.Model):
         "dniCuit": "dniCuit__icontains",
         "nombres": "nombres__icontains",
         "apellidos": "apellidos__icontains",
+        "localidad": "localidad__icontains",
+        "tipoDeCliente": "tipoDeCliente__icontains",
         "mascotas": lambda value: Q(mascota__nombre__icontains=value),
     }
 
