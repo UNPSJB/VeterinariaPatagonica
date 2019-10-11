@@ -17,10 +17,10 @@ urlpatterns = [
     path('ver/<int:id>/', clientes_views.ver, name="clienteVer"),
     path('verDeshabilitados/', clientes_views.verDeshabilitados, name="clienteVerDeshabilitados"),
     path('verHabilitados/', clientes_views.verHabilitados, name="clienteVerHabilitados"),
-    path('reporte_clientes_excel/', clientes_views.ReporteClientesExcel, name="clientesReporteEXCEL"),
-    path('reporte_clientes_pdf/', clientes_views.ReporteClientesPDF, name="clientesReportePDF"),
+    path('listado_clientes_excel/', clientes_views.ListadoClientesExcel, name="clientesListadoEXCEL"),
+    #url(r'^listado_clientes_pdf/(\S+)/$',clientes_views.ListadoClientesPDF, name="clientesListadoPDF" ),
+    path('listado_clientes_pdf/', clientes_views.ListadoClientesPDF, name="clientesListadoPDF"),
     #path('', clientes_views.verHabilitados, name="clienteVerHabilitados"),
     path('documentacion/', clientes_views.documentation, name="clienteManual"),
     path('documentacionCliente/<int:tipo>', clientes_views.documentationCliente, name="clienteManual"),
-    path('buscar/', clientes_views.buscar, name="buscarCliente"),
 ]
