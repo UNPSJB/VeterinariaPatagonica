@@ -173,48 +173,70 @@ def verDeshabilitados(request):
     return HttpResponse (template.render (context, request))
 
 def ListadoClientesExcel(request):
-    # Obtenemos todos los clientes de nuestra base de datos
-    clientes = Cliente.objects.habilitados()
-    template = loader.get_template('GestionDeClientes/verHabilitados.html')
-    contexto = {
-        'clientes' : clientes,
-        'usuario' : request.user,
-    }
-    var=1
-    if (var==1):
-        # Creamos el libro de trabajo
-        wb = Workbook()
-        # Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
-        ws = wb.active
-        # En la celda B1 ponemos el texto 'LISTADO DE CLIENTES'
-        ws['B1'] = 'LISTADO DE CLIENTES'
-        # Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
-        ws.merge_cells('B1:E1')
-        # Creamos los encabezados desde la celda B3 hasta la E3
-        ws['B3'] = 'DNI'
-        ws['C3'] = 'NOMBRES'
-        ws['D3'] = 'APELLIDOS'
-        ws['E3'] = 'LOCALIDAD'
-        cont = 4
-        # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
-        for cliente in clientes:
-            ws.cell(row=cont, column=2).value = cliente.dniCuit
-            ws.cell(row=cont, column=3).value = cliente.nombres
-            ws.cell(row=cont, column=4).value = cliente.apellidos
-            ws.cell(row=cont, column=5).value = cliente.localidad
-            cont = cont + 1
-        # Establecemos el nombre del archivo
-        nombre_archivo = "ReporteClientesExcel.xlsx"
-        # Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
-        response = HttpResponse(content_type="application/ms-excel")
-        contenido = "attachment; filename={0}".format(nombre_archivo)
-        response["Content-Disposition"] = contenido
-        wb.save(response)
-        return response
-    return HttpResponse(template.render(contexto, request))
+    # Creamos el libro de trabajo
+    wb = Workbook()
+    # Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+    ws = wb.active
+    # En la celda B1 ponemos el texto 'LISTADO DE CLIENTES'
+    ws['B1'] = 'LISTADO DE CLIENTES'
+    # Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
+    ws.merge_cells('B1:F1')
+    # Creamos los encabezados desde la celda B3 hasta la E3
+    ws['B3'] = 'DNI/CUIT'
+    ws['C3'] = 'NOMBRES'
+    ws['D3'] = 'APELLIDOS'
+    ws['E3'] = 'LOCALIDAD'
+    ws['F3'] = 'TIPO DE CLIENTE'
+    cont = 5
+    # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+    for cliente in clientesFiltrados:
+        ws.cell(row=cont, column=2).value = cliente.dniCuit
+        ws.cell(row=cont, column=3).value = cliente.nombres
+        ws.cell(row=cont, column=4).value = cliente.apellidos
+        ws.cell(row=cont, column=5).value = cliente.localidad
+        ws.cell(row=cont, column=6).value = cliente.tipoDeCliente
+        cont = cont + 1
+    
+    dims = {}
+    for row in ws.rows:
+        for cell in row:
+            if cell.value:
+                dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))    
+    for col, value in dims.items():
+        print("value", value)
+        ws.column_dimensions[col].width = str(value)
 
+    # Establecemos el nombre del archivo
+    nombre_archivo = "ListadoClientes.xlsx"
+    # Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
+    response = HttpResponse(content_type="application/ms-excel")
+    contenido = "attachment; filename={0}".format(nombre_archivo)
+    response["Content-Disposition"] = contenido
+    wb.save(response)
+    return response
+
+def ListadoClientesPDF(request):
+    print("GET")
+    # Indicamos el tipo de contenido a devolver, en este caso un pdf
+    response = HttpResponse(content_type='application/pdf')
+    # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+    buffer = BytesIO()
+    # Canvas nos permite hacer el reporte con coordenadas X y Y
+    pdf = canvas.Canvas(buffer)
+    # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+    cabecera(pdf)
+    y = 500
+    tabla(pdf, y, clientesFiltrados)
+    # Con show page hacemos un corte de página para pasar a la siguiente
+    pdf.showPage()
+    pdf.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
 
 def cabecera(pdf):
+    print("CABECERA")
     # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
     archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
     # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
@@ -226,8 +248,8 @@ def cabecera(pdf):
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE CLIENTES")
 
-
 def tabla(pdf, y, clientes):
+    print("TABLA")
     # Creamos una tupla de encabezados para neustra tabla
     encabezados = ('DNI/CUIT', 'Nombres', 'Apellidos', 'Localidad', 'Tipo de Cliente')
     # Creamos una lista de tuplas que van a contener a las personas
@@ -250,27 +272,6 @@ def tabla(pdf, y, clientes):
     # Definimos la coordenada donde se dibujará la tabla
     detalle_orden.drawOn(pdf, 20, y)
 
-def ListadoClientesPDF(request):
-    # Obtenemos los clientes de nuestra base de datos
-    #clientes = Cliente.objects.habilitados()
-
-    # Indicamos el tipo de contenido a devolver, en este caso un pdf
-    response = HttpResponse(content_type='application/pdf')
-    # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
-    buffer = BytesIO()
-    # Canvas nos permite hacer el reporte con coordenadas X y Y
-    pdf = canvas.Canvas(buffer)
-    # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
-    cabecera(pdf)
-    y = 500
-    tabla(pdf, y, clientesFiltrados)
-    # Con show page hacemos un corte de página para pasar a la siguiente
-    pdf.showPage()
-    pdf.save()
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
-    return response
 
 @login_required
 def documentationCliente(request, tipo):
