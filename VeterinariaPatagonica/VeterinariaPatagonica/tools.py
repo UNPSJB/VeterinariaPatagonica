@@ -9,6 +9,8 @@ from .forms import PaginaListadoForm, OrdenListadoForm
 #from VeterinariaPatagonica.Apps.GestionDeProductos.models import Producto
 from dal import autocomplete
 
+from django.views.generic.base import TemplateView
+
 
 class VeterinariaPatagonicaQuerySet(models.QuerySet):
 
@@ -254,36 +256,6 @@ class GestorListadoQueryset(GestorListado):
     def __init__(self, *args, claseFiltros=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.ClaseFiltros = claseFiltros
-
-'''class ListadoPDF(View):
-    PAGE_WIDTH  = defaultPageSize[0]
-    PAGE_HEIGHT = defaultPageSize[1]
-
-    def cabecera(self, pdf, texto):
-        pdf.setFont("Helvetica", 16)
-        ancho_texto = stringWidth(texto, "Helvetica", 16)
-        pdf.drawString((ListadoPDF.PAGE_WIDTH - ancho_texto) / 2.0, 790, texto)
-
-    def contenido(self, pdf, y):
-        pass
-
-    def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type='application/pdf')
-        buffer = BytesIO()
-        pdf = canvas.Canvas(buffer)
-
-        self.cabecera(pdf)
-        y = 500
-        self.contenido(pdf, y)
-
-        pdf.showPage()
-        pdf.save()
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-
-        return response'''
-
 
 '''
 class productoAutocomplete(autocomplete.Select2QuerySetView):

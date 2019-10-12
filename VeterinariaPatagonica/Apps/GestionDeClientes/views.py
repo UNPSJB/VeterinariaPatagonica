@@ -8,7 +8,7 @@ from .models import Cliente
 from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
-from VeterinariaPatagonica.tools import GestorListadoQueryset
+from VeterinariaPatagosnica.tools import GestorListadoQueryset
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
@@ -23,9 +23,6 @@ from django.views.generic import View
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
-
-
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 clientesFiltrados = [] 
 
