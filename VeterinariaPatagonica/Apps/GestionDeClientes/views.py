@@ -8,7 +8,7 @@ from .models import Cliente
 from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
-from VeterinariaPatagosnica.tools import GestorListadoQueryset
+from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
