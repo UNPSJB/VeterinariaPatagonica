@@ -28,5 +28,22 @@ Actualmente <strong>no</strong> disponibles
 
     {% endif %}
 
+    <div class="menu-colapsable" >
+            <div class="item-colapsable" >
+                <a role="button" href="#mascota-acciones" data-toggle="collapse">
+                    <i class="glyphicon glyphicon-tasks"></i>
+                    <span>Acciones</span>
+                </a>
+                <div class="contenido-colapsable collapse in" id="mascota-acciones">
+                    <ul class="acciones sinestilo">
+                        <li><a  class="btn btn-sm btn-default" href="{%url 'mascotas:mascotasListadoEXCEL' %}">Imprimir listado en Excel     
+                            <i class="glyphicon glyphicon-list-alt" ></i></a></li>
+                        <li><a  class="btn btn-sm btn-default" href="{%url 'mascotas:mascotasListadoPDF'%}">Imprimir listado en PDF     
+                            <i class="glyphicon glyphicon-file" > </i></a></li>
+                    </ul>
+                </div>
+            </div>
+    </div>
+
 {% endblock %}
 
