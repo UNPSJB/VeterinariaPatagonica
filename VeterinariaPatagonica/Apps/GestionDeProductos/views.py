@@ -79,7 +79,7 @@ def verDeshabilitados(request):
     )
 
     productos = Producto.objects.deshabilitados()
-    gestor.cargar(request, productos)
+    gestor.cargar(request, productos, Producto)
     gestor.ordenar()
     if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
         gestor.filtrar()
