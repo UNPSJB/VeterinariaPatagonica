@@ -56,8 +56,9 @@ def verHabilitados(request):
     )
 
     productos = Producto.objects.habilitados()
-    gestor.cargar(request, productos)
+    gestor.cargar(request, productos, Producto)
     gestor.ordenar()
+
     if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
         gestor.filtrar()
 

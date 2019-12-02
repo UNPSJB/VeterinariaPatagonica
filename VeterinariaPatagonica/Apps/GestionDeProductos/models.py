@@ -26,7 +26,7 @@ class BaseProductoManager(models.Manager):
             qs = qs.filter(tipo=self.tipo)
         return qs
 
-class ProductoQueryset(BajasLogicasQuerySet):
+class ProductoQueryset(VeterinariaPatagonicaQuerySet):
         MAPEO_ORDEN = {
             "orden_nombre": ["nombre"],
             "orden_marca": ["marca"],
@@ -35,13 +35,13 @@ class ProductoQueryset(BajasLogicasQuerySet):
 ProductoManager = models.Manager.from_queryset(ProductoQueryset)
 
 class Producto (models.Model):
-    """MAPPER = {
+    MAPPER = {
         "marca": "marca__icontains",
-        "formaDePresentacion": "formaDePresentacion__icontains",
+        #"formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
-        "precioPorUnidadMayor": "precioPorUnidad__gte",
-        "precioPorUnidadMenor": "precioPorUnidad__lte"
-    }"""
+        #"precioPorUnidadMayor": "precioPorUnidad__gte",
+        #"precioPorUnidadMenor": "precioPorUnidad__lte"
+    }
 
     objects = ProductoManager()
 
