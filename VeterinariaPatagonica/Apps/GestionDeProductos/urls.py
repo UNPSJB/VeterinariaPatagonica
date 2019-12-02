@@ -15,6 +15,7 @@ urlpatterns = [
     path('verHabilitados/', productos_views.verHabilitados, name='productoVerHabilitados'),
     path('verDeshabilitados/', productos_views.verDeshabilitados, name='productoVerDeshabilitados'),
     path('rubroAutocomplete/', productos_views.rubroAutocomplete.as_view(), name='productoRubroAutocomplete'),
+    path('listado_productos_excel/', productos_views.ListadoProductosExcel, name="productosListadoEXCEL"),
     #path('documentacionProducto/<int:tipo>', productos_views.documentationProducto, name="productoManual"),
 ]
 

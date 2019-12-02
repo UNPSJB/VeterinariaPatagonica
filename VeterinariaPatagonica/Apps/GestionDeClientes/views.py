@@ -194,14 +194,14 @@ def ListadoClientesExcel(request):
         ws.cell(row=cont, column=6).value = cliente.tipoDeCliente
         cont = cont + 1
     
-    dims = {}
+    '''dims = {}
     for row in ws.rows:
         for cell in row:
             if cell.value:
                 dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))    
     for col, value in dims.items():
         print("value", value)
-        ws.column_dimensions[col].width = str(value)
+        ws.column_dimensions[col].width = str(value)'''
 
     # Establecemos el nombre del archivo
     nombre_archivo = "ListadoClientes.xlsx"
