@@ -11,15 +11,13 @@
   
 ## Alumnos
 
+  Allende Lucila.
+
   Ducid Matias.
   
-  Allende Lucila.
+  Lopez Fernando.
   
   Tomczuk Miguel.
-  
-  Torres Nelson.
-  
-  Lopez Fernando.
   
 ##
 
