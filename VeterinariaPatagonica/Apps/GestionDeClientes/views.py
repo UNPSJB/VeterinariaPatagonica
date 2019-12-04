@@ -14,6 +14,7 @@ from VeterinariaPatagonica.tools import GestorListadoQueryset
 from django.views.generic.base import TemplateView
 #Workbook nos permite crear libros en excel
 from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 #Importamos settings para poder tener a la mano la ruta de la carpeta media
 from django.conf import settings
@@ -174,6 +175,7 @@ def ListadoClientesExcel(request):
     wb = Workbook()
     # Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
     ws = wb.active
+    ws = wb.worksheets[0]
     # En la celda B1 ponemos el texto 'LISTADO DE CLIENTES'
     ws['B1'] = 'LISTADO DE CLIENTES'
     # Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
@@ -193,15 +195,18 @@ def ListadoClientesExcel(request):
         ws.cell(row=cont, column=5).value = cliente.localidad
         ws.cell(row=cont, column=6).value = cliente.tipoDeCliente
         cont = cont + 1
-    
-    '''dims = {}
+
+    column_widths = []
     for row in ws.rows:
-        for cell in row:
-            if cell.value:
-                dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))    
-    for col, value in dims.items():
-        print("value", value)
-        ws.column_dimensions[col].width = str(value)'''
+        for i, cell in enumerate(row):
+            if len(column_widths) > i:
+                if len(str(cell.value)) > column_widths[i]:
+                    column_widths[i] = len(str(cell.value))
+            else:
+                column_widths += [len(str(cell.value))]
+
+    for i, column_width in enumerate(column_widths):
+         ws.column_dimensions[get_column_letter(i+1)].width = column_width
 
     # Establecemos el nombre del archivo
     nombre_archivo = "ListadoClientes.xlsx"

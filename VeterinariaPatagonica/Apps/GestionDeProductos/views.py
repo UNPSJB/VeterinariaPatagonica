@@ -16,6 +16,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 #Workbook nos permite crear libros en excel
 from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 productosFiltrados = [] 
 
@@ -183,14 +184,17 @@ def ListadoProductosExcel(request):
         ws.cell(row=cont, column=3).value = producto.marca
         cont = cont + 1
     
-    '''dims = {}
+    column_widths = []
     for row in ws.rows:
-        for cell in row:
-            if cell.value:
-                dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))    
-    for col, value in dims.items():
-        print("value", value)
-        ws.column_dimensions[col].width = str(value)'''
+        for i, cell in enumerate(row):
+            if len(column_widths) > i:
+                if len(str(cell.value)) > column_widths[i]:
+                    column_widths[i] = len(str(cell.value))
+            else:
+                column_widths += [len(str(cell.value))]
+
+    for i, column_width in enumerate(column_widths):
+         ws.column_dimensions[get_column_letter(i+1)].width = column_width
     
     # Establecemos el nombre del archivo
     nombre_archivo = "ListadoProductos.xlsx"
