@@ -254,18 +254,6 @@ def tabla(pdf, y, mascotas):
     detalle_orden.drawOn(pdf, 65, y)
 
 
-class clienteAutocomplete(autocomplete.Select2QuerySetView):
-
-    def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
-
-        qs = Cliente.objects.all()
-
-        if self.q:
-            qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
-
-        return qs
-
 @login_required
 def documentationMascota(request, tipo):
     if (tipo==1):
@@ -288,3 +276,16 @@ def documentation(request):
     }
 
     return HttpResponse(template.render(contexto, request))
+
+
+class clienteAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+
+        qs = Cliente.objects.all()
+
+        if self.q:
+            qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
+
+        return qs
