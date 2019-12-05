@@ -47,6 +47,7 @@ class Cliente (models.Model):
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     REGEX_NUMERO = '^[0-9]{1,12}$'
     MAXDNICUIT = 14
+    MINDNICUIT = 7
     MAXNOMBRE = 50
     MAXAPELLIDO = 50
     MAXLOCALIDAD = 60
@@ -95,8 +96,11 @@ class Cliente (models.Model):
         unique= True,
         null= False,
         blank= False,
+        validators=[MinValueValidator(MINDNICUIT,
+         message=("El dni/cuit debe tener mas de {} caracteres".format(MINDNICUIT)))],
         error_messages= {
             'max_length': "El dni/cuit puede tener a lo sumo {} caracteres".format(MAXDNICUIT),
+            
             'unique': "El dni/cuit ingresado ya existe",
             'blank': "El dni/cuit es obligatorio"
         }
