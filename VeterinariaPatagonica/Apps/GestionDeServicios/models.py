@@ -57,7 +57,8 @@ class Servicio(models.Model):
         blank=False,
         error_messages={
             'blank': "El nombre de servicio es obligarotio",
-            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE)
+            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
+            'unique':"Ese Servicio ya existe"
         }
     )
     descripcion = models.CharField(

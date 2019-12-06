@@ -22,6 +22,7 @@ class ServicioForm(forms.ModelForm):
         error_messages = {
             'nombre' : {
                 'max_length': ("Nombre demasiado largo"),
+                'unique': ("Ese servicio ya existe"),
             },
             'precio' : {
                 'min_value' : 'Debe ingresar un valor no menor que el 0%'
