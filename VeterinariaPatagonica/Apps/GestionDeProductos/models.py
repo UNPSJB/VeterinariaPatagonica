@@ -30,6 +30,8 @@ class ProductoQueryset(VeterinariaPatagonicaQuerySet):
         MAPEO_ORDEN = {
             "orden_nombre": ["nombre"],
             "orden_marca": ["marca"],
+            "orden_formaDePresentacion": ["formaDePresentacion"],
+            "orden_precioPorUnidad": ["precioPorUnidad"],
         }
 
 ProductoManager = models.Manager.from_queryset(ProductoQueryset)
@@ -37,10 +39,10 @@ ProductoManager = models.Manager.from_queryset(ProductoQueryset)
 class Producto (models.Model):
     MAPPER = {
         "marca": "marca__icontains",
-        #"formaDePresentacion": "formaDePresentacion__icontains",
+        "formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
-        #"precioPorUnidadMayor": "precioPorUnidad__gte",
-        #"precioPorUnidadMenor": "precioPorUnidad__lte"
+        "precioPorUnidadMayor": "precioPorUnidad__gte",
+        "precioPorUnidadMenor": "precioPorUnidad__lte"
     }
 
     objects = ProductoManager()

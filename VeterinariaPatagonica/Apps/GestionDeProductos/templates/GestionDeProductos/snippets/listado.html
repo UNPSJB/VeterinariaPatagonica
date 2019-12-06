@@ -10,6 +10,9 @@
     <div class="sombreado" id="filtrar-productos">
         {{ gestor.formFiltros.nombre }}
         {{ gestor.formFiltros.marca }}
+        {{ gestor.formFiltros.formaDePresentacion }}
+        {{ gestor.formFiltros.precioPorUnidadMayor }}
+        {{ gestor.formFiltros.precioPorUnidadMenor }}
         {{ gestor.formPagina.resultados }}
         <button class="btn btn-default filtrar" type="submit">Filtrar</button>
     </div>
@@ -18,11 +21,15 @@
         <colgroup>
             <col class="columna{% if gestor.encabezado.orden_nombre.activa %} activa{% endif %}"/>
             <col class="columna{% if gestor.encabezado.orden_marca.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_formaDePresentacion.activa %} activa{% endif %}"/>
+            <col class="columna{% if gestor.encabezado.orden_precioPorUnidad.activa %} activa{% endif %}"/>
         </colgroup>
         <thead>
             <tr>
                 <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombre %}</th>
                 <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_marca %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_formaDePresentacion %}</th>
+                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_precioPorUnidad %}</th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +40,8 @@
                             {{ producto.nombre }}</a>
                     </td>
                     <td> <p>{{producto.marca}}</p></td>
+                    <td> <p>{{producto.formaDePresentacion}}</p></td>
+                    <td> <p>{{producto.precioPorUnidad}}</p></td>
                 </tr>
             {% endfor %}
         </tbody>

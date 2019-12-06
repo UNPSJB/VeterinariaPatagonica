@@ -112,6 +112,30 @@ class FiltradoForm(forms.Form):
         })
     )
 
+    formaDePresentacion = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"FDP...",
+            "class":"form-control",
+        })
+    )
+
+    precioPorUnidadMayor = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"PPU...",
+            "class":"form-control",
+        })
+    )
+
+    precioPorUnidadMenor = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"PPUMENOR...",
+            "class":"form-control",
+        })
+    )
+
     segun = forms.ChoiceField(
         label="Ordenar segun",
         choices=criterios,
@@ -129,7 +153,7 @@ class FiltradoForm(forms.Form):
     def filtros(self):
         retorno = {}
 
-        fields = ("nombre", "marca")
+        fields = ("nombre", "marca", "formaDePresentacion","precioPorUnidadMayor","precioPorUnidadMenor")
         for field in fields:
             if field in self.cleaned_data and self.cleaned_data[field]:
                 retorno[field] = self.cleaned_data[field]
