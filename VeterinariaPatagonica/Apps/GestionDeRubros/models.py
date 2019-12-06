@@ -28,7 +28,8 @@ class Rubro (models.Model):
         validators= [RegexValidator(regex=REGEX_NOMBRE)],
         error_messages= {
             'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAXNOMBRE),
-            'blank': "El nombre es obligatorio"
+            'blank': "El nombre es obligatorio",
+            'unique': "El Rubro ya existe"
         }
     )
 
