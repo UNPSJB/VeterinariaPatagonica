@@ -46,7 +46,7 @@ def modificar(request, id= None, irAMascotas=1): #irAMascotas=1 -> False, irAMas
 
     if request.method == 'POST':
         formulario = ClienteForm(request.POST, instance=cliente)
-        print(formulario)
+        #print(formulario)
         if formulario.is_valid():
             cliente = formulario.save()
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))

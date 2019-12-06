@@ -96,11 +96,10 @@ class Cliente (models.Model):
         unique= True,
         null= False,
         blank= False,
-        validators=[MinValueValidator(MINDNICUIT,
-         message=("El dni/cuit debe tener mas de {} caracteres".format(MINDNICUIT)))],
+        #validators=[MinValueValidator(MINDNICUIT,
+         #message=("El dni/cuit debe tener mas de {} caracteres".format(MINDNICUIT)))],
         error_messages= {
-            'max_length': "El dni/cuit puede tener a lo sumo {} caracteres".format(MAXDNICUIT),
-            
+            'max_length': "El dni/cuit puede tener a lo sumo {} caracteres".format(MAXDNICUIT),           
             'unique': "El dni/cuit ingresado ya existe",
             'blank': "El dni/cuit es obligatorio"
         }
