@@ -49,7 +49,7 @@ PLANTILLAS = {
     "verObservaciones" : "verObservaciones",
 }
 def plantilla(nombre, subdirectorio=""):
-    return join( "GestionDePracticas", subdirectorio, PLANTILLAS[nombre]+".html")
+    return join( "GestionDePracticas/", subdirectorio, PLANTILLAS[nombre]+".html")
 
 
 
