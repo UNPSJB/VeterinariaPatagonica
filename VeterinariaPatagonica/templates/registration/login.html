@@ -17,9 +17,10 @@
   </head>
 
   <body class="container-fluid login">
-
+    {%block principal%}
       <div class="row fila">
         <h5> Bienvenido  al  Sistema  de  Veterinaria  Patagonica  </h5>
+
           <section class="col-xs-12 columna">
 
               <h1>Iniciar Sesion</h1>
@@ -34,7 +35,7 @@
 
                 <div id="seccion-submit">
                   <button class="btn btn-default submit" type="submit" >Iniciar </button>
-                  <a class="reset_pass" href="#">Generar nueva contraseña</a>
+                  <a class="reset_pass" href="{% url 'usuarios:changePassword' %}">Generar nueva contraseña</a>
                 </div>
             </form>
 
@@ -48,7 +49,9 @@
 
 
           </section>
+
     </div>
+    {%endblock principal%}
 
     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>

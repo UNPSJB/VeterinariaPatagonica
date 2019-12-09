@@ -10,6 +10,7 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
     path('admin/', admin.site.urls),
+    path('password/', include('Apps.Usuarios.urls', namespace= 'usuarios')),
     #url(r'^$',, name='base')
     #url(r'test/', include("Apps.GestionDeClientes.urls"))
     #url(r'.*/login.html', views.login),
