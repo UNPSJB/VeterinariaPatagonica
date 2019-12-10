@@ -57,11 +57,6 @@ def ClienteFormFactory(cliente=None):
                     'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Cliente.DESCUENTO),
                 },
 
-                'cuentaCorriente': {
-                    'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Cliente.CC_PARTE_ENTERA),
-                    'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Cliente.PRECIO),
-                }
-
             }
 
             widgets = {

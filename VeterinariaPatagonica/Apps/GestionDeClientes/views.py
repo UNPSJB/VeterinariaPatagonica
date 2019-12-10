@@ -45,15 +45,15 @@ def modificar(request, id= None, irAMascotas=1): #irAMascotas=1 -> False, irAMas
         context = {"titulo": 2, 'usuario': request.user}
 
     if request.method == 'POST':
-        formulario = ClienteForm(request.POST, instance=cliente)
+        form = ClienteForm(request.POST, instance=cliente)
         #print(formulario)
-        if formulario.is_valid():
-            cliente = formulario.save()
+        if form.is_valid():
+            cliente = form.save()
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
-            context['formulario'] = formulario
+            context['form'] = form
     else:
-        context['formulario'] = ClienteForm(instance=cliente)
+        context['form'] = ClienteForm(instance=cliente)
     template = loader.get_template('GestionDeClientes/formulario.html')
     return HttpResponse(template.render(context, request))
 

@@ -31,25 +31,24 @@ Gestion de Clientes | {{titulo}}
 
 {% block contenido %}
 
-    <div class="clienteCuerpo">
-        <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
 
-            {% csrf_token %}
+        {% csrf_token %}
 
-            {% if form.errors %}
-                <div class="errores">
-                    <strong>Por favor revise los siguientes errores:</strong>
-                    <ul>
-                        {% include "snippets/formErrores.html" %}
-                    </ul>
-                </div>
-            {% endif %}
+        {% if form.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
 
-            {% include 'GestionDeClientes/snippetCliente.html' with campos=formulario accion="Guardar Datos"%}
+        <!--{% include 'GestionDeClientes/snippetCliente.html' with campos=form accion="Guardar Datos"%}-->
+        {% include "./snippets/form.html" with accion="Guardar Datos" %}
 
 
-        </form>
-    </div>
+    </form>
 
 {% endblock %}
 
