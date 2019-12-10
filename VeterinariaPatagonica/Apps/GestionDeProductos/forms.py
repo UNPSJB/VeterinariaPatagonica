@@ -107,7 +107,7 @@ class FiltradoForm(forms.Form):
     marca = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            "placeholder":"Marcas...",
+            "placeholder":"Marca...",
             "class":"form-control",
         })
     )
@@ -115,7 +115,7 @@ class FiltradoForm(forms.Form):
     formaDePresentacion = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            "placeholder":"FDP...",
+            "placeholder":"Forma De Presentación...",
             "class":"form-control",
         })
     )
@@ -123,7 +123,7 @@ class FiltradoForm(forms.Form):
     precioPorUnidadMayor = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            "placeholder":"PPU...",
+            "placeholder":"Precio mayor que...",
             "class":"form-control",
         })
     )
@@ -131,7 +131,7 @@ class FiltradoForm(forms.Form):
     precioPorUnidadMenor = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            "placeholder":"PPUMENOR...",
+            "placeholder":"Precio menor que...",
             "class":"form-control",
         })
     )

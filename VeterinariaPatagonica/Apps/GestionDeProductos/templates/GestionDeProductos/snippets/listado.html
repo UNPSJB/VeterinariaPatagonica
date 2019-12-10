@@ -40,7 +40,7 @@
                             {{ producto.nombre }}</a>
                     </td>
                     <td> <p>{{producto.marca}}</p></td>
-                    <td> <p>{{producto.formaDePresentacion}}</p></td>
+                    <td> <p>{{producto.get_formaDePresentacion_display}} ({{producto.formaDePresentacion}})</p></td>
                     <td> <p>{{producto.precioPorUnidad}}</p></td>
                 </tr>
             {% endfor %}
