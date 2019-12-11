@@ -37,13 +37,13 @@ class ProductoQueryset(VeterinariaPatagonicaQuerySet):
 ProductoManager = models.Manager.from_queryset(ProductoQueryset)
 
 class Producto (models.Model):
-    MAPPER = {
+    """MAPPER = {
         "marca": "marca__icontains",
         "formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
         "precioPorUnidadMayor": "precioPorUnidad__gte",
         "precioPorUnidadMenor": "precioPorUnidad__lte"
-    }
+    }"""
 
     objects = ProductoManager()
 
