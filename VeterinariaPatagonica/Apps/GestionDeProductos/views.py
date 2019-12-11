@@ -34,6 +34,7 @@ def producto(request):
     template = loader.get_template('GestionDeProductos/GestionDeProductos.html')#Cargo el template desde la carpeta templates/GestionDeProductos.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeProductos.add_Producto', raise_exception=True)
 def modificar(request, id = None):
@@ -68,6 +69,8 @@ def verHabilitados(request):
         orden=[
             ["orden_nombre", "Nombre"],
             ["orden_marca", "Marca"],
+            ["orden_formaDePresentacion", "Forma de Presentacion"],
+            ["orden_precioPorUnidad", "Precio por Unidad"],
         ],
         claseFiltros=FiltradoForm,
     )
@@ -234,6 +237,73 @@ def ListadoProductosPDF(request):
     response.write(pdf)
     return response
 
+##
+#
+# REPORTE DE PRODUCTOS VENDIDOS POR DIA 
+#
+##
+from reportlab.lib.pagesizes import A4
+from reportlab.graphics.charts.linecharts import HorizontalLineChart
+from reportlab.graphics.charts.lineplots import LinePlot
+from reportlab.graphics.shapes import Drawing
+
+def reporteProductosVendidos(request):
+    print('GET')
+    response = HttpResponse(content_type='application/pdf')
+    #response['Content-Disposition'] = 'attachment; filename = productos-vendidos.pdf' 
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    pdf.setTitle('Reporte productos vendidos')
+    cabeceraReporte(pdf)
+    graficoLineal(pdf)    
+    pdf.showPage()
+    pdf.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
+
+
+def graficoLineal (pdf):
+    drawing = Drawing(400, 200)
+    data = [
+    (13, 5, 20, 22, 37, 45, 19, 4),
+    (5, 20, 46, 38, 23, 21, 6, 14)
+    ]
+    pdf = HorizontalLineChart()
+    pdf.x = 50
+    pdf.y = 50
+    pdf.height = 125
+    pdf.width = 300
+    pdf.data = data
+    pdf.joinedLines = 1
+    catNames = 'Jan Feb Mar Apr May Jun Jul Aug'.split(' ')
+    pdf.categoryAxis.categoryNames = catNames
+    pdf.categoryAxis.labels.boxAnchor = 'n'
+    pdf.lineLabels.fontName = 'FreeSans'
+    pdf.valueAxis.valueMin = 0
+    pdf.valueAxis.valueMax = 60
+    pdf.valueAxis.valueStep = 15
+    pdf.lineLabelFormat = '%2.0f'
+    pdf.lines[0].strokeWidth = 2
+    pdf.lines[1].strokeWidth = 1.5
+    drawing.add(pdf)
+#    drawing.save(formats=['pdf'], outDir='.', fnRoot='test')
+
+def cabeceraReporte(pdf):
+    print("CABECERA REPORTE")
+    # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
+    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
+    # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+    pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
+    # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
+    pdf.setFont("Helvetica", 16)
+    # Dibujamos una cadena en la ubicación X,Y especificada
+    pdf.drawString(200, 790, u"VETERINARIA PATAGONICA")
+    pdf.setFont("Helvetica", 14)
+    pdf.drawString(175, 770, u"REPORTE DE PRODUCTOS VENDIDOS")
+
+
 def cabecera(pdf):
     print("CABECERA")
     # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
@@ -246,6 +316,7 @@ def cabecera(pdf):
     pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE PRODUCTOS")
+
 
 def tabla(pdf, y, productos):
     print("TABLA")
