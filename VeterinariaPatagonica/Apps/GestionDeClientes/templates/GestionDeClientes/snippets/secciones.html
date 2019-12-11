@@ -1,6 +1,6 @@
 <div class="secciones">
       
-    <a id="clienteAyuda" class="btn btn-sm btn-default" href="{% url 'clientes:clienteManual'%}"  data-toggle="tooltip" data-placement="bottom" title="Ayuda"> <i class="glyphicon glyphicon-book"> </i></a>
+    <a id="clienteAyuda" class="btn btn-sm btn-default" href="{% url 'clientes:ayudaCliente'%}"  data-toggle="tooltip" data-placement="bottom" title="Ayuda"> <i class="glyphicon glyphicon-book"> </i></a>
 
     <a id="link-habilitados" class="btn btn-sm btn-default {% if pagina == 'verHabilitados' %} disabled {% endif %}"  href="{% url 'clientes:clienteVerHabilitados' %}"> Habilitados </a>
 

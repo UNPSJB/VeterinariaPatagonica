@@ -21,6 +21,7 @@ urlpatterns = [
     #url(r'^listado_clientes_pdf/$',clientes_views.ListadoClientesPDF.as_view, name="clientesListadoPDF" ),
     #path('listado_clientes_pdf/', clientes_views.ListadoClientesPDF.as_view, name="clientesListadoPDF"),
     path('listado_clientes_pdf/', clientes_views.ListadoClientesPDF, name="clientesListadoPDF"),
-    path('documentacion/', clientes_views.documentation, name="clienteManual"),
-    path('documentacionCliente/<int:tipo>', clientes_views.documentationCliente, name="clienteManual"),
+    path('ayudaCliente/', clientes_views.ayudaContextualCliente, name="ayudaCliente"),
+    #path('documentacion/', clientes_views.documentation, name="clienteManual"),
+    #path('documentacionCliente/<int:tipo>', clientes_views.documentationCliente, name="clienteManual"),
 ]

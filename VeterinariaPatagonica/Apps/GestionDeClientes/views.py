@@ -274,8 +274,11 @@ def tabla(pdf, y, clientes):
     # Definimos la coordenada donde se dibujará la tabla
     detalle_orden.drawOn(pdf, 20, y)
 
+def ayudaContextualCliente(request):
+    # Redireccionamos la ayuda contextual
+    return render(request, "GestionDeClientes/ayudaContextualCliente.html")
 
-@login_required
+'''@login_required
 def documentationCliente(request, tipo):
     if (tipo==1):
         template = loader.get_template('GestionDeClientes/manual_ayuda_cliente/build/archivos/botonHD.html')
@@ -298,4 +301,5 @@ def documentation(request):
         'usuario': request.user,
     }
 
-    return HttpResponse(template.render(contexto, request))
+    return HttpResponse(template.render(contexto, request))'''
+
