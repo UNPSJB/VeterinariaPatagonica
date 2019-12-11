@@ -1,35 +1,32 @@
 {% extends "sitioBase.html" %}
 {% load static %}
 
-{% block paginaEstilos %}
-  {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/GestionDeRubros.css' %}">
-{% endblock paginaEstilos %}
-
 {% block paginaSeccionGeneral %}
   <section>
     {% block secciones %}
-
+    {% include './seccionesSnippet.html' with pagina='default' %}
     {% endblock %}
 
-    <h4 class="rubroTitulo">
+    <h4 class="titulo">
       {% block rubroTitulo %}
-      {% endblock rubroTitulo %}
+      {% endblock %}
     </h4>
-    <br>
-    <div class="rubroLineaTitulo"> </div>
-
-    <p class="rubroSubtitulo">
+    <div class="linea-titulo"> </div>
+    <p class="subtitulo">
       {% block rubroSubtitulo %}
-      {% endblock rubroSubtitulo%}
+      {% endblock %}
     </p>
 
-  {% block rubroContenido %}
-  {% endblock rubroContenido %}
+    {% block rubroContenido %}
+    {% endblock %}
   </section>
-{% endblock paginaSeccionGeneral %}
+{% endblock %}
 
 
 {% block footer %}
   <p>Para mas información  de los Rubros haga click aquí<p>
 {% endblock footer %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+{% endblock paginaJavascript %}
