@@ -16,7 +16,7 @@ PLANTILLAS = {
     "ver" : "ver",
     "crear" : "crear",
     "modificar" : "modificar",
-    "eliminar" : "eliminar"
+    "eliminar" : "eliminar",
 }
 
 def plantilla(nombre):
@@ -181,3 +181,13 @@ def eliminar(request, id):
 
     template = loader.get_template(plantilla("eliminar"))
     return HttpResponse( template.render({}, request) )
+
+@login_required
+def ayudaContextualTipoDeAtencion(request):
+
+    template = loader.get_template('GestionDeTiposDeAtencion/GestindeTiposdeAtencin.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))

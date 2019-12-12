@@ -165,6 +165,18 @@ def verDeshabilitados(request):
     }
     return HttpResponse(template.render(contexto, request))
 
+@login_required
+def ayudaContextualRubro(request):
+
+    template = loader.get_template('GestionDeRubros/GestindeRubros.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
+    #http://localhost:8000/GestionDeRubros/ayudaRubro/images/image6.png
+
 #LISTADOS
 def ListadoRubrosExcel(request):
     # Creamos el libro de trabajo

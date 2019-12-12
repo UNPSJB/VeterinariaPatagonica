@@ -268,15 +268,16 @@ def documentationMascota(request, tipo):
     return HttpResponse(template.render(contexto, request))
 
 @login_required
-def documentation(request):
+def ayudaContextualMascota(request):
 
-    template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/index.html')
+    template = loader.get_template('GestionDeMascotas/ayudaContextualMascota.html')
     contexto = {
         'usuario': request.user,
     }
 
     return HttpResponse(template.render(contexto, request))
 
+#file:///C:/Users/Lucila/Downloads/images/image15.png
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
 

@@ -34,6 +34,8 @@ urlpatterns = [
             path("observaciones/<int:id>/", consultas.modificarObservaciones, name="observaciones"),
         ], "modificar"))),
 
+        path("ayudaConsulta/", consultas.ayudaContextualConsulta, name="ayudaConsulta"),
+
     ], "consulta"))),
 
     path("cirugias/", include(([
@@ -66,6 +68,8 @@ urlpatterns = [
             path("detalles/<int:id>/", cirugias.modificarDetalles, name="detalles"),
             path("observaciones/<int:id>/", cirugias.modificarObservaciones, name="observaciones"),
         ], "modificar"))),
+
+        path("ayudaCirugia/", cirugias.ayudaContextualCirugia, name="ayudaCirugia"),
 
 
     ], "cirugia")))

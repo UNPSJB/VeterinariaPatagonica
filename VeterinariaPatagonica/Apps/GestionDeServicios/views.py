@@ -281,6 +281,15 @@ def tabla(pdf, y, rubros):
     # Definimos la coordenada donde se dibujará la tabla
     detalle_orden.drawOn(pdf, 20, y)
 
+@login_required
+def ayudaContextualServicio(request):
+
+    template = loader.get_template('GestionDeServicios/GestindeServicios.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
 
 #def volver(request, id):
 #    return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))

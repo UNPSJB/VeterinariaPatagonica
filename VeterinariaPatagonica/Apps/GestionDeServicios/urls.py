@@ -20,5 +20,6 @@ urlpatterns = [
     #path('documentacion/', rubros_views.documentation, name="rubroManual"),
     #path('documentacionRubro/<int:tipo>', rubros_views.documentationRubro, name="rubroManual"),
 
+    path('ayudaServicio/', servicios_views.ayudaContextualServicio, name='ayudaServicio'),
     #path('volver/',servicios_views.volver, name='volver'),
 ]
