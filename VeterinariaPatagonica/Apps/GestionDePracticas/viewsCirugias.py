@@ -752,7 +752,15 @@ def verObservaciones(request, id):
     template = loader.get_template(plantilla("verObservaciones"))
     return HttpResponse(template.render(context, request))
 
+@login_required
+def ayudaContextualCirugia(request):
 
+    template = loader.get_template('GestionDePracticas/GestindeCirugas.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
 
 """@login_required
 def verAgendaCirugia(request):

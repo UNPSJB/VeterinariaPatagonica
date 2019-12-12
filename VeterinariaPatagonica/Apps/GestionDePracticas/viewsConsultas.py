@@ -602,3 +602,13 @@ def verObservaciones(request, id):
 
     template = loader.get_template(plantilla("verObservaciones"))
     return HttpResponse(template.render(context, request))
+
+@login_required
+def ayudaContextualConsulta(request):
+
+    template = loader.get_template('GestionDePracticas/GestindeConsultas.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
