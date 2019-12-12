@@ -13,5 +13,6 @@ urlpatterns = [
     path("habilitados/", views.habilitados, name="habilitados"),
     path("deshabilitados/", views.deshabilitados, name="deshabilitados"),
     path("", views.habilitados, name="habilitados"),
+    path("ayudaTipoDeAtencion", views.ayudaContextualTipoDeAtencion, name='ayudaTipoDeAtencion'),
 ]
 
