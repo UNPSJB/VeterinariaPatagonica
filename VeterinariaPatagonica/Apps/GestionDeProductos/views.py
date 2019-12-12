@@ -177,6 +177,16 @@ def eliminar(request, id):
         }
         return HttpResponse( template.render( context, request) )
 
+@login_required
+def ayudaContextualProducto(request):
+
+    template = loader.get_template('GestionDeProductos/ayudaContextualProducto.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
 def ListadoProductosExcel(request):
     # Creamos el libro de trabajo
     wb = Workbook()
@@ -351,26 +361,3 @@ class rubroAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(nombre__icontains=self.q))
 
         return qs
-""""@login_required
-def documentationProducto(request, tipo):
-    if (tipo==1):
-        template = loader.get_template('GestionDeProductos/manual_ayuda_producto/build/archivos/botonHD.html')
-    elif(tipo==2):
-        template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/archivos/criteriosBusqueda.html')
-
-    contexto = {
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))
-
-@login_required
-def documentation(request):
-
-    template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/index.html')
-    contexto = {
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))
-"""
