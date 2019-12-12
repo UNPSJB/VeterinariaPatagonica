@@ -1,5 +1,7 @@
 <div class="secciones">
 
+        <a id="rubroAyuda" class="btn btn-sm btn-default" href="{% url 'rubros:ayudaRubro' %}"  data-toggle="tooltip" data-placement="bottom" title="Ayuda"> <i class="glyphicon glyphicon-book"> </i></a>
+
         <a id="rubroLinkHabilitados" class="btn btn-sm btn-default {% if pagina == 'verHabilitados' %} disabled {% endif %}"  href="{% url 'rubros:rubroVerHabilitados' %}"> Habilitados </a>
 
         <a id="rubroLinkDeshabilitados" class="btn btn-sm btn-default {% if pagina == 'verDeshabilitados' %} disabled {% endif %}"  href="{% url 'rubros:rubroVerDeshabilitados' %}"> Deshabilitados </a>
