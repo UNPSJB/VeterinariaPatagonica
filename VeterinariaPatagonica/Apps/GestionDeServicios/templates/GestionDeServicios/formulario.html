@@ -1,9 +1,8 @@
 {% extends 'GestionDeServicios/GestionDeServicios.html' %}
-
 {% load static %}
 
 {% block titulo %}
-Gestion de Servicios | Crear Servicios
+Gestion de Servicios | {{titulo}}
 {% endblock %}
 
 {% block servicioTitulo %}
@@ -28,7 +27,7 @@ Gestion de Servicios | Crear Servicios
   <div class="servicioCuerpo">
     <form class="form-horizontal formulario" action="" method="post">
       {% csrf_token %}
-      {% include './snippetServicios.html' with form=formulario formset=formset accion="Guardar datos" %}
+      {% include 'GestionDeServicios/snippetServicios.html' with campos=formulario accion="Guardar datos" %}
     </form>
   </div>
 {% endblock %}

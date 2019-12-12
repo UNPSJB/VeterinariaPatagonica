@@ -4,27 +4,51 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.forms import modelformset_factory
-
+from django.db.models import Q
 from .models import Servicio, ServicioProducto
-from .forms import ServicioForm, ServicioProductoForm, ServicioProductoBaseFormSet
+from .forms import ServicioFormFactory, FiltradoForm
+from .forms import ServicioProductoForm, ServicioProductoBaseFormSet
 from VeterinariaPatagonica import tools
-
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from VeterinariaPatagonica.tools import GestorListadoQueryset
+from django.urls import reverse
+
+#Vista genérica para mostrar resultados
+from django.views.generic.base import TemplateView
+#Workbook nos permite crear libros en excel
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+
+#Importamos settings para poder tener a la mano la ruta de la carpeta media
+from django.conf import settings
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from django.views.generic import View
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+
+serviciosFiltrados = [] 
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
 def modificar(request, id = None):
     servicio = Servicio.objects.get(id=id) if id is not None else None
+    ServicioForm = ServicioFormFactory(servicio)
+
     if (id==None):
         context = {"titulo": 1, 'usuario': request.user}
     else:
         context = {"titulo": 2, 'usuario': request.user}
+
     form = ServicioForm(instance=servicio)
     ServicioProductoFormset = modelformset_factory(ServicioProducto,#          Defino la forma del formset. Van a tener el checkbox eliminar, la cantidad mínima de forms en el formset
         fields=("producto", "cantidad"), min_num=1, extra=0, can_delete=True,# es de 1 y la máxima es la determinada por django (1000),
         formset=ServicioProductoBaseFormSet)#                                  además se define que siempre va a haber cero tuplas adicionales (extra).
+  
     if request.method == 'POST':
         form = ServicioForm(request.POST, instance=servicio)
+        
         formset = ServicioProductoFormset(request.POST)
         if form.is_valid() and formset.is_valid():#Verifico si los forms del formset cumplen las restricciones definidas (Si no se lanzó un ValidationError).
             servicio = form.save()
@@ -47,54 +71,54 @@ def modificar(request, id = None):
 
 
 def verHabilitados(request):
-    serviciosQuery = Servicio.objects.habilitados()
-    serviciosQuery = serviciosQuery.filter(tools.paramsToFilter(request.GET, Servicio))
+    global serviciosFiltrados
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_nombre", "Nombre"],
+            ["orden_tipo", "Tipo"],
+            ["orden_precioManoDeObra", "Precio Mano De Obra"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
+
+    servicios = Servicio.objects.habilitados()
+    gestor.cargar(request, servicios, Servicio)
+    gestor.ordenar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
+
+    serviciosFiltrados = gestor.queryset
     template = loader.get_template('GestionDeServicios/verHabilitados.html')
-
-    paginator = Paginator(serviciosQuery, 1)
-    page = request.GET.get('page')
-
-    try:
-        servicios = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        servicios = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        servicios = paginator.page(paginator.num_pages)
-
-    context = {
-        'serviciosQuery' : serviciosQuery,
-        'usuario' : request.user,
-        'servicios': servicios,
+    contexto = {
+        "gestor": gestor,
     }
-
-    return  HttpResponse(template.render(context,request))
+    return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
-    serviciosQuery = Servicio.objects.deshabilitados()
-    serviciosQuery = serviciosQuery.filter(tools.paramsToFilter(request.GET, Servicio))
+    """ Listado de clientes deshabilitados """
+    global serviciosFiltrados
+    gestor = GestorListadoQueryset(
+        orden=[
+            ["orden_nombre", "Nombre"],
+            ["orden_tipo", "Tipo"],
+            ["orden_precioManoDeObra", "Precio Mano De Obra"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
+
+    servicios = Servicio.objects.deshabilitados()
+    gestor.cargar(request, servicios, Servicio)
+    gestor.ordenar()
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
+
+    serviciosFiltrados = gestor.queryset
     template = loader.get_template('GestionDeServicios/verDeshabilitados.html')
-
-    paginator = Paginator(serviciosQuery, 1)
-    page = request.GET.get('page')
-
-    try:
-        servicios = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        servicios = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        servicios = paginator.page(paginator.num_pages)
-
-    context = {
-        'serviciosQuery': serviciosQuery,
-        'usuario': request.user,
-        'servicios': servicios,
+    contexto = {
+        "usuario": request.user,
+        "gestor": gestor
     }
-
-    return  HttpResponse(template.render(context,request))
+    return HttpResponse(template.render(contexto, request))
 
 def ver(request, id):
     #import ipdb; ipdb.set_trace()
@@ -156,6 +180,107 @@ def eliminar(request, id):
             'id' : id
         }
         return HttpResponse( template.render( context, request) )
+
+
+#LISTADOS
+def ListadoServiciosExcel(request):
+    # Creamos el libro de trabajo
+    wb = Workbook()
+    # Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+    ws = wb.active
+    ws = wb.worksheets[0]
+    # En la celda B1 ponemos el texto 'LISTADO DE CLIENTES'
+    ws['B1'] = 'LISTADO DE SERVICIOS'
+    # Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
+    ws.merge_cells('B1:F1')
+    # Creamos los encabezados desde la celda B3 hasta la E3
+    ws['B3'] = 'NOMBRE'
+    ws['C3'] = 'DESCRIPCION'
+    cont = 2
+    # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+    for rubro in serviciosFiltrados:
+        ws.cell(row=cont, column=2).value = servicio.nombre
+        ws.cell(row=cont, column=3).value = servicio.descripcion
+        cont = cont + 1
+
+    column_widths = []
+    for row in ws.rows:
+        for i, cell in enumerate(row):
+            if len(column_widths) > i:
+                if len(str(cell.value)) > column_widths[i]:
+                    column_widths[i] = len(str(cell.value))
+            else:
+                column_widths += [len(str(cell.value))]
+
+    for i, column_width in enumerate(column_widths):
+         ws.column_dimensions[get_column_letter(i+1)].width = column_width
+
+    # Establecemos el nombre del archivo
+    nombre_archivo = "ListadoRubros.xlsx"
+    # Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
+    response = HttpResponse(content_type="application/ms-excel")
+    contenido = "attachment; filename={0}".format(nombre_archivo)
+    response["Content-Disposition"] = contenido
+    wb.save(response)
+    return response
+
+def ListadoServiciosPDF(request):
+    print("GET")
+    # Indicamos el tipo de contenido a devolver, en este caso un pdf
+    response = HttpResponse(content_type='application/pdf')
+    # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+    buffer = BytesIO()
+    # Canvas nos permite hacer el reporte con coordenadas X y Y
+    pdf = canvas.Canvas(buffer)
+    # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+    cabecera(pdf)
+    y = 500
+    tabla(pdf, y, rubrosFiltrados)
+    # Con show page hacemos un corte de página para pasar a la siguiente
+    pdf.showPage()
+    pdf.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
+
+def cabecera(pdf):
+    print("CABECERA")
+    # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
+    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
+    # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+    pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
+    # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
+    pdf.setFont("Helvetica", 16)
+    # Dibujamos una cadena en la ubicación X,Y especificada
+    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.setFont("Helvetica", 14)
+    pdf.drawString(220, 770, u"LISTADO DE RUBROS")
+
+def tabla(pdf, y, rubros):
+    print("TABLA")
+    # Creamos una tupla de encabezados para neustra tabla
+    encabezados = ('Nombre', 'Descripcion')
+    # Creamos una lista de tuplas que van a contener a las personas
+    detalles = [(rubro.nombre, rubro.descripcion) for rubro in rubros]
+    # Establecemos el tamaño de cada una de las columnas de la tabla
+    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm,5 * cm, 5 * cm])
+    # Aplicamos estilos a las celdas de la tabla
+    detalle_orden.setStyle(TableStyle(
+        [
+            # La primera fila(encabezados) va a estar centrada
+            ('ALIGN', (0, 0), (3, 0), 'CENTER'),
+            # Los bordes de todas las celdas serán de color negro y con un grosor de 1
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            # El tamaño de las letras de cada una de las celdas será de 10
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ]
+    ))
+    # Establecemos el tamaño de la hoja que ocupará la tabla
+    detalle_orden.wrapOn(pdf, 800, 600)
+    # Definimos la coordenada donde se dibujará la tabla
+    detalle_orden.drawOn(pdf, 20, y)
+
 
 #def volver(request, id):
 #    return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
