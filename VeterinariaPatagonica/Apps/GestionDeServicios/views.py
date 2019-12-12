@@ -157,5 +157,15 @@ def eliminar(request, id):
         }
         return HttpResponse( template.render( context, request) )
 
+@login_required
+def ayudaContextualServicio(request):
+
+    template = loader.get_template('GestionDeServicios/GestindeServicios.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
 #def volver(request, id):
 #    return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))

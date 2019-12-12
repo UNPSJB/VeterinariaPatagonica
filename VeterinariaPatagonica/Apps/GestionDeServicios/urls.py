@@ -12,6 +12,6 @@ urlpatterns = [
     path('eliminar/<int:id>/', servicios_views.eliminar, name='servicioEliminar'),
     path('verHabilitados/', servicios_views.verHabilitados, name='servicioVerHabilitados'),
     path('verDeshabilitados/', servicios_views.verDeshabilitados, name='servicioVerDeshabilitados'),
-
+    path('ayudaServicio/', servicios_views.ayudaContextualServicio, name='ayudaServicio'),
     #path('volver/',servicios_views.volver, name='volver'),
 ]
