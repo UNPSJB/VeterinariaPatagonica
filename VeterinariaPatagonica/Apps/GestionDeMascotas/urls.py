@@ -21,4 +21,5 @@ urlpatterns = [
     path('documentacionMascota/<int:tipo>', mascotas_views.documentationMascota, name="mascotaManual"),
     path('listado_mascotas_excel/', mascotas_views.ListadoMascotasExcel, name="mascotasListadoExcel"),
     path('listado_mascotas_pdf/', mascotas_views.ListadoMascotasPDF, name="mascotasListadoPDF"),
+    path('ayudaMascota/', mascotas_views.ayudaContextualMascota, name='ayudaMascota'),
 ]
