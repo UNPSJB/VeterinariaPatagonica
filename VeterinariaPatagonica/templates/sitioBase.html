@@ -42,6 +42,7 @@
   <body>
   <div class="container-fluid" id="el_container_fluid">
   <!-- Primer fila: Barra de titulo -->
+  {% block cabecera %}
   <div class="row">
     <header class="col-xs-12" id="sitio-encabezado">
       <div>
@@ -63,6 +64,7 @@
     <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagonica</h1>
     </header>
   </div>
+  {% endblock cabecera %}
   <!-- Segunda Fila: Menu derecho, izquierdo y seccion general -->
   <div class="row" id="fila_centro" >
     <!--Menu izquierdo-->
@@ -137,12 +139,12 @@
     <!-- NProgress -->
     <script src="{% static 'gentelella/nprogress/nprogress.js' %}"></script>
     <!-- Custom Theme Scripts -->
-    <script src="{% static 'js/custom.min.js' %}"></script>
     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
     <script src="{% static 'jquery/jquery.tablesorter.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
     <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
-
+    
   {% endblock paginaJavascript %}
   </body>
 </html>
