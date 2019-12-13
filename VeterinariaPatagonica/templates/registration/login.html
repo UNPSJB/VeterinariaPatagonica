@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>
-      Veterinaria Patagonica | Iniciar Sesion
+      Veterinaria Patagónica | Iniciar Sesión
     </title>
 
     <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
@@ -19,29 +19,30 @@
   <body class="container-fluid login">
     {%block principal%}
       <div class="row fila">
-        <h5> Bienvenido  al  Sistema  de  Veterinaria  Patagonica  </h5>
+        <h5> Bienvenido  al  Sistema  de  Veterinaria  Patagónica  </h5>
 
           <section class="col-xs-12 columna">
 
-              <h1>Iniciar Sesion</h1>
+              <h1>Iniciar Sesión</h1>
 
             <form action="{{ url_actual }}?proxima={{ url_proxima }}" method="post">
               {% csrf_token %}
-
-                <div id="seccion-inputs">
+              
+                <div align="center" id="seccion-inputs">
                   {{ formulario.usuario }}
                   {{ formulario.password }}
                 </div>
 
                 <div id="seccion-submit">
                   <button class="btn btn-default submit" type="submit" >Iniciar </button>
-                  <a class="reset_pass" href="{% url 'usuarios:changePassword' %}">Generar nueva contraseña</a>
+                  <!-- <a class="reset_pass" href="{% url 'usuarios:changePassword' %}">Generar nueva contraseña</a> -->
                 </div>
+
             </form>
 
               <div class="seccion-footer">
 
-                  <h1><i class="fa fa-paw"></i> Veterinaria Patagonica</h1>
+                  <h1><i class="fa fa-paw"></i> Veterinaria Patagónica</h1>
                   <p>2018 Ningun derecho reservado.</p>
 
               </div>

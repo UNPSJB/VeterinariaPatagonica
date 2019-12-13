@@ -1,42 +1,23 @@
 {{ formulario.non_field_errors }}
-
-{% for field in form %}
-<div class="form-group {% if field.errors %}has-error{% endif %}">
-    <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
-        {{ field.label }}
-    </label>
-    <div class="col-xs-7">
-      {{ field }}
-      <div class="campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
-        {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
-      </div>
+{% for campo in formulario %}
+    <div class="form-group {{ campo.name }} {% if campo.errors %}has-error{% endif %}">
+        <label for="{{ campo.id_for_label }}" class="col-sm-4 control-label etiqueta">
+            {{ campo.label }}
+        </label>
+        <div class="col-sm-8">
+            {{ campo }}
+            <div class="campo-errores"  {% if not campo.errors %}style="display:none;"{% endif %}>
+                {% for error in campo.errors %} <span  class="help-block">{{ error }}</span> {% endfor %}
+            </div>
+        </div>
     </div>
-    <span style="display:none;" class="help-block">{{ field.help_text }}</span>
-</div>
 {% endfor %}
 
-{% block errores %}
-  {{ formset.non_form_errors }}
-{% endblock errores %}
+{% if accion %}
+<div class="form-group">
+    <div class="col-sm-offset-4">
+        <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
 
-<div class= "col-xs-12">
-  <div class="col-xs-12 well" >
-    {{formset.management_form}}
-    {% for form in formset %}
-      <div class="col-xs-7" id="item-{{forloop.counter}}">
-        {{form}}
-      </div>
-    {% endfor %}
-    <div class="col-xs-5" id="buttons">
-      <div>
-        <a id="button-add" class="btn btn-primary btn-sm pull-right" role="button">
-          Agregar Producto &raquo;
-        </a>
     </div>
-  </div>
-  <div class="form-group">
-    <div class="col-sm-offset-4 col-sm-8">
-      <button type="submit" class="btn btn-sm btn-default">{{accion}}</button>
-    </div>
-  </div>
 </div>
+{% endif %}

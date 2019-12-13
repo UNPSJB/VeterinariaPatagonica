@@ -25,6 +25,9 @@ from django.contrib.auth import logout as auth_logout
 from django.core.exceptions import PermissionDenied
 from .forms import LoginForm
 from .errores import VeterinariaPatagonicaError
+# from django.core.context_processors import csrf
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 
 def verdemo(request):
     template = request.path.split('/')[-1]
@@ -37,11 +40,17 @@ def base(request):
     template = loader.get_template('sitioBase.html')#Cargo el template del sitio base.
     return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
+@login_required
 def index(request):
     return render_to_response('sitioBase.html')
 
+# @user_passes_test(lambda u: u.is_anonymous)
 def login(peticion):
-
+    # if peticion.user.is_authenticated():
+    #     print("ESTAS AUTENTICADO")
+    print("---------------------------------------------")
+    print(peticion.user.is_authenticated)
+    print("----------------------------")
     proxima = peticion.GET.get('proxima', default='/')
     contexto = {
         'url_proxima':proxima,
@@ -49,24 +58,30 @@ def login(peticion):
     }
 
     if peticion.method == 'POST':
+        try:
+            formulario = LoginForm(peticion.POST)
 
-        formulario = LoginForm(peticion.POST)
+            if formulario.is_valid():
 
-        if formulario.is_valid():
+                usr = formulario.cleaned_data['usuario']
+                pwd = formulario.cleaned_data['password']
+                usuario = authenticate( peticion, username=usr, password=pwd )
 
-            usr = formulario.cleaned_data['usuario']
-            pwd = formulario.cleaned_data['password']
-            usuario = authenticate( peticion, username=usr, password=pwd )
+                if usuario is not None:
 
-            if usuario is not None:
+                    auth_login(peticion, usuario)
+                    return HttpResponseRedirect(proxima)
+            # return render_to_response('registration/login.html')
+            raise PermissionDenied()
+        except:
+            print("Usuario ingresado es inválido.-----------------------------------------------")
+            formulario = LoginForm()
+            template = loader.get_template('registration/login.html')
+            contexto['formulario'] = formulario
 
-                auth_login(peticion, usuario)
-                return HttpResponseRedirect(proxima)
-
-        raise PermissionDenied()
+        return HttpResponse(template.render( contexto, peticion) )
 
     else:
-
         formulario = LoginForm()
         template = loader.get_template('registration/login.html')
         contexto['formulario'] = formulario

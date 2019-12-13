@@ -25,7 +25,7 @@
   <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
 
   <link rel="shortcut icon" href="/../static/images/iconoBarraNavegacion.jpg">
-  
+
   <!--Font Awesome 5 para iconos mas lindos -->
   <script src='https://kit.fontawesome.com/a076d05399.js'></script>
 
@@ -34,7 +34,7 @@
 
   <title>
 {% block paginaTitulo %}
-  Veterinaria Patagonica
+  Veterinaria Patagónica
 {% endblock paginaTitulo %}
   </title>
 
@@ -54,14 +54,17 @@
               <span class=" fa fa-angle-down"></span>
             </a>
             <ul class="dropdown-menu dropdown-usermenu pull-right">
-              <li><a href="{% url "ayuda" %}">Ayuda</a></li>
-              <li><a href="{% url "login" %}"><i class="fa fa-sign-out pull-right"></i>Cerrar Sesión</a></li>
-              <li><a><i class="glyphicon glyphicon-cog pull-right"></i>Configuración</a></li>
+              <li><a href="{% url "ayuda" %}"><i class="glyphicon glyphicon-question-sign pull-right"></i>Ayuda</a></li>
+
+              <!-- <li><a><i class="glyphicon glyphicon-cog pull-right"></i>Configuración</a></li> -->
+              <li> <a href="{% url 'usuarios:changePassword' %}"><i class="glyphicon glyphicon-edit pull-right"></i>Cambiar Contraseña</a></li>
+              <!-- <li> <a href="{% url "usuarios:changePassword"%}">Cambiar Contraseña</a> </li> -->
+              <li><a href="{% url "logout" %}"><i class="glyphicon glyphicon-log-out pull-right"></i>Cerrar Sesión</a></li>
             </ul>
           </li>
         </ul>
       </div>
-    <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagonica</h1>
+    <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagónica</h1>
     </header>
   </div>
   {% endblock cabecera %}

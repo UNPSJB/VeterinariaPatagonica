@@ -8,117 +8,37 @@ Gestion de Servicios | Ver Habilitados
 Servicios Habilitados
 {% endblock %}
 
-{% block servicioSubtitulo %}
-<!--Actualmente disponibles-->
-{% endblock %}
-
 {% block secciones %}
 {% include './seccionesSnippet.html' with pagina='verHabilitados' %}
 {% endblock %}
 
 {% block servicioContenido %}
+    {% if gestor.numero_items %}
 
-{% load navigation_filters %}
-<!-- Listado -->
-<div class="servicioCuerpo" >
+    {% include "./listado.html" %}
 
-    <div id="filtrarServiciosHabilitados">
-        <a role="button" href="#filtrarServicios" data-toggle="collapse">
-            <i class="glyphicon glyphicon-tasks"></i>
-            <span>Criterios de busqueda</span>
-        </a>
-        <div id="filtrarServicios" class="collapse in">
-            <form class="form-horizontal filtrado" action="" method="GET">
-                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
-                    <div>
-                        <form action="" method="GET">
-                            <br>
-                            <input name="nombre" placeholder="Nombre">
-                            <input name="tipo" placeholder="Tipo">
-                            <input name="precioManoDeObra" placeholder="Precio Mano de Obra">
+    {% else %}
 
-                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+    <p><strong>No hay servicios habilitados</strong></p>
 
-                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
-                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+    {% endif %}
 
-                            </button>
-                        </form>
-                    </div>
-            </form>
+    <div class="menu-colapsable" >
+        <div class="item-colapsable" >
+            <a role="button" href="#servicio-acciones" data-toggle="collapse">
+                <i class="glyphicon glyphicon-tasks"></i>
+                <span>Acciones</span>
+            </a>
+            <div class="contenido-colapsable collapse in" id="servicio-acciones">
+                <ul class="acciones sinestilo">
+
+                    <li><a  class="btn btn-sm btn-default" href="{% url 'servicios:servicioCrear' %}">Crear nuevo servicio</a></li>
+                    <li><a  class="btn btn-sm btn-default" href="{%url 'servicios:serviciosListadoEXCEL' %}">Imprimir listado en Excel     
+                        <i class="glyphicon glyphicon-list-alt" ></i></a></li>
+                    <li><a  class="btn btn-sm btn-default" href="{%url 'servicios:serviciosListadoPDF'%}">Imprimir listado en PDF     
+                        <i class="glyphicon glyphicon-file" > </i></a></li>
+                </ul>
+            </div>
         </div>
     </div>
-    <br>
-    <div class="servicioLineaTitulo"> </div>
-    <!--<p> Los siguientes servicios estan habilitados.  </p>-->
-    {% if servicios %}
-            <div class="table-responsive" id="tabla">
-                <table class="table servicioListado">
-                    <thead>
-                        <tr>
-                            <th id="deshabilitados-nombre"> Nombre </th>
-                            <th id="deshabilitados-tipo"> Tipo </th>
-                            <th id="deshabilitados-manoObra"> Mano de Obra ($) </th>
-                            <th id="deshabilitados-acciones"> Acciones </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for servicio in servicios %}
-                            <tr>
-                                <td> <p>{{ servicio.tipo }} </p> </td>
-                                <td> <p>{{ servicio.nombre }} </p> </td>
-                                <td> <p>{{ servicio.precioManoDeObra }} </p> </td>
-                                <td>
-                                    <div class="dropdown">
-                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
-                                            Acción <span class="caret"></span>
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <li><a  href="{% url 'servicios:servicioVer' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Servicio ">
-                                                <i class="glyphicon glyphicon-eye-open"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'servicios:servicioModificar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Servicio">
-                                                <i class="glyphicon glyphicon-edit"> </i>
-                                            </a></li>
-                                            <li><a href="{% url 'servicios:servicioDeshabilitar' servicio.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Servicio">
-                                                <i class="glyphicon glyphicon-minus"> </i>
-                                            </a></li>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-    {% else %}
-        <p> No hay Servicios habilitados</p>
-    {% endif %}
-    <div>
-        <a  id ="servicioHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'servicios:servicioCrear' %}"> Crear </a>
-    </div>
-    <br>
-    <div align="center">
-        <ul class="pagination pagination-sm">
-            {% if servicios.has_previous %}
-                <li><a href="?page={{ servicios.previous_page_number }}" class="btn btnpages">
-                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
-            {% endif %}
-
-            {% for page in servicios.paginator.page_range|page_filter:servicios %}
-                <li class="{% if servicios.number == page %}active{% endif %}">
-                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
-            {% endfor %}
-
-            {% if servicios.has_next %}
-                <li>
-                    <a href="?page={{ servicios.next_page_number }}" class="btn btnpages">
-                        <i class="glyphicon glyphicon-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </div>
-
-</div>
 {% endblock %}

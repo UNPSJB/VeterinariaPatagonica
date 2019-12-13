@@ -2,40 +2,32 @@
 
 {% load static %}
 
-{% block paginaEstilos %}
-  {{ block.super }}
-  <link rel="stylesheet" href="{% static 'css/GestionDeServicios.css' %}">
-{% endblock paginaEstilos %}
-
 {% block paginaSeccionGeneral %}
   <section>
     {% block secciones %}
+    {% include './seccionesSnippet.html' with pagina='default' %}
     {% endblock %}
-    <h4 class="servicioTitulo">
+
+    <h4 class="titulo">
       {% block servicioTitulo %}
-      {% endblock servicioTitulo %}
+      {% endblock %}
     </h4>
-    <br>
-    <div class="servicioLineaTitulo"> </div>
-    {% block errores %}
-    {% endblock errores %}
-    <p class="servicioSubtitulo">
+    <div class="linea-titulo"> </div>
+    <p class="subtitulo">
       {% block servicioSubtitulo %}
-      {% endblock servicioSubtitulo%}
+      {% endblock %}
     </p>
-  {% block servicioContenido %}
-  {% endblock servicioContenido %}
+
+    {% block servicioContenido %}
+    {% endblock %}
   </section>
 
-
-{% endblock paginaSeccionGeneral %}
-
+{% endblock %}
 
 {% block footer %}
   <p>Para mas información  de los Servicios haga click aquí<p>
 {% endblock footer %}
 
 {% block paginaJavascript %}
-{{block.super}}
-<script src="{% static 'js/GestionDeServicios.js' %}"></script>
+    {{block.super}}
 {% endblock paginaJavascript%}

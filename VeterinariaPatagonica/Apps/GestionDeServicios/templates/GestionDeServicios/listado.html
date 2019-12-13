@@ -1,0 +1,54 @@
+<form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
+
+    <div class="hidden orden-listado">
+        {% for field in gestor.formOrden %}
+            {{ field }}
+        {% endfor %}
+        {{ gestor.formPagina.desde }}
+    </div>
+
+    <div class="sombreado" id="filtrar-servicios">
+        {{ gestor.formFiltros.nombre }}
+        {{ gestor.formFiltros.tipo }}
+        {{ gestor.formFiltros.precioManoDeObra }}
+        {{ gestor.formPagina.resultados }}
+        <button class="btn btn-default filtrar" type="submit">Filtrar</button>
+    </div>
+
+    {% if gestor.numero_items %}
+        <table class="table table-bordered table-responsive items">
+            <colgroup>
+                <col class="columna{% if gestor.encabezado.orden_nombre.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_tipo.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_precioManoDeObra.activa %} activa{% endif %}"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombre %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_tipo %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_precioManoDeObra %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for servicio in gestor.items_actuales %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'servicios:servicioVer' servicio.id %}">
+                                {{ servicio.nombre }}</a>
+                        </td>
+                            <td> <p>{{ servicio.tipo }}</p></td>
+                            <td> <p>{{ servicio.precioManoDeObra }}</p></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+        {% include "snippets/paginacion.html" with links=gestor.paginas%}
+        </div>
+    </form>
+    {% else %}
+
+        <p><strong>No hay servicios que mostrar</strong></p>
+
+    {% endif %}

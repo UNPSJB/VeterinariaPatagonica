@@ -1,0 +1,11 @@
+<!-- templates/home.html-->
+{% extends 'sitioBase.html' %}
+{% block content %}
+{% if user.is_authenticated %}
+  Hola {{ user.username }}!
+  <p><a href="{% url 'logout' %}">logout</a></p>
+{% else %}
+  <p>No estas logeado</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+{% endblock %}
