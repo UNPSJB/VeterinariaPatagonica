@@ -25,6 +25,9 @@ from django.contrib.auth import logout as auth_logout
 from django.core.exceptions import PermissionDenied
 from .forms import LoginForm
 from .errores import VeterinariaPatagonicaError
+# from django.core.context_processors import csrf
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 
 def verdemo(request):
     template = request.path.split('/')[-1]
@@ -37,10 +40,15 @@ def base(request):
     template = loader.get_template('sitioBase.html')#Cargo el template del sitio base.
     return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
+@login_required
 def index(request):
     return render_to_response('sitioBase.html')
 
+# @user_passes_test(lambda u: u.is_anonymous)
 def login(peticion):
+
+    # if peticion.user.is_authenticated():
+    #     print("ESTAS AUTENTICADO")
 
     proxima = peticion.GET.get('proxima', default='/')
     contexto = {

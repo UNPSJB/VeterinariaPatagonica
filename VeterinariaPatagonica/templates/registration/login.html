@@ -28,14 +28,14 @@
             <form action="{{ url_actual }}?proxima={{ url_proxima }}" method="post">
               {% csrf_token %}
 
-                <div id="seccion-inputs">
+                <div align="center" id="seccion-inputs">
                   {{ formulario.usuario }}
                   {{ formulario.password }}
                 </div>
 
                 <div id="seccion-submit">
                   <button class="btn btn-default submit" type="submit" >Iniciar </button>
-                  <a class="reset_pass" href="{% url 'usuarios:changePassword' %}">Generar nueva contraseña</a>
+                  <!-- <a class="reset_pass" href="{% url 'usuarios:changePassword' %}">Generar nueva contraseña</a> -->
                 </div>
             </form>
 
