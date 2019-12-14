@@ -10,6 +10,8 @@ from django import forms
 from .models import TipoDeAtencion
 from .forms import TipoDeAtencionForm, ModificacionTipoDeAtencionForm, FiltradoForm
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
+from django.contrib.auth.decorators import login_required
+
 
 LOGIN_URL = '/login/'
 
@@ -251,3 +253,14 @@ def cambioEstado(request, id, baja=False):
         tipoDeAtencion.save()
 
     return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
+
+
+@login_required
+def ayudaContextualTipoDeAtencion(request):
+
+    template = loader.get_template('GestionDeTiposDeAtencion/ayudaContextualTiposdeAtencion.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
