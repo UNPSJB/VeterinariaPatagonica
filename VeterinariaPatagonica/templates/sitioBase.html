@@ -14,15 +14,16 @@
 {% endblock paginaEstilos %}
   <title>
 {% block paginaTitulo %}
-  Veterinaria Patagonica
+  Veterinaria Patagónica
 {% endblock paginaTitulo %}
   </title>
   </head>
   <body>
   <div class="container-fluid" id="el_container_fluid">
+  {% block cabecera %}
   <div class="row">
     <header class="col-xs-12" id="sitio-encabezado">
-      <h2><a href="{% url "index" %}">Veterinaria Patagonica</a></h2>
+      <h2><a href="{% url "index" %}">Veterinaria Patagónica</a></h2>
     </header>
     <nav id="sitio-navbar" class="col-xs-12 navbar">
       <ul class="nav navbar-nav navbar-right">
@@ -32,7 +33,7 @@
           </a>
           <ul class="dropdown-menu">
             {% block menuAyuda %}
-            <li><a href="#"><i class="glyphicon glyphicon-book"></i>Manual de usuario</a></li>
+            <li><a href="{% url "ayuda"%}" target="_blank"><i class="glyphicon glyphicon-book"></i>Manual de usuario</a></li>
             {% endblock %}
           </ul>
         </li>
@@ -57,14 +58,14 @@
             </li>
             {% endif %}
             <li>
-              <a href="#">
-                <i class="fa fa-refresh"></i>
+              <a href="{% url 'usuarios:changePassword' %}">
+                <i class="glyphicon glyphicon-edit "></i>
                 Cambiar contraseña
               </a>
             </li>
             <li>
               <a href="{% url "logout" %}">
-                <i class="fa fa-sign-out"></i>
+                <i class="fa fa-sign-out "></i>
                 Cerrar Sesión</a>
               </li>
           {% endblock %}
@@ -73,6 +74,7 @@
       </ul>
     </nav>
   </div>
+  {% endblock cabecera %}
   <div class="row" id="fila_centro" >
     <nav class="col-xs-12 col-sm-4 col-md-3 navbar sitio-menu" id="sitio_menu_izq">
       <div class="left_col scroll-view">

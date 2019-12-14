@@ -6,57 +6,40 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>
-      Veterinaria Patagónica | Iniciar Sesión
+    
+     <title>
+    {% block title %}
+      Veterinaria Patagonica | Iniciar Sesion
+    {% endblock title %}
     </title>
 
-    <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+     <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
     <link href="{% static 'vendor/fontawesome/css/font-awesome.css' %}" rel="stylesheet">
     <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
   </head>
+   <body class="container-fluid login">
 
-  <body class="container-fluid login">
-    {%block principal%}
-      <div class="row fila">
-        <h5> Bienvenido  al  Sistema  de  Veterinaria  Patagónica  </h5>
-
-          <section class="col-xs-12 columna">
-
-              <h1>Iniciar Sesión</h1>
-
+       <div class="row">
+        {% block principal %}
+          <div class="col-xs-12">
+          <section class="principal">
+            <h3>Bienvenido  al  Sistema  de  Veterinaria  Patagonica</h3>
             <form action="{{ url_actual }}?proxima={{ url_proxima }}" method="post">
               {% csrf_token %}
-              
-                <div align="center" id="seccion-inputs">
-                  {{ formulario.usuario }}
-                  {{ formulario.password }}
-                </div>
-
-                <div id="seccion-submit">
-                  <button class="btn btn-default submit" type="submit" >Iniciar </button>
-                  <!-- <a class="reset_pass" href="{% url 'usuarios:changePassword' %}">Generar nueva contraseña</a> -->
-                </div>
-
+              <div id="inputs">
+                {{ formulario.usuario }}
+                {{ formulario.password }}
+              </div>
+                <button class="btn btn-default submit" type="submit" >Iniciar sesión</button>
             </form>
 
-              <div class="seccion-footer">
-
-                  <h1><i class="fa fa-paw"></i> Veterinaria Patagónica</h1>
-                  <p>2018 Ningun derecho reservado.</p>
-
-              </div>
-
-
-
+            <h2><i class="fa fa-paw"></i> Veterinaria Patagonica</h2>
           </section>
-
+        </div>
+        {% endblock principal %}
     </div>
-    {%endblock principal%}
-
-    <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
+     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
     <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
-
-  </body>
+   </body>
 </html>
