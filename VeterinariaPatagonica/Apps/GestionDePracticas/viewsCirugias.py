@@ -16,6 +16,7 @@ from .models.estado import *
 from .gestionDePracticas import *
 from .views import listarXlsx
 from . import reportes
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -1091,3 +1092,14 @@ def reporte(request):
         retorno = HttpResponse(template.render(context, request))
 
     return retorno
+
+
+@login_required
+def ayudaContextualCirugia(request):
+
+    template = loader.get_template('GestionDePracticas/ayudaContextualCirugas.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))

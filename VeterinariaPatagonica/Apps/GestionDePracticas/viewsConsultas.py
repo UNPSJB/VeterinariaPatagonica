@@ -16,7 +16,7 @@ from .models.estado import *
 from .gestionDePracticas import *
 from .views import listarXlsx
 from . import reportes
-
+from django.contrib.auth.decorators import login_required
 
 
 def contextoCreacion(request, idCreacion):
@@ -822,3 +822,13 @@ def reporte(request):
         retorno = HttpResponse(template.render(context, request))
 
     return retorno
+
+@login_required
+def ayudaContextualConsulta(request):
+
+    template = loader.get_template('GestionDePracticas/ayudaContextualConsultas.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
