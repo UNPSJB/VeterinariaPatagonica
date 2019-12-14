@@ -4,33 +4,33 @@ from decimal import Decimal
 from VeterinariaPatagonica import tools
 from django.core.validators import MinValueValidator, MaxValueValidator
 from VeterinariaPatagonica.areas import Areas
-from django.db.models import Q
-from VeterinariaPatagonica.tools import BajasLogicasQuerySet
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+
 
 class BaseServicioManager(models.Manager):
-    def __init__(self, tipo=None):
-        super().__init__()
-        self.tipo = tipo
+    pass
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.tipo is not None:
-            qs = qs.filter(tipo=self.tipo)
-        return qs
-
-class ServicioQueryset(BajasLogicasQuerySet):
-        MAPEO_ORDEN = {
-            "orden_nombre": ["nombre"],
-            "orden_tipo": ["tipo"],
-            "orden_precioManoDeObra": ["precioManoDeObra"],
-        }
-
-ServicioManager = models.Manager.from_queryset(ServicioQueryset)
+ServicioManager = BaseServicioManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Servicio(models.Model):
 
-    objects = ServicioManager()
+    class Meta:
+        permissions=(
+            ("servicio_crear", "crear"),
+            ("servicio_modificar", "modificar"),
+            ("servicio_eliminar", "eliminar"),
+            ("servicio_ver_habilitados", "ver_habilitados"),
+            ("servicio_listar_habilitados", "listar_habilitados"),
+            ("servicio_ver_no_habilitados", "ver_no_habilitados"),
+            ("servicio_listar_no_habilitados", "listar_no_habilitados")
+        )
+        default_permissions = ()
+        ordering = ["tipo", "nombre"]
+
+    MAPPER ={
+        "nombre": "nombre__icontains",
+        "tipo": "tipo__icontains",
+        "precioManoDeObra": "precioManoDeObra__icontains"
+    }
 
     CONSULTA = 'C'
     QUIRURGICA = 'Q'
@@ -70,8 +70,7 @@ class Servicio(models.Model):
         blank=False,
         error_messages={
             'blank': "El nombre de servicio es obligarotio",
-            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE),
-            'unique':"Ese Servicio ya existe"
+            'max_length': "El nombre puede tener a lo sumo {} caracteres".format(MAX_NOMBRE)
         }
     )
     descripcion = models.CharField(
@@ -118,15 +117,7 @@ class Servicio(models.Model):
         default=False
         )
 
-    
-
-    def describir(self):
-        return "%s: %s $%.2f (%d min.)" % (
-            Areas[self.tipo].nombrePlural.capitalize(),
-            self.nombre,
-            self.precioTotal(),
-            self.tiempoEstimado,
-        )
+    objects = ServicioManager()
 
     def __str__(self):
         cadena = 'Nombre de Servicio: {0}, Duración Estimada: {1} Precio: {2}.'
@@ -137,9 +128,6 @@ class Servicio(models.Model):
         for sproducto in self.servicio_productos.all():
             productos += sproducto.precioTotal()
         return self.precioManoDeObra + productos
-
-    class Meta:
-        ordering = ["tipo", "nombre"]
 
     # def precioSegunProductos(self, productos):
     #     precioTotal = Decimal("0")

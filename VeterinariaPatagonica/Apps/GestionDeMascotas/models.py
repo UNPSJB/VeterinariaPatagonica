@@ -1,37 +1,34 @@
-from django.utils import timezone as djangotimezone
+from datetime import datetime, date
+
 from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import Q
 from Apps.GestionDeClientes import models as gcmodels
 from VeterinariaPatagonica import tools
-from datetime import date
-from django.utils.timezone import now
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+
 
 # Create your models here.
 
 class BaseMascotaManager(models.Manager):
-    def __init__(self, tipo=None):
-        super().__init__()
-        self.tipo = tipo
+    pass
 
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.tipo is not None:
-            qs = qs.filter(tipo=self.tipo)
-        return qs
-
-class MascotaQueryset(VeterinariaPatagonicaQuerySet):
-        MAPEO_ORDEN = {
-        "orden_patente" : ["patente"],
-        "orden_nombre" : ["nombre"],
-        "orden_cliente" : ["cliente"],
-        "orden_especie" : ["especie"],
-    }
-
-MascotaManager = BaseMascotaManager.from_queryset(MascotaQueryset)
+MascotaManager = BaseMascotaManager.from_queryset(tools.BajasLogicasQuerySet)
 
 class Mascota(models.Model):
+
+    class Meta:
+        permissions=(
+            ("mascota_crear", "crear"),
+            ("mascota_modificar", "modificar"),
+            ("mascota_eliminar", "eliminar"),
+            ("mascota_ver_habilitados", "ver_habilitados"),
+            ("mascota_listar_habilitados", "listar_habilitados"),
+            ("mascota_ver_no_habilitados", "ver_no_habilitados"),
+            ("mascota_listar_no_habilitados", "listar_no_habilitados")
+        )
+        default_permissions = ()
+        ordering = ["patente"]
+
     MAPPER = {
         "especie": "especie__icontains",
         "cliente": "cliente",
@@ -91,7 +88,10 @@ class Mascota(models.Model):
         unique=False,
         null=False,
         blank=False,
-        default=djangotimezone.now,
+        #default=date.today(),
+        #default=timezone.now(),
+        #default=now(),
+        default=datetime.now,
         error_messages={'required': "la fecha es obligatorio"})
 
     especie = models.CharField(
@@ -131,11 +131,7 @@ class Mascota(models.Model):
 
 
     def generadorDePatente(self, id):
-         print(id)
+
          if self.patente is '':
              self.patente= "Vet-" + str(id)
          return self.patente
-
-    class Meta:
-        permissions = (('deshabilitar_mascota', 'Puede deshabilitar una Mascota'),)
-        ordering = ["patente"]

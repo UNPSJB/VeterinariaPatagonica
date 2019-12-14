@@ -1,0 +1,81 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block titulo %}
+Programar {{ tipo }}
+{% endblock %}
+{% block paginaEstilos %}
+    {{ form.media.css }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    {{ block.super }}
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo=accion %}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    {% if accion %}
+    <div class="cuadro">
+    {% include "GestionDePracticas/snippets/resumen/actualizacion.html" %}
+    </div>
+    <form class="form-horizontal formulario" action="{{ request.get_full_path }}" method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="errores">
+            <strong>Por favor revise los siguientes errores:</strong>
+            <ul>
+                {% include 'snippets/formErrores.html' %}
+            </ul>
+        </div>
+        {% endif %}
+        {% block fields %}
+            {% if form.mascota %}
+            {% include "snippets/field.html" with field=form.mascota %}
+            {% endif %}
+            {% include "snippets/calendarField.html" with field=form.desde %}
+            {% include "snippets/calendarField.html" with field=form.hasta %}
+            {% include "snippets/field.html" with field=form.duracion %}
+            {% include "snippets/field.html" with field=form.adelanto %}
+        {% endblock %}
+        {% block acciones %}
+            {% include "snippets/submit.html" %}
+        {% endblock %}
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+    {% include "GestionDePracticas/snippets/resumen.js.html" %}
+    <script type="text/javascript">
+        $("#{{ form.desde.name|add:"_calendar" }}").datetimepicker({
+            locale:"es",
+        });
+        $("#{{ form.hasta.name|add:"_calendar" }}").datetimepicker({
+            locale:"es",
+            useCurrent: false,
+        });
+
+        $("#{{ form.desde.name|add:"_calendar" }}").on("dp.change", function (e) {
+            $('#{{ form.hasta.name|add:"_calendar" }}').data("DateTimePicker").minDate(e.date);
+            var formato = leerFormato("hasta_calendar");
+            var duracion = calcularVigencia("id_desde", "id_hasta", formato, "minute");
+            document.getElementById("id_duracion").value = duracion;
+        });
+
+        $("#{{ form.hasta.name|add:"_calendar" }}").on("dp.change", function (e) {
+            $('#{{ form.desde.name|add:"_calendar" }}').data("DateTimePicker").maxDate(e.date);
+            var formato = leerFormato("hasta_calendar");
+            var duracion = calcularVigencia("id_desde", "id_hasta", formato, "minute");
+            document.getElementById("id_duracion").value = duracion;
+        });
+        document.getElementById("id_duracion").onchange = function(){
+            var formato = leerFormato("hasta_calendar");
+            ajustarVigencia("id_desde", "id_hasta", "id_duracion", formato, "minute");
+        }
+    </script>
+{{ form.media.js }}
+{% endblock %}

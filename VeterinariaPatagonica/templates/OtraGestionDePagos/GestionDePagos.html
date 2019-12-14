@@ -1,0 +1,12 @@
+{% extends "sitioBase.html" %}
+{% load static %}
+{% block paginaSeccionGeneral %}
+    <section>
+        <h3 class="titulo">
+        {% block pago-titulo %}
+        {% endblock %}
+        </h3>
+        {% block pago-contenido %}
+        {% endblock %}
+    </section>
+{% endblock %}

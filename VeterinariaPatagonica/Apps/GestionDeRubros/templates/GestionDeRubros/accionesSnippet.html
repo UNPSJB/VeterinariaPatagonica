@@ -1,28 +1,17 @@
-<div class="menu-colapsable" >
-    <div class="item-colapsable" >
-        <a role="button" href="#rubro-acciones" data-toggle="collapse">
-            <i class="glyphicon glyphicon-tasks"></i>
-            <span>Acciones</span>
-        </a>
-        <div class="contenido-colapsable collapse in" id="rubro-acciones">
-            <ul class="acciones sinestilo">
+<div class="rubroItemAcciones">
 
-                {% if seccion != 'ver' %}
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroVer'  item.id %}">Ver detalles</a></li>
-                {% endif %}
+        {% if seccion != 'ver' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroVer' item.id %}">Ver</a>
+        {% endif %}
 
-                {% if seccion != 'modificar' %}
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroModificar' item.id %}">Modificar</a></li>
-                {% endif %}
+        {% if seccion != 'modificar' %}
+        <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroModificar' item.id %}">Modificar</a>
+        {% endif %}
 
-                {% if item.baja == False %}
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroDeshabilitar' item.id %}">Deshabilitar</a></li>
-                {% else %}
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroHabilitar' item.id %}">Habilitar</a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroEliminar' item.id %}">Eliminar</a></li>
-                {% endif %}
+        {% if item.baja == False %}
+            <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroDeshabilitar' item.id %}">Deshabilitar</a>
+        {% else %}
+            <a  class="btn btn-sm btn-default" href="{% url 'rubros:rubroHabilitar' item.id %}">Habilitar</a>
+        {% endif %}
 
-            </ul>
-        </div>
-    </div>
 </div>

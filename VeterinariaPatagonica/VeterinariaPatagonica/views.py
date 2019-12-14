@@ -1,110 +1,63 @@
-'''
-from django.shortcuts import render_to_response
-
-from django.template import loader
-from django.http import HttpResponse
-
-    def verdemo(request):
-        context = {}
-        template = request.path.split('/')[-1]
-        #printf(template)
-        tmp = loader.get_template('demos/'+template)
-        #return render_to_response("demos/" + template, request)
-        return HttpResponse(tmp.render(context, request))
-
-def base(request):
-    return render_to_response('sitio_base.html',request)
-'''
-from django.shortcuts import render_to_response
-from django.shortcuts import render
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import authenticate
-from django.contrib.auth import login as auth_login
-from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import authenticate as auth_authenticate, login as auth_login, logout as auth_logout
+from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
+
 from .forms import LoginForm
 from .errores import VeterinariaPatagonicaError
-# from django.core.context_processors import csrf
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
 
-def verdemo(request):
-    template = request.path.split('/')[-1]
-    return render_to_response("demos/" + template, request)
+LOGIN_URL = "/login/"
 
-def base(request):
-    #[BUG]no funciona con render_to_response.
-    #return render_to_response("sitio_base.html",request)
-    context = {}#Defino un contexto.
-    template = loader.get_template('sitioBase.html')#Cargo el template del sitio base.
-    return HttpResponse(template.render(context,request))#Devuelvo la url con el template armado.
 
-@login_required
 def index(request):
-    return render_to_response('sitioBase.html')
 
-# @user_passes_test(lambda u: u.is_anonymous)
-def login(peticion):
-    # if peticion.user.is_authenticated():
-    #     print("ESTAS AUTENTICADO")
-    print("---------------------------------------------")
-    print(peticion.user.is_authenticated)
-    print("----------------------------")
-    proxima = peticion.GET.get('proxima', default='/')
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect(LOGIN_URL)
+
+    return HttpResponse(
+        loader.get_template("sitioBase.html").render(
+            {},
+            request
+        )
+    )
+
+
+def login(request):
+
+    proxima = "/"
+    if ("proxima" in request.GET) and (request.GET["proxima"] is not None):
+        proxima = request.GET["proxima"]
+
     contexto = {
-        'url_proxima':proxima,
-        'url_actual':peticion.path
+        "url_proxima":proxima,
+        "url_actual":request.path
     }
 
-    if peticion.method == 'POST':
-        try:
-            formulario = LoginForm(peticion.POST)
+    if request.method == "POST":
+        formulario = LoginForm(request.POST)
 
-            if formulario.is_valid():
+        if formulario.is_valid():
+            usr = formulario.cleaned_data["usuario"]
+            pwd = formulario.cleaned_data["password"]
+            usuario = auth_authenticate(request, username=usr, password=pwd)
 
-                usr = formulario.cleaned_data['usuario']
-                pwd = formulario.cleaned_data['password']
-                usuario = authenticate( peticion, username=usr, password=pwd )
-
-                if usuario is not None:
-
-                    auth_login(peticion, usuario)
-                    return HttpResponseRedirect(proxima)
-            # return render_to_response('registration/login.html')
-            raise PermissionDenied()
-        except:
-            print("Usuario ingresado es inválido.-----------------------------------------------")
-            formulario = LoginForm()
-            template = loader.get_template('registration/login.html')
-            contexto['formulario'] = formulario
-
-        return HttpResponse(template.render( contexto, peticion) )
-
+            if usuario is not None:
+                auth_login(request, usuario)
+                return HttpResponseRedirect(proxima)
+            else:
+                raise PermissionDenied()
     else:
         formulario = LoginForm()
-        template = loader.get_template('registration/login.html')
-        contexto['formulario'] = formulario
+        template = loader.get_template("login.html")
+        contexto["formulario"] = formulario
 
-    return HttpResponse(template.render( contexto, peticion) )
-
-def logout(peticion):
-
-    auth_logout(peticion)
-    return HttpResponseRedirect('/login/')
+    return HttpResponse(template.render( contexto, request) )
 
 
-def noEncontrado(request):
+def logout(request):
 
-    template = loader.get_template("error.html")
-    context = {
-        "excepciones" : [VeterinariaPatagonicaError(
-            "No encontrado",
-            "La direccion solicitada no corresponde al sitio."
-        )]
-    }
+    if not isinstance(request.user, AnonymousUser):
+        auth_logout(request)
 
-    return HttpResponse(template.render( context, request ))
-
-def ayuda(request):
-    return render_to_response('manual/documentacion.html')
+    return HttpResponseRedirect(LOGIN_URL)

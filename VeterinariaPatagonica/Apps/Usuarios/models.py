@@ -4,18 +4,14 @@ from Apps.GestionDePracticas.models.practica import Practica
 
 class Usuario(AbstractUser):
 
-    def acciones(self):
+    def grupo(self):
+        return self.groups.last()
 
-        acciones = set(Practica.Acciones)
+    def esVeterinario(self):
+        return self.groups.filter(name="Veterinarios").count() > 0
 
-        if self.is_superuser:
-            return acciones
+    def esAdministrativo(self):
+        return self.groups.filter(name="Administrativos").count() > 0
 
-        seleccionados = set()
-        permisos = self.get_all_permissions()
-
-        for accion in acciones:
-            if accion.idPermiso() in permisos:
-                seleccionados.add(accion)
-
-        return seleccionados
+    def esGerente(self):
+        return self.groups.filter(name="Gerentes").count() > 0

@@ -5,26 +5,14 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from .models import Mascota
-from .forms import MascotaFormFactory, FiltradoForm
+from .forms import MascotaFormFactory
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
 from Apps.GestionDeClientes.models import Cliente
 from django.urls import reverse_lazy
-from VeterinariaPatagonica.tools import GestorListadoQueryset
 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-from django.conf import settings
-from io import BytesIO
-from reportlab.pdfgen import canvas
-from django.views.generic import View
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
-from reportlab.lib.units import cm
-from reportlab.lib import colors
-from openpyxl import Workbook
-
-mascotasFiltradas = []
 
 def mascota(request):
     context = {}
@@ -52,8 +40,8 @@ def modificar(request, id= None, cliente_id=None):
 
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
-        print(formulario.is_valid())
-        print(formulario)
+
+
         if formulario.is_valid():
             mascota = formulario.save()
             mascota.generadorDePatente(mascota.id)
@@ -130,154 +118,53 @@ def ver(request, id):
 
 
 def verHabilitados(request):
-
-    global mascotasFiltradas
-    gestor = GestorListadoQueryset(
-        orden=[
-            ["orden_patente", "Patente"],
-            ["orden_nombre", "Nombre"],
-            ["orden_cliente", "Dueño"],
-            ["orden_especie", "Especie"],
-        ],
-        claseFiltros=FiltradoForm,
-    )
-
-    mascotas = Mascota.objects.habilitados()
-    gestor.cargar(request, mascotas, Mascota)
-    gestor.ordenar()
-    
-    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
-        gestor.filtrar()
-
-    mascotasFiltradas = gestor.queryset
+    mascotasQuery = Mascota.objects.habilitados()
+    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
-    contexto = {"gestor" : gestor,}
+
+    paginator = Paginator(mascotasQuery, 3)
+    page = request.GET.get('page')
+
+    try:
+        mascotas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        mascotas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        mascotas = paginator.page(paginator.num_pages)
+
+    contexto = {
+        'mascotasQuery': mascotasQuery,
+        'usuario': request.user,
+        'mascotas': mascotas,
+    }
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request):
+    mascotasQuery = Mascota.objects.deshabilitados()
+    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
 
-    global mascotasFiltradas
-    gestor = GestorListadoQueryset(
-        orden=[
-            ["orden_patente", "Patente"],
-            ["orden_nombre", "Nombre"],
-            ["orden_cliente", "Dueño"],
-            ["orden_especie", "Especie"],
-        ],
-        claseFiltros=FiltradoForm,
-    )
-
-    mascotas = Mascota.objects.deshabilitados()
-    gestor.cargar(request, mascotas, Mascota)
-    gestor.ordenar()
-    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
-        gestor.filtrar()
-
-    mascotasFiltradas = gestor.queryset
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
-    contexto = {
-        'usuario': request.user,
-        "gestor" : gestor,
-    }
-    return HttpResponse(template.render(contexto, request))
 
-def ListadoMascotasExcel(request):
-    wb = Workbook()
-    ws = wb.active
-    ws['B1'] = 'LISTADO DE MASCOTAS'
-    ws.merge_cells('B1:E1')
-    ws['B3'] = 'PATENTE'
-    ws['C3'] = 'NOMBRE'
-    ws['D3'] = 'DUEÑO'
-    ws['E3'] = 'ESPECIE'
-    cont = 4
+    paginator = Paginator(mascotasQuery, 3)
+    page = request.GET.get('page')
 
-    for mascota in mascotasFiltradas:
-        ws.cell(row=cont, column=2).value = mascota.patente
-        ws.cell(row=cont, column=3).value = mascota.nombre
-        ws.cell(row=cont, column=4).value = str(mascota.cliente)
-        ws.cell(row=cont, column=5).value = mascota.especie
-        cont = cont + 1
-    
-    '''dims = {}
-    for row in ws.rows:
-        for cell in row:
-            if cell.value:
-                dims[cell.column] = max((dims.get(cell.column, 0), len(str(cell.value))))    
-    for col, value in dims.items():
-        print("value", value)
-        ws.column_dimensions[col].width = str(value)'''
-
-
-    nombre_archivo = "ListadoMascotas.xlsx"
-
-    response = HttpResponse(content_type="application/ms-excel")
-    contenido = "attachment; filename={0}".format(nombre_archivo)
-    response["Content-Disposition"] = contenido
-    wb.save(response)
-    return response
-
-def ListadoMascotasPDF(request):
-    response = HttpResponse(content_type='application/pdf')
-    buffer = BytesIO()
-    pdf = canvas.Canvas(buffer)
-    cabecera(pdf)
-    y = 500
-    tabla(pdf, y, mascotasFiltradas)
-    pdf.showPage()
-    pdf.save()
-    pdf = buffer.getvalue()
-    buffer.close()
-    response.write(pdf)
-    return response
-
-def cabecera(pdf):
-    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
-    pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
-    pdf.setFont("Helvetica", 16)
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
-    pdf.setFont("Helvetica", 14)
-    pdf.drawString(220, 770, u"LISTADO DE MASCOTAS")
-
-def tabla(pdf, y, mascotas):
-    encabezados = ('Patente', 'Nombre', 'Dueño', 'Especie')
-    detalles = [(mascota.patente, mascota.nombre, mascota.cliente, mascota.especie) for mascota in mascotas]
-    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 4 * cm, 5 * cm, 4 * cm])
-    detalle_orden.setStyle(TableStyle(
-        [
-            ('ALIGN', (0, 0), (3, 0), 'CENTER'),
-            ('GRID', (0, 0), (-1, -1), 1, colors.black),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ]
-    ))
-    detalle_orden.wrapOn(pdf, 800, 600)
-    detalle_orden.drawOn(pdf, 65, y)
-
-
-@login_required
-def documentationMascota(request, tipo):
-    if (tipo==1):
-        template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/archivos/botonHD.html')
-    elif(tipo==2):
-        template = loader.get_template('GestionDeMascotas/manual_ayuda_mascota/build/archivos/criteriosBusqueda.html')
+    try:
+        mascotas = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        mascotas = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        mascotas = paginator.page(paginator.num_pages)
 
     contexto = {
+        'mascotasQuery': mascotasQuery,
         'usuario': request.user,
+        'mascotas': mascotas,
     }
-
     return HttpResponse(template.render(contexto, request))
-
-@login_required
-def ayudaContextualMascota(request):
-
-    template = loader.get_template('GestionDeMascotas/ayudaContextualMascota.html')
-    contexto = {
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))
-
-#file:///C:/Users/Lucila/Downloads/images/image15.png
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
 

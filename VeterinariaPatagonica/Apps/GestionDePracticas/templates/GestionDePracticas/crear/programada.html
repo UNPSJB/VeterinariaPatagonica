@@ -1,0 +1,109 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block paginaEstilos %}
+    {{ form.media.css }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    {{ block.super }}
+{% endblock %}
+{% block titulo %}
+Programar {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+Programar {{ tipo }}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    {% if accion %}
+    <div class="cuadro">
+        {% include "GestionDePracticas/snippets/resumen/creacion.html" %}
+    </div>
+    <form class="form-horizontal formulario" action="{{ request.get_full_path }}" method="post">
+    {% csrf_token %}
+        <div class="practica">
+            <nav class="navbar botones-navegacion">
+              <ul class="nav navbar-nav">
+                <li class="disabled">
+                    <a class="btn btn-default izquierda" href="#">Actualizar</a>
+                </li>
+                <li>
+                {% with path="practicas:"|add:tipo|add:":crear:modificarPractica" %}
+                    <a class="btn btn-default izquierda" href="{% url path id %}">Modificar {{ tipo }}</a>
+                {% endwith %}
+                </li>
+                <li>
+                {% with path="practicas:"|add:tipo|add:":crear:modificarProductos" %}
+                    <a class="btn btn-default izquierda" href="{% url path id %}">Modificar productos</a>
+                {% endwith %}
+                </li>
+              </ul>
+              <ul class="nav navbar-nav navbar-right">
+                <li>
+                {% with path="practicas:"|add:tipo|add:":crear:terminar" %}
+                    <a class="btn btn-default derecha" href="{% url path id %}">Cancelar</a>
+                {% endwith %}
+                </li>
+              </ul>
+            </nav>
+            <div class="practica-controles">
+                {% if form.errors %}
+                <div class="errores">
+                    <strong>Por favor revise los siguientes errores:</strong>
+                    <ul>
+                        {% include 'snippets/formErrores.html' %}
+                    </ul>
+                </div>
+                {% endif %}
+                {% block fields %}
+                    {% if form.mascota %}
+                    {% include "snippets/field.html" with field=form.mascota %}
+                    {% endif %}
+                    {% include "snippets/calendarField.html" with field=form.desde %}
+                    {% include "snippets/calendarField.html" with field=form.hasta %}
+                    {% include "snippets/field.html" with field=form.duracion %}
+                    {% include "snippets/field.html" with field=form.adelanto %}
+                {% endblock %}
+                {% block acciones %}
+                    {% include "snippets/submit.html" %}
+                {% endblock %}
+            </div>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}
+{% block paginaJavascript %}
+    {{ form.media.js }}
+    {{ block.super }}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+    {% include "GestionDePracticas/snippets/resumen.js.html" %}
+    <script type="text/javascript">
+        document.onreadystatechange = function(){
+            $("#{{ form.desde.name|add:"_calendar" }}").datetimepicker({
+                locale:"es",
+            });
+            $("#{{ form.hasta.name|add:"_calendar" }}").datetimepicker({
+                locale:"es",
+                useCurrent: false,
+            });
+            $("#{{ form.desde.name|add:"_calendar" }}").on("dp.change", function (e) {
+                $('#{{ form.hasta.name|add:"_calendar" }}').data("DateTimePicker").minDate(e.date);
+                var formato = leerFormato("hasta_calendar");
+                var duracion = calcularVigencia("id_desde", "id_hasta", formato, "minute");
+                document.getElementById("id_duracion").value = duracion;
+            });
+            $("#{{ form.hasta.name|add:"_calendar" }}").on("dp.change", function (e) {
+                $('#{{ form.desde.name|add:"_calendar" }}').data("DateTimePicker").maxDate(e.date);
+                var formato = leerFormato("hasta_calendar");
+                var duracion = calcularVigencia("id_desde", "id_hasta", formato, "minute");
+                document.getElementById("id_duracion").value = duracion;
+            });
+            document.getElementById("id_duracion").onchange = function(){
+                var formato = leerFormato("hasta_calendar");
+                ajustarVigencia("id_desde", "id_hasta", "id_duracion", formato, "minute");
+            }
+        }
+    </script>
+{% endblock %}

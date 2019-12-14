@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'Apps.GestionDeServicios',
     'Apps.GestionDeTiposDeAtencion',
     'Apps.Usuarios',
-    'localflavor'
 ]
 
 MIDDLEWARE = [
@@ -98,18 +97,18 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'VeterinariaPatagonica.db'),
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': 'veterinaria_patagonica_db',
+    #     'USER': 'veterinaria_patagonica_user',
+    #     'PASSWORD': 'veterinaria_patagonica',
+    #     'HOST': '127.0.0.1',
+    #     'PORT': '5432',
+    #     'CHARSET': 'UTF-8'
+    # }
 }
-"""
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'veterinaria_patagonica_db',
-        'USER': 'veterinaria_patagonica_user',
-        'PASSWORD': 'veterinaria_patagonica',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-        'CHARSET': 'UTF-8'
-    }
-"""
+
+
 
 
 # Password validation
@@ -143,7 +142,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
@@ -161,3 +160,5 @@ LOGIN_URL = '/login/'
 AUTH_USER_MODEL = 'Usuarios.Usuario'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+

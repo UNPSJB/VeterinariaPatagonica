@@ -1,0 +1,128 @@
+{% extends 'OtraGestionDeFacturas/GestionDeFacturas.html' %}
+{% block titulo %}
+Ver factura
+{% endblock %}
+{% block factura-titulo %}
+{% with id=factura.id|stringformat:"d" %}
+{% include "snippets/titulo.html" with titulo="Factura número "|add:id %}
+{% endwith %}
+{% endblock %}
+{% block factura-contenido %}
+<div class="contenedor">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-md-6">
+            <p><b>Factura número:</b> {{ factura.id }}</p>
+            <p><b>Factura tipo:</b> {{ factura.get_tipo_display }}</p>
+            <p><b>Fecha de facturación:</b> {{ factura.fecha|date:"d/m/y" }}</p>
+            {% if not cliente.baja and perms.GestionDeClientes.cliente_ver %}
+            <b><a href="{% url "clientes:clienteVer" factura.cliente.id %}">Cliente:</a></b>
+            {% else %}
+            <b>Cliente:</b>
+            {% endif %}
+            <ul>
+                <li><b>DNI/CUIT:</b> {{ factura.cliente.dniCuit }}</li>
+                <li><b>Nombre:</b> {{ factura.cliente.apellidos }} {{ factura.cliente.nombres }} (cliente {{ factura.cliente.get_tipoDeCliente_display|lower }})</li>
+                <li><b>Dirección:</b> {{ factura.cliente.direccion }}, {{ factura.cliente.localidad }}</li>
+            </ul>
+            <p><b>Paga:</b> {{ factura.pago|yesno }}</p>
+        </div>
+        <div class="col-xs-12 col-sm-4 col-md-6">
+            {% if factura.pago and perms.GestionDePagos.pago_ver %}
+            <div class="cuadro">
+                <div class="cuadro-titulo">Pago</div>
+                <div class="cuadro-contenido">
+                    <p><b>Identificador:</b> {{ factura.pago.id }}</p>
+                    <p><b>Fecha de emisión:</b> {{ factura.pago.fecha|date:"d/m/y" }}</p>
+                    <p><b>Importe:</b> ${{ factura.pago.importeTotal|floatformat:2 }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-xs-12">
+            <b>Detalles:</b>
+            <div class="table-responsive">
+                <table class="table-bordered detalles" id="factura">
+                    <colgroup>
+                        <col class="cantidad">
+                        <col class="producto">
+                        <col class="precio">
+                        <col class="importe">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>Cantidad</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if factura.practica %}
+                        {% with descripcion="Servicio de atención clínica ("|add:factura.practica.nombreTipo|add:": "|add:factura.practica.tipoDeAtencion.nombre|add:")" %}
+                        <tr>
+                            <td>1</td>
+                            <td>
+                            {% if urlPractica %}
+                                <a href="{{ urlPractica }}">{{ descripcion }}</a>
+                            {% else %}
+                                {{ descripcion }}
+                            {% endif %}
+                            </td>
+                            <td>{{ factura.practica.precio|floatformat:2 }}</td>
+                            <td>{{ factura.practica.precio|floatformat:2 }}</td>
+                        </tr>
+                        {% endwith %}
+                        {% endif %}
+                        {% for detalle in factura.detalles_producto.all %}
+                        <tr>
+                            <td>{{ detalle.cantidad }}</td>
+                            <td>
+                            {% if not detalle.producto.baja and perms.GestionDeServicios.producto_ver_habilitados %}
+                                <a href="{% url "productos:productoVer" detalle.producto.id %}">
+                                    {{ detalle.producto.nombre }}
+                                </a>
+                            {% else %}
+                                {{ detalle.producto.nombre }}
+                            {% endif %}
+                            </td>
+                            <td>{{ detalle.precioPorUnidad|floatformat:2 }}</td>
+                            <td>{{ detalle.subtotal|floatformat:2 }}</td>
+                        </tr>
+                        {% endfor %}
+                        {% if factura.descuento != 0 %}
+                        <tr class="breve">
+                            <td colspan="3">
+                                Descuento del %{{ factura.descuento|floatformat:2 }}
+                            </td>
+                            <td>{{ factura.importeDescuento|floatformat:2 }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if factura.recargo != 0 %}
+                        <tr class="breve">
+                            <td colspan="3">
+                                Recargo del %{{ factura.recargo|floatformat:2 }}
+                            </td>
+                            <td>{{ factura.importeRecargo|floatformat:2 }}</td>
+                        </tr>
+                        {% endif %}
+                        {% if factura.tipo == "A" %}
+                        <tr class="breve">
+                            <td colspan="3">Importe neto</td>
+                            <td>{{ factura.importeNeto|floatformat:2 }}</td>
+                        </tr>
+                        <tr class="breve">
+                            <td colspan="3">IVA 21%</td>
+                            <td>{{ factura.importeIVA|floatformat:2 }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr class="breve total">
+                            <td colspan="3">Total</td>
+                            <td>${{ factura.total|floatformat:2 }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

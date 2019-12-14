@@ -4,30 +4,44 @@
 Gestion de Mascotas | Ver Mascota
 {% endblock %}
 
-{% block tituloSeccion %}
+{% block secciones %}
+    {% include './seccionesSnippet.html' with pagina='default' %}
+{% endblock %}
+
+{% block mascotaTitulo %}
 Ver Mascota
 {% endblock %}
 
-{% block subtitulo %}
-Muestra datos del mascota
+{% block mascotaSubtitulo %}
+Muestra datos de Mascota
 {% endblock %}
 
-{% block contenido %}
+{% block mascotaContenido %}
 
-    {% include './snippets/acciones.html' with item=mascota seccion='ver' %}
+    {% include './accionesSnippet.html' with item=mascota seccion='ver' %}
 
-    <div>
-        <p> <strong>Identificador: </strong>{{ mascota.id }}</p>
-        <p> <strong>Patente: </strong>{{mascota.patente}} 
-        <p> <strong>Dueño: </strong>{{mascota.cliente}}</p>
-        <p> <strong>Nombre:</strong> {{ mascota.nombre }} ({% if mascota.baja %}Deshabilitado{% else %}Habilitado{% endif %})</p>
-        <p> <strong>Especie:</strong> {{mascota.especie}} </p>
-        <p> <strong>Fecha de Nacimiento: </strong>{{ mascota.fechaNacimiento}}</p>
-        <p> <strong>Raza: </strong>{{ mascota.raza}}</p>
+    <div class="mascotaCuerpo">
+
+        {% if mascota %}
+        <div class="well">
+
+            <p>Identificador: {{ mascota.id }}</p>
+            <p>Patente: {{mascota.patente}} </p>
+            <p>Cliente: {{ mascota.cliente}}</p>
+            <p>Nombre: {{ mascota.nombre }} ({% if mascota.baja %}Deshabilitado{% else %}Habilitado{% endif %}) </p>
+            <p>Especie: {{ mascota.especie }}</p>
+            <p>Fecha de Nacimiento: {{mascota.fechaNacimiento}} </p>
+            <p>Raza: {{ mascota.raza }}</p>
+        </div>
+        {% else %}
+
+            <p> La mascota no existe </p>
+
+        {% endif %}
+
     </div>
-
     <div class= "col-sm-offset-11">
       <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
     </div>
 
-{% endblock contenido %}
+{% endblock mascotaContenido %}

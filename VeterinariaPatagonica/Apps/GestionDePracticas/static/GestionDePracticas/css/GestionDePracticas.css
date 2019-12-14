@@ -1,74 +1,32 @@
-/* timeline de gentelella */
-
-*, :after, :before {
-    box-sizing: border-box;
+.cuadro-titulo i.glyphicon{
+    margin-right: 5px;
 }
-ul.timeline li {
+
+ul.historial {
+    margin: 0px;
+}
+ul.historial li {
     position: relative;
     clear: both
 }
-.timeline .block {
+.historial .estado {
     margin: 0;
     border-left: 3px solid #e8e8e8;
     overflow: visible;
     padding: 10px 15px;
-    margin-left: 105px
+    margin-left: 20px
 }
-.timeline.widget {
-    min-width: 0;
-    max-width: inherit
-}
-.timeline.widget .block {
-    margin-left: 5px
-}
-.timeline .tags {
-    position: absolute;
-    top: 15px;
-    left: 0;
-    width: 84px
-}
-.timeline .tag {
-    display: block;
-    height: 30px;
-    font-size: 13px;
-    padding: 8px
-}
-.timeline .tag span {
-    display: block;
-    overflow: hidden;
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-weight: bold;
-}
-.tag {
-    line-height: 1;
-    background: #1ABB9C;
-    color: #fff !important;
-}
-.tag:after {
-    content: " ";
-    height: 30px;
-    width: 0;
-    position: absolute;
-    left: 100%;
-    top: 0;
-    margin: 0;
-    pointer-events: none;
-    border-top: 14px solid transparent;
-    border-bottom: 14px solid transparent;
-    border-left: 11px solid #1ABB9C
-}
-.timeline h2.title {
+.historial h2.link {
     position: relative;
     font-size: 16px;
     margin: 0
 }
-.timeline h2.title:before {
+.historial h2.link:before {
+    box-sizing: border-box;
     content: "";
     position: absolute;
     left: -23px;
-    top: 3px;
+    top: 12px;
     display: block;
     width: 14px;
     height: 14px;
@@ -76,14 +34,106 @@ ul.timeline li {
     border-radius: 14px;
     background: #f9f9f9
 }
-.timeline .byline {
+.historial .detalles {
     padding: .25em 0
+}
+#historial .cuadro-contenido {
+    padding: 0px;
+}
+
+.practica {
+    border: 1px solid #DDD;
+    padding: 0px;
+    margin: 20px 0px 10px 0px;
+}
+.botones-navegacion {
+    border: 0px;
+    border-radius: 0px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #DDD;
+    min-height: 0px;
+}
+.botones-navegacion>ul.nav.navbar-nav>li>a {
+    padding: 6px 12px;
+    margin: 0px;
+    border: 0px;
+}
+.botones-navegacion>ul.nav.navbar-nav {
+    margin: 0px !important;
+}
+
+.practica-controles {
+    border-style: none;
+    padding: 6px;
+}
+.practica-controles>.btn-toolbar {
+    text-align: center;
+}
+.practica-controles>.btn-toolbar>.btn-group.creacion {
+    float: none;
+    margin: 10px 0px 0px 0px;
+}
+
+.resumen>.bloque>.dato.servicios>a,
+.resumen>.bloque>.dato.productos>a {
+    color: #555;
+}
+.resumen>.bloque>.dato.servicios table,
+.resumen>.bloque>.dato.productos table {
+    margin-left: 16px;
+}
+.resumen>.bloque>.dato.servicios table td.cantidad,
+.resumen>.bloque>.dato.productos table td.cantidad {
+    padding-right: 4px;
+    text-align: right;
+}
+.resumen>.bloque>.dato.servicios table td.descripcion,
+.resumen>.bloque>.dato.productos table td.descripcion {
+    padding-left: 4px;
+}
+.resumen>.bloque>.dato.productos table tr.stock-faltante {
+    color: #A94442;
+}
+
+.referencias,
+.grafico {
+    text-align: center;
+}
+.grafico .leyenda {
+    font-weight: bold;
+}
+#formulario {
+    margin-bottom: 20px;
+}
+#grafico-perfil-tda-antes>canvas,
+#grafico-perfil-tda-despues>canvas {
+    width: 300px;
+    height: 300px;
+}
+#grafico-realizaciones>canvas {
+    width: 600px;
+    height: 300px;    
+}
+#grafico-actualizaciones>canvas.consulta {
+    width: 400px;
+    height: 250px;    
+}
+#grafico-actualizaciones>canvas.cirugia {
+    width: 500px;
+    height: 250px;    
+}
+#grafico-tda-normales>canvas.barras,
+#grafico-tda-raros>canvas.barras {
+    width: 500px;
+    height: 300px;    
+}
+#grafico-tda-normales>canvas.radar,
+#grafico-tda-raros>canvas.radar {
+    width: 500px;
+    height: 500px;    
 }
 
 
-
-
-.btn-group.creacion {
-    margin-left: 25px;
-    margin-right: 25px;
+.grafico>canvas {
+    border: 1px solid gray;
 }

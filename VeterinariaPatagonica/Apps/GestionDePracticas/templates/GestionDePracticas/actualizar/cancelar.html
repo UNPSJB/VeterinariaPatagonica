@@ -1,0 +1,32 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block titulo %}
+{{ form.accion|capfirst }} {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo=accion %}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    <div class="cuadro">
+    {% include "GestionDePracticas/snippets/resumen/actualizacion.html" %}
+    </div>
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="POST">
+        {% csrf_token %}
+        {% if form.errors %}
+        <div class="errores">
+            <strong>Por favor revise los siguientes errores:</strong>
+            <ul>
+                {% include 'snippets/formErrores.html' %}
+            </ul>
+        </div>
+        {% endif %}
+        {% include "snippets/form.html" %}
+    </form>
+</div>
+{% endblock %}
+{% block paginaJavascript %}
+    {{ block.super }}
+    {% include "GestionDePracticas/snippets/resumen.js.html" %}
+{% endblock %}

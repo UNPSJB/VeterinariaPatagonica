@@ -8,3 +8,5 @@ def config(clave):
         return 0.15
     elif clave == "app_name":
         return "practicas"
+    elif clave == "login_url":
+        return "/login/"

@@ -1,0 +1,10 @@
+{% extends 'GestionDePracticas/actualizar/programar.html' %}
+{% block fields %}
+    {% include "snippets/calendarField.html" with field=form.desde %}
+    {% include "snippets/calendarField.html" with field=form.hasta %}
+    {% include "snippets/field.html" with field=form.duracion %}
+    {% include "snippets/field.html" with field=form.motivo %}
+{% endblock %}
+{% block acciones %}
+    {% include "snippets/submit.html" %}
+{% endblock %}

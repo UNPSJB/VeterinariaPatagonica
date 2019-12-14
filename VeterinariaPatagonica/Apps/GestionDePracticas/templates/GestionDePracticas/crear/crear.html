@@ -1,0 +1,102 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block paginaEstilos %}
+    {{ formPractica.media.css }}
+    {{ formsetServicios.media.css }}
+    {{ block.super }}
+{% endblock %}
+{% block titulo %}
+Crear {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+Crear {{ tipo }}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    {% if acciones %}
+        <div class="cuadro" id="cuadro-resumen">
+            {% include "GestionDePracticas/snippets/resumen/creacion.html" %}
+        </div>
+        <form id="form-creacion" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+            {% csrf_token %}
+            <div class="practica">
+                {% block navegacion-crear %}
+                <nav class="navbar botones-navegacion">
+                      <ul class="nav navbar-nav">
+                        <li>
+                            <a class="btn btn-default izquierda" href="#" onclick="submitForm('form-creacion');">Actualizar</a>
+                        </li>
+                        <li class="disabled">
+                            <a class="btn btn-default izquierda" href="#">Modificar {{ tipo }}</a>
+                        </li>
+                        <li class="disabled">
+                            <a class="btn btn-default izquierda" href="#">Modificar productos</a>
+                        </li>
+                      </ul>
+                      <ul class="nav navbar-nav navbar-right">
+                        <li class="disabled">
+                            <a class="btn btn-default derecha" href="#">Cancelar</a>
+                        </li>
+                      </ul>
+                </nav>
+                {% endblock %}
+                <div class="practica-controles">
+                    <div id="form-creacion-errores">
+                        {% if formPractica.errors or formsetServicios.total_error_count %}
+                            <div class="errores">
+                                <strong>Por favor revise los siguientes errores:</strong>
+                                <ul>
+                                    {% include 'snippets/formErrores.html' with form=formPractica %}
+                                    {% include 'snippets/formsetErrores.html' with formset=formsetServicios %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% include "snippets/form.html" with form=formPractica accion=None %}
+                    <div class="servicios">
+                        <div class="row servicios">
+                            <label for="formset-servicios" class="col-xs-12 col-sm-2 col-md-4 control-label etiqueta">
+                                Servicios
+                            </label>
+                            <div class="col-xs-12 col-sm-10 col-md-8 control" id="formset-servicios">
+                                {% include "snippets/ayuda.html" with id="ayuda-servicios" content="Permite completar el listado de servicios y cantidades respectivas de la práctica. Las cantidades deben ser mayores a cero y no pueden haber items duplicados." %}
+                                {% include "snippets/formset.html" with formset=formsetServicios titulo="" %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-toolbar">
+                        {% block acciones %}
+                            <div class="btn-group creacion">
+                            {{ acciones.acciones }}
+                            </div>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var validadores = [
+            {
+                "validador" : validarFormset,
+                "argumentos" : {
+                    "validarCantidades" : true,
+                    "comparador" : compararServicios,
+                    "formset_id" : "{{ formsetServicios.prefix }}-formset",
+                    "errores" : document.getElementById("form-creacion-errores"),
+                }
+            }
+        ]
+        document.onreadystatechange = function(){
+            var servicios = document.getElementById('{{ formsetServicios.prefix }}-formset');
+            actualizarEliminar(servicios);
+        }
+    </script>
+{{formPractica.media.js}}
+{{ formsetServicios.media.js }}
+{% endblock %}

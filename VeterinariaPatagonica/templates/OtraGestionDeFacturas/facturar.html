@@ -1,0 +1,88 @@
+{% extends 'OtraGestionDeFacturas/GestionDeFacturas.html' %}
+{% load static %}
+{% block paginaEstilos %}
+    {{ formset.media.css }}
+    {{ block.super }}
+{% endblock %}
+{% block titulo %}
+Facturar
+{% endblock %}
+{% block factura-titulo %}
+{% include "snippets/titulo.html" with titulo="Facturar" %}
+{% endblock %}
+{% block factura-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    {% if accion %}
+    {% with factura=form.factura %}
+        <form id="form-facturar" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+
+            <div class="cuadro">
+                <div class="row cuadro-contenido resumen">
+                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                        <div class="dato importe">
+                            <i class="fa fa-dot-circle-o"></i><b>Importe:</b> $<span class="valor">{{ factura.total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-8 col-sm-6 col-md-6 bloque">
+                    {% if factura.practica.adelanto %}
+                        <div class="dato adelanto">
+                            <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> $<span class="valor">{{ factura.practica.adelanto.importe|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% csrf_token %}
+            <div id="form-facturar-errores">
+                {% if form.errors or formset.total_error_count %}
+                    <div class="errores">
+                        <b>Por favor revise los siguientes errores:</b>
+                        <ul>
+                            {% include 'snippets/formErrores.html' %}
+                            {% include 'snippets/formsetErrores.html' %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+            {% block formularioFactura %}
+            {% include "snippets/form.html" with accion=None %}
+            {% endblock %}
+            <div class="form-group productos">
+                <div class="row productos">
+                    <label for="formset-productos" class="col-xs-12 col-sm-2 col-md-4 control-label etiqueta">
+                        Productos
+                    </label>
+                    <div class="col-xs-12 col-sm-10 col-md-8 control" id="formset-productos">
+                        {% include "snippets/ayuda.html" with id="ayuda-servicios" content="Puede agregar a la facturación la venta de productos. Las cantidades deben ser mayores a cero y no pueden haber items duplicados." %}
+                        {% include "snippets/formset.html" with titulo="" %}
+                    </div>
+                </div>
+            </div>
+            {% include "snippets/form.html" with form=acciones accion=None %}
+        </form>
+    {% endwith %}
+    {% endif %}
+</div>
+{% endblock %}
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var validadores = [
+            {
+                "validador" : validarFormset,
+                "argumentos" : {
+                    "validarCantidades" : false,
+                    "comparador" : compararProductos,
+                    "formset_id" : "{{ formset.prefix }}-formset",
+                    "errores" : document.getElementById("form-facturar-errores"),
+                }
+            }
+        ]
+
+        var productos = document.getElementById('{{ formset.prefix }}-formset');
+        actualizarEliminar(productos);
+    </script>
+    {{ formset.media.js }}
+{% endblock %}

@@ -1,32 +1,36 @@
+from datetime import datetime
+
+from django.db import transaction
 from django.db.utils import Error as ErrorBD
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.contrib.auth.decorators import login_required, permission_required
-from django.utils import timezone as djangotimezone
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
 
 from VeterinariaPatagonica.areas import Areas
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
+from VeterinariaPatagonica.forms import ExportarForm
+from VeterinariaPatagonica import pdf
 from .models.practica import Practica
 from .models.estado import *
-from .permisos import *
 from .gestionDePracticas import *
-from .config import config
+from .views import listarXlsx
+from . import reportes
 
 
 
-def contextoCreacion(request, idCreacion, accion=None):
+def contextoCreacion(request, idCreacion):
     return crearContexto(
         request,
         idCreacion,
-        tipoPractica=Areas.Q.nombre,
-        accion=accion
+        tipoPractica=Areas.Q.nombre(),
     )
 
 
 
 def contextoModificacion(practica, accion=None):
     return {
-        "tipo" : Areas.Q.nombre,
+        "tipo" : Areas.Q.nombre(),
         "practica" : practica,
         "accion" : accion,
         "errores" : [],
@@ -34,37 +38,238 @@ def contextoModificacion(practica, accion=None):
 
 
 
-@login_required(redirect_field_name='proxima')
 def listar(request):
 
+    usuario = request.user
+    if isinstance(usuario, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    filtros = permisos.filtroPermitidas(usuario, Practica.Acciones.listar)
+    if filtros is None:
+        raise PermissionDenied()
+
+    practicas = Estado.anotarPracticas(
+        Practica.quirurgicas.all(),
+        estado_actual=True,
+        atendida_por=True
+    ).filter(filtros)
+
     gestor = GestorListadoPractica(
-        orden=[
-            ["orden_id", "Cirugia"],
-            ["orden_cliente", "Cliente"],
-            ["orden_mascota", "Mascota"],
-            ["orden_actualizacion", "Ultima Actualizacion"],
+        campos = [
+            ["id", "Cirugía"],
+            ["estadoactual", "Estado Actual"],
+            ["cliente", "Cliente"],
+            ["mascota", "Mascota"],
+            ["tipodeatencion", "Tipo de Atención"],
+            ["precio", "Precio"],
+            ["marcacreacion", "Creación"],
+            ["marcaultimaactualizacion", "Última Actualización"],
+            ["creadapor", "Creada por"],
+            ["atendidapor", "Atendida por"],
         ],
-        claseFiltros=FiltradoCirugiaForm,
+        iniciales = {
+            "seleccion" : (
+                "id",
+                "estadoactual",
+                "cliente",
+                "marcacreacion",
+                "marcaultimaactualizacion",
+            ),
+            "orden" : (
+                ("marcaultimaactualizacion", False),
+                ("estadoactual", False),
+            ),
+        },
+        clases={"filtrado" : FiltradoCirugiaForm},
+        queryset=practicas,
+        mapaFiltrado=practicas.MAPEO_FILTRADO,
+        mapaOrden=practicas.MAPEO_ORDEN,
     )
 
-    practicas = Practica.quirurgicas.conEstadoActual()
-    gestor.cargar(request, practicas, clase=Practica)
+    gestor.cargar(request)
+    gestor.paginacion["cantidad"].label = "Cirugías por página"
 
-    if gestor.formFiltros.is_valid():
-        gestor.filtrar()
-        gestor.ordenar()
+    menu = [[], [], [], []]
+    itemExportar(usuario, menu[0], "xlsx", Areas.Q)
+    itemListarRealizaciones(usuario, menu[1])
+    itemListarTurnos(usuario, menu[1], Areas.Q)
+    itemCrear(usuario, menu[2], Areas.Q)
+    itemReporte(usuario, menu[3], Areas.Q)
 
-    template = loader.get_template( plantilla("listar") )
-    context = {"tipo" : Areas.Q.nombre, "gestor" : gestor}
+    template = loader.get_template( plantilla("listar", "cirugias") )
+    context = {
+        "tipo" : Areas.Q.nombre(),
+        "gestor" : gestor,
+        "practicas" : practicas,
+        "menu" : [ seccion for seccion in menu if len(seccion) ],
+        "visibles" : permisos.permitidas(
+            usuario,
+            Practica.Acciones.ver_informacion_general,
+            gestor.itemsActuales()
+        )
+    }
 
     return HttpResponse(template.render( context, request ))
 
 
+def turnos(request):
 
-@login_required(redirect_field_name='proxima')
+    usuario = request.user
+    if isinstance(usuario, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    puedeRealizar = permisos.filtroPermitidas(usuario, Practica.Acciones.realizar, areas=[Areas.Q])
+    puedeListar = permisos.filtroPermitidas(usuario, Practica.Acciones.listar, areas=[Areas.Q])
+    if (puedeListar is None) or (puedeRealizar is None):
+        raise PermissionDenied()
+
+    practicas = Estado.anotarPracticas(
+        Practica.quirurgicas.enEstado(Programada),
+        estado_actual=True,
+        atendida_por=True
+    ).filter(puedeListar)
+
+    gestor = GestorListadoTurnos(
+        campos = [
+            ["inicioturno", "Inicio"],
+            ["duracionturno", "Duración"],
+            ["tiemporestante", "Tiempo restante"],
+            ["id", "Cirugía"],
+            ["programadapor", "Atendida por"],
+            ["cliente", "Cliente"],
+            ["mascota", "Mascota"],
+            ["reprogramaciones", "Reprogramaciones"],
+            ["tipodeatencion", "Tipo de Atención"],
+            ["creadapor", "Creada por"],
+            ["marcacreacion", "Creación"],
+            ["marcaultimaactualizacion", "Ultima Actualización"],
+        ],
+        iniciales = {
+            "seleccion" : (
+                "inicioturno",
+                "duracionturno",
+                "tiemporestante",
+                "id",
+                "programadapor",
+                "cliente",
+            ),
+        },
+        clases={"filtrado" : FiltradoTurnosForm},
+        queryset=practicas,
+        mapaFiltrado=practicas.MAPEO_FILTRADO,
+        mapaOrden=practicas.MAPEO_ORDEN,
+    )
+
+    gestor.cargar(request)
+    gestor.paginacion["cantidad"].label = "Turnos por página"
+
+    menu = [[], []]
+    itemListarRealizaciones(usuario, menu[0])
+    itemListar(usuario, menu[0], Areas.Q)
+    itemCrear(usuario, menu[1], Areas.Q)
+
+    template = loader.get_template( plantilla("listar", "turnos") )
+    context = {
+        "gestor" : gestor,
+        "practicas" : practicas,
+        "menu" : [ seccion for seccion in menu if len(seccion) ],
+        "visibles" : permisos.permitidas(
+            usuario,
+            Practica.Acciones.ver_informacion_general,
+            gestor.itemsActuales()
+        )
+    }
+    return HttpResponse(template.render( context, request ))
+
+
+
+def exportar(request, formato=None):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
+
+    permitidas = permisos.filtroPermitidas(
+        request.user,
+        Practica.Acciones["exportar_%s" % formato],
+        areas=Areas.Q
+    )
+    if permitidas is None:
+        raise PermissionDenied()
+    practicas = Estado.anotarPracticas(
+        Practica.quirurgicas.all(),
+        estado_actual=True,
+        atendida_por=True,
+    ).filter(permitidas)
+
+    gestor = GestorListadoPractica(
+        campos = [
+            ["id", "Cirugía"],
+            ["estadoactual", "Estado Actual"],
+            ["cliente", "Cliente"],
+            ["mascota", "Mascota"],
+            ["tipodeatencion", "Tipo de Atención"],
+            ["precio", "Precio"],
+            ["marcacreacion", "Creación"],
+            ["marcaultimaactualizacion", "Ultima Actualización"],
+            ["creadapor", "Creada por"],
+            ["atendidapor", "Atendida por"],
+        ],
+        iniciales = {
+            "seleccion" : (
+                "id",
+                "estadoactual",
+                "cliente",
+                "marcacreacion",
+                "marcaultimaactualizacion",
+                "atendidapor",
+            ),
+            "orden" : (
+                ("marcaultimaactualizacion", False),
+                ("estadoactual", False),
+            ),
+        },
+        clases={"filtrado" : FiltradoCirugiaForm},
+        queryset=practicas,
+        mapaFiltrado=practicas.MAPEO_FILTRADO,
+        mapaOrden=practicas.MAPEO_ORDEN,
+    )
+
+    gestor.cargar(request)
+    gestor.paginacion["cantidad"].label = "Cirugías por página"
+    exportar = ExportarForm(request.GET)
+    accion = exportar.accion()
+    visibles = [ gestor[campo]["visible"] for campo in gestor.columnas ]
+    encabezados = [ gestor[campo]["etiqueta"] for campo in gestor.columnasVisibles ]
+
+    if formato=="xlsx":
+        listar=listarXlsx
+
+    if accion=="exportar_pagina":
+        response = listar(Areas.C.nombre(), gestor.itemsActuales(), visibles, encabezados)
+    elif accion=="exportar_todos":
+        response = listar(Areas.C.nombre(), gestor.items(), visibles, encabezados)
+    else:
+        template = loader.get_template(plantilla("exportar", "cirugias"))
+        context = {
+            "formato" : formato,
+            "gestor" : gestor,
+            "exportar" : exportar,
+            "menu" : menuExportar(request.user, formato, Areas.Q),
+        }
+        response = HttpResponse(template.render(context, request))
+    return response
+
+
 def ver(request, id):
 
+    usuario = request.user
+    if isinstance(usuario, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    acciones = Practica.Acciones.ver_informacion_general
     practica = Practica.quirurgicas.get(id=id)
+    if not permisos.paraPractica(usuario, acciones, practica):
+        raise PermissionDenied()
     estados = practica.estados.all()
     tope = estados.count()
 
@@ -75,66 +280,38 @@ def ver(request, id):
 
     n = n if (0 < n < tope) else tope-1
     estado = estados[n].related()
-
-    acciones = crearUrls(
-        [
-            Practica.Acciones.programar,
-            Practica.Acciones.reprogramar,
-            Practica.Acciones.realizar,
-            Practica.Acciones.cancelar,
-            Practica.Acciones.facturar,
-        ],
-        practica,
-        request.user
-    )
+    accion = Practica.Acciones.ver_detalle_estado
+    if not permisos.paraPractica(usuario, accion, practica, estado=estado):
+        estado = None
 
     context = {
         "practica" : practica,
         "estado" : estado,
-        "acciones" : acciones,
+        "menu" : menuAcciones(usuario, Practica.Acciones.ver_informacion_general, practica),
+        "historial" : enlacesHistorial(usuario, practica, n)
     }
 
-    template = loader.get_template(plantilla(str(estado).lower()))
+    template = loader.get_template(plantilla("ver", "informacionGeneral"))
     return HttpResponse(template.render( context, request ))
 
 
 
-@login_required(redirect_field_name='proxima')
-def buscar(request):
-
-    gestor = GestorListadoPractica(claseFiltros=BusquedaCirugiaForm)
-    gestor.cargar(
-        request,
-        Practica.quirurgicas.none(),
-        clase=Practica
-    )
-
-    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
-        gestor.actualizar(Practica.quirurgicas.conEstadoActual())
-        gestor.filtrar()
-
-    context = {
-        "tipo" : Areas.Q.nombre,
-        "gestor" : gestor,
-    }
-
-    template = loader.get_template( plantilla("buscar") )
-    return HttpResponse(template.render( context, request ))
-
-
-
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR, raise_exception=True)
 def crear(request):
 
-    context = { "tipo" : Areas.Q.nombre, "errores" : [] }
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    if not permisos.paraCrear(request.user, Areas.Q):
+        raise PermissionDenied()
+
+    context = { "tipo" : Areas.Q.nombre(), "errores" : [] }
 
     try:
         acciones = accionesIniciales(request.user, Areas.Q)
 
         if request.method == "POST":
 
-            formCreacion = CreacionForm(acciones, request.POST, vacio="Guardar")
+            formCreacion = CreacionForm(acciones, request.POST)
             formPractica = PracticaForm(request.POST)
             formsetServicios = CirugiaServicioFormSet(request.POST, prefix="servicio")
 
@@ -142,26 +319,26 @@ def crear(request):
 
                 idCreacion = idCrearPractica(request.session)
                 servicios = formsetServicios.cleaned_data
-                accion = formCreacion.accion
+                accion = formCreacion.accion()
 
-                guardar(request.session, idCreacion, "tipo", Areas.Q.nombre)
+                guardar(request.session, idCreacion, "tipo", Areas.Q.nombre())
                 guardar(request.session, idCreacion, "practicaData", formPractica.data)
                 guardar(request.session, idCreacion, "serviciosData", servicios)
 
                 try:
                     productos = buscarProductos(servicios)
                 except VeterinariaPatagonicaError as error:
-                    context["errores"].append( errorDatos(error, Areas.Q.nombre, idCreacion) )
+                    context["errores"].append( errorDatos(error, Areas.Q.nombre(), idCreacion) )
                 else:
                     guardar(request.session, idCreacion, "productosData", productos)
 
                     if accion:
-                        return HttpResponseRedirect(pathInicializar(Areas.Q.nombre, accion, idCreacion))
+                        return HttpResponseRedirect(pathInicializar(Areas.Q.nombre(), accion, idCreacion))
 
-                    return HttpResponseRedirect(pathModificar(Areas.Q.nombre, idCreacion))
+                    return HttpResponseRedirect(pathModificar(Areas.Q.nombre(), idCreacion))
         else:
 
-            formCreacion = CreacionForm(acciones, vacio="Guardar")
+            formCreacion = CreacionForm(acciones)
             formPractica = PracticaForm()
             formsetServicios = CirugiaServicioFormSet(prefix="servicio")
 
@@ -173,38 +350,42 @@ def crear(request):
     except VeterinariaPatagonicaError as error:
         context["errores"] .append( errorSolicitud(error) )
 
-    template = loader.get_template(plantilla('crear'))
+    template = loader.get_template(plantilla("crear", "crear"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR, raise_exception=True)
 def modificar(request, idCreacion):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    if not permisos.paraCrear(request.user, Areas.Q):
+        raise PermissionDenied()
 
     try:
         context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.Q.nombre)] }
+        context = { "errores": [errorSolicitud(error, Areas.Q.nombre())] }
     else:
 
         acciones = accionesIniciales(request.user, Areas.Q)
 
         if request.method == "POST":
 
-            formCreacion = CreacionForm(acciones, request.POST, vacio="Guardar")
+            formCreacion = CreacionForm(acciones, request.POST)
             formPractica = PracticaForm(request.POST)
             formsetServicios = CirugiaServicioFormSet(request.POST, prefix="servicio")
 
             if formPractica.is_valid() and formsetServicios.is_valid() and formCreacion.is_valid():
 
-                accion = formCreacion.accion
+                accion = formCreacion.accion()
                 servicios = formsetServicios.cleaned_data
 
                 try:
                     productos = buscarProductos(servicios)
                 except VeterinariaPatagonicaError as error:
-                    context["errores"].append( errorDatos(error, Areas.Q.nombre, idCreacion) )
+                    context["errores"].append( errorDatos(error, Areas.Q.nombre(), idCreacion) )
                 else:
 
                     guardar(request.session, idCreacion, "practicaData", formPractica.data)
@@ -212,7 +393,7 @@ def modificar(request, idCreacion):
                     guardar(request.session, idCreacion, "productosData", productos)
 
                     if accion:
-                        return HttpResponseRedirect(pathInicializar(Areas.Q.nombre, accion, idCreacion))
+                        return HttpResponseRedirect(pathInicializar(Areas.Q.nombre(), accion, idCreacion))
         else:
 
             try:
@@ -226,17 +407,17 @@ def modificar(request, idCreacion):
                 servicios = obtener(request.session, idCreacion, "serviciosData")
             except VeterinariaPatagonicaError as error:
                 context["errores"].append(errorDatos(error))
-                servicios = {}
-            formsetServicios = CirugiaServicioFormSet(initial=servicios, prefix="servicio")
+                servicios = ()
 
-            formCreacion = CreacionForm(acciones, vacio="Guardar")
+            formsetServicios = CirugiaServicioFormSet(initial=servicios, prefix="servicio")
+            formCreacion = CreacionForm(acciones)
 
         practica = obtenerPractica(request, idCreacion)
         detalles = obtenerDetalles(request, idCreacion)
         precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
         duracion = calcularDuracion(detalles["servicios"])
         context["practica"] = practica
-        context["servicios"] = detalles["servicios"]
+        context["detalles"] = detalles
         context["precio"] = precio
         context["duracion"] = duracion
 
@@ -244,33 +425,36 @@ def modificar(request, idCreacion):
         context["formsetServicios"] = formsetServicios
         context["acciones"] = formCreacion
 
-    template = loader.get_template(plantilla('modificar'))
+    template = loader.get_template(plantilla("crear", "modificar"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR, raise_exception=True)
 def modificarProductos(request, idCreacion):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    if not permisos.paraCrear(request.user, Areas.Q):
+        raise PermissionDenied()
 
     try:
         context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.Q.nombre)] }
+        context = { "errores": [errorSolicitud(error, Areas.Q.nombre())] }
     else:
 
         acciones = accionesIniciales(request.user, Areas.Q)
-
         practica = obtenerPractica(request, idCreacion)
 
         if request.method == "POST":
 
-            formCreacion = CreacionForm(acciones, request.POST, vacio="Guardar")
+            formCreacion = CreacionForm(acciones, request.POST)
             formset = PracticaProductoFormSet(request.POST, prefix="producto")
 
             if formset.is_valid() and formCreacion.is_valid():
 
-                accion = formCreacion.accion
+                accion = formCreacion.accion()
                 guardar(request.session, context["id"], "productosData", formset.cleaned_data)
 
                 if accion:
@@ -281,36 +465,39 @@ def modificarProductos(request, idCreacion):
                 productosInitial = obtener(request.session, context["id"], "productosData")
             except VeterinariaPatagonicaError as error:
                 context["errores"].append(errorDatos(error))
-                productosInitial = {}
+                productosInitial = ()
 
             formset = PracticaProductoFormSet(initial=productosInitial, prefix="producto")
-            formCreacion = CreacionForm(acciones, vacio="Guardar")
+            formCreacion = CreacionForm(acciones)
 
         detalles = obtenerDetalles(request, idCreacion)
         precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
         duracion = calcularDuracion(detalles["servicios"])
         context["formset"] = formset
         context["practica"] = practica
-        context["servicios"] = detalles["servicios"]
+        context["detalles"] = detalles
         context["precio"] = precio
         context["duracion"] = duracion
         context["acciones"] = formCreacion
 
-    template = loader.get_template(plantilla('productos'))
+    template = loader.get_template(plantilla("crear", "productos"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR+PERMISOS_PRESUPUESTAR, raise_exception=True)
 def crearPresupuestada(request, idCreacion):
 
-    try:
-        context = contextoCreacion(request, idCreacion, Practica.Acciones.presupuestar.name)
-    except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.Q.nombre)] }
-    else:
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
+    if not permisos.paraCrear(request.user, Areas.Q, accion=Practica.Acciones.presupuestar):
+        raise PermissionDenied()
+
+    try:
+        context = contextoCreacion(request, idCreacion)
+    except VeterinariaPatagonicaError as error:
+        context = { "errores": [errorSolicitud(error, Areas.Q.nombre())] }
+    else:
         try:
             practica = obtenerPractica(request, idCreacion)
             detalles = obtenerDetalles(request, idCreacion)
@@ -321,12 +508,12 @@ def crearPresupuestada(request, idCreacion):
 
                 form = formPresupuestar(request.POST, practica=practica)
                 if form.is_valid():
-                    accion = form.accion
-                    datos = form.datos
+                    accion = form.accion()
+                    datos = form.datos()
                     form.actualizarPractica()
 
                     try:
-                        practica = persistir(practica, detalles, accion, datos)
+                        practica = persistir(request.user, practica, detalles, accion, datos)
                     except ErrorBD as error:
                         context["errores"].append(errorBD(**context))
                     else:
@@ -338,7 +525,7 @@ def crearPresupuestada(request, idCreacion):
 
             context["form"] = form
             context["practica"] = practica
-            context["servicios"] = detalles["servicios"]
+            context["detalles"] = detalles
             context["precio"] = precio
             context["duracion"] = duracion
             context["accion"] = "Crear presupuesto"
@@ -347,19 +534,23 @@ def crearPresupuestada(request, idCreacion):
         except VeterinariaPatagonicaError as error:
             context["errores"].append(errorDatos(error, **context))
 
-    template = loader.get_template(plantilla('crearPresupuestada'))
+    template = loader.get_template(plantilla("crear", "presupuestada"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR+PERMISOS_PROGRAMAR, raise_exception=True)
 def crearProgramada(request, idCreacion):
 
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    if not permisos.paraCrear(request.user, Areas.Q, accion=Practica.Acciones.programar):
+        raise PermissionDenied()
+
     try:
-        context = contextoCreacion(request, idCreacion, Practica.Acciones.programar.name)
+        context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.Q.nombre)] }
+        context = { "errores": [errorSolicitud(error, Areas.Q.nombre())] }
     else:
 
         try:
@@ -374,12 +565,12 @@ def crearProgramada(request, idCreacion):
 
                 form = formProgramar(request.POST, practica=practica, precio=precio, duracion=duracion)
                 if form.is_valid():
-                    accion = form.accion
-                    datos = form.datos
+                    accion = form.accion()
+                    datos = form.datos()
                     form.actualizarPractica()
 
                     try:
-                        practica = persistir(practica, detalles, accion, datos)
+                        practica = persistir(request.user, practica, detalles, accion, datos)
                     except ErrorBD as error:
                         context["errores"].append(errorBD(**context))
                     else:
@@ -391,7 +582,7 @@ def crearProgramada(request, idCreacion):
 
             context["form"] = form
             context["practica"] = practica
-            context["servicios"] = detalles["servicios"]
+            context["detalles"] = detalles
             context["precio"] = precio
             context["duracion"] = duracion
             context["porcentajeAdelanto"] = (config("adelanto") * 100)
@@ -400,19 +591,23 @@ def crearProgramada(request, idCreacion):
         except VeterinariaPatagonicaError as error:
             context["errores"].append(errorDatos(error, **context))
 
-    template = loader.get_template(plantilla('crearProgramada'))
+    template = loader.get_template(plantilla("crear", "programada"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR+PERMISOS_REALIZAR, raise_exception=True)
 def crearRealizada(request, idCreacion):
 
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    if not permisos.paraCrear(request.user, Areas.Q, accion=Practica.Acciones.realizar):
+        raise PermissionDenied()
+
     try:
-        context = contextoCreacion(request, idCreacion, Practica.Acciones.realizar.name)
+        context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.Q.nombre)] }
+        context = { "errores": [errorSolicitud(error, Areas.Q.nombre())] }
     else:
         try:
             practica = obtenerPractica(request, idCreacion)
@@ -426,14 +621,17 @@ def crearRealizada(request, idCreacion):
 
                 form = formRealizar(request.POST, practica=practica, duracion=duracion)
                 if form.is_valid():
-                    accion = form.accion
-                    datos = form.datos
+                    accion = form.accion()
+                    datos = form.datos()
                     form.actualizarPractica()
 
                     try:
-                        practica = persistir(practica, detalles, accion, datos)
+                        practica = persistir(request.user, practica, detalles, accion, datos)
                     except ErrorBD as error:
                         context["errores"].append(errorBD(**context))
+                    except VeterinariaPatagonicaError as error:
+                        context["errores"] = [ errorProducto(error) ]
+
                     else:
                         eliminar(request.session, idCreacion)
                         return HttpResponseRedirect(pathVer(context["tipo"], practica.pk))
@@ -443,7 +641,7 @@ def crearRealizada(request, idCreacion):
 
             context["form"] = form
             context["practica"] = practica
-            context["servicios"] = detalles["servicios"]
+            context["detalles"] = detalles
             context["precio"] = precio
             context["duracion"] = duracion
             context["accion"] = "Registrar realizacion"
@@ -451,33 +649,30 @@ def crearRealizada(request, idCreacion):
         except VeterinariaPatagonicaError as error:
             context["errores"].append(errorDatos(error, **context))
 
-    template = loader.get_template(plantilla('crearRealizada'))
+    template = loader.get_template(plantilla("crear", "realizada"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CREAR, raise_exception=True)
 def terminarCreacion(request, idCreacion):
 
-    try:
-        context = contextoCreacion(request, idCreacion)
-    except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.Q.nombre)] }
-    else:
-        eliminar(request.session, idCreacion)
-        return HttpResponseRedirect(pathListar(Areas.Q.nombre))
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
-    template = loader.get_template(plantilla("error"))
-    return HttpResponse(template.render(context, request))
+    if not permisos.paraCrear(request.user, Areas.Q):
+        raise PermissionDenied()
 
+    context = contextoCreacion(request, idCreacion)
+    eliminar(request.session, idCreacion)
+    return HttpResponseRedirect(pathListar(Areas.Q.nombre()))
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_PROGRAMAR, raise_exception=True)
 def programar(request, id):
 
-    context = { "tipo" : Areas.Q.nombre, "errores" : [] }
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    context = { "tipo" : Areas.Q.nombre(), "errores" : [] }
 
     try:
         practica = Practica.quirurgicas.get(id=id)
@@ -487,224 +682,249 @@ def programar(request, id):
         context["errores"].append(errorSolicitud(error))
     else:
 
+        if not permisos.paraPractica(request.user, Practica.Acciones.programar, practica):
+            raise PermissionDenied()
+
         context = contextoModificacion(practica, "Guardar")
         precio = practica.total()
         duracion = practica.duracionTotalServicios()
 
-        if request.method == 'POST':
+        if request.method == "POST":
             form = formProgramar(request.POST, precio=precio, practica=practica, duracion
 =duracion)
 
             if form.is_valid():
-                accion = form.accion
-                datos = form.datos
+                accion = form.accion()
+                datos = form.datos()
                 form.actualizarPractica()
 
                 try:
                     practica.save(force_update=True)
-                    practica.hacer(accion, **datos)
+                    practica.hacer(request.user, accion, **datos)
                 except VeterinariaPatagonicaError as error:
                     context["errores"].append(errorAccion(practica, accion))
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.Q.nombre, practica.pk,))
+                    return HttpResponseRedirect(pathVer(Areas.Q.nombre(), practica.pk,))
         else:
             form = formProgramar(precio=precio, practica=practica, duracion=duracion)
 
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.programar, practica)
         context["form"] = form
         context["practica"] = practica
-        context["servicios"] = practica.practica_servicios.all()
-        context["precio"] = precio
-        context["duracion"] = duracion
-        context["porcentajeAdelanto"] = (config("adelanto") * 100)
-        context["accion"] = "Programar turno"
+        context["accion"] = "Programar cirugia"
 
-    template = loader.get_template(plantilla('programar'))
+    template = loader.get_template(plantilla("actualizar", "programar"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_PROGRAMAR, raise_exception=True)
 def reprogramar(request, id):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
     try:
         practica = Practica.quirurgicas.get(id=id)
         verificarPractica(practica)
         verificarAccion(practica, Practica.Acciones.reprogramar)
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.Q.nombre, "errores" : [errorSolicitud(error)] }
+        context = { "tipo" : Areas.Q.nombre(), "errores" : [errorSolicitud(error)] }
     else:
+
+        if not permisos.paraPractica(request.user, Practica.Acciones.reprogramar, practica):
+            raise PermissionDenied()
 
         context = contextoModificacion(practica, "Guardar")
 
-        if request.method == 'POST':
+        if request.method == "POST":
 
             form = formReprogramar(request.POST, practica=practica)
 
             if form.is_valid():
-                accion = form.accion
-                datos = form.datos
+                accion = form.accion()
+                datos = form.datos()
 
                 try:
-                    practica.hacer(accion, **datos)
+                    practica.hacer(request.user, accion, **datos)
                 except VeterinariaPatagonicaError as error:
                     context["errores"].append(errorAccion(practica, accion))
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.Q.nombre, practica.pk,))
+                    return HttpResponseRedirect(pathVer(Areas.Q.nombre(), practica.pk,))
         else:
             form = formReprogramar(practica=practica)
 
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.reprogramar, practica)
         context["form"] = form
         context["practica"] = practica
-        context["servicios"] = practica.practica_servicios.all()
-        context["precio"] = practica.total()
-        context["duracion"] = practica.estado().duracion
-        context["accion"] = "Programar turno"
+        context["accion"] = "Reprogramar cirugia"
 
-    template = loader.get_template(plantilla('reprogramar'))
+    template = loader.get_template(plantilla("actualizar", "reprogramar"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_REALIZAR, raise_exception=True)
 def realizar(request, id):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
     try:
         practica = Practica.quirurgicas.get(id=id)
         verificarPractica(practica)
         verificarAccion(practica, Practica.Acciones.realizar)
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.Q.nombre, "errores" : [errorSolicitud(error)] }
+        context = { "tipo" : Areas.Q.nombre(), "errores" : [errorSolicitud(error)] }
     else:
+
+        if not permisos.paraPractica(request.user, Practica.Acciones.realizar, practica):
+            raise PermissionDenied()
 
         context = contextoModificacion(practica, "Guardar")
         duracion = calcularDuracion(practica.practica_servicios.all())
 
-        if request.method == 'POST':
+        if request.method == "POST":
 
             form = formRealizar(request.POST, practica=practica, duracion=duracion)
 
             if form.is_valid():
-                accion = form.accion
-                datos = form.datos
+                accion = form.accion()
+                datos = form.datos()
                 form.actualizarPractica()
 
                 try:
                     practica.save(force_update=True)
-                    practica.hacer(accion, **datos)
+                    practica.hacer(request.user, accion, **datos)
                 except VeterinariaPatagonicaError as error:
-                    context["errores"].append(errorAccion(practica, accion))
+                    context["errores"].append(errorAccion(practica, accion, descripcion=error.descripcion))
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.Q.nombre, practica.pk,))
+                    return HttpResponseRedirect(pathVer(Areas.Q.nombre(), practica.pk,))
 
         else:
             form = formRealizar(practica=practica, duracion=duracion)
 
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.realizar, practica)
         context["form"] = form
         context["practica"] = practica
-        context["servicios"] = practica.practica_servicios.all()
-        context["precio"] = practica.total()
-        context["duracion"] = duracion
-        context["accion"] = "Registrar realizacion"
+        context["accion"] = "Registrar realizacion de cirugia"
 
-    template = loader.get_template(plantilla('realizar'))
+    template = loader.get_template(plantilla("actualizar", "realizar"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_CANCELAR, raise_exception=True)
 def cancelar(request, id):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
     try:
         practica = Practica.quirurgicas.get(id=id)
         verificarAccion(practica, Practica.Acciones.cancelar)
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.Q.nombre, "errores" : [errorSolicitud(error)] }
+        context = { "tipo" : Areas.Q.nombre(), "errores" : [errorSolicitud(error)] }
     else:
+
+        if not permisos.paraPractica(request.user, Practica.Acciones.cancelar, practica):
+            raise PermissionDenied()
 
         context = contextoModificacion(practica, "Guardar")
 
-        if request.method == 'POST':
+        if request.method == "POST":
 
             form = CanceladaForm(request.POST)
 
             if form.is_valid():
-                accion = form.accion
-                datos = form.datos
+                accion = form.accion()
+                datos = form.datos()
 
                 try:
-                    practica.hacer(accion, **datos)
+                    practica.hacer(request.user, accion, **datos)
                 except VeterinariaPatagonicaError as error:
                     context["errores"].append(errorAccion(practica, accion))
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.Q.nombre, practica.pk,))
+                    return HttpResponseRedirect(pathVer(Areas.Q.nombre(), practica.pk,))
 
         else:
 
             form = CanceladaForm()
 
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.cancelar, practica)
         context["form"] = form
-        context["accion"] = "Completar cancelacion"
+        context["accion"] = "Cancelar cirugia"
 
-    template = loader.get_template(plantilla('cancelar'))
+    template = loader.get_template(plantilla("actualizar", "cancelar"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_DETALLES, raise_exception=True)
-def modificarDetalles(request, id):
+def modificarRealizacion(request, id):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
     try:
         practica = Practica.quirurgicas.get(id=id)
         verificarEstado(practica, [Realizada])
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.Q.nombre, "errores" : [errorSolicitud(error)] }
+        context = { "tipo" : Areas.Q.nombre(), "errores" : [errorSolicitud(error)] }
     else:
+
+        if not permisos.paraPractica(request.user, Practica.Acciones.modificar, practica):
+            raise PermissionDenied()
+
         realizada = practica.estado()
-        context = { "tipo" : Areas.Q.nombre, "accion" : "Guardar" }
+        context = { "tipo" : Areas.Q.nombre(), "accion" : "Guardar" }
 
         if request.method == "POST":
 
-            servicios = CirugiaRealizadaServicioFormSet(request.POST, instancia=realizada, prefix="servicio_realizado")
+            servicios = PracticaRealizadaServicioFormSet(request.POST, instancia=realizada, prefix="servicio_realizado")
             productos = PracticaRealizadaProductoFormSet(request.POST, instancia=realizada, prefix="producto_utilizado")
 
             if servicios.is_valid() and productos.is_valid():
+
                 try:
-                    servicios = servicios.save()
-                    productos = productos.save()
-                    realizada.completarPrecio()
+                    with transaction.atomic():
+                        servicios.save()
+                        productos.save()
+                        realizada.completarPrecio()
                 except ErrorBD as error:
                     context["errores"] = [ errorBD() ]
+                except VeterinariaPatagonicaError as error:
+                    context["errores"] = [ errorProducto(error) ]
+
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.Q.nombre, practica.pk))
+                    return HttpResponseRedirect(pathVer(Areas.Q.nombre(), practica.pk))
 
         else:
-            servicios = CirugiaRealizadaServicioFormSet(instancia=realizada, prefix="servicio_realizado")
+            servicios = PracticaRealizadaServicioFormSet(instancia=realizada, prefix="servicio_realizado")
             productos = PracticaRealizadaProductoFormSet(instancia=realizada, prefix="producto_utilizado")
 
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.modificar, practica)
         context["servicios"] = servicios
         context["productos"] = productos
 
-    template = loader.get_template(plantilla("modificarDetalles"))
+    template = loader.get_template(plantilla("modificar", "realizacion"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_DETALLES, raise_exception=True)
-def modificarObservaciones(request, id):
+def modificarInformacionClinica(request, id):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
     try:
         practica = Practica.quirurgicas.get(id=id)
         verificarEstado(practica, [Realizada])
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.Q.nombre, "errores" : [errorSolicitud(error)] }
+        context = { "tipo" : Areas.Q.nombre(), "errores" : [errorSolicitud(error)] }
     else:
+
+        if not permisos.paraPractica(request.user, Practica.Acciones.modificar_informacion_clinica, practica):
+            raise PermissionDenied()
+
         realizada = practica.estado()
-        context = { "tipo" : Areas.Q.nombre, "accion" : "Guardar" }
+        context = { "tipo" : Areas.Q.nombre(), "accion" : "Guardar" }
 
         if request.method == "POST":
 
@@ -718,65 +938,156 @@ def modificarObservaciones(request, id):
                 except ErrorBD as error:
                     context["errores"] = [ errorBD() ]
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.Q.nombre, practica.pk))
+                    return HttpResponseRedirect(pathVer(Areas.Q.nombre(), practica.pk))
 
         else:
             generales = ObservacionesGeneralesForm(instance=realizada, prefix="observaciones_generales")
             servicios = ObservacionesServiciosFormSet(instance=realizada)
 
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.modificar_informacion_clinica, practica)
         context["generales"] = generales
         context["servicios"] = servicios
 
-    template = loader.get_template(plantilla("modificarObservaciones"))
+    template = loader.get_template(plantilla("modificar", "informacionClinica"))
     return HttpResponse(template.render(context, request))
 
 
 
-@login_required(redirect_field_name='proxima')
-@permission_required(PERMISOS_DETALLES, raise_exception=True)
-def verObservaciones(request, id):
+def verInformacionClinica(request, id):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
     try:
         practica = Practica.quirurgicas.get(id=id)
         verificarEstado(practica, [Realizada, Facturada])
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.Q.nombre, "errores" : [errorSolicitud(error)] }
+        context = { "tipo" : Areas.Q.nombre(), "errores" : [errorSolicitud(error)] }
     else:
+
+        if not permisos.paraPractica(request.user, Practica.Acciones.ver_informacion_clinica, practica):
+            raise PermissionDenied()
+
         realizada = practica.estados.realizacion()
         context = {
-            "tipo" : Areas.Q.nombre,
+            "tipo" : Areas.Q.nombre(),
             "practica" : practica,
             "realizada" : realizada,
+            "menu" : menuAcciones(request.user, Practica.Acciones.ver_informacion_clinica, practica)
         }
 
-    template = loader.get_template(plantilla("verObservaciones"))
+    template = loader.get_template(plantilla("ver", "informacionClinica"))
     return HttpResponse(template.render(context, request))
 
-@login_required
-def ayudaContextualCirugia(request):
 
-    template = loader.get_template('GestionDePracticas/GestindeCirugas.html')
-    contexto = {
-        'usuario': request.user,
+def reportePdf(practicas, hoy, dias):
+
+    canvas = pdf.crear()
+
+    y = pdf.A4[1] - pdf.MARGEN
+    y = -54 + pdf.titulo(canvas, y, "Reporte de cirugias al %s" % hoy.strftime("%d/%m/%Y"), 15, 0.5)
+    y = -54 + reportes.perfiles(canvas, y, practicas, hoy, dias["perfiles"])
+    y = -54 + reportes.realizacionesPorDia(canvas, y, practicas, hoy, dias["realizaciones"])
+    y = -54 + reportes.porcentajesActualizacion(canvas, y, practicas, Areas.Q, hoy, dias["actualizaciones"])
+    y = -54 + reportes.tiposDeAtencion(canvas, y, practicas, hoy, dias["tiposdeatencion"])
+
+    return pdf.terminar(canvas)
+
+
+def reporteHtml(practicas, hoy, dias):
+
+    fecha = hoy - timedelta(days=dias["perfiles"])
+    antes, despues = reportes.clasificarRealizaciones(practicas, fecha)
+    perfiles = {
+        "dias" : dias["perfiles"],
+        "fecha" : fecha,
+        "datos" : {
+            "antes" : reportes.datosPerfiles(
+                reportes.contarRealizaciones(antes)
+            ),
+            "despues" : reportes.datosPerfiles(
+                reportes.contarRealizaciones(despues)
+            ),
+        }
     }
 
-    return HttpResponse(template.render(contexto, request))
+    fecha = hoy - timedelta(days=dias["realizaciones"])
+    realizacionesPorDia = {
+        "dias" : dias["realizaciones"],
+        "fecha" : fecha,
+        "datos" : reportes.datosRealizacionesPorDia(
+            reportes.realizacionesEntre(practicas, fecha, hoy)
+        ),
+    }
 
-"""@login_required
-def verAgendaCirugia(request):
+    fecha = hoy - timedelta(days=dias["actualizaciones"])
+    seleccionadas = reportes.creadasEntre(practicas, fecha, hoy)
+    porcentajesActualizacion = {
+        "datos" : None,
+        "dias" : dias["actualizaciones"],
+        "fecha" : fecha,
+    }
+    if seleccionadas:
+        porcentajesActualizacion["datos"] = reportes.datosPorcentajesActualizacion(
+            reportes.calcularNiveles(seleccionadas, Areas.Q)
+        )
 
-    if "fecha" in request.GET:
-        fecha = request.GET["fecha"]
+
+    fecha = hoy - timedelta(days=dias["tiposdeatencion"])
+    tdas = reportes.buscarTDA(practicas, fecha)
+    habilitados = tdas.filter(baja=False)
+    deshabilitados = tdas.filter(baja=True)
+    tiposDeAtencion = {
+        "fecha" : fecha,
+        "dias" : dias["tiposdeatencion"],
+        "habilitados" : habilitados.count(),
+        "deshabilitados" : deshabilitados.count(),
+    }
+    if habilitados:
+        normales, raros, descarte = reportes.clasificar(reportes.preparar(habilitados))
+        tiposDeAtencion["normales"] = normales
+        tiposDeAtencion["raros"] = raros
+        tiposDeAtencion["descarte"] = descarte
+        tiposDeAtencion["datos"] = {
+            "normales" : reportes.datosTiposDeAtencion(normales),
+            "raros" : reportes.datosTiposDeAtencion(raros),
+        }
+
+
+    return {
+        "hoy" : hoy,
+        "tipo" : Areas.Q.nombre(),
+        "perfiles" : perfiles,
+        "realizacionesPorDia" : realizacionesPorDia,
+        "porcentajesActualizacion" : porcentajesActualizacion,
+        "tiposDeAtencion" : tiposDeAtencion,
+    }
+
+
+def reporte(request):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+
+    if not request.user.has_perm("GestionDePracticas.ver_reporte_cirugia"):
+        raise PermissionDenied()
+
+    retorno = ""
+    form = FiltradoReportesForm(request.GET)
+    practicas = Practica.quirurgicas.all()
+    hoy = datetime.now().date()
+    dias = form.dias()
+
+    if form.accion() == "pdf":
+        contenido = reportePdf(practicas, hoy, dias)
+        nombre = "reporte-cirugias-%s" % hoy.strftime("%Y%m%d")
+        retorno = HttpResponse(contenido, content_type="application/pdf")
+        retorno["Content-Disposition"] = "attachment; filename=%s.pdf" % nombre
+
     else:
-        fecha = djangotimezone.now()
+        context = reporteHtml(practicas, hoy, dias)
+        context["form"] = form
+        template = loader.get_template(plantilla("reportes"))
+        retorno = HttpResponse(template.render(context, request))
 
-    practicas = Practica.quirurgicas.filter(turno__date=fecha)
-
-    turnos = [{
-        "turno": practica.turno,
-        "duracion": practica.duracion(),
-        "servicios": [servicio.nombre for servicio in practica.servicios.all()]
-    } for practica in practicas]
-
-    return JsonResponse({ 'turnos':  turnos})
-"""
+    return retorno

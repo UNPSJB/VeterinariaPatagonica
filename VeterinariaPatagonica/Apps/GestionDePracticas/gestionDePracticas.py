@@ -1,56 +1,26 @@
-from os.path import join
-from datetime import datetime, timedelta
+from os.path import join as pathjoin
+from datetime import timedelta, datetime
+from decimal import Decimal
 
 from django.urls import reverse
 from django.db import transaction
-from django.db.models import Max as dbMax
-from django.db.models import F as dbF
-from django.utils import timezone
+from django.db.models import Q
 
-from VeterinariaPatagonica.tools import GestorListadoQueryset
+from VeterinariaPatagonica.tools import GestorListadoQuerySet, R
 from VeterinariaPatagonica.areas import Areas
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from Apps.GestionDeProductos.models import Producto
-from Apps.GestionDeServicios.models import Servicio, ServicioProducto
+from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeClientes.models import Cliente
-from Apps.GestionDeTiposDeAtencion.models import TipoDeAtencion
+from Apps.GestionDeMascotas.models import Mascota
 from .forms import *
 from .models import *
 from .config import config
+from . import permisos
 
-PLANTILLAS = {
-    "error" : "error",
 
-    "buscar" : "buscar",
-    "listar" : "listar",
-
-    "crear" : "crear",
-    "modificar" : "modificar",
-    "crearPresupuestada" : "crearPresupuestada",
-    "crearProgramada" : "crearProgramada",
-    "crearRealizada" : "crearRealizada",
-    "productos" : "productos",
-
-    "ver" : "ver",
-    "creada" : "ver",
-    "presupuestada" : "presupuestada",
-    "programada" : "programada",
-    "realizada" : "realizada",
-    "cancelada" : "cancelada",
-    "facturada" : "facturada",
-
-    "programar" : "programar",
-    "reprogramar" : "reprogramar",
-    "realizar" : "realizar",
-    "cancelar" : "cancelar",
-
-    "modificarDetalles" : "modificarDetalles",
-    "modificarObservaciones" : "modificarObservaciones",
-    "verObservaciones" : "verObservaciones",
-}
-def plantilla(nombre, subdirectorio=""):
-    return join( "GestionDePracticas/", subdirectorio, PLANTILLAS[nombre]+".html")
-
+def plantilla(*ruta):
+    return pathjoin("GestionDePracticas", *ruta) + ".html"
 
 
 def pathModificar(tipo, id):
@@ -81,16 +51,37 @@ def pathInicializar(tipo, accion, id):
 
 
 
-def pathVer(tipo, id):
+def pathVer(tipo, id, estado=None):
     return reverse(
         "%s:%s:ver:practica" % (config("app_name"), tipo), args=(id,)
-    )
+    ) + ("" if estado is None else "?estado=%d" % estado)
 
 
 
 def pathListar(tipo):
     return reverse(
         "%s:%s:listar" % (config("app_name"), tipo)
+    )
+
+
+
+def pathListarRealizaciones():
+    return reverse(
+        "%s:realizaciones" % config("app_name")
+    )
+
+
+
+def pathListarTurnosPendientes(tipo):
+    return reverse(
+        "%s:%s:turnos" % (config("app_name"), tipo)
+    )
+
+
+
+def pathExportar(tipo, formato):
+    return reverse(
+        "%s:%s:exportar:%s" % (config("app_name"), tipo, formato)
     )
 
 
@@ -102,9 +93,23 @@ def pathCrear(tipo):
 
 
 
-def pathDetallarRealizacion(tipo, id):
+def pathModificarRealizacion(tipo, id):
     return reverse(
-        "%s:%s:modificar:detalles" % (config("app_name"), tipo), args=(id,)
+        "%s:%s:modificar:realizacion" % (config("app_name"), tipo), args=(id,)
+    )
+
+
+
+def pathModificarInformacionClinica(tipo, id):
+    return reverse(
+        "%s:%s:modificar:informacionClinica" % (config("app_name"), tipo), args=(id,)
+    )
+
+
+
+def pathVerInformacionClinica(tipo, id):
+    return reverse(
+        "%s:%s:ver:informacionClinica" % (config("app_name"), tipo), args=(id,)
     )
 
 
@@ -119,6 +124,13 @@ def pathActualizar(tipo, accion, id):
 def pathFacturar(id):
     return reverse(
         "facturas:facturarPractica", args=(id,)
+    )
+
+
+
+def pathReporte(tipo):
+    return reverse(
+        "%s:%s:reporte" % (config("app_name"), tipo)
     )
 
 
@@ -202,12 +214,17 @@ def errorAccion(practica=None, accion=None, **kwargs):
     else:
         tipo = practica.nombreTipo()
 
+    if "descripcion" in kwargs:
+        descripcion = kwargs["descripcion"]
+    else:
+        descripcion = "Ocurrio un error al intentar %s, la modificacion no pudo completarse." % accion
+
     detalles = kwargs["detalles"] if "detalles" in kwargs else ""
 
     error= {
         "clase" : "error",
         "titulo" : "Error durante modificacion de %s" % tipo,
-        "descripcion" : "Ocurrio un error al intentar %s, la modificacion no pudo completarse. %s." % (accion, detalles),
+        "descripcion" :  "%s %s" % (descripcion, detalles),
         "sugerencias" : []
     }
 
@@ -216,6 +233,27 @@ def errorAccion(practica=None, accion=None, **kwargs):
             {
                 "href" : pathVer(tipo, practica.id),
                 "contenido" : "Ver el estado actual de la practica"
+            }
+        )
+
+    return error
+
+
+
+def errorProducto(error, tipo=None, id=None, **kwargs):
+
+    error = {
+        "clase" : "error",
+        "titulo" : error.titulo,
+        "descripcion" : error.descripcion,
+        "sugerencias" : []
+    }
+
+    if (tipo is not None) and (id is not None):
+        error["sugerencias"].append(
+            {
+                "href" : pathTerminar(tipo, id),
+                "contenido" : "Cancelar la creacion"
             }
         )
 
@@ -258,7 +296,6 @@ def obtener(session, id, etiqueta):
 
 def eliminar(session, id):
 
-    claves = []
     etiquetas = (
         "tipo",
         "practicaData",
@@ -273,7 +310,7 @@ def eliminar(session, id):
 
 
 
-def crearContexto(request, idCreacion, tipoPractica=None, accion=None):
+def crearContexto(request, idCreacion, tipoPractica=None):
 
     tipo = obtener(request.session, idCreacion, "tipo")
 
@@ -430,33 +467,26 @@ def obtenerPractica(request, idCreacion):
 
 
 
-def persistir(practica, detalles, accion, argumentos):
+def persistir(usuario, practica, detalles, accion, argumentos):
 
     with transaction.atomic():
 
-        practica.save(force_insert=True)
+        practica.save(force_insert=True, usuario=usuario)
         practica.practica_servicios.set(detalles["servicios"], bulk=False)
         practica.practica_productos.set(detalles["productos"], bulk=False)
-        practica.hacer(accion, **argumentos)
+        practica.hacer(usuario, accion, **argumentos)
 
     return practica
 
 
 
-def accionesIniciales(user, area):
+def accionesIniciales(usuario, area):
+    retorno = set()
+    for actualizacion in Practica.Acciones.iniciales(area.codigo()):
+        if permisos.paraCrear(usuario, area, accion=actualizacion):
+            retorno.add(actualizacion)
 
-    usuario = user.acciones()
-    practica = Practica.Acciones.iniciales(area.codigo)
-
-    acciones = practica & usuario
-
-    if not len(acciones):
-        raise VeterinariaPatagonicaError(
-            "Permiso denegado",
-            "No tiene permisos para crear practicas de este tipo"
-        )
-
-    return acciones
+    return retorno
 
 
 
@@ -535,7 +565,7 @@ def verificarAccion(practica, accion):
 
 def formPresupuestar(*args, vigencia=config("vigencia"), **kwargs):
 
-    hoy = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    hoy = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
     initial = {
         "duracion" : vigencia,
@@ -557,7 +587,7 @@ def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None,
 
     rango = timedelta(minutes=duracion*20)
     busquedas = 100
-    inicio = timezone.now().replace(second=0, microsecond=0)
+    inicio = datetime.now().replace(second=0, microsecond=0)
     finalizacion = inicio + rango
 
     cuando = None
@@ -571,7 +601,7 @@ def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None,
             busquedas -= 1
 
     if cuando is None:
-        cuando = timezone.now().replace(second=0, microsecond=0)
+        cuando = datetime.now().replace(second=0, microsecond=0)
 
     initial = {
         "desde" : cuando,
@@ -587,14 +617,15 @@ def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None,
     return ProgramadaForm(*args, precio=precio, practica=practica, **kwargs)
 
 
+
 def formReprogramar(*args, practica=None, **kwargs):
 
     if practica is not None:
         estado = practica.estado()
-        cuando = timezone.localtime(estado.inicio)
-        duracion = estado.duracion
+        cuando = estado.inicio
+        duracion = estado.duracion()
     else:
-        cuando = timezone.now().replace(minute=0,second=0,microsecond=0) + timedelta(hours=1)
+        cuando = datetime.now().replace(minute=0,second=0,microsecond=0) + timedelta(hours=1)
         duracion = config("duracion")
 
     initial = {
@@ -619,12 +650,12 @@ def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
     if practica is not None:
         estado = practica.estado()
         if isinstance(estado, Programada):
-            finalizacion = timezone.localtime(estado.finalizacion)
-            inicio = timezone.localtime(estado.inicio)
-            duracion = estado.duracion
+            finalizacion = estado.finalizacion
+            inicio = estado.inicio
+            duracion = estado.duracion()
 
     if finalizacion is None:
-        finalizacion = timezone.now()
+        finalizacion = datetime.now()
     if inicio is None:
         inicio = finalizacion - timedelta(minutes=duracion)
 
@@ -642,34 +673,246 @@ def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
 
 
 
-def crearUrls(acciones, practica, usuario):
+def itemReporte(usuario, seccion, area):
+    nombre = area.nombre()
+    nombrePlural = area.nombrePlural()
+    if usuario.has_perm("GestionDePracticas.ver_reporte_%s" % nombre):
+        seccion.append(
+            (pathReporte(nombre), "Ver reporte de %s" % nombrePlural)
+        )
+
+
+
+def itemCrear(usuario, seccion, area):
+    nombre = area.nombre()
+    if usuario.has_perm("GestionDePracticas.crear_%s_atendida" % nombre):
+        seccion.append(
+            (pathCrear(nombre), "Crear %s" % nombre)
+        )
+
+
+
+def itemListarTurnos(usuario, seccion, area):
+    nombre = area.nombre()
+    atendidas = "GestionDePracticas.realizar_%s_programada_atendida" % nombre
+    noAtendidas = "GestionDePracticas.realizar_%s_programada_no_atendida" % nombre
+    if usuario.has_perm(atendidas) or usuario.has_perm(noAtendidas):
+        seccion.append(
+            (pathListarTurnosPendientes(nombre), "Listar turnos de %s pendientes" % nombre)
+        )
+
+
+
+def itemListarRealizaciones(usuario, seccion):
+
+    if permisos.filtroPermitidas(usuario, Practica.Acciones.realizar) is not None:
+        seccion.append(
+            (pathListarRealizaciones(), "Listar practicas realizadas por %s" % usuario.username)
+        )
+
+
+
+def itemListar(usuario, seccion, area):
+    nombre = area.nombre()
+    if permisos.filtroPermitidas(usuario, Practica.Acciones.listar, areas=area) is not None:
+        seccion.append(
+            (pathListar(nombre), "Listar %ss" % nombre)
+        )
+
+
+
+def itemExportar(usuario, seccion, formato, area):
+    nombre = area.nombre()
+    if permisos.filtroPermitidas(usuario, Practica.Acciones["exportar_"+formato], areas=area) is not None:
+        seccion.append(
+            (pathExportar(nombre, formato), "Exportar %ss en formato %s" % (nombre, formato))
+        )
+
+
+
+def itemsAcciones(usuario, seccion, acciones, practica):
 
     generadoresUrls = {
-        Practica.Acciones.programar : lambda practica: pathActualizar(practica.nombreTipo(), "programar", practica.id),
-        Practica.Acciones.reprogramar : lambda practica: pathActualizar(practica.nombreTipo(), "reprogramar", practica.id),
-        Practica.Acciones.realizar : lambda practica: pathActualizar(practica.nombreTipo(), "realizar", practica.id),
-        Practica.Acciones.cancelar : lambda practica: pathActualizar(practica.nombreTipo(), "cancelar", practica.id),
-        Practica.Acciones.facturar : lambda practica: pathFacturar(practica.id),
+        Practica.Acciones.modificar : lambda practica: pathModificarRealizacion(practica.nombreTipo(), practica.id),
+        Practica.Acciones.ver_informacion_general : lambda practica: pathVer(practica.nombreTipo(), practica.id),
+        Practica.Acciones.ver_informacion_clinica : lambda practica: pathVerInformacionClinica(practica.nombreTipo(), practica.id),
+        Practica.Acciones.modificar_informacion_clinica : lambda practica: pathModificarInformacionClinica(practica.nombreTipo(), practica.id),
+        Practica.Acciones.programar : lambda practica: pathActualizar(practica.nombreTipo(), Practica.Acciones.programar.name, practica.id),
+        Practica.Acciones.reprogramar : lambda practica: pathActualizar(practica.nombreTipo(), Practica.Acciones.reprogramar.name, practica.id),
+        Practica.Acciones.realizar : lambda practica: pathActualizar(practica.nombreTipo(), Practica.Acciones.realizar.name, practica.id),
+        Practica.Acciones.cancelar : lambda practica: pathActualizar(practica.nombreTipo(), Practica.Acciones.cancelar.name, practica.id),
+        Practica.Acciones.facturar : lambda practica: pathFacturar(practica.id)
     }
 
-    permitidas = practica.estado().accionesPosibles().intersection( usuario.acciones() )
-    retorno = []
-
+    posibles = practica.estado().accionesPosibles().intersection(set(acciones))
     for accion in acciones:
-        if accion in permitidas:
-            generador = generadoresUrls[accion]
-            retorno.append([accion, generador(practica)])
+        if not accion in posibles:
+            continue
+        if permisos.paraPractica(usuario, accion, practica):
+            url = generadoresUrls[accion](practica)
+            seccion.append( (url, accion) )
 
-    return retorno
+
+
+def menuAcciones(usuario, accion, practica):
+
+    menu = [[], [], [], [], []]
+    area = Areas[practica.tipo]
+
+    modificar = [ item for item in [
+        Practica.Acciones.modificar,
+        Practica.Acciones.modificar_informacion_clinica,
+        Practica.Acciones.ver_informacion_clinica
+    ] if item != accion ]
+
+    actualizar = [ item for item in [
+        Practica.Acciones.presupuestar,
+        Practica.Acciones.programar,
+        Practica.Acciones.reprogramar,
+        Practica.Acciones.cancelar,
+        Practica.Acciones.realizar,
+        Practica.Acciones.facturar
+    ] if item != accion ]
+
+    ver = [ item for item in [
+        Practica.Acciones.ver_informacion_general
+    ] if item != accion ]
+
+    itemsAcciones(
+        usuario,
+        menu[0],
+        actualizar,
+        practica
+    )
+    itemsAcciones(
+        usuario,
+        menu[1],
+        modificar,
+        practica
+    )
+    itemsAcciones(
+        usuario,
+        menu[2],
+        ver,
+        practica
+    )
+    itemListar(usuario, menu[3], area)
+    itemCrear(usuario, menu[4], area)
+
+    return [ item for item in menu if len(item) ]
 
 
 
-class GestorListadoPractica(GestorListadoQueryset):
+def menuExportar(usuario, formato, area):
+    menu = [[],[]]
+    if formato != "xlsx":
+        itemExportar(usuario, menu[0], "xlsx", area)
+    itemListar(usuario, menu[1], area)
+    return [ item for item in menu if len(item) ]
 
-    def ordenar(self):
-        self.queryset = self.queryset.annotate(
-            ultima_mod=dbMax('estado__marca')
-        ).filter(
-            estado__marca=dbF('ultima_mod')
+
+
+def enlacesHistorial(usuario, practica, actual):
+
+    enlaces = []
+    acciones = Practica.Acciones.ver_informacion_general
+
+    if permisos.paraPractica(usuario, acciones, practica):
+        for n, estado in enumerate( practica.estados.all() ):
+            if (n == 0):
+                continue
+            url = pathVer(practica.nombreTipo(), practica.id, n) if n != actual else ""
+            enlaces.append( [url, estado.related()] )
+
+    return enlaces
+
+
+
+class GestorListadoPractica(GestorListadoQuerySet):
+
+    def hacerSeleccion(self, *args, **kwargs):
+        super().hacerSeleccion(*args, **kwargs)
+
+        opciones = {
+            "creada_por" : True,
+            "atendida_por" : True,
+            "marca_creacion" : True,
+            "marca_ultima_actualizacion" : True,
+            "estado_actual" : True
+        }
+
+        if self.seleccionar:
+            opciones["creada_por"] = self.campos["creadapor"]["visible"]
+            opciones["atendida_por"] = self.campos["atendidapor"]["visible"]
+            opciones["estado_actual"] = self.campos["estadoactual"]["visible"]
+            opciones["marca_creacion"] = self.campos["marcacreacion"]["visible"]
+            opciones["marca_ultima_actualizacion"] = self.campos["marcaultimaactualizacion"]["visible"]
+
+        self.queryset = Estado.anotarPracticas(
+            self.queryset,
+            **opciones
         )
-        super().ordenar()
+
+
+
+class GestorListadoRealizacion(GestorListadoQuerySet):
+
+    def hacerSeleccion(self, *args, **kwargs):
+        super().hacerSeleccion(*args, **kwargs)
+
+        opciones = {
+            "creada_por" : True,
+            "atendida_por" : True,
+            "marca_creacion" : True,
+            "marca_ultima_actualizacion" : True,
+            "estado_actual" : True,
+            "realizada_por" : True,
+            "horario_realizacion" : True,
+            "duracion_realizacion" : True
+        }
+
+        if self.seleccionar:
+            opciones["creada_por"] = self.campos["creadapor"]["visible"]
+            opciones["atendida_por"] = self.campos["atendidapor"]["visible"]
+            opciones["estado_actual"] = self.campos["estadoactual"]["visible"]
+            opciones["marca_creacion"] = self.campos["marcacreacion"]["visible"]
+            opciones["marca_ultima_actualizacion"] = self.campos["marcaultimaactualizacion"]["visible"]
+            opciones["horario_realizacion"] = self.campos["iniciorealizacion"]["visible"]
+            opciones["duracion_realizacion"] = self.campos["duracionrealizacion"]["visible"]
+
+        self.queryset = Realizada.anotarPracticas(
+            self.queryset,
+            **opciones
+        )
+
+
+
+
+class GestorListadoTurnos(GestorListadoQuerySet):
+
+    def hacerSeleccion(self, *args, **kwargs):
+        super().hacerSeleccion(*args, **kwargs)
+
+        opciones = {
+            "creada_por" : True,
+            "marca_creacion" : True,
+            "marca_ultima_actualizacion" : True,
+            "programada_por" : True,
+            "horario_turno" : True,
+            "duracion_turno" : True,
+            "reprogramaciones" : True
+        }
+
+        if self.seleccionar:
+            opciones["creada_por"] = self.campos["creadapor"]["visible"]
+            opciones["marca_creacion"] = self.campos["marcacreacion"]["visible"]
+            opciones["marca_ultima_actualizacion"] = self.campos["marcaultimaactualizacion"]["visible"]
+            opciones["programada_por"] = self.campos["programadapor"]["visible"]
+            opciones["horario_turno"] = self.campos["inicioturno"]["visible"]
+            opciones["duracion_turno"] = self.campos["duracionturno"]["visible"]
+            opciones["reprogramaciones"]= self.campos["reprogramaciones"]["visible"]
+
+        self.queryset = Programada.anotarPracticas(
+            self.queryset,
+            **opciones
+        )

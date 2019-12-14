@@ -29,7 +29,7 @@ def modificar(request, id = None):
 
     if request.method == 'POST':
         formulario = FormaDePagoForm(request.POST, instance=formaDePago)
-        print(formulario)
+
         if formulario.is_valid():
             formaDePago = formulario.save()
             return HttpResponseRedirect("/GestionDeFormasDePagos/ver/{}".format(formaDePago.id))

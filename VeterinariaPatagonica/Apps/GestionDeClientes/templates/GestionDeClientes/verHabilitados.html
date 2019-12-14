@@ -4,43 +4,129 @@
 Gestion de Clientes | Ver Habilitados
 {% endblock %}
 
-{% block tituloSeccion %}
+{% block clienteTitulo %}
 Clientes Habilitados
 {% endblock %}
 
 {% block secciones %}
-{% include './snippets/secciones.html' with pagina='verHabilitados' %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
 {% endblock %}
 
-{% block contenido %}
-    {% if gestor.numero_items %}
+{% block clienteContenido %}
 
-    {% include "./snippets/listado.html" %}
+{% load navigation_filters %}
+<!-- Listado -->
+<div class="clienteCuerpo" >
 
+    <div id="filtrarClientesHabilitados">
+        <a role="button" href="#filtrarClientes" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarClientes" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="dniCuit" placeholder="DNI/CUIT">
+                            <input name="nombres" placeholder="Nombres">
+                            <input name="apellidos" placeholder="Apellidos">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+
+    <div class="clienteLineaTitulo"> </div>
+    <br>
+
+    {% if clientesQuery %}
+            <div class="table-responsive" id="tabla">
+                <table id="tabla-cliente" class="table clienteListado tablesorter">
+                    <thead>
+                        <tr>
+                            <th id="habilitados-dni"> DNI/CUIT </th>
+                            <th id="habilitados-apellido"> Apellidos </th>
+                            <th id="habilitados-nombre"> Nombres </th>
+                            <th id="habilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for cliente in clientes %}
+                            <tr>
+                                <td> <p>{{cliente.dniCuit}}</p></td>
+                                <td> <p>{{cliente.apellidos}}</p></td>
+                                <td><p>{{cliente.nombres }}</p></td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
+                                            Acción <span class="caret"></span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <li><a  href="{% url 'clientes:clienteVer' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Cliente">
+                                                <i class="glyphicon glyphicon-eye-open"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'clientes:clienteModificar' cliente.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Cliente">
+                                                <i class="glyphicon glyphicon-edit" > </i>
+                                            </a></li>
+                                            <li><a href="{% url 'clientes:clienteDeshabilitar' cliente.id%}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Cliente">
+                                                <i class="glyphicon glyphicon-minus" > </i>
+                                            </a></li>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
     {% else %}
 
-    <p><strong>No hay clientes habilitados</strong></p>
+        <p> No hay clientes habilitados</p>
 
     {% endif %}
 
-    <div class="menu-colapsable" >
-        <div class="item-colapsable" >
-            <a role="button" href="#cliente-acciones" data-toggle="collapse">
-                <i class="glyphicon glyphicon-tasks"></i>
-                <span>Acciones</span>
-            </a>
-            <div class="contenido-colapsable collapse in" id="cliente-acciones">
-                <ul class="acciones sinestilo">
-    
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'clientes:clienteCrear' %}">Crear nuevo cliente    
-                        <i class="glyphicon glyphicon-user" ></i></a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'clientes:clientesListadoEXCEL' %}">Imprimir listado en Excel     
-                        <i class="glyphicon glyphicon-list-alt" ></i></a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'clientes:clientesListadoPDF'%}">Imprimir listado en PDF     
-                        <i class="glyphicon glyphicon-file" > </i></a></li>
-    
-                </ul>
-            </div>
-        </div>
+    <div align="center">
+        <a id ="clienteHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'clientes:clienteCrear' %}" data-toggle="tooltip" data-placement="bottom" title="Crear nuevo Cliente"> Crear </a>
+        <a id ="clienteHabiltadosExcel" class="btn btn-sm btn-default" href="{% url 'clientes:clientesReporteEXCEL' %}" data-toggle="tooltip" data-placement="bottom" title="Imprimir listado en Excel">
+            <i class="glyphicon glyphicon-list-alt" > </i>
+        </a>
+        <a id ="clienteHabiltadosPdf" class="btn btn-sm btn-default" href="{% url 'clientes:clientesReportePDF' %}" data-toggle="tooltip" data-placement="bottom" title="Imprimir listado en Pdf">
+            <i class="glyphicon glyphicon-file" > </i>
+        </a>
     </div>
+    <br>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if clientes.has_previous %}
+                <li><a href="?page={{ clientes.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in clientes.paginator.page_range|page_filter:clientes %}
+                <li class="{% if clientes.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if clientes.has_next %}
+                <li>
+                    <a href="?page={{ clientes.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+</div>
+
 {% endblock %}

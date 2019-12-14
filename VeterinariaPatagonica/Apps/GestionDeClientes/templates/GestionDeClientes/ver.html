@@ -4,36 +4,49 @@
 Gestion de Clientes | Ver Cliente
 {% endblock %}
 
-{% block tituloSeccion %}
+{% block secciones %}
+    {% include './seccionesSnippet.html' with pagina='default' %}
+{% endblock %}
+
+{% block clienteTitulo %}
 Ver Cliente
 {% endblock %}
 
-{% block subtitulo %}
+{% block clienteSubtitulo %}
 Muestra datos del cliente
 {% endblock %}
 
-{% block contenido %}
+{% block clienteContenido %}
 
-    {% include './snippets/acciones.html' with item=cliente seccion='ver' %}
+    {% include './accionesSnippet.html' with item=cliente seccion='ver' %}
 
-    <div>
-        <p> <strong>Identificador: </strong>{{ cliente.id }}</p>
-        <p> <strong>Tipo De Cliente: </strong>{{cliente.tipoDeCliente}} ({% if cliente.baja %}Deshabilitado{% else %}Habilitado{% endif %})</p>
-        <p> <strong>Dni/CUIT: </strong>{{cliente.dniCuit}}</p>
-        <p> <strong>Nombres:</strong> {{ cliente.nombres }} </p>
-        <p> <strong>Apellidos:</strong> {{cliente.apellidos}} </p>
-        <p> <strong>Direccion: </strong>{{ cliente.direccion }}</p>
-        <p> <strong>Localidad: </strong>{{cliente.localidad}}</p>
-        <p> <strong>Celular: </strong>{{cliente.celular}}</p>
-        <p><strong>Telefono:</strong>{{ cliente.telefono }}</p>
-        <p> <strong>Email:</strong>{{cliente.email}}</p>
-        <p id="porcentajeDescuentoServicio"> <strong>Descuento Servicio:</strong> {{cliente.descuentoServicio}} %</p>
-        <p> <strong>Descuento Producto: </strong>{{cliente.descuentoProducto}} %</p>
-        <!--<p> <strong>Cuenta Corriente: $</strong>{{cliente.cuentaCorriente}}</p>-->
+    <div class="clienteCuerpo">
+
+        {% if cliente %}
+        <div class="well">
+            <p>Identificador: {{ cliente.id }}</p>
+            <p>Tipo De Cliente: {{cliente.tipoDeCliente}} ({% if cliente.baja %}Deshabilitado{% else %}Habilitado{% endif %})</p>
+            <p>Dni/CUIT: {{cliente.dniCuit}}</p>
+            <p>Nombres: {{ cliente.nombres }} </p>
+            <p>Apellidos:{{cliente.apellidos}} </p>
+            <p>Direccion: {{ cliente.direccion }}</p>
+            <p>Localidad: {{cliente.localidad}}</p>
+            <p>Celular: {{cliente.celular}}</p>
+            <p>Telefono: {{ cliente.telefono }}</p>
+            <p>Email: {{cliente.email}}</p>
+            <p id="porcentajeDescuentoServicio">Descuento Servicio: {{cliente.descuentoServicio}} %</p>
+            <p>Descuento Producto: {{cliente.descuentoProducto}} %</p>
+            <p>Cuenta Corriente: $ {{cliente.cuentaCorriente}}</p>
+        </div>
+        {% else %}
+
+            <p> El cliente no existe </p>
+
+        {% endif %}
+
     </div>
-
     <div class= "col-sm-offset-11">
       <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
     </div>
 
-{% endblock contenido %}
+{% endblock clienteContenido %}

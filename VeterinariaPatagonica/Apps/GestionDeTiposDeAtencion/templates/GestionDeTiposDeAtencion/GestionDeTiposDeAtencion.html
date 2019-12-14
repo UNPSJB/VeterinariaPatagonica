@@ -1,26 +1,12 @@
-{% extends 'sitioBase.html' %}
+{% extends "sitioBase.html" %}
 {% load static %}
-
 {% block paginaSeccionGeneral %}
-
-        <section>
-        {% block secciones %}
-        {% include './snippets/secciones.html' with pagina='default' %}
-        {% endblock %}
-
-        <h4 class="titulo">
-            {% block tituloSeccion %}
-            {% endblock %}
-        </h4>
-        <div class="linea-titulo"></div>
-        <p class="subtitulo">
-            {% block subtitulo %}
-            {% endblock %}
-        </p>
-
-        {% block contenido %}
-        {% endblock contenido %}
-        </section>
-
+    <section>
+    <h3 class="titulo">
+    {% block tda-titulo %}
+    {% endblock %}
+    </h3>
+    {% block tda-contenido %}
+    {% endblock %}
+    </section>
 {% endblock %}
-

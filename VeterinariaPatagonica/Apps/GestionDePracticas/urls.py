@@ -2,6 +2,7 @@ from django.urls import path, include
 from .config import config
 from . import viewsConsultas as consultas
 from . import viewsCirugias as cirugias
+from . import views
 
 app_name = config("app_name")
 
@@ -9,7 +10,6 @@ urlpatterns = [
 
     path("consultas/", include(([
         path("", consultas.listar, name="listar"),
-        path("buscar/", consultas.buscar, name="buscar"),
         path("crear/", include(([
             path("", consultas.crear, name="practica"),
             path("<int:idCreacion>/", consultas.modificar, name="modificarPractica"),
@@ -21,26 +21,29 @@ urlpatterns = [
 
         path("ver/", include(([
             path("<int:id>/", consultas.ver, name="practica"),
-            path("observaciones/<int:id>/", consultas.verObservaciones, name="observaciones"),
+            path("informacionclinica/<int:id>/", consultas.verInformacionClinica, name="informacionClinica"),
         ], "ver"))),
 
         path("actualizaciones/", include(([
             path("realizar/<int:id>/", consultas.realizar, name="realizar"),
-            path("cancelar/<int:id>/", consultas.cancelar, name="cancelar"),
         ], "actualizaciones"))),
 
         path("modificar/", include(([
-            path("detalles/<int:id>/", consultas.modificarDetalles, name="detalles"),
-            path("observaciones/<int:id>/", consultas.modificarObservaciones, name="observaciones"),
+            path("realizacion/<int:id>/", consultas.modificarRealizacion, name="realizacion"),
+            path("informacionclinica/<int:id>/", consultas.modificarInformacionClinica, name="informacionClinica"),
         ], "modificar"))),
 
-        path("ayudaConsulta/", consultas.ayudaContextualConsulta, name="ayudaConsulta"),
+        path("exportar/", include(([
+            path("xlsx/", consultas.exportar, {"formato" : "xlsx"}, name="xlsx"),
+        ], "exportar"))),
+
+        path("reporte/", consultas.reporte, name="reporte"),
 
     ], "consulta"))),
 
     path("cirugias/", include(([
         path("", cirugias.listar, name="listar"),
-        path("buscar/", cirugias.buscar, name="buscar"),
+        path("turnos/", cirugias.turnos, name="turnos"),
         path("crear/", include(([
             path("", cirugias.crear, name="practica"),
             path("<int:idCreacion>/", cirugias.modificar, name="modificarPractica"),
@@ -53,7 +56,7 @@ urlpatterns = [
 
         path("ver/", include(([
             path("<int:id>/", cirugias.ver, name="practica"),
-            path("observaciones/<int:id>/", cirugias.verObservaciones, name="observaciones"),
+            path("informacionclinica/<int:id>/", cirugias.verInformacionClinica, name="informacionClinica"),
         ], "ver"))),
 
 
@@ -65,13 +68,16 @@ urlpatterns = [
         ], "actualizaciones"))),
 
         path("modificar/", include(([
-            path("detalles/<int:id>/", cirugias.modificarDetalles, name="detalles"),
-            path("observaciones/<int:id>/", cirugias.modificarObservaciones, name="observaciones"),
+            path("realizacion/<int:id>/", cirugias.modificarRealizacion, name="realizacion"),
+            path("informacionclinica/<int:id>/", cirugias.modificarInformacionClinica, name="informacionClinica"),
         ], "modificar"))),
 
-        path("ayudaCirugia/", cirugias.ayudaContextualCirugia, name="ayudaCirugia"),
+        path("exportar/", include(([
+            path("xlsx/", cirugias.exportar, {"formato" : "xlsx"}, name="xlsx"),
+        ], "exportar"))),
 
+        path("reporte/", cirugias.reporte, name="reporte"),
 
-    ], "cirugia")))
-
+    ], "cirugia"))),
+    path("realizaciones/", views.realizaciones, name="realizaciones"),
 ]

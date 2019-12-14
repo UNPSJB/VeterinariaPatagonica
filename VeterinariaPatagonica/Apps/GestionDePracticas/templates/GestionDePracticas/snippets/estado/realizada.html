@@ -1,0 +1,110 @@
+<a id="estado"></a>
+<h3 class="titulo">Realizacion</h3>
+<div class="contenedor">
+<p><b>Inicio:</b> {{ estado.inicio|date:"d/m/y" }} a las {{ estado.inicio|date:"H:i" }}hs.</p>
+<p><b>Finalizacion:</b> {{ estado.finalizacion|date:"d/m/y" }} a las {{ estado.finalizacion|date:"H:i" }}hs.</p>
+<p><b>Duracion real:</b> {{ estado.duracion }} min</p>
+<p><b>Importe total:</b> ${{ estado.total|floatformat:2 }}</p>
+<b>Servicios realizados:</b>
+<table class="table-bordered table-responsive detalles" id="servicios_realizados">
+    <colgroup>
+        <col class="cantidad">
+        <col class="servicio">
+        <col class="precio">
+        <col class="importe">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Cantidad</th>
+            <th>Servicio</th>
+            <th>Precio</th>
+            <th>Importe</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in estado.realizada_servicios.all %}
+        <tr>
+            <td>{{ detalle.cantidad }}</td>
+            <td>
+            {% if not detalle.servicio.baja and perms.GestionDeServicios.servicio_ver_habilitados %}
+                <a href="{% url "servicios:servicioVer" detalle.servicio.id %}">
+                    {{ detalle.servicio.nombre }}
+                </a>
+            {% else %}
+                {{ detalle.servicio.nombre }}
+            {% endif %}
+            </td>
+            <td>{{ detalle.precio|floatformat:2 }}</td>
+            <td>{{ detalle.precioTotal|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="breve">
+            <td colspan="3">
+            {% if not practica.tipoDeAtencion.baja and perms.GestionDeTiposDeAtencion.tipodeatencion_ver_habilitados %}
+                <a href="{% url "tiposDeAtencion:ver" practica.tipoDeAtencion.id %}">
+                    Tipo de atencion {{ practica.tipoDeAtencion.nombre }} (%{{ practica.tipoDeAtencion.recargo|floatformat:2 }} de recargo)
+                </a>
+            {% else %}
+                Tipo de atencion {{ practica.tipoDeAtencion.nombre }} (%{{ practica.tipoDeAtencion.recargo|floatformat:2 }} de recargo)
+            {% endif %}
+            </td>
+            <td>{{ estado.ajusteServicios|floatformat:2 }}</td>
+        </tr>
+        <tr class="breve">
+            <td colspan="3">Total</td>
+            <td>{{ estado.totalServicios|floatformat:2 }}</td>
+        </tr>
+    </tbody>
+</table>
+<b>Productos utilizados:</b>
+<table class="table-bordered table-responsive detalles" id="productos_utilizados">
+    <colgroup>
+        <col class="cantidad">
+        <col class="producto">
+        <col class="precio">
+        <col class="importe">
+    </colgroup>
+    <thead>
+        <tr>
+            <th>Cantidad</th>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Importe</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for detalle in estado.realizada_productos.all %}
+        <tr>
+            <td>{{ detalle.cantidad }}</td>
+            <td>
+            {% if not detalle.producto.baja and perms.GestionDeProductos.producto_ver_habilitados %}
+                <a href="{% url "productos:productoVer" detalle.producto.id %}">
+                    {{ detalle.producto.nombre }}
+                </a>
+            {% else %}
+                {{ detalle.producto.nombre }}
+            {% endif %}
+            </td>
+            <td>{{ detalle.precio|floatformat:2 }}</td>
+            <td>{{ detalle.precioTotal|floatformat:2 }}</td>
+        </tr>
+        {% endfor %}
+        <tr class="breve">
+            <td colspan="3">
+            {% if not practica.tipoDeAtencion.baja and perms.GestionDeTiposDeAtencion.tipodeatencion_ver_habilitados %}
+                <a href="{% url "tiposDeAtencion:ver" practica.tipoDeAtencion.id %}">
+                    Tipo de atencion {{ practica.tipoDeAtencion.nombre }} (%{{ practica.tipoDeAtencion.recargo|floatformat:2 }} de recargo)
+                </a>
+            {% else %}
+                Tipo de atencion {{ practica.tipoDeAtencion.nombre }} (%{{ practica.tipoDeAtencion.recargo|floatformat:2 }} de recargo)
+            {% endif %}
+            </td>
+            <td>{{ estado.ajusteProductos|floatformat:2 }}</td>
+        </tr>
+        <tr class="breve">
+            <td colspan="3">Total</td>
+            <td>{{ estado.totalProductos|floatformat:2 }}</td>
+        </tr>
+    </tbody>
+</table>
+</div>

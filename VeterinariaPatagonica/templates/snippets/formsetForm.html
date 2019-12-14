@@ -1,21 +1,16 @@
 <div class="row formset-form">
-
-    <div class="col-sm-1 form-group {{ form.visible_fields.0.name }} {% if form.visible_fields.0.errors %}has-error{% endif %}">
+    <div class="col-xs-12 col-sm-2 col-md-1 form-group {{ form.visible_fields.0.name }} {% if form.visible_fields.0.errors %}has-error{% endif %}">
         {{ form.visible_fields.0 }}
     </div>
-
-    <div class="col-sm-10 form-group {{ form.visible_fields.1.name }} {% if form.visible_fields.1.errors %}has-error{% endif %}">
+    <div class="col-xs-10 col-sm-8  col-md-10 form-group {{ form.visible_fields.1.name }} {% if form.visible_fields.1.errors %}has-error{% endif %}">
         {{ form.visible_fields.1 }}
     </div>
-
-    <div class="col-sm-1 form-group eliminar">
+    <div class="col-xs-2 col-sm-2 col-md-1 form-group eliminar">
         <a role="button" href="javascript:;" onclick="eliminar(event);" class="btn btn-xs btn-default pull-right"><i class="glyphicon glyphicon-remove"></i></a>
     </div>
-
     {% for field in form.hidden_fields %}
-    <div class="form-group {{ field.name }} hidden">
+    <div class="col-xs-12 form-group {{ field.name }} hidden">
         {{ field }}
     </div>
     {% endfor %}
-
 </div>

@@ -1,62 +1,52 @@
-{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
+{% extends "GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html" %}
 {% load static %}
-
 {% block paginaEstilos %}
     {{ block.super }}
     <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
-    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
-
 {% block titulo %}
-Gestion de Tipos de Atencion | Crear Tipo de Atencion
+{{ accion|capfirst }} tipo de atención
 {% endblock %}
-
-{% block tituloSeccion %}
-Nuevo Tipo de Atencion
+{% block tda-titulo %}
+{% include "snippets/titulo.html" with titulo=accion|capfirst|add:" tipo de atención" %}
 {% endblock %}
-
-{% block subtitulo %}
-Agrega un tipo de atencion al listado
+{% block tda-contenido %}
+<div class="contenedor">
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="errores">
+                <b>Por favor revise los siguientes errores:</b>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
+        {% include "snippets/field.html" with field=form.nombre %}
+        {% include "snippets/field.html" with field=form.descripcion %}
+        {% include "snippets/field.html" with field=form.tipoDeServicio %}
+        {% include "snippets/field.html" with field=form.lugar %}
+        {% include "snippets/field.html" with field=form.emergencia %}
+        {% include "snippets/calendarField.html" with field=form.inicioFranjaHoraria icono="reloj" %}
+        {% include "snippets/calendarField.html" with field=form.finFranjaHoraria icono="reloj" %}
+        {% include "snippets/field.html" with field=form.recargo %}
+        {% include "snippets/submit.html" %}
+    </form>
+</div>
 {% endblock %}
-
-{% block contenido %}
-
-        <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
-
-            {% csrf_token %}
-
-            {% if form.errors %}
-                <div class="errores">
-                    <strong>Por favor revise los siguientes errores:</strong>
-                    <ul>
-                        {% include "snippets/formErrores.html" %}
-                    </ul>
-                </div>
-            {% endif %}
-
-            {% include "./snippets/form.html" with accion="Crear" %}
-
-        </form>
-
-{% endblock %}
-
 {% block paginaJavascript %}
     {{ block.super }}
     <script src="{% static "vendor/moment/moment.js" %}"></script>
     <script src="{% static "vendor/moment/locale/es.js" %}"></script>
     <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
-
     <script type="text/javascript">
-        document.onreadystatechange = function(){
-            $("#inicioFranjaHoraria").datetimepicker({
-                locale:"es",
-                format: 'LT',
-            });
-            $("#finFranjaHoraria").datetimepicker({
-                locale:"es",
-                format: 'LT',
-            });
-        }
+        $("#{{ form.inicioFranjaHoraria.name|add:"_calendar" }}").datetimepicker({
+            locale:"es",
+            format: 'LT',
+        });
+        $("#{{ form.finFranjaHoraria.name|add:"_calendar" }}").datetimepicker({
+            locale:"es",
+            format: 'LT',
+        });
     </script>
-
 {% endblock %}

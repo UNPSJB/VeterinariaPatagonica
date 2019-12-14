@@ -22,7 +22,7 @@ def ProductoFormFactory(producto=None):
                'precioDeCompra', 'precioPorUnidad',
                'rubro' ]
 
-    if producto is None:
+    if producto is  None:
         campos.insert(0, 'nombre')
 
     class ProductoForm(forms.ModelForm):
@@ -32,11 +32,11 @@ def ProductoFormFactory(producto=None):
             fields = campos
             labels = {
                 'nombre':'Nombre:',
-                'marca':'Marca:',
-                'stock':'Stock:',
+                'marca': 'Marca:',
+                'stock': 'Stock:',
                 'formaDePresentacion':'Forma de Presentación:',
                 'precioPorUnidad':'Precio por Unidad:',
-                'precioDeCompra':'Precio de Compra:',
+                'precioDeCompra' : 'Precio de Compra:',
                 'rubro':'Rubro:',
                 'descripcion':'Descripción:',
                 'baja':'Baja:'
@@ -83,88 +83,3 @@ def ProductoFormFactory(producto=None):
                     })
 
     return ProductoForm
-
-class FiltradoForm(forms.Form):
-
-    ordenes = (
-        ("d", "Descendente"),
-        ("a", "Ascendente"),
-    )
-
-    criterios = (
-        ("nombre", "Nombre"),
-        ("marca", "Marca"),
-    )
-
-    nombre = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Nombre...",
-            "class":"form-control"
-        })
-    )
-
-    marca = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Marca...",
-            "class":"form-control",
-        })
-    )
-
-    formaDePresentacion = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Forma De Presentación...",
-            "class":"form-control",
-        })
-    )
-
-    precioPorUnidadMayor = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Precio mayor que...",
-            "class":"form-control",
-        })
-    )
-
-    precioPorUnidadMenor = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Precio menor que...",
-            "class":"form-control",
-        })
-    )
-
-    segun = forms.ChoiceField(
-        label="Ordenar segun",
-        choices=criterios,
-        required=False,
-        widget=forms.Select(attrs={"class":"form-control"}),
-    )
-
-    orden = forms.ChoiceField(
-        label="Orden",
-        choices=ordenes,
-        required=False,
-        widget=forms.Select(attrs={"class":"form-control"}),
-    )
-
-    def filtros(self):
-        retorno = {}
-
-        fields = ("nombre", "marca", "formaDePresentacion","precioPorUnidadMayor","precioPorUnidadMenor")
-        for field in fields:
-            if field in self.cleaned_data and self.cleaned_data[field]:
-                retorno[field] = self.cleaned_data[field]
-        return retorno
-
-    def criterio(self):
-        if self.cleaned_data and "segun" in self.cleaned_data:
-            return self.cleaned_data["segun"]
-        return None
-
-    def ascendente(self):
-        if self.cleaned_data and "orden" in self.cleaned_data:
-            return (self.cleaned_data["orden"] == "a")
-        return None

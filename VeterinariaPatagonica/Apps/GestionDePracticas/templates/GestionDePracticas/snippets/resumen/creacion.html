@@ -1,0 +1,82 @@
+<div class="row cuadro-contenido resumen">
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato cliente">
+        {% if practica.cliente %}
+            <i class="fa fa-dot-circle-o"></i><b>Cliente:</b> {{ practica.cliente }}
+        {% else %}
+            <i class="fa fa-circle-o"></i><b>Cliente:</b>
+        {% endif %}
+        </div>
+        <div class="dato tipodeatencion">
+        {% if practica.tipoDeAtencion %}
+            <i class="fa fa-dot-circle-o"></i><b>Tipo de atención:</b> {{ practica.tipoDeAtencion }}
+        {% else %}
+            <i class="fa fa-circle-o"></i><b>Tipo de atención:</b>
+        {% endif %}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato precio">
+        {% if precio %}
+            <i class="fa fa-dot-circle-o"></i><b>Precio previsto:</b> ${{ precio|floatformat:2 }}
+        {% else %}
+            <i class="fa fa-circle-o"></i><b>Precio previsto:</b>
+        {% endif %}
+        </div>
+        <div class="dato duracion">
+        {% if duracion %}
+            <i class="fa fa-dot-circle-o"></i><b>Duración estimada:</b> {{ duracion }} minutos
+        {% else %}
+            <i class="fa fa-circle-o"></i><b>Duración estimada:</b>
+        {% endif %}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato servicios">
+            {% if detalles.servicios %}
+            <a href="javascript:;" onclick="alternar('iconoServicios', 'resumenServicios', 'fa-minus-circle', 'fa-plus-circle');" >
+                <i id="iconoServicios" class="fa fa-plus-circle"></i><b>Servicios:</b>
+            </a>
+            <div class="hidden" id="resumenServicios">
+                <table>
+                    <tbody>
+                    {% for detalle in detalles.servicios %}
+                        <tr>
+                            <td class="cantidad">{{ detalle.cantidad }}</td>
+                            <td>x</td>
+                            <td class="descripcion">{{ detalle.servicio.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <i class="fa fa-circle-o"></i><b>Servicios:</b>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato productos">
+            {% if detalles.productos %}
+            <a href="javascript:;" onclick="alternar('iconoProductos', 'resumenProductos', 'fa-minus-circle', 'fa-plus-circle');" >
+                <i id="iconoProductos" class="fa fa-plus-circle"></i><b>Productos:</b>
+            </a>
+            <div class="hidden" id="resumenProductos">
+                <table>
+                    <tbody>
+                    {% for detalle in detalles.productos %}
+                        <tr {% if detalle.producto.stock < detalle.cantidad %}class="stock-faltante"{% endif %}>
+                            <td class="cantidad">{{ detalle.cantidad }}</td>
+                            <td>x</td>
+                            <td class="descripcion">{{ detalle.producto.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <i class="fa fa-circle-o"></i><b>Productos:</b>
+            {% endif %}
+        </div>
+    </div>
+</div>

@@ -1,59 +1,75 @@
+from decimal import Decimal
 from django.db import models
 from django.core.validators import RegexValidator, MinValueValidator, MaxValueValidator
 from Apps.GestionDeRubros import models as grmodels
 from VeterinariaPatagonica import tools
 from decimal import Decimal
-from django.db.models import Q
 
 
-from VeterinariaPatagonica.tools import BajasLogicasQuerySet
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
+from django.core.exceptions import ValidationError
+from django.db.models import F
 
 # Create your models here.
 
-class ProductoQuerySet(BajasLogicasQuerySet):
+
+class ProductoQuerySet(tools.BajasLogicasQuerySet):
     def insumos(self):
         return self.filter(precioPorUnidad__lte=Decimal(0))
-
-class BaseProductoManager(models.Manager):
-    def __init__(self, tipo=None):
-        super().__init__()
-        self.tipo = tipo
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.tipo is not None:
-            qs = qs.filter(tipo=self.tipo)
-        return qs
-
-class ProductoQueryset(VeterinariaPatagonicaQuerySet):
-        MAPEO_ORDEN = {
-            "orden_nombre": ["nombre"],
-            "orden_marca": ["marca"],
-            "orden_formaDePresentacion": ["formaDePresentacion"],
-            "orden_precioPorUnidad": ["precioPorUnidad"],
+    def productos(self):
+        return self.filter(precioPorUnidad__gt=Decimal(0))
+    def actualizarStock(self, actualizacion):
+        productos = {
+            producto.id : producto for producto in self.filter(
+                id__in=actualizacion.keys()
+            )
         }
 
-ProductoManager = models.Manager.from_queryset(ProductoQueryset)
+        for id, diferencia in actualizacion.items():
+            productos[id].stock += actualizacion[id]
+            try:
+                productos[id].full_clean()
+                productos[id].save()
+            except ValidationError as error:
+                raise VeterinariaPatagonicaError(
+                    "Error al actualizar stock",
+                    "%s - El stock no es suficiente." % productos[id],
+                )
+
+class BaseProductoManager(models.Manager):
+    pass
+
+ProductoManager = BaseProductoManager.from_queryset(ProductoQuerySet)
 
 class Producto (models.Model):
-    """MAPPER = {
+
+    class Meta:
+        permissions=(
+            ("producto_crear", "crear"),
+            ("producto_modificar", "modificar"),
+            ("producto_eliminar", "eliminar"),
+            ("producto_ver_habilitados", "ver_habilitados"),
+            ("producto_listar_habilitados", "listar_habilitados"),
+            ("producto_ver_no_habilitados", "ver_no_habilitados"),
+            ("producto_listar_no_habilitados", "listar_no_habilitados")
+        )
+        default_permissions = ()
+        ordering = ["nombre", "marca"]
+
+    MAPPER = {
         "marca": "marca__icontains",
         "formaDePresentacion": "formaDePresentacion__icontains",
         "nombre": "nombre__icontains",
         "precioPorUnidadMayor": "precioPorUnidad__gte",
         "precioPorUnidadMenor": "precioPorUnidad__lte"
-    }"""
-
-    objects = ProductoManager()
+    }
 
     MAX_NOMBRE = 50
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'
     REGEX_NUMERO = '^[0-9]{1,12}$'
     MAXDESCRIPCION= 150
 
-    STOCK_MIN_VALUE = 1
-    STOCK_MAX_VALUE = 100
+    STOCK_MIN_VALUE = 0
     MAX_ENTERO = 4
     MAX_DECIMAL = 2
     MIN_PRECIO = Decimal(0)
@@ -138,7 +154,6 @@ class Producto (models.Model):
         help_text="Stock del Producto",
         validators=[
             MinValueValidator(STOCK_MIN_VALUE, message=("El Stock no puede ser menor a {}").format(STOCK_MIN_VALUE)),
-            MaxValueValidator(STOCK_MAX_VALUE, message=("El Stock no puede ser mayor a {}").format(STOCK_MAX_VALUE))
         ]
     )
 
@@ -205,17 +220,8 @@ class Producto (models.Model):
 
     baja = models.BooleanField(default=False)
 
-    def describir(self):
 
-        nombre = self.nombre
-        compra = self.precioDeCompra
-        venta = self.precioPorUnidad
-        presentacion = self.get_formaDePresentacion_display()
-
-        if venta > 0.0:
-            return "Producto: %s X %s $%.2f ($%.2f)" % (nombre, presentacion, venta, compra)
-        else:
-            return "Insumo: %s X %s $%.2f" % (nombre, presentacion, compra)
+    objects = ProductoManager()
 
     def __str__(self):
         fp = self.formaDePresentacion
@@ -224,7 +230,3 @@ class Producto (models.Model):
 
     def precioEnUnidad(self, cantidad):
         return Producto.CONVERT[self.formaDePresentacion](self.precioPorUnidad) * cantidad
-
-    class Meta:
-        ordering = ["nombre", "marca"]
-

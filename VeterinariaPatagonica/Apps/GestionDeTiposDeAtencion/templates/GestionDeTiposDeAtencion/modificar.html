@@ -1,64 +1,23 @@
-{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
+{% extends 'GestionDeTiposDeAtencion/crear.html' %}
 {% load static %}
-
 {% block paginaEstilos %}
     {{ block.super }}
-    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
-    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
-
-{% block titulo %}
-Gestion de Tipos de Atencion | Modificar Tipo de Atencion
-{% endblock %}
-
-{% block tituloSeccion %}
-Modificar Tipo de Atencion
-{% endblock %}
-
-{% block subtitulo %}
-Permite cambiar datos relacionados al tipo de atencion
-{% endblock %}
-
-{% block contenido %}
-
-    {% include './snippets/acciones.html' with item=tipoDeAtencion seccion='modificar' %}
-
-            <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
-
-                {% csrf_token %}
-
-                {% if form.errors %}
-                    <div class="errores">
-                        <strong>Por favor revise los siguientes errores:</strong>
-                        <ul>
-                            {% include "snippets/formErrores.html" %}
-                        </ul>
-                    </div>
-                {% endif %}
-
-                {% include "./snippets/form.html" with accion="Modificar" %}
-
-            </form>
-
-{% endblock %}
-
-{% block paginaJavascript %}
-    {{ block.super }}
-    <script src="{% static "vendor/moment/moment.js" %}"></script>
-    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
-    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
-
-    <script type="text/javascript">
-        document.onreadystatechange = function(){
-            $("#inicioFranjaHoraria").datetimepicker({
-                locale:"es",
-                format: 'LT',
-            });
-            $("#finFranjaHoraria").datetimepicker({
-                locale:"es",
-                format: 'LT',
-            });
-        }
-    </script>
-
+{% block tda-contenido %}
+<div class="contenedor">
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="errores">
+                <b>Por favor revise los siguientes errores:</b>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
+        {% include "snippets/field.html" with field=form.nombre %}
+        {% include "snippets/field.html" with field=form.descripcion %}
+        {% include "snippets/submit.html" %}
+    </form>
+</div>
 {% endblock %}

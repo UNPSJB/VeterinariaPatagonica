@@ -1,14 +1,8 @@
 {% extends 'GestionDeRubros/GestionDeRubros.html' %}
 {% load static %}
 
-{% block paginaEstilos %}
-    {{ block.super }}
-    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
-    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
-{% endblock %}
-
 {% block titulo %}
-Gestion de Rubros | {{titulo}}
+Gestion de Rubros | Crear Rubros
 {% endblock %}
 
 {% block rubroTitulo %}
@@ -21,6 +15,7 @@ Gestion de Rubros | {{titulo}}
 {% endblock %}
 
 {% block rubroSubtitulo %}
+
 {% if titulo == 1 %}
     Agrega un Rubro al listado
 {% endif %}
@@ -36,8 +31,7 @@ Gestion de Rubros | {{titulo}}
 
             {% csrf_token %}
 
-           {% include 'GestionDeRubros/snippetRubro.html' with campos=formulario accion="Guardar Datos"%}
-
+            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2=""%}
 
         </form>
     </div>

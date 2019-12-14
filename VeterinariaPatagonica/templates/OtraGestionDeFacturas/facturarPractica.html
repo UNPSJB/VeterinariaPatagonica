@@ -1,0 +1,33 @@
+{% extends 'OtraGestionDeFacturas/facturar.html' %}
+{% load static %}
+{% block titulo %}
+Facturar practica
+{% endblock %}
+{% block factura-titulo %}
+{% include "snippets/titulo.html" with titulo="Facturar practica" %}
+{% endblock %}
+{% block formularioFactura %}
+    <div class="form-group cliente">
+        <div class=row>
+            <label for="cliente_id" class="col-xs-12 col-sm-2 col-md-4 etiqueta control-label">
+            Cliente
+            </label>
+            <div class="col-xs-12 col-sm-10 col-md-8 control">
+                {% include "snippets/ayuda.html" with content="Cliente asociado a la practica siendo facturada." id="cliente_id_help_text" %}
+                <div id="cliente_id" class="cuasi-control">{{ facturacion.cliente }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group cliente">
+        <div class=row>
+            <label for="practica_id" class="col-xs-12 col-sm-2 col-md-4 etiqueta control-label">
+            Practica
+            </label>
+            <div class="col-xs-12 col-sm-10 col-md-8 control">
+                {% include "snippets/ayuda.html" with content="Practica siendo facturada." id="practica_id_help_text" %}
+                <div id="practica_id" class="cuasi-control">{{ facturacion.practica }}</div>
+            </div>
+        </div>
+    </div>
+    {% include "snippets/form.html" with accion=None %}
+{% endblock %}

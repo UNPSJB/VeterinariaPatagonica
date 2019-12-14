@@ -1,0 +1,133 @@
+<div class="menu_section">
+  <ul class="nav side-menu">
+    <li class="grupo">
+      <i class="fa fa-group"></i>
+      <div>
+        <b>{{ request.user.grupo.name|capfirst }}</b>
+      </div>
+    </li>
+<!-- Clientes -->
+    <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <a href="javascript:;"> Clientes </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "clientes:clienteVerHabilitados" %}">Listar</a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "clientes:clienteCrear" %}">Crear Cliente</a>
+        </li>
+      </ul>
+    </li>
+<!-- Mascotas -->
+    <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <a href="javascript:;"> Mascotas </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "mascotas:mascotaVerHabilitados" %}">Listar</a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "mascotas:mascotaCrear" %}">Crear Mascota </a>
+        </li>
+      </ul>
+     </li>
+<!-- Productos -->
+     <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <a href="javascript:;"> Productos </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "productos:productoVerHabilitados" %}">Listar Productos</a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "productos:productoCrear" %}">Crear Producto</a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "rubros:rubroVerHabilitados" %}"> Listar Rubros </a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "rubros:rubroCrear" %}"> Crear Rubro </a>
+        </li>
+      </ul>
+    </li>
+<!-- Servicios -->
+     <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <a href="javascript:;"> Servicios </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "servicios:servicioVerHabilitados" %}">Listar</a>
+        </li>
+      </ul>
+    </li>
+<!-- Tipos de atencion -->
+     <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+       <a href="javascript:;"> Tipos de Atención </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+           <a href="{% url "tiposdeatencion:habilitados" %}">Listar</a>
+        </li>
+      </ul>
+    </li>
+<!-- Cobros -->
+     <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+       <a href="javascript:;"> Cobros </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+           <a href="{% url "facturas:facturar" %}"> Crear Factura </a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "facturas:listar" %}"> Listar Facturas </a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "pagos:listar" %}"> Listar Pagos </a>
+        </li>
+      </ul>
+    </li>
+<!-- Practicas -->
+    <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <a href="javascript:;"> Consultas </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "practicas:consulta:listar" %}">Listar</a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "practicas:consulta:crear:practica" %}">Crear</a>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <i class="glyphicon glyphicon-chevron-down"></i>
+      <a href="javascript:;"> Cirugias </a>
+      <ul class="nav child_menu">
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "practicas:cirugia:listar" %}">Listar</a>
+        </li>
+        <li>
+          <i class="glyphicon glyphicon-chevron-right"></i>
+          <a href="{% url "practicas:cirugia:crear:practica" %}">Crear</a>
+        </li>
+      </ul>
+    </li>
+   </ul>
+</div>

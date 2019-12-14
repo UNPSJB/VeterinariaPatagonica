@@ -4,42 +4,132 @@
 Gestion de Productos | Ver Habilitados
 {% endblock %}
 
-{% block tituloSeccion %}
+{% block productoTitulo %}
 Productos Habilitados
 {% endblock %}
 
-{% block secciones %}
-{% include './snippets/secciones.html' with pagina='verHabilitados' %}
+{% block productoSubtitulo %}
+<!--Actualmente disponibles-->
 {% endblock %}
 
-{% block contenido %}
-    {% if gestor.numero_items %}
+{% block secciones %}
+{% include './seccionesSnippet.html' with pagina='verHabilitados' %}
+{% endblock %}
 
-    {% include "./snippets/listado.html" %}
+{% block productoContenido %}
+
+{% load navigation_filters %}
+
+<!-- Listado -->
+<div class="productoCuerpo" >
+    <!--<p> Los siguientes Productos estan habilitados.  </p>-->
+
+        <div id="filtrarProductosHabilitados">
+        <a role="button" href="#filtrarProductos" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarProductos" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                                <input name="nombre" placeholder="Nombre">
+                                <input name="marca" placeholder="Marca">
+                              <!--  <input name="formaDePresentacion" placeholder="Forma De Presentacion"> -->
+                                <input name="precioPorUnidadMayor" placeholder="Precio Por Unidad Mayor a">
+                                <input name="precioPorUnidadMenor" placeholder="Precio Por Unidad Menor a">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="productoLineaTitulo"> </div>
+
+    <br>
+
+    {% if productos %}
+        <div class="table-responsive" id="tabla">
+            <table class="table productoListado">
+                <thead>
+                    <tr>
+                        <th id="deshabilitados-nombre"> Nombre </th>
+                        <th id="deshabilitados-marca"> Marca </th>
+                        <th id="deshabilitados-formaDePresentacion"> Forma de Presentacion </th>
+                        <th id="deshabilitados-precio"> Precio </th>
+                        <!--<th id="deshabilitados-acciones"> Acciones </th>-->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                        <tr>
+                            <td> <p> {{ producto.nombre }} </p></td>
+                            <td> <p> {{ producto.marca }} </p></td>
+                            <td> <p> {{ producto.formaDePresentacion }} </p></td>
+                            <td> <p>$ {{ producto.precioPorUnidad }} </p></td>
+                            <td>
+                                <div class="dropdown">
+                                    <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
+                                        Acción <span class="caret"></span>
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <li><a href="{% url 'productos:productoVer' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Producto">
+                                            <i class="glyphicon glyphicon-eye-open"></i>
+                                        </a></li>
+                                        <li><a href="{% url 'productos:productoModificar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Producto">
+                                            <i class="glyphicon glyphicon-edit"></i>
+                                        </a></li>
+                                        <li><a href="{% url 'productos:productoDeshabilitar' producto.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Deshabilitar Producto">
+                                            <i class="glyphicon glyphicon-minus" ></i>
+                                        </a></li>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
     {% else %}
 
-    <p><strong>No hay productos habilitados</strong></p>
+        <p> No hay Productos habilitados </p>
 
     {% endif %}
-
-    <div class="menu-colapsable" >
-        <div class="item-colapsable" >
-            <a role="button" href="#producto-acciones" data-toggle="collapse">
-                <i class="glyphicon glyphicon-tasks"></i>
-                <span>Acciones</span>
-            </a>
-            <div class="contenido-colapsable collapse in" id="producto-acciones">
-                <ul class="acciones sinestilo">
-
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}">Crear nuevo producto
-                        <i class="fa fa-shopping-basket" aria-hidden="true"></i></a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'productos:productosListadoEXCEL' %}">Imprimir listado en Excel     
-                        <i class="glyphicon glyphicon-list-alt" ></i></a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{% url 'productos:productosListadoPDF'%}">Imprimir listado en PDF     
-                        <i class="glyphicon glyphicon-file" > </i></a></li>
-                </ul>
-            </div>
-        </div>
+    <div>
+        <a  id ="productoHabilitadosCrear" class="btn btn-sm btn-default" href="{% url 'productos:productoCrear' %}"> Crear </a>
     </div>
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if productos.has_previous %}
+                <li><a href="?page={{ productos.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
+
+            {% for page in productos.paginator.page_range|page_filter:productos %}
+                <li class="{% if productos.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if productos.has_next %}
+                <li>
+                    <a href="?page={{ productos.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+
+</div>
+
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block titulo %}
+Información clínica de {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo="Ver información clínica de "|add:tipo %}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% if errores is not None %}
+        {% include "snippets/errores.html" %}
+    {% else %}
+        <div class="cuadro">
+            <div class="cuadro-titulo">
+                Observaciones generales:
+            </div>
+            <div class="cuadro-contenido">
+                <p><strong>Condicion previa de la mascota:</strong> {{ realizada.condicionPreviaMascota|default:"Sin datos." }}</p>
+                <p><strong>Resultados de la practica:</strong> {{ realizada.resultados|default:"Sin datos." }}</p>
+            </div>
+        </div>
+        <div class="cuadro">
+            <div class="cuadro-titulo">
+                Observaciones para cada servicio realizado:
+            </div>
+            <div class="cuadro-contenido">
+                {% for detalle in realizada.realizada_servicios.all %}
+                    <p><strong>{{ detalle.servicio.nombre }}:</strong> {{ detalle.observaciones|default:"Sin datos." }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

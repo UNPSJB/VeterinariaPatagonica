@@ -1,0 +1,227 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block titulo %}
+Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
+{% endblock %}
+{% block practica-titulo %}
+Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    <form id="formulario" class="form-horizontal" action="{{ request.path }}" method="GET">
+        {% if form.errors %}
+        <div class="errores">
+            <b>Por favor revise los siguientes errores:</b>
+            <ul>
+                {% include "snippets/formErrores.html" %}
+            </ul>
+        </div>
+        {% endif %}
+        {% for field in form %}
+        <div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
+            <div class=row>
+                <label for="{{ field.id_for_label }}" class="col-xs-12 col-sm-7 col-md-5 etiqueta control-label">
+                {{ field.label }}
+                </label>
+                <div class="col-xs-12 col-sm-5 col-md-7 control">
+                    {% if field.help_text %}
+                    {% include "./ayuda.html" with content=field.help_text id=field.id_for_label|add:"_help_text" %}
+                    {% endif %}
+                    {{ field }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </form>
+    <div id="perfiles-tda">
+        <h5>
+                Perfil del tipo de atención en prácticas realizadas (últimos {{ perfiles.dias }} días)
+        </h5>
+        {% if perfiles.datos.despues %}
+        <div class="row">
+            {% if perfiles.datos.antes %}
+            <div class="col-xs-12 col-sm-12 col-md-6 grafico" id="grafico-perfil-tda-antes">
+                <canvas></canvas>
+                <div class="leyenda">Desde el día {{ perfiles.fecha|date:"d/m/Y" }}</div>
+            </div>
+            {% endif %}
+            <div class="col-xs-12 col-sm-12 col-md-6 grafico" id="grafico-perfil-tda-despues">
+                <canvas></canvas>
+                <div class="leyenda">Hasta el día {{ perfiles.fecha|date:"d/m/Y" }}</div>
+            </div>
+            <div class="col-xs-12 referencias">
+            </div>
+        </div>
+        {% else %}
+        <p>No hay prácticas realizadas desde el día {{ perfiles.fecha|date:"d/m/Y" }}.</p>
+        {% endif %}
+    </div>
+    <div id="realizaciones">
+        <h5>
+            Número diario de prácticas realizadas (últimos {{ realizacionesPorDia.dias }} días)
+        </h5>
+        {% if realizacionesPorDia.datos %}
+        <div class="row">
+            <div class="col-xs-12 grafico" id="grafico-realizaciones">
+                <canvas></canvas>
+            </div>
+        </div>
+        {% else %}
+        <p>No hay prácticas realizadas desde el día {{ realizacionesPorDia.fecha|date:"d/m/Y" }}.</p>
+        {% endif %}
+    </div>
+    <div id="actualizaciones">
+        <h5>Prácticas actualizadas según estado (últimos {{ porcentajesActualizacion.dias }} días)</h5>
+        {% if porcentajesActualizacion.datos %}
+        <div class="row">
+            <div class="col-xs-12 grafico" id="grafico-actualizaciones">
+                <canvas class="{{ tipo }}"></canvas>
+            </div>
+        </div>
+        {% else %}
+        <p>No hay prácticas creadas desde el día {{ porcentajesActualizacion.fecha|date:"d/m/Y" }}.</p>
+        {% endif %}
+    </div>
+    <div id="tiposdeatencion">
+        <h5>
+            Tipos de atención más frecuentes (últimos {{ tiposDeAtencion.dias }} días)
+        </h5>
+        {% if tiposDeAtencion.habilitados == 0 and tiposDeAtencion.deshabilitados == 0 %}
+        <p>
+            No se han creado prácticas desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}.
+        </p>
+        {% else %}
+        {% if tiposDeAtencion.deshabilitados %}
+            Hay registradas {{ tiposDeAtencion.deshabilitados }} prácticas con tipos de atención deshabilitados creadas desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}
+        {% endif %}
+        {% if tiposDeAtencion.habilitados %}
+            {% if tiposDeAtencion.raros %}
+                <p>Se analizan por separado {{ tiposDeAtencion.raros|length }} de los tipos de atención por presentar menor frecuencia de uso (Otros TDA).</p>
+            {% endif %}
+            {% if tiposDeAtencion.descarte %}
+                {% with cantidad=tiposDeAtencion.normales|length|add:tiposDeAtencion.raros|length %}
+                <p>Se limita el reporte a {{ cantidad }} de los tipos de atención con mayor frecuencia de uso.</p>
+                {% endwith %}
+            {% endif %}
+            {% if tiposDeAtencion.normales %}
+            {% if tiposDeAtencion.datos.normales.cantidad > 1 %}
+            <div class="row">
+                <div class="col-xs-12 grafico" id="grafico-tda-normales">
+                {% if tiposDeAtencion.datos.normales.cantidad >= 5 %}
+                    <canvas class="radar"></canvas>
+                {% else %}
+                    <canvas class="barras"></canvas>
+                {% endif %}
+                    <div class="leyenda">Tipos de atención</div>
+                </div>
+                <div class="col-xs-12 referencias">
+                </div>
+            </div>
+            {% endif %}
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Recargo</th>
+                        <th>Prácticas</th>
+                        <th>Prácticas (%)</th>
+                        <th>Recaudación</th>
+                        <th>Recaudación (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tda in tiposDeAtencion.normales %}
+                    <tr>
+                        <td>{{ tda.id|default:"" }}</td>
+                        <td>{{ tda.nombre }}</td>
+                        <td>{% if tda.recargo is not None %}% {{ tda.recargo|floatformat:2 }}{% endif %}</td>
+                        <td>{{ tda.practicas|floatformat }}</td>
+                        <td>% {{ tda.ptjpracticas|floatformat:2 }}</td>
+                        <td>$ {{ tda.recaudacion|floatformat:2 }}</td>
+                        <td>% {{ tda.ptjrecaudacion|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            {% if tiposDeAtencion.raros %}
+            {% if tiposDeAtencion.datos.raros.cantidad > 1 %}
+            <div class="row">
+                <div class="col-xs-12 grafico" id="grafico-tda-raros">
+                {% if tiposDeAtencion.datos.raros.cantidad >= 5 %}
+                    <canvas class="radar"></canvas>
+                {% else %}
+                    <canvas class="barras"></canvas>
+                {% endif %}
+                    <div class="leyenda">Otros tipos de atención</div>
+                </div>
+                <div class="col-xs-12 referencias">
+                </div>
+            </div>
+            {% endif %}
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Recargo</th>
+                        <th>Prácticas</th>
+                        <th>Prácticas (%)</th>
+                        <th>Recaudación</th>
+                        <th>Recaudación (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tda in tiposDeAtencion.raros %}
+                    <tr>
+                        <td>{{ tda.id }}</td>
+                        <td>{{ tda.nombre }}</td>
+                        <td>% {{ tda.recargo|floatformat:2 }}</td>
+                        <td>{{ tda.practicas|floatformat }}</td>
+                        <td>% {{ tda.ptjpracticas|floatformat:2 }}</td>
+                        <td>$ {{ tda.recaudacion|floatformat:2 }}</td>
+                        <td>% {{ tda.ptjrecaudacion|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+            {% if tiposDeAtencion.descarte %}
+            <p>Los tipos de atención sin analizar son:</p>
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Recargo</th>
+                        <th>Prácticas</th>
+                        <th>Prácticas (%)</th>
+                        <th>Recaudación</th>
+                        <th>Recaudación (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for tda in tiposDeAtencion.descarte %}
+                    <tr>
+                        <td>{{ tda.id }}</td>
+                        <td>{{ tda.nombre }}</td>
+                        <td>% {{ tda.recargo|floatformat:2 }}</td>
+                        <td>{{ tda.practicas|floatformat }}</td>
+                        <td>% {{ tda.ptjpracticas|floatformat:2 }}</td>
+                        <td>$ {{ tda.recaudacion|floatformat:2 }}</td>
+                        <td>% {{ tda.ptjrecaudacion|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        {% else %}
+        <p>
+            No se han creado prácticas con ninguno de los tipos de atención habilitados desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}.
+        </p>
+        {% endif %}
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

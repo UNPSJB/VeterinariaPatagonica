@@ -1,0 +1,39 @@
+<a id="estado"></a>
+<h3 class="titulo">Turno</h3>
+<div class="contenedor">
+<p><b>Inicio:</b> {{ estado.inicio|date:"d/m/y" }} a las {{ estado.inicio|date:"H:i" }}hs.</p>
+<p><b>Finalizacion:</b> {{ estado.finalizacion|date:"d/m/y" }} a las {{ estado.finalizacion|date:"H:i" }}hs.</p>
+<p><b>Duracion:</b> {{ estado.duracion }} min</p>
+<p><b>Adelanto:</b> ${{ practica.adelanto.importe|floatformat:2 }}</p>
+<p><b>Estado:</b>
+{% if estado.fueRealizado %}
+Realizado
+{% elif estado.fueCancelado %}
+Cancelado
+{% elif estado.fueReprogramado %}
+Reprogramado
+{% elif estado.tiempoRestante > 0 %}
+Pendiente
+{% else %}
+Con retraso
+{% endif %}
+{% if estado.esReprogramacion %}
+<p><b>Motivo de reprogramacion:</b>
+    {{ estado.motivoReprogramacion|default:"Sin motivo registrado" }}</p>
+{% endif %}
+{% with turnos=estado.turnosMismoHorario %}
+    {% if estado.esUltimo and turnos %}
+        <p><b>Otros turnos en el mismo horario:</b>
+            <ol>
+                {% for turno in turnos %}
+                {% with path="practicas:"|add:turno.practica.nombreTipo|add:":ver:practica" %}
+                    <li><a href="{% url path id=turno.practica.id %}">
+                        {{ turno.practica.nombreTipo|capfirst }} {{ turno.practica.id }}: de {{ turno.inicio|date:"H:i" }} a {{ turno.finalizacion|date:"H:i" }}
+                    </a></li>
+                {% endwith %}
+                {% endfor %}
+            </ol>
+        </p>
+    {% endif %}
+{% endwith %}
+</div>

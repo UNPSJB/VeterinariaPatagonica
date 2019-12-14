@@ -1,6 +1,8 @@
 from django import forms
 from .models import Cliente
-from localflavor.ar import forms as lforms
+#[MOD]
+#from localflavor.ar import forms as lforms
+
 from django.core.validators import RegexValidator
 #Para que no pinche instalar -> pip install django-localflavor
 
@@ -57,6 +59,11 @@ def ClienteFormFactory(cliente=None):
                     'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Cliente.DESCUENTO),
                 },
 
+                'cuentaCorriente': {
+                    'max_digits': "Debe ingresar a lo sumo %d digitos para la parte entera" % (Cliente.CC_PARTE_ENTERA),
+                    'max_whole_digits': "Debe ingresar a lo sumo %d digitos en total" % (Cliente.PRECIO),
+                }
+
             }
 
             widgets = {
@@ -68,11 +75,14 @@ def ClienteFormFactory(cliente=None):
 
         def clean_dniCuit(self):
             dato = self.data["dniCuit"]
-            try:
+            #[MOD]
+            return dato #borrar
+            """try:
                 return lforms.ARDNIField().clean(dato)
             except forms.ValidationError:
                 pass
-            return lforms.ARCUITField().clean(dato)
+
+            return lforms.ARCUITField().clean(dato)"""
 
         def clean(self):
             cleaned_data = super().clean()
@@ -102,56 +112,29 @@ class FiltradoForm(forms.Form):
         ("dniCuit", "DNI/CUIT"),
         ("nombres", "Nombres"),
         ("apellidos", "Apellidos"),
-        ("localidad", "Localiad"),
-        ("tipoDeCliente", "TipoDeCliente"),
         ("mascota", "Mascota"),
     )
 
     dniCuit = forms.CharField(
         required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"DNI/CUIT...",
-            "class":"form-control"
-        })
+        widget=forms.TextInput(attrs={"class":"form-control"})
+    )
+
+    nombres = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class":"form-control"})
+    )
+
+    mascota = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={"class":"form-control"})
     )
 
     apellidos = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            "placeholder":"Apellidos...",
+            "placeholder":"Terminos a buscar...",
             "class":"form-control",
-        })
-    )
-
-    nombres = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Nombres...",
-            "class":"form-control"
-        })
-    )
-
-    localidad = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Localidad...",
-            "class":"form-control",
-        })
-    )
-
-    tipoDeCliente = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Tipo De Cliente...",
-            "class":"form-control",
-        })
-    )
-
-    mascota = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Mascota...",
-            "class":"form-control"
         })
     )
 
@@ -170,13 +153,10 @@ class FiltradoForm(forms.Form):
     )
 
     def filtros(self):
-        retorno = {}
-
-        fields = ("dniCuit", "apellidos", "nombres", "localidad", "tipoDeCliente", "mascota")
-        for field in fields:
-            if field in self.cleaned_data and self.cleaned_data[field]:
-                retorno[field] = self.cleaned_data[field]
-        return retorno
+        if self.cleaned_data:
+            fields = ("dniCuit", "nombres", "apellidos", "mascota")
+            datos = { k : self.cleaned_data[k] for k in fields }
+        return datos
 
     def criterio(self):
         if self.cleaned_data and "segun" in self.cleaned_data:

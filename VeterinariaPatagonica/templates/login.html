@@ -1,0 +1,38 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+     <title>
+      Veterinaria Patagonica | Iniciar Sesion
+    </title>
+     <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+    <link href="{% static 'vendor/fontawesome/css/font-awesome.css' %}" rel="stylesheet">
+    <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
+  </head>
+   <body class="container-fluid login">
+       <div class="row">
+          <div class="col-xs-12">
+          <section class="principal">
+            <h3>Bienvenido  al  Sistema  de  Veterinaria  Patagonica</h3>
+            <form action="{{ url_actual }}?proxima={{ url_proxima }}" method="post">
+              {% csrf_token %}
+              <div id="inputs">
+                {{ formulario.usuario }}
+                {{ formulario.password }}
+              </div>
+                <button class="btn btn-default submit" type="submit" >Iniciar sesión</button>
+            </form>
+
+            <h2><i class="fa fa-paw"></i> Veterinaria Patagonica</h2>
+          </section>
+        </div>
+    </div>
+     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
+   </body>
+</html>

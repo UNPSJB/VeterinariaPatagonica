@@ -15,12 +15,15 @@ Pagos de Facturas
 
 {% load navigation_filters %}
 
+<!-- Listado -->
+<div class="pagosCuerpo" >
+
     <div id="filtrarPagos">
-        <a role="button" href="#filtrarPagos2" data-toggle="collapse">
+        <a role="button" href="#filtrarPagosote" data-toggle="collapse">
             <i class="glyphicon glyphicon-tasks"></i>
             <span>Criterios de busqueda</span>
         </a>
-        <div id="filtrarPagos2" class="collapse in">
+        <div id="filtrarPagosote" class="collapse in">
             <form class="form-horizontal filtrado" action="" method="GET">
                 <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
                     <div>
@@ -32,71 +35,17 @@ Pagos de Facturas
                             <input name="importeTotal" placeholder="Importe">
 
 
-                            <button class="btn btn-default filtrar" type="submit">Filtrar</button>
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
                         </form>
-
-
                     </div>
             </form>
         </div>
     </div>
-    <br>
-    <form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
-      <div class="hidden orden-listado">
-          {% for field in gestor.formOrden %}
-              {{ field }}
-          {% endfor %}
-          {{ gestor.formPagina.desde }}
-      </div>
-      <div class="sombreado">
-          {{ gestor.formPagina.resultados }}
-          <button class="btn btn-default filtrar" type="submit">Mostrar</button>
-      </div>
-
-        <table class="table table-bordered table-responsive items">
-          <colgroup>
-            <col class="columna{% if gestor.encabezado.orden_fecha.activa %} activa{% endif %}"/>
-            <col class="columna{% if gestor.encabezado.orden_importeTotal.activa %} activa{% endif %}"/>
-            <col class="columna{% if gestor.encabezado.orden_factura.activa %} activa{% endif %}"/>
-            <!-- <col class="columna{% if gestor.encabezado.orden_baja.activa %} activa{% endif %}"/> -->
-          </colgroup>
-          <thead>
-            <tr>
-              <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_fecha %}</th>
-              <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_importeTotal %}</th>
-              <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_factura %}</th>
-
-
-              <!-- <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_baja %}</th> -->
-            </tr>
-          </thead>
-          <tbody>
-              {% for pago in gestor.items_actuales %}
-                  <tr>
-                      <td>
-                          <a href="{% url 'pagos:pagoVer' pago.id %}">
-                              {{ pago.fecha }}</a>
-                      </td>
-
-                      <td>{{ pago.importeTotal }}</td>
-
-                      <td>{{ pago.factura.id }}</td>
-
-                      <!-- <td>% {{ pago.baja }}</td> -->
-
-                      <!-- <td>{{ tipoDeAtencion.inicioFranjaHoraria|date:"H:i" }} hs. a {{ tipoDeAtencion.finFranjaHoraria|date:"H:i" }} hs.</td> -->
-                  </tr>
-              {% endfor %}
-          </tbody>
-        </table>
-
-      <div>
-      {% include "snippets/paginacion.html" with links=gestor.paginas%}
-      </div>
-
-    </form>
-
-
     <br>
     {% if pagos %}
             <div class="table-responsive" id="tabla">

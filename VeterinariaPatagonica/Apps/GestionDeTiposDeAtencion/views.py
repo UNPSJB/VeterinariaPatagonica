@@ -1,142 +1,229 @@
-from os.path import join
+from os.path import join as pathjoin
 
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
 from django import forms
 
 from .models import TipoDeAtencion
-from .forms import TipoDeAtencionForm
-from VeterinariaPatagonica.tools import GestorListadoQueryset
+from .forms import TipoDeAtencionForm, ModificacionTipoDeAtencionForm, FiltradoForm
+from VeterinariaPatagonica.tools import GestorListadoQuerySet
 
-PLANTILLAS = {
-    "habilitados" : "habilitados",
-    "deshabilitados" : "deshabilitados",
-    "ver" : "ver",
-    "crear" : "crear",
-    "modificar" : "modificar",
-    "eliminar" : "eliminar",
-}
+LOGIN_URL = '/login/'
 
-def plantilla(nombre):
-    return join( "GestionDeTiposDeAtencion/", PLANTILLAS[nombre]+".html")
+def plantilla(*ruta):
+    return pathjoin("GestionDeTiposDeAtencion", *ruta) + ".html"
 
 
+def permisosModificar(tipoDeAtencion):
+    permisos = ["GestionDeTiposDeAtencion.tipodeatencion_modificar"]
+    if tipoDeAtencion.baja:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_ver_no_habilitados")
+    else:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_ver_habilitados")
+    return permisos
 
-def habilitados(request):
-    """ Listado de tipos de atencion habilitados """
 
-    gestor = GestorListadoQueryset(
-        orden=[
-            ["orden_nombre", "Nombre"],
-            ["orden_emergencia", "Emergencia"],
-            ["orden_lugar", "Lugar de atencion"],
-            ["orden_recargo", "Recargo"],
-            ["orden_inicio", "Franja Horaria"],
-        ]
+def menuModificar(usuario, tipoDeAtencion):
+
+    menu = [[],[],[],[]]
+
+    menu[0].append( (reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)), "Ver tipo de atención") )
+
+    if tipoDeAtencion.baja:
+        menu[1].append( (reverse("tiposDeAtencion:habilitar", args=(tipoDeAtencion.id,)), "Habilitar tipo de atención") )
+    else:
+        menu[1].append( (reverse("tiposDeAtencion:deshabilitar", args=(tipoDeAtencion.id,)), "Deshabilitar tipo de atención") )
+
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados"):
+        menu[2].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados"):
+        menu[2].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
+
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
+        menu[3].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )
+
+    return [ item for item in menu if len(item) ]
+
+
+
+def permisosVer(tipoDeAtencion):
+    permisos = []
+    if tipoDeAtencion.baja:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_ver_no_habilitados")
+    else:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_ver_habilitados")
+    return permisos
+
+
+
+def menuVer(usuario, tipoDeAtencion):
+
+    menu = [[],[],[]]
+
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_modificar"):
+        menu[0].append( (reverse("tiposDeAtencion:modificar", args=(tipoDeAtencion.id,)), "Modificar tipo de atención") )
+        if tipoDeAtencion.baja:
+            menu[0].append( (reverse("tiposDeAtencion:habilitar", args=(tipoDeAtencion.id,)), "Habilitar tipo de atención") )
+        else:
+            menu[0].append( (reverse("tiposDeAtencion:deshabilitar", args=(tipoDeAtencion.id,)), "Deshabilitar tipo de atención") )
+
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados"):
+        menu[1].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados"):
+        menu[1].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
+
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
+        menu[2].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )
+
+    return [ item for item in menu if len(item) ]
+
+
+
+def permisosListar(habilitados):
+    permisos = []
+    if habilitados:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados")
+    else:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados")
+    return permisos
+
+
+
+def menuListar(usuario, habilitados):
+    menu = [[],[]]
+
+    if (not habilitados) and usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados"):
+        menu[0].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
+    if habilitados and usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados"):
+        menu[0].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
+
+    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
+        menu[1].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )
+    return [ item for item in menu if len(item) ]
+
+
+
+def listar(request, habilitados=True):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
+
+    if not request.user.has_perms(permisosListar(habilitados)):
+        raise PermissionDenied()
+
+    if habilitados:
+        queryset = TipoDeAtencion.objects.habilitados()
+    else:
+        queryset = TipoDeAtencion.objects.deshabilitados()
+
+    gestor = GestorListadoQuerySet(
+        campos = [
+            ["nombre", "Nombre"],
+            ["emergencia", "Emergencia"],
+            ["lugar", "Lugar de atencion"],
+            ["recargo", "Recargo"],
+            ["iniciofranjahoraria", "Franja Horaria"],
+        ],
+        clases={"filtrado" : FiltradoForm},
+        queryset=queryset,
+        mapaFiltrado=queryset.MAPEO_FILTRADO,
+        mapaOrden=queryset.MAPEO_ORDEN
     )
 
-    tiposDeAtencion = TipoDeAtencion.objects.habilitados()
-    gestor.cargar(request, tiposDeAtencion)
-    gestor.ordenar()
+    gestor.cargar(request)
+    gestor.paginacion["cantidad"].label = "Resultados por página"
 
-    template = loader.get_template( plantilla("habilitados") )
-    context = {"gestor" : gestor}
-    #raise Exception(str(gestor.encabezado))
-    return HttpResponse(template.render( context, request ))
-
-
-
-def deshabilitados(request):
-    """ Listado de tipos de atencion deshabilitados """
-
-    gestor = GestorListadoQueryset(
-        orden=[
-            ["orden_nombre", "Nombre"],
-            ["orden_emergencia", "Emergencia"],
-            ["orden_lugar", "Lugar de atencion"],
-            ["orden_recargo", "Recargo"],
-            ["orden_inicio", "Franja Horaria"],
-        ]
-    )
-
-    tiposDeAtencion = TipoDeAtencion.objects.deshabilitados()
-    gestor.cargar(request, tiposDeAtencion)
-    gestor.ordenar()
-
-    template = loader.get_template( plantilla("deshabilitados") )
-    context = {"gestor" : gestor}
+    template = loader.get_template( plantilla("listar") )
+    context = {
+        "gestor" : gestor,
+        "tipo" : "habilitados" if habilitados else "deshabilitados",
+        "menu" : menuListar(request.user, habilitados),
+    }
     return HttpResponse(template.render( context, request ))
 
 
 
 def ver(request, id):
-    """ Ver tipo de atencion segun <id> """
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
 
     tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
+    if not request.user.has_perms(permisosVer(tipoDeAtencion)):
+        raise PermissionDenied()
 
-    template = loader.get_template(plantilla("ver"))
     context = {
-        "tipoDeAtencion" : tipoDeAtencion
+        "tipoDeAtencion" : tipoDeAtencion,
+        "menu" : menuVer(request.user, tipoDeAtencion)
     }
 
+    template = loader.get_template(plantilla("ver"))
     return HttpResponse(template.render( context, request ))
 
 
 
-@login_required(redirect_field_name="proxima")
-@permission_required("GestionDeTiposDeAtencion.add_TipoDeAtencion", raise_exception=True)
 def crear(request):
-    """ Dar de alta un nuevo tipo de atencion """
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
+
+    if not request.user.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
+        raise PermissionDenied()
 
     if request.method == "POST":
-
         tipoDeAtencion = TipoDeAtencion()
         form = TipoDeAtencionForm(request.POST, instance=tipoDeAtencion)
 
         if form.is_valid():
-
             tipoDeAtencion = form.save()
-
             return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
-        else:
-            context = { "form" : form }
 
     else:
+        form = TipoDeAtencionForm()
 
-        context = { "form" : TipoDeAtencionForm() }
+    menu = [[]]
+    if request.user.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados"):
+        menu[0].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
+    if request.user.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados"):
+        menu[0].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
 
+    context = {
+        "accion" : "crear",
+        "form" : form,
+        "menu" : [ item for item in menu if len(item) ]
+    }
     template = loader.get_template(plantilla("crear"))
     return HttpResponse(template.render( context, request) )
 
 
 
-@login_required(redirect_field_name="proxima")
-@permission_required("GestionDeTiposDeAtencion.change_TipoDeAtencion", raise_exception=True)
 def modificar(request, id):
-    """ Modificar tipo de atencion con clave primaria <id> """
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
 
     tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
+    if not request.user.has_perms(permisosModificar(tipoDeAtencion)):
+        raise PermissionDenied()
 
     if request.method == "POST":
-
-        form = TipoDeAtencionForm(request.POST, instance=tipoDeAtencion)
+        form = ModificacionTipoDeAtencionForm(request.POST, instance=tipoDeAtencion)
 
         if form.is_valid():
-
             if form.has_changed():
                 form.save()
-
             return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
 
     else:
-
-        form = TipoDeAtencionForm(instance=tipoDeAtencion)
+        form = ModificacionTipoDeAtencionForm(instance=tipoDeAtencion)
 
     context = {
-        "form":form,
-        "tipoDeAtencion":tipoDeAtencion
+        "accion" : "modificar",
+        "form" : form,
+        "menu" : menuModificar(request.user, tipoDeAtencion)
     }
 
     template = loader.get_template(plantilla("modificar"))
@@ -144,50 +231,23 @@ def modificar(request, id):
 
 
 
-@login_required(redirect_field_name="proxima")
-@permission_required("GestionDeTiposDeAtencion.delete_TipoDeAtencion", raise_exception=True)
-def deshabilitar(request, id):
-    """ Deshablitar el tipo de atencion con clave primaria <id> """
+def cambioEstado(request, id, baja=False):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
 
     tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
+    permisos = ["GestionDeTiposDeAtencion.tipodeatencion_modificar"]
+    if tipoDeAtencion.baja:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_ver_no_habilitados")
+    else:
+        permisos.append("GestionDeTiposDeAtencion.tipodeatencion_ver_habilitados")
 
-    tipoDeAtencion.baja = True
-    tipoDeAtencion.save()
+    if not request.user.has_perms(permisos):
+        raise PermissionDenied()
+
+    if tipoDeAtencion.baja != baja:
+        tipoDeAtencion.baja = baja
+        tipoDeAtencion.save()
 
     return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
-
-
-@login_required(redirect_field_name="proxima")
-@permission_required("GestionDeTiposDeAtencion.delete_TipoDeAtencion", raise_exception=True)
-def habilitar(request, id):
-    """ Hablitar el tipo de atencion con clave primaria <id> """
-
-    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-
-    tipoDeAtencion.baja = False
-    tipoDeAtencion.save()
-
-    return HttpResponseRedirect( reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)) )
-
-
-
-@login_required(redirect_field_name="proxima")
-@permission_required("GestionDeTiposDeAtencion.delete_TipoDeAtencion", raise_exception=True)
-def eliminar(request, id):
-    """ Eliminar el tipo de atencion con clave primaria <id> """
-
-    tipoDeAtencion = TipoDeAtencion.objects.get(id=id)
-    tipoDeAtencion.delete()
-
-    template = loader.get_template(plantilla("eliminar"))
-    return HttpResponse( template.render({}, request) )
-
-@login_required
-def ayudaContextualTipoDeAtencion(request):
-
-    template = loader.get_template('GestionDeTiposDeAtencion/GestindeTiposdeAtencin.html')
-    contexto = {
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))

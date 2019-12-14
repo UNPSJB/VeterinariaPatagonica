@@ -1,0 +1,127 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block paginaEstilos %}
+    {{ formset.media.css }}
+    {{ block.super }}
+{% endblock %}
+{% block titulo %}
+Modificar productos de {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+Modificar productos de {{ tipo }}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    {% if acciones %}
+    <div class="cuadro">
+        {% include "GestionDePracticas/snippets/resumen/creacion.html" %}
+    </div>
+    <form id="form-creacion" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+        <div class="practica">
+            <nav class="navbar botones-navegacion">
+                  <ul class="nav navbar-nav">
+                    <li>
+                        <a class="btn btn-default izquierda" href="#" onclick="submitForm('form-creacion');">Actualizar</a>
+                    </li>
+                    <li>
+                    {% with path="practicas:"|add:tipo|add:":crear:modificarPractica" %}
+                        <a class="btn btn-default izquierda" href="{% url path id %}">Modificar {{ tipo }}</a>
+                    {% endwith %}
+                    </li>
+                    <li class="disabled">
+                    {% with path="practicas:"|add:tipo|add:":crear:modificarProductos" %}
+                        <a class="btn btn-default izquierda" href="{% url path id %}">Modificar productos</a>
+                    {% endwith %}
+                    </li>
+                  </ul>
+                  <ul class="nav navbar-nav navbar-right">
+                    <li>
+                    {% with path="practicas:"|add:tipo|add:":crear:terminar" %}
+                        <a class="btn btn-default derecha" href="{% url path id %}">Cancelar</a>
+                    {% endwith %}
+                    </li>
+                  </ul>
+            </nav>
+            <div class="practica-controles">
+                <div class="row">
+                    <div class="col-sm-12 hidden">
+                        {% csrf_token %}
+                    </div>
+                    <div id="formset-{{ formset.prefix }}-errores">
+                        {% if formset.total_error_count %}
+                            <div class="col-sm-12">
+                                <div class="errores">
+                                    <strong>Por favor revise los siguientes errores:</strong>
+                                    <ul>
+                                        {% include 'snippets/formsetErrores.html' %}
+                                    </ul>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="cuadro">
+                            <div class="cuadro-titulo">
+                                <b>Productos </b> {% include "snippets/ayuda.html" with id="ayuda-productos" content="Permite modificar el listado de productos y cantidades correspondientes a los servicios seleccionados. Las cantidades deben ser mayores a cero y no pueden haber productos duplicados." placement="bottom" %}
+                            </div>
+                            <div class="cuadro-contenido">
+                            {% include "snippets/formset.html" with titulo="Productos" %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-toolbar">
+                {% block acciones %}
+                    <div class="btn-group creacion">
+                    {{ acciones.acciones }}
+                    </div>
+                {% endblock %}
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<h3>Productos previstos</h3>
+<div class="contenedor" id="productos-estimados">
+        {% for detalle in detalles.servicios %}
+        <p>Para practicar <b>{{ detalle.cantidad }}</b> {% if detalle.cantidad == 1 %}vez{% else %}veces{% endif %} el servicio <b>{{ detalle.servicio.nombre }}</b> se tiene previsto el uso de:
+        </p>
+        <ul>
+        {% for producto, cantidad in detalle.cantidadesProductos %}
+            <li><b>{{ cantidad }}</b> ({{ producto.get_formaDePresentacion_display }}) <b>{{ producto.nombre }}</b></li>
+        {% endfor %}
+        </ul>
+        {% endfor %}
+
+    {% endif %}
+</div>
+
+{% endblock %}
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var validadores = [
+            {
+                "validador" : validarFormset,
+                "argumentos" : {
+                    "validarCantidades" : true,
+                    "comparador" : compararProductos,
+                    "formset_id" : "{{ formset.prefix }}-formset",
+                    "errores" : document.getElementById("formset-{{ formset.prefix }}-errores"),
+                }
+            }
+        ]
+        document.onreadystatechange = function(){
+            var productos = document.getElementById('{{ formset.prefix }}-formset');
+            actualizarEliminar(productos);
+        }
+    </script>
+
+
+
+    {{ formset.media.js }}
+    {% include "GestionDePracticas/snippets/resumen.js.html" %}
+
+
+{% endblock %}

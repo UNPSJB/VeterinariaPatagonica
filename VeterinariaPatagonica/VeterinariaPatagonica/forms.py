@@ -1,121 +1,244 @@
+from datetime import timedelta
+
 from django import forms
 
+from VeterinariaPatagonica.widgets import SubmitChoices, SubmitButtons
+
+
+class PaginacionSubmitButtons(SubmitButtons):
+    selected_attribute = {"disabled": True}
 
 
 class LoginForm(forms.Form):
 
     usuario = forms.CharField(
         required=True,
-        label = 'Usuario',
+        label = "Usuario",
         widget = forms.TextInput(attrs={
-            'class': 'form-control',
-            'placeholder' : 'Usuario...'
+            "class": "form-control",
+            "placeholder" : "Usuario"
         }),
         help_text="Nombre de usuario para iniciar sesion"
     )
 
     password = forms.CharField(
         required=True,
-        max_length=15,
-        min_length=4,
         label="Contraseña",
         widget=forms.PasswordInput(attrs={
-            'class' : 'form-control',
-            'placeholder' : 'Contraseña...'
+            "class" : "form-control",
+            "placeholder" : "Contraseña"
         }),
         help_text="Contraseña de usuario"
     )
 
 
-class OrdenListadoForm(forms.Form):
+class BaseForm(forms.Form):
 
-    def initial_columnas(self):
+    _datos = None
+
+    def suprimirErrores(self, campo, codigos):
+        suprimir = []
+        encontrados = 0
+        if campo in self.errors:
+            errores = self.errors[campo].as_data()
+            for error in errores:
+                if error.code in codigos:
+                    suprimir.append(error)
+                    encontrados += 1
+            if encontrados:
+                for error in suprimir:
+                    errores.remove(error)
+                if not len(errores):
+                    del(self.errors[campo])
+        return encontrados
+
+
+    def datos(self, vacios=True):
+        if self._datos is None:
+            self._datos = {}
+            default = []
+            if not self.is_bound:
+                if not vacios:
+                    default.extend(self.fields.keys())
+                else:
+                    for nombre, campo in self.fields.items():
+                        if campo.required:
+                            default.append(nombre)
+                        else:
+                            self._datos[nombre] = campo.empty_values[0]
+            else:
+                if not self.is_valid():
+                    for nombre in self.fields.keys():
+                        if nombre not in self.cleaned_data:
+                            default.append(nombre)
+
+                if not vacios:
+                    for nombre, valor in self.cleaned_data.items():
+                        if valor in self.fields[nombre].empty_values:
+                            default.append(nombre)
+                        else:
+                            self._datos[nombre] = valor
+                else:
+                    self._datos.update(self.cleaned_data)
+            for nombre in default:
+                self._datos[nombre] = self.get_initial_for_field(
+                    self.fields[nombre],
+                    nombre
+                )
+        return self._datos
+
+    def datosCumplen(self, funcion):
         return {
-            x[1] : str(x[0]) for x in enumerate(self.nombres_columnas, start=1)
+            campo:valor for campo, valor in self.datos().items() if funcion(valor)
         }
 
-    def primer_orden(self):
-        return [[columna, False] for columna in self.nombres_columnas]
 
-    def orden(self):
+class SeleccionForm(BaseForm):
 
-        data = self.clean()
-        for columna in self.nombres_columnas:
-            if (not columna in data) or (not data[columna]):
-                return self.primer_orden()
+    def clean(self):
+        data = super().clean()
+        suprimidos = self.suprimirErrores(
+            "seleccionados",
+            ["invalid_choice", "invalid_list"]
+        )
+        if suprimidos:
+            self.add_error(
+                None,
+                forms.ValidationError("Algunos datos del formulario no eran válidos y se adoptaron valores por defecto.")
+            )
+        return data
 
-        columnas = []
-        for columna in self.nombres_columnas:
-            valor = data[columna]
-            columnas.append([abs(valor), valor>0, columna])
-        columnas.sort()
-
-        return [[nom, asc] for pos,asc,nom in columnas]
-
-    def __init__(   self, *args, columnas=[], **kwargs ):
-        super().__init__(*args, **kwargs)
-        self.nombres_columnas = columnas
-        if columnas:
-            for columna, valor in self.initial_columnas().items():
-                self.fields[columna] = forms.IntegerField(
-                    required=False,
-                    widget = forms.HiddenInput(
-                        attrs={"value":valor}
-                    ),
-                )
-
-
-class PaginaListadoForm(forms.Form):
-
-    RESULTADOS = (
-        (10, "10 Resultados por pagina"),
-        (20, "20 Resultados por pagina"),
-        (40, "40 Resultados por pagina"),
-        (60, "60 Resultados por pagina"),
-        (80, "80 Resultados por pagina"),
-        (100, "100 Resultados por pagina"),
-        (200, "200 Resultados por pagina"),
+    seleccionados = forms.MultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple(),
+        error_messages={
+            "required" : "El listado debe tener algun campo visible",
+        }
     )
-    RESULTADOS_DEFAULT = RESULTADOS[0][0]
 
-    def cantidad(self):
-        cantidad = self.nombre_cantidad
-        if self.is_valid():
-            data = self.cleaned_data
-            if (cantidad in data) and data[cantidad]:
-                return data[cantidad]
-        return PaginaListadoForm.RESULTADOS_DEFAULT
+    def __init__(self, *args, campos=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["seleccionados"].choices = [
+            (nombre, etiqueta) for nombre, etiqueta in campos
+        ]
 
-    def desde(self):
-        desde = self.nombre_desde
-        if self.is_valid():
-            data = self.cleaned_data
-            if (desde in data) and data[desde]:
-                return data[desde]
-        return 0
 
-    def __init__(self,*args,nombre_cantidad="resultados",nombre_desde="desde",**kwargs):
+class OrdenForm(BaseForm):
+
+    def clean(self):
+        data = super().clean()
+        suprimidos = 0
+        for campo in self.fields:
+            suprimidos += self.suprimirErrores(
+                campo,
+                ["invalid", "invalid_choice"]
+            )
+        if suprimidos:
+            self.add_error(
+                None,
+                forms.ValidationError("Algunos datos del formulario no eran válidos y se adoptaron valores por defecto.")
+            )
+        return data
+
+    def __init__(self, *args, campos=(), choices=None, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.nombre_desde = nombre_desde
-        self.fields[nombre_desde] = forms.IntegerField(
-            required=False,
-            widget = forms.HiddenInput(
-                attrs={"value":"0"}
-            ),
-        )
+        for pos, (nombre, etiqueta) in enumerate(campos, start=len(campos)+1):
+            self.fields[nombre] = forms.IntegerField(
+                required=False,
+                widget = forms.HiddenInput(),
+                label = etiqueta,
+                initial = pos
+            )
+        if choices is None:
+            self.fields["ordenar"] = forms.CharField(
+                required=False,
+                widget = forms.HiddenInput(),
+            )
+        else:
+            self.fields["ordenar"] = forms.ChoiceField(
+                required=False,
+                widget = SubmitChoices(
+                    selected_class="activo",
+                    option_attrs={"class" : "btn btn-sm btn-default encabezado"}
+                ),
+                choices=choices,
+            )
 
-        self.nombre_cantidad = nombre_cantidad
-        self.fields[nombre_cantidad] = forms.TypedChoiceField(
-            choices = PaginaListadoForm.RESULTADOS,
-            coerce=int,
-            empty_value=None,
-            required=False,
-            widget = forms.Select(
-                attrs={"class":"form-control"},
-            ),
-        )
 
+class PaginacionForm(BaseForm):
+
+    def clean(self):
+        data = super().clean()
+        suprimidos = 0
+        for campo in self.fields:
+            suprimidos += self.suprimirErrores(
+                campo,
+                ["invalid", "min_value"]
+            )
+        if suprimidos:
+            self.add_error(
+                None,
+                forms.ValidationError("Algunos datos del formulario no eran válidos y se adoptaron valores por defecto.")
+            )
+        return data
+
+    pagina_actual = forms.IntegerField(
+        required=False,
+        min_value=1,
+        initial=1,
+        widget = forms.HiddenInput()
+    )
+
+    cantidad = forms.IntegerField(
+        required=False,
+        min_value=0,
+        initial=10,
+        widget = forms.NumberInput(
+            attrs={"class" : "form-control"},
+        ),
+    )
+
+    def __init__(self, *args, choices=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if choices is None:
+            self.fields["pagina"] = forms.IntegerField(
+                required=False,
+                min_value=1,
+                widget = forms.HiddenInput(),
+            )
+        elif choices:
+            self.fields["pagina"] = forms.ChoiceField(
+                required=False,
+                widget = PaginacionSubmitButtons(
+                    selected_class="activo",
+                    option_attrs={"class" : "btn btn-sm btn-default"},
+                ),
+                choices=choices
+            )
+
+
+class ExportarForm(forms.Form):
+
+    prefix="exportacion"
+
+    acciones = forms.CharField(
+        required=False,
+        label="",
+        widget=SubmitButtons(
+            option_attrs={"class" : "btn btn-sm btn-default"},
+            choices=(
+                ("exportar_pagina", "Exportar página"),
+                ("exportar_todos", "Exportar todos"),
+            )
+        ),
+    )
+
+    def accion(self):
+        if self.is_valid():
+            retorno = self.cleaned_data["acciones"]
+        else:
+            retorno = ""
+        return retorno
 
 
 class BaseFormSet(forms.BaseFormSet):
@@ -129,7 +252,7 @@ class BaseFormSet(forms.BaseFormSet):
     max_num = 1000
     absolute_max = 2000
     validate_min = True
-    validate_max = False
+    validate_max = True
 
     def __init__(self, *args, label=None, **kwargs):
         super().__init__(*args, **kwargs)
@@ -144,7 +267,7 @@ class BaseFormSet(forms.BaseFormSet):
             return None
         ocurrencias = []
         valores = tuple( item.cleaned_data[field] for field in self.id_fields )
-        for i in range( len(self.forms) ):
+        for i in range(len(self.forms)):
             item = self.forms[i]
             if not item.is_valid() or i in self._ignorar_forms:
                 continue
@@ -163,7 +286,7 @@ class BaseFormSet(forms.BaseFormSet):
 
     def _validarIdentidades(self):
         errores = []
-        for i in range( len(self.forms) ):
+        for i in range(len(self.forms)):
             form = self.forms[i]
             vacios = self._vacios(i)
             if len(vacios):
@@ -176,7 +299,7 @@ class BaseFormSet(forms.BaseFormSet):
 
     def _validarOcurrencias(self):
         errores = []
-        for i in range( len(self.forms) ):
+        for i in range(len(self.forms)):
             if (i in self._ignorar_forms):
                 continue
             ocurrencias = self.ocurrencias(i)
@@ -189,29 +312,25 @@ class BaseFormSet(forms.BaseFormSet):
 
     def clean(self):
         retorno = super().clean()
+
         errores = []
-
-        #Valida que cada form tenga completo los campos de identidad
         errores.extend( self._validarIdentidades() )
-
-        #Valida que no hayan forms con la misma identidad
         errores.extend( self._validarOcurrencias() )
 
         if len(errores) > 0:
             raise forms.ValidationError(errores)
+
         return retorno
 
-    @property
     def completos(self):
         return [
             self.forms[i].cleaned_data for i in range(len(self.forms)) if not i in self._ignorar_forms
         ]
 
-    @property
     def labeled_forms(self):
         forms = []
         label_format = self.label+" %d"
-        for i in range( len(self.forms) ):
+        for i in range(len(self.forms)):
             forms.append({
                 "label" : label_format % (i+1),
                 "form" : self.forms[i]
@@ -219,14 +338,7 @@ class BaseFormSet(forms.BaseFormSet):
         return forms
 
 
-
 class QuerysetFormSet(BaseFormSet):
-    """ Formset para crear, modificar y eliminar objetos de un queryset
-
-        form: subclase de ModelForm a utilizar con cada objeto
-        id_fields: iterable con fields del form que determinan la identidad del objeto
-
-        """
 
     def __init__(self, data=None, *args, queryset=None, **kwargs):
         self.queryset = queryset
@@ -270,10 +382,10 @@ class QuerysetFormSet(BaseFormSet):
         if len(self._ignorar_forms):
             return
 
-        enviados = self.instancias
+        enviados = self.instancias()
         todos = [ x for x in self.queryset.all() ]
 
-        eliminados   = []
+        eliminados  = []
         agregados   = []
         modificados = []
         conservados = []
@@ -295,7 +407,6 @@ class QuerysetFormSet(BaseFormSet):
         self.para_actualizar = tuple(modificados)
         self.para_conservar = tuple(conservados)
 
-    @property
     def instancias(self):
         return [ form.instance for form in self.forms ]
 
@@ -313,3 +424,111 @@ class QuerysetFormSet(BaseFormSet):
             item.save(force_update=True, update_fields=update_fields)
         for item in self.para_eliminar:
             item.delete()
+
+
+class DesdeHastaForm(BaseForm):
+
+    DATETIME_INPUT_FMTS = ("%d/%m/%y %H:%M", "%d/%m/%Y %H:%M")
+    DATE_INPUT_FMTS = ("%d/%m/%y", "%d/%m/%Y")
+    TIME_INPUT_FMTS = ("%H:%M",)
+
+    desde = forms.DateTimeField(
+        input_formats=DATETIME_INPUT_FMTS,
+        label="Fecha y hora de inicio",
+        widget=forms.DateInput(
+            format=DATETIME_INPUT_FMTS[0],
+            attrs={
+                "class":"form-control",
+            },
+        ),
+        error_messages={
+            "required" : "Fecha y hora de inicio son obligatorias",
+            "invalid" : "Fecha y hora de inicio deben tener el formato <dia>/<mes>/<año> <horas>:<minutos>",
+        },
+    )
+
+    hasta = forms.DateTimeField(
+        required=False,
+        input_formats=DATETIME_INPUT_FMTS,
+        label="Fecha y hora de finalizacion",
+        widget=forms.DateInput(
+            format=DATETIME_INPUT_FMTS[0],
+            attrs={
+                "class":"form-control",
+            },
+        ),
+        error_messages={
+            "required" : "Fecha y hora de finalizacion son obligatorias",
+            "invalid" : "Fecha y hora de finalizacion deben tener el formato <dia>/<mes>/<año> <horas>:<minutos>",
+        },
+    )
+
+    def __init__(self, *args, unidadDuracion="minutes", **kwargs):
+        super().__init__(*args, **kwargs)
+        self.unidadDuracion = unidadDuracion
+
+    duracion = forms.IntegerField(
+        required=False,
+        min_value=1,
+        widget=forms.TextInput(attrs={"class":"form-control"}),
+        error_messages={
+            "required" : "La duracion es obligatoria",
+            "invalid" : "La duracion debe ser un numero entero",
+            "min_value" : "La duracion debe ser mayor que cero",
+        },
+    )
+
+    def datetimeInicio(self):
+        retorno = None
+        if self.is_valid():
+            retorno = self.cleaned_data["desde"]
+        return retorno
+
+    def datetimeFinalizacion(self):
+        retorno = None
+        if self.is_valid():
+            retorno = self.cleaned_data["hasta"]
+        return retorno
+
+    def timedeltaDuracion(self):
+        retorno = None
+        if self.is_valid():
+            retorno = timedelta(**{self.unidadDuracion : self.cleaned_data["duracion"]})
+        return retorno
+
+    def clean(self):
+        retorno = super().clean()
+
+        validos  = "desde" not in self.errors
+        validos &= "hasta" not in self.errors
+        validos &= "duracion" not in self.errors
+
+        if validos:
+            inicio = retorno["desde"]
+            finalizacion = retorno["hasta"]
+            if retorno["duracion"] is not None:
+                lapso = timedelta(**{ self.unidadDuracion : retorno["duracion"] })
+            else:
+                lapso = None
+
+            if finalizacion == lapso == None:
+                self.add_error(
+                    None,
+                    forms.ValidationError("La fecha y hora de finalización (o duración) son obligatorias", code="lapso_incoherente")
+                )
+            elif finalizacion == None:
+                    retorno["hasta"] = inicio + lapso
+            elif lapso == None:
+                retorno["duracion"] = finalizacion - inicio
+            else:
+                if (inicio + lapso) != finalizacion:
+                    self.add_error(
+                        None,
+                        forms.ValidationError("La fecha y hora de finalización no coinciden con la duración", code="lapso_incoherente")
+                    )
+                if retorno["desde"] >= retorno["hasta"]:
+                    self.add_error(
+                        None,
+                        forms.ValidationError("La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.", code="lapso_incoherente")
+                    )
+        return retorno

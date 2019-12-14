@@ -1,0 +1,123 @@
+{% extends "GestionDePracticas/listar/listar.html" %}
+{% load static %}
+{% block paginaEstilos %}
+{{ block.super }}
+<link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+{% block titulo %}
+Turnos pendientes
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo="Turnos de cirugia pendientes" %}
+{% endblock %}
+{% block botonFiltrado %}
+<div class="col-xs-12 col-sm-12 col-md-12 columna">
+    <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
+        <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de turnos
+    </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Registrado por</b>: coincidencias segun nombre de usuario.</li><li><b>Desde</b>: mostrar turnos desde la fecha y hora indicada.</li><li><b>Hasta</b>: mostrar turnos hasta la fecha y hora indicada.</li><li><b>Cliente</b>: coincidencias segun nombres, apellidos o DNI/CUIT</li><li><b>Mascota</b>: coincidencias segun nombre o patente</li><li><b>Tipo de atencion</b>: coincidencias segun nombre</li></ul>" html=True placement="bottom" %}
+</div>
+{% endblock %}
+{% block formFiltrado %}
+{% with form=gestor.filtrado %}
+<div class="col-xs-12 col-sm-6 col-md-4 form-group {{ form.cliente.name }} {% if form.cliente.errors %}has-error{% endif %}">
+    {{ form.cliente }}
+</div>
+<div class="col-xs-12 col-sm-6 col-md-4 form-group {{ form.mascota.name }} {% if form.mascota.errors %}has-error{% endif %}">
+    {{ form.mascota }}
+</div>
+<div class="col-xs-12 col-sm-6 col-md-4 form-group {{ form.tipo_de_atencion.name }} {% if form.tipo_de_atencion.errors %}has-error{% endif %}">
+    {{ form.tipo_de_atencion }}
+</div>
+<div class="col-xs-12 col-sm-6 col-md-4 form-group {{ form.programada_por.name }} {% if form.programada_por.errors %}has-error{% endif %}">
+    {{ form.programada_por }}
+</div>
+<div class="col-xs-12 col-sm-6 col-md-4 form-group {{ form.programada_desde.name }}">
+    <div class="input-group date" id="{{ form.programada_desde.name|add:"_calendar" }}">
+        {{ form.programada_desde }}
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </div>
+</div>
+<div class="col-xs-12 col-sm-6 col-md-4 form-group {{ form.programada_hasta.name }}">
+    <div class="input-group date" id="{{ form.programada_hasta.name|add:"_calendar" }}">
+        {{ form.programada_hasta }}
+        <span class="input-group-addon">
+            <span class="glyphicon glyphicon-calendar"></span>
+        </span>
+    </div>
+</div>
+{% endwith %}
+{% endblock %}
+{% block resumenResultados %}
+    <b>Mostrando {{ gestor.itemsActuales.count }} turnos de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
+{% endblock %}
+{% block resultados %}
+{% for practica in gestor.itemsActuales %}
+{% if practica.id in visibles %}
+<tr onclick="cambiarUbicacion('{% url "practicas:"|add:practica.nombreTipo|add:":ver:practica" practica.id %}');"  class="activa">
+{% else %}
+<tr class="inactiva">
+{% endif %}
+    {% if gestor.inicioturno.visible %}
+    <td>{{ practica.inicio_turno|date:"d/m/y H:i" }}</td>
+    {% endif %}
+    {% if gestor.duracionturno.visible %}
+    <td>{{ practica.duracion_turno }}</td>
+    {% endif %}
+    {% if gestor.tiemporestante.visible %}
+    {% if practica.estado.tiempoRestante.total_seconds > 0 %}
+    <td>{{ practica.estado.inicio|timeuntil }}</td>
+    {% else %}
+    <td><i>Atrasado {{ practica.estado.inicio|timesince }}</i></td>
+    {% endif %}
+    {% endif %}
+    {% if gestor.id.visible %}
+    <td>{{ practica.get_tipo_display }} nº {{ practica.id }}</td>
+    {% endif %}
+    {% if gestor.programadapor.visible %}
+    <td>{{ practica.nombre_programada_por }}</td>
+    {% endif %}
+    {% if gestor.cliente.visible %}
+    <td>{{ practica.cliente }}</td>
+    {% endif %}
+    {% if gestor.mascota.visible %}
+    <td>{{ practica.mascota|default:"Ninguna" }}</td>
+    {% endif %}
+    {% if gestor.reprogramaciones.visible %}
+    <td>{{ practica.reprogramaciones }}</td>
+    {% endif %}
+    {% if gestor.tipodeatencion.visible %}
+    <td>{{ practica.tipoDeAtencion|capfirst }}</td>
+    {% endif %}
+    {% if gestor.creadapor.visible %}
+    <td>{{ practica.nombre_creada_por }}</td>
+    {% endif %}
+    {% if gestor.marcacreacion.visible %}
+    <td>{{ practica.marca_creacion|date:"d/m/y" }}</td>
+    {% endif %}
+    {% if gestor.marcaultimaactualizacion.visible %}
+    <td>{{ practica.marca_ultima_actualizacion|date:"d/m/y" }}</td>
+    {% endif %}
+</tr>
+{% endfor %}
+{% endblock %}
+{% block sinResultados %}
+    <b>No hay turnos que mostrar</b>
+{% endblock %}
+{% block paginaJavascript %}
+{{ block.super }}
+<script src="{% static "vendor/moment/moment.js" %}"></script>
+<script src="{% static "vendor/moment/locale/es.js" %}"></script>
+<script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+<script type="text/javascript">
+    document.onreadystatechange = function(){
+        $("#{{ gestor.filtrado.programada_desde.name|add:"_calendar" }}").datetimepicker({
+            locale:"es",
+        });
+        $("#{{ gestor.filtrado.programada_hasta.name|add:"_calendar" }}").datetimepicker({
+            locale:"es",
+        });
+    }
+</script>
+{% endblock %}

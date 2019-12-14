@@ -1,0 +1,33 @@
+{% extends 'GestionDePracticas/crear/crear.html' %}
+
+{% block navegacion-crear %}
+<nav class="navbar botones-navegacion">
+      <ul class="nav navbar-nav">
+        <li>
+            <a class="btn btn-default izquierda" href="#" onclick="submitForm('form-creacion');">Actualizar</a>
+        </li>
+        <li class="disabled">
+        {% with path="practicas:"|add:tipo|add:":crear:modificarPractica" %}
+            <a class="btn btn-default izquierda" href="#">Modificar {{ tipo }}</a>
+        {% endwith %}
+        </li>
+        <li>
+        {% with path="practicas:"|add:tipo|add:":crear:modificarProductos" %}
+            <a class="btn btn-default izquierda" href="{% url path id %}">Modificar productos</a>
+        {% endwith %}
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+        {% with path="practicas:"|add:tipo|add:":crear:terminar" %}
+            <a class="btn btn-default derecha" href="{% url path id %}">Cancelar</a>
+        {% endwith %}
+        </li>
+      </ul>
+</nav>
+{% endblock %}
+
+{% block paginaJavascript %}
+    {{ block.super }}
+    {% include "GestionDePracticas/snippets/resumen.js.html" %}
+{% endblock %}

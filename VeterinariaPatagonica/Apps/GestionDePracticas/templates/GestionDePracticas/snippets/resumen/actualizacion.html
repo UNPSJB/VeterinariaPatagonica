@@ -1,0 +1,88 @@
+<div class="row cuadro-contenido resumen">
+
+    <!-- Resumen actualizacion -->
+
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato cliente">
+            <i class="fa fa-dot-circle-o"></i><b>Cliente:</b> {{ practica.cliente }}
+        </div>
+        <div class="dato mascota">
+        {% if practica.mascota %}
+            <i class="fa fa-dot-circle-o"></i><b>Mascota:</b> {{ practica.mascota }}
+        {% else %}
+            <i class="fa fa-circle-o"></i><b>Mascota:</b>
+        {% endif %}
+        </div>
+        <div class="dato tipodeatencion">
+            <i class="fa fa-dot-circle-o"></i><b>Tipo de atención:</b> {{ practica.tipoDeAtencion }}
+        </div>
+        {% if practica.estado.inicio %}
+        <div class="dato inicio">
+            <i class="fa fa-dot-circle-o"></i><b>Inicio:</b> {{ practica.estado.inicio|date:"d/m/y H:i" }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato precio">
+            <i class="fa fa-dot-circle-o"></i><b>Precio previsto:</b> ${{ practica.total|floatformat:2 }}
+        </div>
+        <div class="dato duracion">
+            <i class="fa fa-dot-circle-o"></i><b>Duración estimada:</b> {{ practica.duracionTotalServicios }} minutos
+        </div>
+        {% if practica.estado.vencimiento %}
+        <div class="dato vigencia">
+            <i class="fa fa-dot-circle-o"></i><b>Vigencia:</b> {{ practica.estado.vencimiento|timeuntil }}
+        </div>
+        {% endif %}
+        {% if practica.estado.duracion %}
+        <div class="dato vigencia">
+            <i class="fa fa-dot-circle-o"></i><b>Duración prevista:</b> {{ practica.estado.duracion }} minutos
+        </div>
+        {% endif %}
+        {% if practica.adelanto %}
+        <div class="dato adelanto">
+            <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> ${{ practica.adelanto.importe|floatformat:2 }}
+        </div>
+        {% endif %}
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato servicios">
+            <a href="javascript:;" onclick="alternar('iconoServicios', 'resumenServicios', 'fa-minus-circle', 'fa-plus-circle');" >
+                <i id="iconoServicios" class="fa fa-plus-circle"></i><b>Servicios:</b>
+            </a>
+            <div class="hidden" id="resumenServicios">
+                <table>
+                    <tbody>
+                    {% for detalle in practica.practica_servicios.all %}
+                        <tr>
+                            <td class="cantidad">{{ detalle.cantidad }}</td>
+                            <td>x</td>
+                            <td class="descripcion">{{ detalle.servicio.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+        <div class="dato productos">
+            <a href="javascript:;" onclick="alternar('iconoProductos', 'resumenProductos', 'fa-minus-circle', 'fa-plus-circle');" >
+                <i id="iconoProductos" class="fa fa-plus-circle"></i><b>Productos:</b>
+            </a>
+            <div class="hidden" id="resumenProductos">
+                <table>
+                    <tbody>
+                    {% for detalle in practica.practica_productos.all %}
+                        <tr {% if detalle.producto.stock < detalle.cantidad %}class="stock-faltante"{% endif %}>
+                            <td class="cantidad">{{ detalle.cantidad }}</td>
+                            <td>x</td>
+                            <td class="descripcion">{{ detalle.producto.nombre }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

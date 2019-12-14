@@ -1,0 +1,103 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block paginaEstilos %}
+{{ servicios.media.css }}
+{{ productos.media.css }}
+{{ block.super }}
+{% endblock %}
+{% block titulo %}
+Modificar {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo="Modificar "|add:tipo %}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+        <div class="row">
+            <div class="col-xs-12 hidden">
+                {% csrf_token %}
+            </div>
+            <div class="col-xs-12">
+                <div id="formset-{{ servicios.prefix }}-errores">
+                    {% if servicios.total_error_count %}
+                        <div class="errores">
+                            <strong>Por favor revise los siguientes errores:</strong>
+                            <ul>{% include 'snippets/formsetErrores.html' with formset=servicios %}</ul>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="cuadro">
+                    <div class="cuadro-titulo">
+                        <b>Servicios realizados</b> {% include "snippets/ayuda.html" with id="ayuda-servicios-realizados" content="Puede modificar el listado de servicios realizados a la mascota durante la atención junto con la cantidad de veces que se realizó cada uno. No pueden haber servicios duplicados." placement="bottom" %}
+                    </div>
+                    <div class="cuadro-contenido">
+                        {% include "snippets/formset.html" with formset=servicios titulo="Servicios realizados" %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12">
+                <div id="formset-{{ productos.prefix }}-errores">
+                    {% if productos.total_error_count %}
+                        <div class="errores">
+                            <strong>Por favor revise los siguientes errores:</strong>
+                            <ul>{% include 'snippets/formsetErrores.html' with formset=productos %}</ul>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="cuadro">
+                    <div class="cuadro-titulo">
+                        <b>Productos utilizados</b> {% include "snippets/ayuda.html" with id="ayuda-productos-utilizados" content="Puede modificar el listado de productos y cantidades de producto utilizados durante la realizacion de los servicios. No pueden haber productos duplicados." placement="bottom" %}
+                    </div>
+                    <div class="cuadro-contenido">
+                        {% include "snippets/formset.html" with formset=productos %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 acciones">
+                <button type="submit" class="btn btn-sm btn-default center-block">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+{% block paginaJavascript %}
+    {{ block.super }}
+    <script type="text/javascript">
+        var validadores = [
+            {
+                "validador" : validarFormset,
+                "argumentos" : {
+                    "validarCantidades" : true,
+                    "comparador" : compararServicios,
+                    "formset_id" : "{{ servicios.prefix }}-formset",
+                    "errores" : document.getElementById("formset-{{ servicios.prefix }}-errores"),
+                }
+            },
+            {
+                "validador" : validarFormset,
+                "argumentos" : {
+                    "validarCantidades" : true,
+                    "comparador" : compararProductos,
+                    "formset_id" : "{{ productos.prefix }}-formset",
+                    "errores" : document.getElementById("formset-{{ productos.prefix }}-errores"),
+                }
+            }
+        ]
+        document.onreadystatechange = function(){
+            var servicios = document.getElementById('{{ servicios.prefix }}-formset');
+            var productos = document.getElementById('{{ productos.prefix }}-formset');
+            actualizarEliminar(servicios);
+            actualizarEliminar(productos);
+        }
+    </script>
+
+
+{{ servicios.media.js }}
+{{ productos.media.js }}
+
+
+{% endblock %}

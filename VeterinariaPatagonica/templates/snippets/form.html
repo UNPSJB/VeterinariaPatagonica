@@ -1,22 +1,6 @@
 {% for field in form.visible_fields %}
-<div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
-    <div class=row>
-        <label for="{{ field.id_for_label }}" class="col-sm-4 control-label etiqueta">
-            {{ field.label }}
-        </label>
-        <div class="col-sm-8 control">
-            {{ field }}
-        </div>
-    </div>
-</div>
+    {% include "./field.html" %}
 {% endfor %}
-
 {% if accion %}
-<div class="form-group">
-    <div class=row>
-        <div class="col-sm-offset-4 col-sm-8">
-            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
-        </div>
-     </div>
-</div>
+    {% include "./submit.html" %}
 {% endif %}

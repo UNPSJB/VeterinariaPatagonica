@@ -1,30 +1,18 @@
-{% extends 'GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html' %}
-
+{% extends "GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html" %}
 {% block titulo %}
-Gestion de Tipos de Atencion | Ver Tipo de Atencion
+Ver tipo de atención
 {% endblock %}
-
-{% block tituloSeccion %}
-Ver Tipo de Atencion
+{% block tda-titulo %}
+{% include "snippets/titulo.html" with titulo="Tipo de atención: "|add:tipoDeAtencion.nombre %}
 {% endblock %}
-
-{% block subtitulo %}
-Muestra datos del tipo de atencion
-{% endblock %}
-
-{% block contenido %}
-
-    {% include './snippets/acciones.html' with item=tipoDeAtencion seccion='ver' %}
-
-    <div>
-        <p><strong>Identificador:</strong> {{ tipoDeAtencion.id }}</p>
-        <p><strong>Nombre:</strong> {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %} Deshabilitado {% else %} Habilitado {% endif %})</p>
-        <p><strong>Descripcion:</strong> {{ tipoDeAtencion.descripcion }}</p>
-        <p><strong>Lugar de atencion:</strong> {{ tipoDeAtencion.get_lugar_display }}</p>
-        <p><strong>Emergencia:</strong> {% if tipoDeAtencion.emergencia %} Si {% else %} No {% endif %}</p>
-        <p><strong>Tipo de servicio:</strong> {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
-        <p><strong>Franja horaria:</strong> de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
-        <p><strong>Recargo:</strong> {{ tipoDeAtencion.recargo|floatformat:2 }}%</p>
-    </div>
-
+{% block tda-contenido %}
+<div class="contenedor">
+    <p><b>Nombre:</b> {{ tipoDeAtencion.nombre }} ({% if tipoDeAtencion.baja %}deshabilitado{% else %}habilitado{% endif %})</p>
+    <p><b>Descripción:</b> {{ tipoDeAtencion.descripcion }}</p>
+    <p><b>Lugar de atención:</b> {{ tipoDeAtencion.get_lugar_display }}</p>
+    <p><b>Emergencia:</b> {{ tipoDeAtencion.emergencia|yesno }}</p>
+    <p><b>Tipo de servicio:</b> {{ tipoDeAtencion.get_tipoDeServicio_display }}</p>
+    <p><b>Franja horaria:</b> de {{ tipoDeAtencion.inicioFranjaHoraria }} a {{ tipoDeAtencion.finFranjaHoraria }}</p>
+    <p><b>Recargo:</b> {{ tipoDeAtencion.recargo|floatformat:2 }}%</p>
+</div>
 {% endblock %}

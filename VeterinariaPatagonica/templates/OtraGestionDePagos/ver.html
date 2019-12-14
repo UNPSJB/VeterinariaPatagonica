@@ -1,0 +1,41 @@
+{% extends "OtraGestionDePagos/GestionDePagos.html" %}
+{% block titulo %}
+Ver pago
+{% endblock %}
+{% block pago-titulo %}
+{% with id=pago.id|stringformat:"d" %}
+{% include "snippets/titulo.html" with titulo="Pago número "|add:id %}
+{% endwith %}
+{% endblock %}
+{% block pago-contenido %}
+<div class="contenedor">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-6">
+            <p><b>Identificador:</b> {{ pago.id }}</p>
+            <p><b>Fecha de emisión:</b> {{ pago.fecha|date:"d/m/y" }}</p>
+            <p><b>Importe:</b> ${{ pago.importeTotal|floatformat:2 }}</p>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-6">
+        {% if perms.GestionDeFacturas.factura_ver_pagas %}
+        {% with factura=pago.factura %}
+            <div class="cuadro">
+                <div class="cuadro-titulo">Factura</div>
+                <div class="cuadro-contenido">
+                    <p><b>Factura número:</b> {{ factura.id }}</p>
+                    <p><b>Factura tipo:</b> {{ factura.get_tipo_display }}</p>
+                    <p><b>Fecha de facturación:</b> {{ factura.fecha|date:"d/m/y" }}</p>
+                    {% if not factura.cliente.baja and perms.GestionDeClientes.cliente_ver_habilitados %}
+                    <b><a href="{% url "clientes:clienteVer" factura.cliente.id %}">Cliente:</a></b>{% else %}<b>Cliente:</b>{% endif %}
+                    <ul>
+                        <li><b>DNI/CUIT:</b> {{ factura.cliente.dniCuit }}</li>
+                        <li><b>Nombre:</b> {{ factura.cliente.apellidos }} {{ factura.cliente.nombres }} (cliente {{ factura.cliente.get_tipoDeCliente_display|lower }})</li>
+                        <li><b>Dirección:</b> {{ factura.cliente.direccion }}, {{ factura.cliente.localidad }}</li>
+                    </ul>
+                </div>
+            </div>
+        {% endwith %}
+        {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

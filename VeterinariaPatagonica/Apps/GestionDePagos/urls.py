@@ -1,18 +1,19 @@
 from django.conf.urls import url
 from django.urls import path
-from . import views as pagos_views
-
-from Apps.GestionDeFacturas import views as facturas_views
+from . import views
 
 
 app_name = 'pagos'
 
+
 urlpatterns = [
+    # url(r'^$', pagos_views.pago, name="pago"),
+    # path('pagoCrear/<int:idFactura>/', pagos_views.crear, name="pagoCrear"),
+    # path('pagoEliminar/<int:id>/', pagos_views.eliminar, name="pagoEliminar"),
+    # path('pagoVer/<int:id>/', pagos_views.ver, name="pagoVer"),
+    # path('pagoListar/', pagos_views.listar, name="pagoListar"),
 
-    url(r'^$', pagos_views.pago, name="pago"),
-    path('crear/<int:idFactura>/', pagos_views.crear, name="pagoCrear"),
-    path('eliminar/<int:id>/', pagos_views.eliminar, name="pagoEliminar"),
-    path('ver/<int:id>/', pagos_views.ver, name="pagoVer"),
-    path('listar/', pagos_views.listar, name="pagoListar"),
+    path('crear/<int:id>/', views.crear, name="crear"),
+    path('listar/', views.listar, name="listar"),
+    path('ver/<int:id>/', views.ver, name="ver"),
 ]
-

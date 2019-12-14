@@ -1,0 +1,28 @@
+{% if titulo %}
+    {% if menu %}
+        <div class="dropdown menu-contextual">
+            <a href="javascript:;" data-toggle="dropdown" class="dropdown-toggle">
+                {{ titulo }}
+                <i class="fa fa-caret-down"></i>
+            </a>
+            <div class="dropdown-menu">
+            {% for seccion in menu %}
+                {% if not forloop.counter0 == 0 %}
+                <div class="separador"></div>
+                {% endif %}
+                <ul class="seccion">
+                {% for url, etiqueta in seccion %}
+                    <li>
+                        <a href="{{ url }}">
+                            <div class="etiqueta">{{ etiqueta|capfirst }}</div>
+                        </a>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% endfor %}
+            </div>
+        </div>
+    {% else %}
+        {{ titulo }}
+    {% endif %}
+{% endif %}

@@ -1,0 +1,50 @@
+{% extends 'GestionDePracticas/GestionDePracticas.html' %}
+{% load static %}
+{% block titulo %}
+Modificar información clínica de {{ tipo }}
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo="Modificar información clínica de "|add:tipo %}
+{% endblock %}
+{% block practica-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    <form id="form-observaciones" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+            {% csrf_token %}
+            <div id="form-observaciones-errores">
+                {% if generales.errors or servicios.total_error_count %}
+                    <div class="errores">
+                        <strong>Por favor revise los siguientes errores:</strong>
+                        <ul>
+                            {% include 'snippets/formErrores.html' with form=generales %}
+                            {% include 'snippets/formsetErrores.html' with formset=servicios %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+            {{ servicios.management_form }}
+            <div class="cuadro">
+                <div class="cuadro-titulo">
+                    Observaciones generales
+                </div>
+                <div class="cuadro-contenido">
+                    {% include "snippets/form.html" with form=generales accion=None %}
+                </div>
+            </div>
+            <div class="cuadro">
+                <div class="cuadro-titulo">
+                    Observaciones para cada servicio realizado {% include "snippets/ayuda.html" with id="ayuda-observaciones-servicios" content="Permite mantener observaciones realizadas por el veterinario asociadas a cada servicio realizado." placement="bottom" %}
+                </div>
+                <div class="cuadro-contenido">
+                    {% for form in servicios %}
+                        {% for field in form.hidden_fields %}
+                            {{ field }}
+                        {% endfor %}
+                        {% include "snippets/field.html" with field=form.observaciones %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% include "snippets/submit.html" with accion="guardar" %}
+    </form>
+</div>
+{% endblock %}

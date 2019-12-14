@@ -1,0 +1,29 @@
+{% extends "GestionDePracticas/listar/consultas.html" %}
+
+{% block titulo %}
+Exportar listado de consultas en formato {{ formato }}
+{% endblock %}
+
+{% block listado-titulo %}
+{% include "snippets/titulo.html" with titulo="Exportar listado de consultas en formato "|add:formato %}
+{% endblock %}
+
+{% block submit %}
+{% for accion in exportar.acciones %}
+<div class="col-xs-6 col-sm-4 col-md-2 form-group pull-right submit">
+    {{ accion }}
+</div>
+{% endfor %}
+<div class="col-xs-4 col-sm-3 col-md-2 form-group pull-right submit">
+    <button class="btn btn-sm btn-default" value="" type="submit">Actualizar</button>
+</div>
+{% if gestor.paginar %}
+{{ gestor.paginacion.pagina_actual }}
+<div class="col-xs-8 col-sm-8 col-md-4 form-group pull-right {{ gestor.paginacion.cantidad.name }} {% if gestor.paginacion.cantidad.errors %}has-error{% endif %}">
+    <div class="input-group">
+        <div class="input-group-addon"> {{ gestor.paginacion.cantidad.label }} </div>
+        {{ gestor.paginacion.cantidad }}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

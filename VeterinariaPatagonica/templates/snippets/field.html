@@ -1,8 +1,13 @@
-<div class=row>
-    <label for="{{ field.id_for_label }}" class="col-sm-4 control-label etiqueta">
+<div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
+    <div class=row>
+        <label for="{{ field.id_for_label }}" class="col-xs-12 col-sm-2 col-md-4 etiqueta control-label">
         {{ field.label }}
-    </label>
-    <div class="col-sm-8 control">
-        {{ field }}
+        </label>
+        <div class="col-xs-12 col-sm-10 col-md-8 control">
+            {% if field.help_text %}
+            {% include "./ayuda.html" with content=field.help_text id=field.id_for_label|add:"_help_text" %}
+            {% endif %}
+            {{ field }}
+        </div>
     </div>
 </div>

@@ -1,15 +1,12 @@
 {% extends "sitioBase.html" %}
-
 {% block paginaSeccionGeneral %}
-
 <section>
-
-    <div class="errores">
-        {% for excepcion in excepciones %}
-            {% include "snippets/excepcion.html" %}
-        {% endfor %}
+    <div class="contenedor">
+        <div class="errores">
+            {% for excepcion in excepciones %}
+                {% include "snippets/excepcion.html" %}
+            {% endfor %}
+        </div>
     </div>
-
 </section>
-
 {% endblock %}

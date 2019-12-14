@@ -1,122 +1,132 @@
 <!DOCTYPE html>
 {% load static %}
-
 <html lang="es">
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
-
+  <link rel="shortcut icon" href="/../static/images/iconoBarraNavegacion.jpg">
 {% block paginaEstilos %}
-  <!-- Barra de Carga -->
-  <!-- Bootstrap -->
-<!--  <link href="{% static 'gentelella/bootstrap/dist/css/bootstrap.min.css' %}" rel="stylesheet"> -->
-
-  <!-- NProgress -->
-  <link href="{% static 'gentelella/nprogress/nprogress.css' %}" rel="stylesheet">
-  <!-- bootstrap-progressbar -->
-  <link href="{% static 'gentelella/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css' %}" rel="stylesheet">
-  <!-- Custom Theme Style -->
-  <link href="{% static 'css/custom.css' %}" rel="stylesheet">
   <link href="{% static 'vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
   <link href="{% static 'vendor/fontawesome/css/font-awesome.css' %}" rel="stylesheet">
   <link href="{% static 'css/veterinaria-patagonica.css' %}" rel="stylesheet">
-
-  <link rel="shortcut icon" href="/../static/images/iconoBarraNavegacion.jpg">
-
-  <!--Font Awesome 5 para iconos mas lindos -->
-  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-
 {% endblock paginaEstilos %}
-
-
   <title>
 {% block paginaTitulo %}
-  Veterinaria Patagónica
+  Veterinaria Patagonica
 {% endblock paginaTitulo %}
   </title>
-
   </head>
   <body>
   <div class="container-fluid" id="el_container_fluid">
-  <!-- Primer fila: Barra de titulo -->
-  {% block cabecera %}
   <div class="row">
     <header class="col-xs-12" id="sitio-encabezado">
-      <div>
-        <!-- Menu de Usuario -->
-        <ul class="nav navbar-nav navbar-right">
-          <li class="">
-            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              Menu De Usuario
-              <span class=" fa fa-angle-down"></span>
-            </a>
-            <ul class="dropdown-menu dropdown-usermenu pull-right">
-              <li><a href="{% url "ayuda" %}"><i class="glyphicon glyphicon-question-sign pull-right"></i>Ayuda</a></li>
-
-              <!-- <li><a><i class="glyphicon glyphicon-cog pull-right"></i>Configuración</a></li> -->
-              <li> <a href="{% url 'usuarios:changePassword' %}"><i class="glyphicon glyphicon-edit pull-right"></i>Cambiar Contraseña</a></li>
-              <!-- <li> <a href="{% url "usuarios:changePassword"%}">Cambiar Contraseña</a> </li> -->
-              <li><a href="{% url "logout" %}"><i class="glyphicon glyphicon-log-out pull-right"></i>Cerrar Sesión</a></li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    <h1><!--<i class="fa fa-paw" ></i>--><a href="{% url "index" %}">Veterinaria Patagónica</h1>
+      <h2><a href="{% url "index" %}">Veterinaria Patagonica</a></h2>
     </header>
+    <nav id="sitio-navbar" class="col-xs-12 navbar">
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+            Ayuda <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {% block menuAyuda %}
+            <li><a href="#"><i class="glyphicon glyphicon-book"></i>Manual de usuario</a></li>
+            {% endblock %}
+          </ul>
+        </li>
+        <li class="dropdown menu-usuario">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
+            Menu de usuario <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+          {% block menuUsuario %}
+            <li>
+              <div class="usuario">
+                <i class="fa fa-user"></i>
+                <b>{{ request.user.username|lower }}</b>
+              </div>
+            </li>
+            {% if not request.user.esAdministrativo %}
+            <li>
+              <a href="{% url "practicas:realizaciones" %}">
+                <i class="fa fa-history"></i>
+                Practicas realizadas
+              </a>
+            </li>
+            {% endif %}
+            <li>
+              <a href="#">
+                <i class="fa fa-refresh"></i>
+                Cambiar contraseña
+              </a>
+            </li>
+            <li>
+              <a href="{% url "logout" %}">
+                <i class="fa fa-sign-out"></i>
+                Cerrar Sesión</a>
+              </li>
+          {% endblock %}
+          </ul>
+        </li>
+      </ul>
+    </nav>
   </div>
-  {% endblock cabecera %}
-  <!-- Segunda Fila: Menu derecho, izquierdo y seccion general -->
   <div class="row" id="fila_centro" >
-    <!--Menu izquierdo-->
-    <nav class="col-sm-4 col-md-3 sitio-menu" id="sitio_menu_izq">
-      <!-- Codigo copiado del template casi sin modificar, habria que ajustarlo linea a linea -->
+    <nav class="col-xs-12 col-sm-4 col-md-3 navbar sitio-menu" id="sitio_menu_izq">
       <div class="left_col scroll-view">
-        <div class="clearfix"></div>
-        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-menu">
+            <i class="fa fa-navicon"> </i>
+          </button>
+        </div>
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu collapse navbar-collapse">
           {% block paginaMenuIzq %}
-          {% include './menuIzqSnippet.html' %}
+          {% if request.user.esGerente %}
+            {% include './menu/gerentes.html' %}
+          {% elif request.user.esVeterinario %}
+            {% include './menu/veterinarios.html' %}
+          {% elif request.user.esAdministrativo %}
+            {% include './menu/administrativos.html' %}
+          {% endif %}
           {% endblock paginaMenuIzq %}
         </div>
       </div>
     </nav>
-    <!-- Seccion general -->
-    <div class="col-xs-9 " id="sitio_seccion_principal">
+    <div class="col-xs-12 col-sm-8 col-md-9" id="sitio_seccion_principal">
       <div class="contenedor">
         {% block paginaSeccionGeneral %}
           <section>
-            <div class="col-xs-4" >
+            <div class="col-xs-6 col-sm-4 col-md-3" >
               <a class="btn btn-primary cuadradito" href="{% url "clientes:clienteCrear" %}" role="button" id="imagenCliente"></a>
               <p class= "text-primary">Crear un Cliente</p>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "mascotas:mascotaCrear" %}" role="button" id="imagenMascota"></a>
               <p class= "text-primary">Crear una Mascota</p>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "productos:productoCrear" %}" role="button" id="imagenProducto"></a>
               <p class= "text-primary">Crear un Producto</p>
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6 col-sm-4 col-md-3">
             <a class="btn btn-primary cuadradito" href="{% url "practicas:consulta:crear:practica" %}" role="button" id="imagenConsulta"></a>
             <p class= "text-primary">Crear una Consulta</p>
             </div>
-            <div class="col-xs-4">
-              <a class="btn btn-primary cuadradito" href="{% url "practicas:cirugia:crear:practica" %}" role="button" id="imagenCirugia"></a>
-              <p class= "text-primary">Crear una Cirugía</p>
-            </div>
-            <div class="col-xs-4">
+            <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button" id="imagenServicio"></a>
               <p class= "text-primary">Crear un Servicio</p>
             </div>
-            <div class="col-xs-4">
-              <a class="btn btn-primary cuadradito" href="{% url "facturas:facturaCrear" %}" role="button" id="imagenFactura"></a>
+            <div class="col-xs-6 col-sm-4 col-md-3">
+              <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button" id="imagenServicio"></a>
+              <p class= "text-primary">Crear un Servicio</p>
+            </div>
+            <div class="col-xs-6 col-sm-4 col-md-3">
+              <a class="btn btn-primary cuadradito" href="{% url "facturas:facturar" %}" role="button" id="imagenFactura"></a>
               <p class= "text-primary">Crear una Factura</p>
             </div>
-
-            <div class="col-xs-4">
+            <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button" id="imagenTipoDeAtencion"></a>
               <p class= "text-primary">Crear un Tipo de Atención</p>
             </div>
@@ -124,30 +134,19 @@
         {% endblock paginaSeccionGeneral %}
       </div>
     </div>
-    <!-- Menu derecho -->
-
     </div>
-    <!-- Tercer Fila: Pie de pagina -->
     <div class="row">
       <footer class="col-xs-12" id="sitio-piedepagina">
         {% block paginaPie %}
-          <p> 2018 Ningún derecho reservado </p>
+          <p>Último inicio de sesión registrado el {{ request.user.last_login|date:"d/m/y" }} a las {{ request.user.last_login|date:"H:i" }}</p>
         {% endblock paginaPie %}
       </footer>
     </div>
-  </div> <!-- el_container_fluid -->
+  </div>
   {% block paginaJavascript %}
-    <!-- jQuery -->
-    <script src="{% static 'gentelella/jquery/dist/jquery.min.js' %}"></script>
-    <!-- NProgress -->
-    <script src="{% static 'gentelella/nprogress/nprogress.js' %}"></script>
-    <!-- Custom Theme Scripts -->
     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
-    <script src="{% static 'jquery/jquery.tablesorter.js' %}"></script>
-    <script src="{% static 'js/custom.js' %}"></script>
     <script src="{% static 'js/veterinaria-patagonica.js' %}"></script>
-    
   {% endblock paginaJavascript %}
   </body>
 </html>

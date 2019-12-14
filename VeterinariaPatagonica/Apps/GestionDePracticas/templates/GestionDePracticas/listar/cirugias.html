@@ -1,0 +1,67 @@
+{% extends "GestionDePracticas/listar/listar.html" %}
+{% block titulo %}
+Cirugias
+{% endblock %}
+{% block practica-titulo %}
+{% include "snippets/titulo.html" with titulo="Cirugias" %}
+{% endblock %}
+{% block botonFiltrado %}
+<div class="col-xs-12 col-sm-12 col-md-12 columna">
+    <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
+        <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de cirugias
+    </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Cliente</b>: coincidencias segun nombres, apellidos o DNI/CUIT</li><li><b>Mascota</b>: coincidencias segun nombre o patente</li><li><b>Tipo de atencion</b>: coincidencias segun nombre</li><li><b>Estado</b>: cualquier estado o en alguno en particular</li></ul>" html=True placement="bottom" %}
+</div>
+{% endblock %}
+{% block formFiltrado %}
+{% for campo in gestor.filtrado %}
+<div class="col-xs-12 col-sm-6 col-md-3 form-group {{ campo.name }} {% if campo.errors %}has-error{% endif %}">
+    {{ campo }}
+</div>
+{% endfor %}
+{% endblock %}
+{% block resumenResultados %}
+<b>Mostrando {{ gestor.itemsActuales.count }} cirugias de {{ gestor.numeroItems }} encontradas. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
+{% endblock %}
+{% block resultados %}
+{% for practica in gestor.itemsActuales %}
+{% if practica.id in visibles %}
+<tr onclick="cambiarUbicacion('{% url "practicas:"|add:practica.nombreTipo|add:":ver:practica" practica.id %}');"  class="activa">
+{% else %}
+<tr class="inactiva">
+{% endif %}
+    {% if gestor.id.visible %}
+    <td>{{ practica.get_tipo_display }} nº {{ practica.id }}</td>
+    {% endif %}
+    {% if gestor.estadoactual.visible %}
+    <td>{{ practica.nombre_estado_actual|capfirst }}</td>
+    {% endif %}
+    {% if gestor.cliente.visible %}
+    <td>{{ practica.cliente }}</td>
+    {% endif %}
+    {% if gestor.mascota.visible %}
+    <td>{{ practica.mascota|default:"Ninguna" }}</td>
+    {% endif %}
+    {% if gestor.tipodeatencion.visible %}
+    <td>{{ practica.tipoDeAtencion|capfirst }}</td>
+    {% endif %}
+    {% if gestor.precio.visible %}
+    <td>$ {{ practica.precio }}</td>
+    {% endif %}
+    {% if gestor.marcacreacion.visible %}
+    <td>{{ practica.marca_creacion|date:"d/m/y"  }}</td>
+    {% endif %}
+    {% if gestor.marcaultimaactualizacion.visible %}
+    <td>{{ practica.marca_ultima_actualizacion|date:"d/m/y" }}</td>
+    {% endif %}
+    {% if gestor.creadapor.visible %}
+    <td>{{ practica.nombre_creada_por }}</td>
+    {% endif %}
+    {% if gestor.atendidapor.visible %}
+    <td>{{ practica.nombre_atendida_por }}</td>
+    {% endif %}
+</tr>
+{% endfor %}
+{% endblock %}
+{% block sinResultados %}
+<b>No se encontraron cirugias</b>
+{% endblock %}

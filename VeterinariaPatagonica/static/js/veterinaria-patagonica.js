@@ -39,11 +39,6 @@
  * and open the template in the editor.
  */
 
-$(document).ready(function() {
-            
-    init_sidebar();				
-});	
-
 var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     $BODY = $('body'),
     $MENU_TOGGLE = $('#menu_toggle'),
@@ -86,16 +81,17 @@ var setContentHeight = function () {
         } else {
             // prevent closing menu if we are on child menu
             if (!$li.parent().is('.child_menu')) {
+            $li.find('>i.glyphicon-chevron-down').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
                 $SIDEBAR_MENU.find('li').removeClass('active active-sm');
                 $SIDEBAR_MENU.find('li ul').slideUp();
             }else
             {
-				if ( $BODY.is( ".nav-sm" ) )
-				{
-					$li.parent().find( "li" ).removeClass( "active active-sm" );
-					$li.parent().find( "li ul" ).slideUp();
-				}
-			}
+                if ( $BODY.is( ".nav-sm" ) )
+                {
+                    $li.parent().find( "li" ).removeClass( "active active-sm" );
+                    $li.parent().find( "li ul" ).slideUp();
+                }
+            }
             $li.addClass('active');
 
             $('ul:first', $li).slideDown(function() {
@@ -292,26 +288,33 @@ function actualizarAttr(item, attrName, start, id){
     }
 }
 
-function buscarOpcion(form, clase){
+function buscarCantidad(form, clase){
+
+    var contenedor = form.getElementsByClassName(clase)[0];
+    var input    = contenedor.getElementsByTagName("input")[0];
+    return input.value
+}
+
+function buscarOpcionSelect2(form, clase){
 
     var contenedor = form.getElementsByClassName(clase)[0];
     var select    = contenedor.getElementsByTagName("select")[0];
-    return select.selectedIndex;
+    return select.selectedOptions[0].value
 }
 
 function compararServicios(form1, form2){
 
-    var opcion1 = buscarOpcion(form1, "form-group servicio");
-    var opcion2 = buscarOpcion(form2, "form-group servicio");
-    
+    var opcion1 = buscarOpcionSelect2(form1, "form-group servicio");
+    var opcion2 = buscarOpcionSelect2(form2, "form-group servicio");
+
     return opcion1 == opcion2;
 }
 
 
 function compararProductos(form1, form2){
 
-    var opcion1 = buscarOpcion(form1, "form-group producto");
-    var opcion2 = buscarOpcion(form2, "form-group producto");
+    var opcion1 = buscarOpcionSelect2(form1, "form-group producto");
+    var opcion2 = buscarOpcionSelect2(form2, "form-group producto");
     
     return opcion1 == opcion2;
 }
@@ -349,8 +352,8 @@ function resetValidacion(forms, errores){
         forms[i].classList.remove("has-error");
     
     itemsErrores = errores.getElementsByClassName("dinamico");
-    for (i=0 ; i<itemsErrores.length ; i++)
-        itemsErrores[i].remove();
+    while (itemsErrores.length)
+        itemsErrores[0].remove();
 
     cuadroErrores = errores.getElementsByClassName("errores");
     if (cuadroErrores.length > 0){
@@ -361,16 +364,32 @@ function resetValidacion(forms, errores){
     }
 }
 
+function buscarCantidadesNulas(forms){
+    var i, input, contenedor, nulos;
+    nulos = [];
+
+    for (i=0 ; i<forms.length ; i++){
+        contenedor = forms[i].getElementsByClassName("form-group cantidad")[0];
+        input    = contenedor.getElementsByTagName("input")[0];
+        if (input.value<=0){
+            nulos.push(i);
+        }
+    } 
+    return nulos;
+}
+
 function validarFormset(event, argumentos){
 
-    var i, j, nuevoDuplicado, mensaje, items;
+    var retorno, i, j, nuevoDuplicado, mensaje, items, nulos;
     var duplicados  = Array();
     var comparar   = argumentos["comparador"];
+    var validarCantidades   = argumentos["validarCantidades"];
     var formset      = document.getElementById(argumentos["formset_id"]);
     var forms         = getForms(formset);
     var errores      = argumentos["errores"];
 
     resetValidacion(forms, errores);
+    retorno = true;
     
     for (i=0 ; i<forms.length ; i++){
         for (j=0 ; j<forms.length ; j++){
@@ -392,14 +411,31 @@ function validarFormset(event, argumentos){
     }
 
     if (duplicados.length){
+        retorno = false;
+
         duplicados.sort();
         items = duplicados.join(", ");
         mensaje = "Cada item puede agregarse a lo sumo una vez, revise las filas: "+items;
         agregarError(errores, mensaje);
-        return false;
     }
 
-    return true;
+    if (validarCantidades){
+        nulos = buscarCantidadesNulas(forms);
+        if (nulos.length){
+            retorno = false;
+            items = [];
+
+            for (i=0 ; i<nulos.length ; i++){
+                forms[i].classList.add("has-error");
+                items.push(i+1);
+            }
+            
+            mensaje = "La cantidad de cada item debe ser mayor a cero, revise las filas: "+items.join(", ");
+            agregarError(errores, mensaje);
+        }
+    }
+
+    return retorno;
 }
 
 function validar(event){
@@ -421,41 +457,6 @@ function validar(event){
         event.preventDefault();
     }
 }
-
-function ajustarDuracion(id_desde, id_hasta, id_duracion){
-    var input = document.getElementById(id_duracion);
-    var duracion = parseInt(input.value);
- 
-    var desde = document.getElementById(id_desde);
-    var desde_fmt = $(desde).data("DateTimePicker").date()._f;
-    var d = desde.getElementsByTagName("input")[0];
- 
-    var hasta = document.getElementById(id_hasta);
-    var hasta_fmt = $(hasta).data("DateTimePicker").date()._f;
-    var h = hasta.getElementsByTagName("input")[0];
- 
-    var x = moment(d.value, desde_fmt);
-    x.add(duracion, "minute");
-    h.value = x.format(hasta_fmt);
-    return;
-}
-
-function calcularDuracion(id_desde, id_hasta){
-    var desde = document.getElementById(id_desde);
-    var hasta = document.getElementById(id_hasta);
-    var desde_fmt = $(desde).data("DateTimePicker").date()._f;
-    var hasta_fmt = $(hasta).data("DateTimePicker").date()._f;
-    var desde_val = desde.getElementsByTagName("input")[0].value;
-    var hasta_val = hasta.getElementsByTagName("input")[0].value;
-    var a = moment(desde_val, desde_fmt);
-    var b = moment(hasta_val, hasta_fmt);
-    return b.diff(a,"minute",false);
-}
-
-
-
-
-
 
 function leerFormato(id_datetimepicker){
     var datetimepicker = document.getElementById(id_datetimepicker);
@@ -485,3 +486,61 @@ function ajustarVigencia(id_desde, id_hasta, id_duracion, formato, unidad){
     hasta.value = nuevo_hasta.format(formato);
     return;
 }
+
+function submitForm(id){
+    var form = document.getElementById(id);
+    form.submit();
+}
+
+function cerrarPopover(id){
+    var a = document.getElementById(id);
+    a.click();
+}
+
+function cambiarUbicacion(url){
+    if (url){
+        document.location.href = url;
+    }
+}
+
+function reemplazarClase(x, una, otra){
+
+    if (x.classList.contains(una)){
+        x.classList.remove(una);
+        x.classList.add(otra);
+    }
+}
+
+function alternarVisibilidad(x){
+
+    if (x.classList.contains("hidden")){
+        x.classList.remove("hidden");
+    }
+    else {
+        x.classList.add("hidden");
+    }
+}
+
+function alternar(idIcono, idContenido, ocultar, mostrar){
+
+    var contenido = document.getElementById(idContenido);
+    var icono = document.getElementById(idIcono);
+
+    alternarVisibilidad(contenido);
+    
+    if (contenido.classList.contains("hidden")){
+        reemplazarClase(icono, ocultar, mostrar);
+    }
+    else {
+        reemplazarClase(icono, mostrar, ocultar);
+    }
+}
+
+$(document).ready(function() {
+
+    init_sidebar();
+    $(".link-ayuda").popover({
+        "animation" : true,
+        "delay" : 0,
+    });
+});

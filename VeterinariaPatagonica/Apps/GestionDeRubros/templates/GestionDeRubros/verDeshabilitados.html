@@ -18,33 +18,110 @@ Actualmente <strong>no</strong> disponibles
 
 {% block rubroContenido %}
 
-    {% if gestor.numero_items %}
+{% load navigation_filters %}
 
-        {% include "./listado.html" %}
+<!-- Listado -->
+<div class="rubroCuerpo" >
+
+    <div id="filtrarRubrosDeshabilitados">
+        <a role="button" href="#filtrarRubros" data-toggle="collapse">
+            <i class="glyphicon glyphicon-tasks"></i>
+            <span>Criterios de busqueda</span>
+        </a>
+        <div id="filtrarRubros" class="collapse in">
+            <form class="form-horizontal filtrado" action="" method="GET">
+                <!--{% include "formularios/snippet.html" with formulario=form accion="Filtrar" %}-->
+                    <div>
+                        <form action="" method="GET">
+                            <br>
+                            <input name="nombre" placeholder="Nombre">
+
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja"> <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
+                        </form>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <br>
+    <div class="rubroLineaTitulo"> </div>
+
+
+
+  <p> Los siguientes rubros pueden ser habilitados o eliminados.  </p>
+
+    {% if rubros %}
+            <div class="table-responsive" id="tabla">
+                <table class="table rubroListado">
+                    <thead>
+                        <tr>
+                            <th id="deshabilitados-nombre"> Nombre </th>
+                            <th id="deshabilitados-descripcion"> Descripcion </th>
+                            <th id="deshabilitados-acciones"> Acciones </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rubro in rubros %}
+                            <tr>
+                                <td>{{rubro.nombre}}</td>
+                                <td> <p>{{rubro.descripcion|truncatechars:40 }}</p></td>
+                                <td> <p align="justify">
+                                    <div class="dropdown">
+                                        <button data-toggle="dropdown" type="button" class="btn btn-default dropdown-toggle btn-sm" aria-haspopup="true" aria-expanded="false">
+                                            Acción <span class="caret"></span>
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <li><a  href="{% url 'rubros:rubroVer' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Ver Rubro">
+                                                <i class="glyphicon glyphicon-eye-open"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'rubros:rubroModificar' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Modificar Rubro">
+                                                <i class="glyphicon glyphicon-edit"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'rubros:rubroHabilitar' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Habilitar Rubro">
+                                                <i class="glyphicon glyphicon-plus"> </i>
+                                            </a></li>
+                                            <li><a href="{% url 'rubros:rubroEliminar' rubro.id %}" class="btn btn-xs btn-default" data-toggle="tooltip" data-placement="bottom" title="Eliminar Rubro">
+                                                <i class="glyphicon glyphicon-remove"> </i>
+                                            </a></li>
+                                        </div>
+                                    </div>
+                                </p> </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
     {% else %}
 
-        <p><strong>No hay rubros deshabilitados</strong></p>
+        <p> No hay rubros deshabilitados</p>
 
     {% endif %}
+    <div align="center">
+        <ul class="pagination pagination-sm">
+            {% if rubros.has_previous %}
+                <li><a href="?page={{ rubros.previous_page_number }}" class="btn btnpages">
+                    <i class="glyphicon glyphicon-chevron-left"></i></a></li>
+            {% endif %}
 
-    <div class="menu-colapsable" >
-        <div class="item-colapsable" >
-            <a role="button" href="#rubro-acciones" data-toggle="collapse">
-                <i class="glyphicon glyphicon-tasks"></i>
-                <span>Acciones</span>
-            </a>
-            <div class="contenido-colapsable collapse in" id="rubro-acciones">
-                <ul class="acciones sinestilo">
-    
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'rubros:rubrosListadoEXCEL' %}">Imprimir listado en Excel     
-                        <i class="glyphicon glyphicon-list-alt" ></i></a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'rubros:rubrosListadoPDF'%}">Imprimir listado en PDF     
-                        <i class="glyphicon glyphicon-file" > </i></a></li>
-    
-                </ul>
-            </div>
-        </div>
+            {% for page in rubros.paginator.page_range|page_filter:rubros %}
+                <li class="{% if rubros.number == page %}active{% endif %}">
+                    <a class="btn btnpages" href="?page={{ page }}">{{ page }}</a></li>
+            {% endfor %}
+
+            {% if rubros.has_next %}
+                <li>
+                    <a href="?page={{ rubros.next_page_number }}" class="btn btnpages">
+                        <i class="glyphicon glyphicon-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
     </div>
+</div>
 
 {% endblock %}

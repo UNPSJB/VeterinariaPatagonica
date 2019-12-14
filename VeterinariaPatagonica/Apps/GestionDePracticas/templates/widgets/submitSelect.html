@@ -1,9 +1,7 @@
 {% with id=widget.attrs.id %}
-
 <div {% include "django/forms/widgets/attrs.html" %}>
     {% for option in widget.options %}
         {% include option.template_name with widget=option %}
     {% endfor %}
 </div>
-
 {% endwith %}

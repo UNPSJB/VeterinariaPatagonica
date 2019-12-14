@@ -1,0 +1,102 @@
+{% extends "OtraGestionDePagos/GestionDePagos.html" %}
+
+{% block paginaEstilos %}
+    {{ block.super }}
+    <style type="text/css">
+        #pagar {
+            padding: 15px;
+            text-align: center;
+        }
+
+        #pagar,
+        #form-facturar-errores,
+        .cuadro {
+            margin-bottom: 15px;
+        }
+    </style>
+{% endblock %}
+
+{% block titulo %}
+Pagar factura
+{% endblock %}
+
+{% block pago-titulo %}
+{% include "snippets/titulo.html" with titulo="Pagar factura" %}
+{% endblock %}
+
+{% block pago-contenido %}
+<div class="contenedor">
+    {% include "snippets/errores.html" %}
+    {% if accion %}
+
+        <div class="cuadro">
+            <div class="row cuadro-contenido resumen">
+                <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                    <div class="dato factura-tipo">
+                        <i class="fa fa-dot-circle-o"></i><b>Factura tipo:</b> <span class="valor">{{ factura.tipo|upper }}</span>
+                    </div>
+                    <div class="dato factura-numero">
+                        <i class="fa fa-dot-circle-o"></i><b>Factura número:</b> <span class="valor">{{ factura.id }}</span>
+                    </div>
+                    <div class="dato fecha">
+                        <i class="fa fa-dot-circle-o"></i><b>Fecha de facturación:</b> <span class="valor">{{ factura.fecha|date:"d/m/y" }}</span>
+                    </div>
+                    <div class="dato tiempo-facturacion">
+                        <i class="fa fa-dot-circle-o"></i><b>Facturado hace:</b> <span class="valor">{{ factura.fecha|timesince }}</span>
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                    <div class="dato cliente-dnicuit">
+                        <i class="fa fa-dot-circle-o"></i><b>DNI/CUIT del cliente:</b> <span class="valor">{{ factura.cliente.dniCuit }}</span>
+                    </div>
+                    <div class="dato cliente-nombre-completo">
+                        <i class="fa fa-dot-circle-o"></i><b>Nombre completo del cliente:</b> <span class="valor">{{ factura.cliente.apellidos }} {{ factura.cliente.nombres }}</span>
+                    </div>
+                    <div class="dato cliente-direccion">
+                        <i class="fa fa-dot-circle-o"></i><b>Dirección del cliente:</b> <span class="valor">{{ factura.cliente.dirección|default:"-" }}</span>
+                    </div>
+                    <div class="dato importe">
+                        <i class="fa fa-dot-circle-o"></i><b>Importe:</b> $<span class="valor">{{ factura.total|floatformat:2 }}</span>
+                    </div>
+                    {% if factura.practica.adelanto %}
+                    <div class="dato adelanto">
+                        <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> $<span class="valor">{{ factura.practica.adelanto.importe|floatformat:2 }} <i>(importe adeudado: ${{ factura.totalAdeudado }})</i></span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div id="form-facturar-errores">
+        {% if form.errors %}
+            <div class="errores">
+                <b>Por favor revise los siguientes errores:</b>
+                <ul>{% include 'snippets/formErrores.html' %}</ul>
+            </div>
+        {% endif %}
+        </div>
+
+        <div id="pagar" class="sombreado">
+            <form class="form-inline formulario" action="{{ request.path }}" method="POST">
+                {% csrf_token %}
+                <div class="form-group importe">
+                    <label for="id_accion">Guardar pago</label>
+                    <button class="btn btn-sm btn-default" id="id_accion" type="submit" name="accion" value="pagar">Guardar</button>
+                </div>
+            </form>
+        </div>
+
+        {% if facturasAdeudadas %}
+        <div id="facturas-adeudadas">
+            <b>Otras facturas adeudadas de {% if not factura.cliente.baja and perms.GestionDeClientes.cliente_ver_habilitados %}<a href="{% url "clientes:clienteVer" factura.cliente.id %}">{{ factura.cliente }}</a>{% else %}{{ factura.cliente }}{% endif %}:</b>
+            <ul>
+            {% for adeudada in facturasAdeudadas %}
+                <li>{% if perms.GestionDeFacturas.factura_ver_no_pagas %}<a href="{% url "facturas:ver" adeudada.id %}">{{ adeudada }}</a>{% else %}{{ adeudada }}{% endif %}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %}

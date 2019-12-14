@@ -4,33 +4,46 @@
 Gestion de Productos | Ver Producto
 {% endblock %}
 
-{% block tituloSeccion %}
+{% block secciones %}
+    {% include './seccionesSnippet.html' with pagina='default' %}
+{% endblock %}
+
+{% block productoTitulo %}
 Ver Producto
 {% endblock %}
 
-{% block subtitulo %}
+{% block productoSubtitulo %}
 Muestra datos del producto
 {% endblock %}
 
-{% block contenido %}
+{% block productoContenido %}
 
-    {% include './snippets/acciones.html' with item=producto seccion='ver' %}
+    {% include './accionesSnippet.html' with item=producto seccion='ver' %}
 
-    <div>
-        <p> <strong>Identificador: </strong>{{ producto.id }} </p>
-        <p> <strong>Nombre: </strong>{{ producto.nombre }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %}) </p>
-        <p> <strong>Marca: </strong>{{ producto.marca }}</p>
-        <p> <strong>Stock: </strong>{{ producto.stock }}</p>
-        <p> <strong>Forma De Presentacion: </strong>{{ producto.get_formaDePresentacion_display }}</p>
-        <p> <strong>Precio Por Unidad: $ </strong>{{ producto.precioPorUnidad }}</p>
-        <p> <strong>Precio De Compra: $ </strong>{{ producto.precioDeCompra}}</p>
-        <p> <strong>Rubro: </strong>{{ producto.rubro }}</p>
-        <p> <strong>Descripcion: </strong>{{ producto.descripcion }}</p>
+    <div class="productoCuerpo">
+
+        {% if producto %}
+        <div class="well">
+            <p>Identificador: {{ producto.id }} </p>
+            <p>Nombre: {{ producto.nombre }} ({% if producto.baja %} Deshabilitado {% else %} Habilitado {% endif %}) </p>
+            <p>Marca: {{ producto.marca }}</p>
+            <p>Stock: {{ producto.stock }}</p>
+            <p>Forma De Presentacion: {{ producto.formaDePresentacion }}</p>
+            <p>Precio Por Unidad: $ {{ producto.precioPorUnidad }}</p>
+            <p>Precio De Compra: $ {{ producto.precioDeCompra}}</p>
+            <p>Rubro: {{ producto.rubro }}</p>
+            <p>Descripcion: {{ producto.descripcion }}</p>
+        </div>
+        {% else %}
+
+            <p> El producto no existe </p>
+
+        {% endif %}
+
     </div>
-
     <div class= "col-sm-offset-11">
-        <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
+        <span class="btn btn-default btn-sm" type="button" onClick="javascript:history.go(-1);"> Anterior </span>
     </div>
 
 
-{% endblock %}
+{% endblock productoContenido %}

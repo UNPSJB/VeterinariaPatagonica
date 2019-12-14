@@ -35,81 +35,19 @@ Facturas Emitidas
                             <input name="cliente" placeholder="Cliente">
                             <input name="Fecha" placeholder="Fecha">
 
-                          <button class="btn btn-default filtrar" type="submit">Filtrar</button>
+                            <button type="submit" class="" data-toggle="tooltip" data-placement="bottom" title="Buscar">
+
+                                <!--<a  class="btn btn-xs btn-default"> <i class="glyphicon glyphicon-search"> </i> </a>-->
+                                <a  class="wrapper-simple naranja" > <i class="glyphicon glyphicon-search"> </i> </a>
+
+                            </button>
                         </form>
                     </div>
             </form>
         </div>
     </div>
     <br>
-
-    <form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
-      <div class="hidden orden-listado">
-          {% for field in gestor.formOrden %}
-              {{ field }}
-          {% endfor %}
-          {{ gestor.formPagina.desde }}
-      </div>
-      <div class="sombreado">
-          {{ gestor.formPagina.resultados }}
-          <button class="btn btn-default filtrar" type="submit">Mostrar</button>
-      </div>
-          <table class="table table-bordered table-responsive items">
-            <colgroup>
-               <!-- <col span="ID"/> -->
-               <!-- <col class="columna" columna "activa"/> -->
-              <col class="columna{% if gestor.encabezado.orden_tipo.activa %} activa{% endif %}"/>
-              <col class="columna{% if gestor.encabezado.orden_cliente.activa %} activa{% endif %}"/>
-              <col class="columna{% if gestor.encabezado.orden_fecha.activa %} activa{% endif %}"/>
-              <col class="columna{% if gestor.encabezado.orden_recargo.activa %} activa{% endif %}"/>
-              <col class="columna{% if gestor.encabezado.orden_descuento.activa %} activa{% endif %}"/>
-              <col class="columna{% if gestor.encabezado.orden_total.activa %} activa{% endif %}"/>
-            </colgroup>
-            <thead>
-              <tr>
-                 <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_tipo %}</th>
-                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_cliente %}</th>
-                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_fecha %}</th>
-                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_recargo %}</th>
-                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_descuento %}</th>
-                <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_total %}</th>
-              </tr>
-            </thead>
-            <tbody>
-                {% for factura in gestor.items_actuales %}
-                    <tr>
-                        <td>
-                            <a href="{% url 'facturas:facturaVer' factura.id %}">
-                                {{ factura.tipo }}</a>
-                        </td>
-                        <!-- <td>{{factura.tipo}}</td> -->
-                        <td>{{ factura.cliente }}</td>
-
-                        <td>{{ factura.fecha }}</td>
-
-                         <td>% {{ factura.recargo }}</td>
-
-                         <td>% {{ factura.descuento }}</td>
-
-                         <td>% {{ factura.total }}</td>
-
-                        <!-- <td>{{ tipoDeAtencion.inicioFranjaHoraria|date:"H:i" }} hs. a {{ tipoDeAtencion.finFranjaHoraria|date:"H:i" }} hs.</td> -->
-                    </tr>
-                {% endfor %}
-            </tbody>
-          </table>
-      </div>
-      <div>
-      {% include "snippets/paginacion.html" with links=gestor.paginas%}
-      </div>
-    </form>
-
-
-
-
-
-
-
+    <div class="facturaLineaTitulo"> </div>
 
     <br>
 

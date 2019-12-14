@@ -2,7 +2,7 @@
     <div class="errores">
         {% for error in errores %}
         <div class="error {{ error.clase }}">
-            <strong>{{ error.titulo }}</strong>
+            <b>{{ error.titulo }}</b>
             <p>{{ error.descripcion }}</p>
             {% if error.sugerencias %}
                 <ul class="sugerencias">

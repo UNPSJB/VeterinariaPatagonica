@@ -1,0 +1,223 @@
+{% extends "GestionDeTiposDeAtencion/GestionDeTiposDeAtencion.html" %}
+{% load static %}
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+{% block titulo %}
+Tipos de atención {{ tipo }}
+{% endblock %}
+{% block tda-titulo %}
+{% include "snippets/titulo.html" with titulo="Tipos de atención "|add:tipo %}
+{% endblock %}
+{% block tda-contenido %}
+    {% with demasiados=20 %}
+    <div class="contenedor">
+        {% if gestor.numeroErrores %}
+        <div class="errores">
+            <b>Por favor revise los siguientes errores:</b>
+            <ul>
+            {% include "snippets/formErrores.html" with form=gestor.erroresValidacion %}
+            </ul>
+        </div>
+        {% endif %}
+        <form class="form-inline listado" action="{{ request.path }}" method="GET">
+            <div class="form-inline sombreado">
+                {% if gestor.filtrar %}
+                <div class="row fila boton-filtrado">
+                {% block botonFiltrado %}
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
+                        <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de tipos de atención
+                    </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: coincidencias según nombre</li><li><b>Emergencia</b>: tipos de atención de emergencia, normales o ambos</li><li><b>Lugar</b>: tipos de atención en veterinaria, en domicilio del cliente o ambos</li><li><b>Desde y Hasta</b>: tipos de atención que sean validos en la franja horaria dada.</li></ul>" html=True placement="bottom" %}
+                </div>
+                {% endblock %}
+                </div>
+                <div class="row fila filtrado" id="filtradoResultados">
+                {% block formFiltrado %}
+                {% with form=gestor.filtrado %}
+                    <div class="col-xs-12 col-sm-12 col-md-12 form-group {{ form.nombre.name }} {% if form.nombre.errors %}has-error{% endif %}">
+                        {{ form.nombre }}
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3 form-group {{ form.lugar.name }} {% if form.lugar.errors %}has-error{% endif %}">
+                        {{ form.lugar }}
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3 form-group {{ form.emergencia.name }} {% if form.emergencia.errors %}has-error{% endif %}">
+                        {{ form.emergencia }}
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3 form-group {{ form.desde.name }}">
+                        <div class="input-group date" id="{{ form.desde.name|add:"_calendar" }}">
+                            {{ form.desde }}
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-3 form-group {{ form.hasta.name }}">
+                        <div class="input-group date" id="{{ form.hasta.name|add:"_calendar" }}">
+                            {{ form.hasta }}
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-time"></span>
+                            </span>
+                        </div>
+                    </div>
+                {% endwith %}
+                {% endblock %}
+                </div>
+                {% endif %}
+                {% if gestor.seleccionar %}
+                <div class="row fila boton-seleccion">
+                    {% block botonSeleccion %}
+                    <div class="col-xs-12 col-sm-12 col-md-12 columna">
+                        <a class="boton" href="javascript:;" onclick="alternar('iconoCampos', 'seleccionCampos', 'fa-chevron-up', 'fa-chevron-down');"><i id="iconoCampos" class="fa fa-chevron-down"></i>Seleccion de campos</a>
+                        {% include "snippets/ayuda.html" with id="ayuda-seleccion-campos" content="<p>Opciones para ocultar/mostrar campos del listado.</p><p>Es obligatorio que haya algun campo visible</p>" html=True placement="bottom" %}
+                    </div>
+                    {% endblock %}
+                </div>
+                <div class="row hidden fila seleccion" id="seleccionCampos">
+                    {% block formSeleccion %}
+                    {% for opcion in gestor.seleccion.seleccionados %}
+                    <div class="form-group col-xs-6 col-sm-4 col-md-3 seleccionar {{ field.name }}">
+                        {{ opcion.tag }}
+                        <label for="{{ opcion.id_for_label }}" class="control-label">{{ opcion.choice_label }}</label>
+                    </div>
+                    {% endfor %}
+                    {% endblock %}
+                </div>
+                {% endif %}
+                <div class="row fila submit">
+                    {% block submit %}
+                    <div class="col-xs-4 col-sm-3 col-md-2 form-group pull-right submit">
+                        <button class="btn btn-sm btn-default" value="" type="submit">Actualizar</button>
+                    </div>
+                    {% if gestor.paginar %}
+                    {{ gestor.paginacion.pagina_actual }}
+                    <div class="col-xs-8 col-sm-5 col-md-4 form-group pull-right {{ gestor.paginacion.cantidad.name }} {% if gestor.paginacion.cantidad.errors %}has-error{% endif %}">
+                        <div class="input-group">
+                            <div class="input-group-addon"> {{ gestor.paginacion.cantidad.label }} </div>
+                            {{ gestor.paginacion.cantidad }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+            {% if gestor.numeroItems %}
+            <div class="resumen-resultados">
+            {% block resumenResultados %}
+                <b>Mostrando {{ gestor.itemsActuales.count }} tipos de atención de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}. </b>
+            {% endblock %}
+                {% if gestor.itemsActuales.count > demasiados %}<b><a name="iniciodelistado" href="#findelistado">Ir al final del listado.</a></b>{% endif %}
+            </div>
+            {% if gestor.paginar and gestor.itemsActuales.count > demasiados %}
+            <div class="paginacion">
+            {{ gestor.paginacion.pagina }}
+            </div>
+            {% endif %}
+            <div class="table-responsive">
+                {% if gestor.ordenar %}
+                <div class="orden-campos hidden">
+                    {% for field in gestor.orden.hidden_fields %}
+                        {{ field }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <table class="table table-bordered items">
+                    <colgroup>
+                    {% for campo in gestor %}
+                        <col class="columna {{ campo.nombre }}"/>
+                    {% endfor %}
+                    </colgroup>
+                    <thead>
+                    {% if gestor.ordenar %}
+                        <tr>
+                        {% for opcion in gestor.orden.ordenar %}
+                            <th><button {{ opcion }}>
+                                {{ opcion.choice_label }}
+                                {% if opcion.data.selected %}
+                                {% if opcion.data.value.0 == "+" %}
+                                <i class="fa fa-caret-up"></i>
+                                {% else %}
+                                <i class="fa fa-caret-down"></i>
+                                {% endif %}
+                                {% endif %}
+                            </button></th>
+                        {% endfor %}
+                        </tr>
+                    {% else %}
+                        <tr>
+                        {% for campo in gestor %}
+                            <th><span class="{{ campo.nombre }}">
+                                {{ campo.etiqueta }}
+                            </span></th>
+                        {% endfor %}
+                        </tr>
+                    {% endif %}
+                    </thead>
+                    <tbody>
+                    {% block resultados %}
+                    {% for tipoDeAtencion in gestor.itemsActuales %}
+                        {% if perms.GestionDeTiposDeAtencion.tipodeatencion_ver_habilitados %}
+                        <tr class="activa" onclick="cambiarUbicacion('{% url "tiposDeAtencion:ver" tipoDeAtencion.id %}');">
+                        {% else %}
+                        <tr>
+                        {% endif %}
+                            {% if gestor.nombre.visible %}
+                            <td>{{ tipoDeAtencion.nombre }}</td>
+                            {% endif %}
+                            {% if gestor.emergencia.visible %}
+                            <td>{{ tipoDeAtencion.emergencia|yesno:"Si,No,-" }}</td>
+                            {% endif %}
+                            {% if gestor.lugar.visible %}
+                            <td>{{ tipoDeAtencion.get_lugar_display }}</td>
+                            {% endif %}
+                            {% if gestor.recargo.visible %}
+                            <td>% {{ tipoDeAtencion.recargo|floatformat:2 }}</td>
+                            {% endif %}
+                            {% if gestor.iniciofranjahoraria.visible %}
+                            <td>{{ tipoDeAtencion.inicioFranjaHoraria|date:"H:i" }} hs. a {{ tipoDeAtencion.finFranjaHoraria|date:"H:i" }} hs.</td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    {% endblock %}
+                    </tbody>
+                </table>
+            </div>
+            {% if gestor.itemsActuales.count > demasiados %}
+            <a name="findelistado" href="#iniciodelistado">
+                <b>Volver al inicio del listado</b>
+            </a>
+            {% endif %}
+            {% else %}
+            <div class="sin-resultados">
+            {% block sinResultados %}
+                <b>No hay tipos de atención que mostrar</b>
+            {% endblock %}
+            </div>
+            {% endif %}
+            {% if gestor.paginar %}
+            <div class="paginacion">
+                {{ gestor.paginacion.pagina }}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+    {% endwith %}
+{% endblock %}
+{% block paginaJavascript %}
+{{ block.super }}
+<script src="{% static "vendor/moment/moment.js" %}"></script>
+<script src="{% static "vendor/moment/locale/es.js" %}"></script>
+<script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
+<script type="text/javascript">
+    $("#{{ gestor.filtrado.desde.name|add:"_calendar" }}").datetimepicker({
+        locale:"es",
+        format:"LT",
+    });
+
+    $("#{{ gestor.filtrado.hasta.name|add:"_calendar" }}").datetimepicker({
+        locale:"es",
+        format:"LT",
+    });
+</script>
+{% endblock %}
