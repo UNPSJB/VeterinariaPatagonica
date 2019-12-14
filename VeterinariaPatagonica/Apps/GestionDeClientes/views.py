@@ -319,3 +319,13 @@ def documentation(request):
     }
 
     return HttpResponse(template.render(contexto, request))
+    
+@login_required
+def ayudaContextualCliente(request):
+# Redireccionamos la ayuda contextual
+    template = loader.get_template('GestionDeClientes/ayudaContextualCliente.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
