@@ -162,3 +162,13 @@ class rubroAutocomplete(autocomplete.Select2QuerySetView):
         return qs
 
 
+@login_required
+def ayudaContextualProducto(request):
+
+    template = loader.get_template('GestionDeProductos/ayudaContextualProducto.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+

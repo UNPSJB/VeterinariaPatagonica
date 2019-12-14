@@ -219,6 +219,7 @@ class Cliente (models.Model):
 
 
     descuentoServicio = models.DecimalField(
+        help_text="Tipo de cliente Especial",
         max_digits= DESCUENTO,
         decimal_places= PARTE_DECIMAL,
         default= DEFAULT,

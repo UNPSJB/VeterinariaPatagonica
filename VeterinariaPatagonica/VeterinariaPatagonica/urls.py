@@ -9,6 +9,8 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
     path("admin/", admin.site.urls),
+    path('password/',include ('Apps.Usuarios.urls',namespace='usuarios')),
+    path('ayuda/', views.ayuda, name='ayuda'),
     path("GestionDeClientes/", include("Apps.GestionDeClientes.urls", namespace= "clientes")),
     path("GestionDeMascotas/", include("Apps.GestionDeMascotas.urls", namespace= "mascotas")),
     path("GestionDeProductos/",include("Apps.GestionDeProductos.urls", namespace="productos")),

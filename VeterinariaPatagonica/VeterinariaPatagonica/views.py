@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate as auth_authenticate, login as auth_login, logout as auth_logout
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-
+from django.shortcuts import render_to_response
 from .forms import LoginForm
 from .errores import VeterinariaPatagonicaError
 
@@ -29,6 +29,9 @@ def login(request):
     if ("proxima" in request.GET) and (request.GET["proxima"] is not None):
         proxima = request.GET["proxima"]
 
+    if not isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect(proxima)
+
     contexto = {
         "url_proxima":proxima,
         "url_actual":request.path
@@ -46,10 +49,13 @@ def login(request):
                 auth_login(request, usuario)
                 return HttpResponseRedirect(proxima)
             else:
-                raise PermissionDenied()
+                formulario = LoginForm()
+                template = loader.get_template("registration/login.html")
+                contexto["formulario"] = formulario
+
     else:
         formulario = LoginForm()
-        template = loader.get_template("login.html")
+        template = loader.get_template("registration/login.html")
         contexto["formulario"] = formulario
 
     return HttpResponse(template.render( contexto, request) )
@@ -61,3 +67,6 @@ def logout(request):
         auth_logout(request)
 
     return HttpResponseRedirect(LOGIN_URL)
+
+def ayuda(request):
+    return render_to_response('manual/documentacion.html')

@@ -12,4 +12,6 @@ urlpatterns = [
     path("modificar/<int:id>/", views.modificar, name="modificar"),
     path("deshabilitar/<int:id>/", views.cambioEstado, {"baja" : True}, name="deshabilitar"),
     path("habilitar/<int:id>/", views.cambioEstado, {"baja" : False}, name="habilitar"),
+    path("ayudaTipoDeAtencion", views.ayudaContextualTipoDeAtencion, name='ayudaTipoDeAtencion'),
+
 ]

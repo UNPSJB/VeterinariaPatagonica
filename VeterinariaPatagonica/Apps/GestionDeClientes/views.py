@@ -298,5 +298,4 @@ def ayudaContextualCliente(request):
     contexto = {
         'usuario': request.user,
     }
-
     return HttpResponse(template.render(contexto, request))

@@ -14,28 +14,20 @@
 {% endblock paginaEstilos %}
   <title>
 {% block paginaTitulo %}
-  Veterinaria Patagonica
+  Veterinaria Patagónica
 {% endblock paginaTitulo %}
   </title>
   </head>
   <body>
   <div class="container-fluid" id="el_container_fluid">
+  {% block cabecera %}
   <div class="row">
     <header class="col-xs-12" id="sitio-encabezado">
-      <h2><a href="{% url "index" %}">Veterinaria Patagonica</a></h2>
+      <h2><a href="{% url "index" %}">Veterinaria Patagónica</a></h2>
     </header>
     <nav id="sitio-navbar" class="col-xs-12 navbar">
       <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
-            Ayuda <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu">
-            {% block menuAyuda %}
-            <li><a href="#"><i class="glyphicon glyphicon-book"></i>Manual de usuario</a></li>
-            {% endblock %}
-          </ul>
-        </li>
+        
         <li class="dropdown menu-usuario">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">
             Menu de usuario <span class="caret"></span>
@@ -48,6 +40,9 @@
                 <b>{{ request.user.username|lower }}</b>
               </div>
             </li>
+            {% block menuAyuda %}
+            <li><a href="{% url "ayuda"%}" target="_blank"><i class="glyphicon glyphicon-book"></i>Manual de usuario</a></li>
+            {% endblock %}
             {% if not request.user.esAdministrativo %}
             <li>
               <a href="{% url "practicas:realizaciones" %}">
@@ -57,14 +52,14 @@
             </li>
             {% endif %}
             <li>
-              <a href="#">
-                <i class="fa fa-refresh"></i>
+              <a href="{% url 'usuarios:changePassword' %}">
+                <i class="glyphicon glyphicon-edit "></i>
                 Cambiar contraseña
               </a>
             </li>
             <li>
               <a href="{% url "logout" %}">
-                <i class="fa fa-sign-out"></i>
+                <i class="fa fa-sign-out "></i>
                 Cerrar Sesión</a>
               </li>
           {% endblock %}
@@ -73,6 +68,7 @@
       </ul>
     </nav>
   </div>
+  {% endblock cabecera %}
   <div class="row" id="fila_centro" >
     <nav class="col-xs-12 col-sm-4 col-md-3 navbar sitio-menu" id="sitio_menu_izq">
       <div class="left_col scroll-view">
@@ -119,16 +115,16 @@
               <p class= "text-primary">Crear un Servicio</p>
             </div>
             <div class="col-xs-6 col-sm-4 col-md-3">
-              <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button" id="imagenServicio"></a>
-              <p class= "text-primary">Crear un Servicio</p>
-            </div>
-            <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "facturas:facturar" %}" role="button" id="imagenFactura"></a>
               <p class= "text-primary">Crear una Factura</p>
             </div>
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button" id="imagenTipoDeAtencion"></a>
               <p class= "text-primary">Crear un Tipo de Atención</p>
+            </div>
+            <div class="col-xs-6 col-sm-4 col-md-3">
+              <a class="btn btn-primary cuadradito" href="{% url "practicas:cirugia:crear:practica" %}" role="button" id="imagenCirugia"></a>
+              <p class= "text-primary">Crear una Cirugía</p>
             </div>
           </section>
         {% endblock paginaSeccionGeneral %}

@@ -177,3 +177,13 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
 
         return qs
+
+@login_required
+def ayudaContextualMascota(request):
+
+    template = loader.get_template('GestionDeMascotas/ayudaContextualMascota.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))

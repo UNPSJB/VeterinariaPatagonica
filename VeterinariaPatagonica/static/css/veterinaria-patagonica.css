@@ -743,7 +743,7 @@ table.detalles>tbody>tr.total {
 
 /* Dashboard */
 
-/*#imagenServicio {
+#imagenServicio {
   background-image: url('../images/servicio.jpg');
   background-size: contain;
 }
@@ -770,7 +770,11 @@ table.detalles>tbody>tr.total {
 #imagenTipoDeAtencion {
   background-image: url('../images/casa.jpg');
   background-size: contain;
-}*/
+}
+#imagenFactura {
+    background-image: url('../images/factura.jpg');
+    background-size: contain;
+}
 
 
 /* Menus colapsables */

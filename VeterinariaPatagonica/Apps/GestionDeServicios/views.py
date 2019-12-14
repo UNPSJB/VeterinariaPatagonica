@@ -231,3 +231,13 @@ def listar(request, habilitados=True):
         "menu" : [],
     }
     return HttpResponse(template.render( context, request ))
+
+@login_required
+def ayudaContextualServicio(request):
+
+    template = loader.get_template('GestionDeServicios/ayudaContextualServicios.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
