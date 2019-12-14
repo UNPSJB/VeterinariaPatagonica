@@ -1,0 +1,42 @@
+<div class="form-group {{ form.dniCuit.name }} {% if form.dniCuit.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.dniCuit %}
+</div>
+<div class="form-group {{ form.apellidos.name }} {% if form.apellidos.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.apellidos %}
+</div>
+<div class="form-group {{ form.nombres.name }} {% if form.nombres.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.nombres %}
+</div>
+<div class="form-group {{ form.direccion.name }} {% if form.direccion.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.direccion %}
+</div>
+<div class="form-group {{ form.localidad.name }} {% if form.localidad.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.localidad %}
+</div>
+<div class="form-group {{ form.celular.name }} {% if form.celular.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.celular %}
+</div>
+<div class="form-group {{ form.telefono.name }} {% if form.telefono.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.telefono %}
+</div>
+<div class="form-group {{ form.email.name }} {% if form.email.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.email %}
+</div>
+<div class="form-group {{ form.tipoDeCliente.name }} {% if form.tipoDeCliente.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.tipoDeCliente %}
+</div>
+<div class="form-group {{ form.descuentoServicio.name }} {% if form.tipoDeCliente.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.descuentoServicio %}
+</div>
+<div class="form-group {{ form.descuentoProducto.name }} {% if form.tipoDeCliente.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.descuentoProducto %}
+</div>
+{% if accion %}
+<div class="form-group">
+    <div class=row>
+        <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+        </div>
+     </div>
+</div>
+{% endif %}

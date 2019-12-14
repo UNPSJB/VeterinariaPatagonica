@@ -25,6 +25,11 @@ class VeterinariaPatagonicaQuerySet(models.QuerySet):
             )
         return object
 
+    def habilitados(self):
+        return self.filter(baja=False)
+
+    def deshabilitados(self):
+        return self.filter(baja=True)
 
 
 #Esta clase sirve para gestionar las bajas

@@ -4,18 +4,17 @@ from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
-
-
 from .models import Cliente
 from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
+from VeterinariaPatagonica.tools import GestorListadoQuerySet
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
 #Workbook nos permite crear libros en excel
-#[MOD]
-#from openpyxl import Workbook
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
 
 #Importamos settings para poder tener a la mano la ruta de la carpeta media
 from django.conf import settings
@@ -26,8 +25,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
 
-
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+clientesFiltrados = [] 
 
 def clientes(request):
     context = {}#Defino el contexto.
@@ -36,7 +34,7 @@ def clientes(request):
 
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.add_Cliente', raise_exception=True)
-def modificar(request, id = None, irAMascotas=1): #irAMascotas=1 -> False, irAMasotas=0 -> True
+def modificar(request, id= None, irAMascotas=1): #irAMascotas=1 -> False, irAMasotas=0 -> True
 
     cliente = Cliente.objects.get(id=id) if id is not None else None
     ClienteForm = ClienteFormFactory(cliente)
@@ -47,15 +45,15 @@ def modificar(request, id = None, irAMascotas=1): #irAMascotas=1 -> False, irAMa
         context = {"titulo": 2, 'usuario': request.user}
 
     if request.method == 'POST':
-        formulario = ClienteForm(request.POST, instance=cliente)
-
-        if formulario.is_valid():
-            cliente = formulario.save()
+        form = ClienteForm(request.POST, instance=cliente)
+        #print(formulario)
+        if form.is_valid():
+            cliente = form.save()
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
-            context['formulario'] = formulario
+            context['form'] = form
     else:
-        context['formulario'] = ClienteForm(instance=cliente)
+        context['form'] = ClienteForm(instance=cliente)
     template = loader.get_template('GestionDeClientes/formulario.html')
     return HttpResponse(template.render(context, request))
 
@@ -95,14 +93,14 @@ def eliminar(request, id):
         raise Http404()
     if request.method == 'POST':
         cliente.delete()
-        return HttpResponseRedirect( "/GestionDeClientes/verDeshabilitados/" )
+        return HttpResponseRedirect ("/GestionDeClientes/verDeshabilitados/" )
     else:
         template = loader.get_template('GestionDeClientes/eliminar.html')
         context = {
             'usuario' : request.user,
             'id' : id
         }
-        return HttpResponse( template.render( context, request) )
+        return HttpResponse (template.render (context, request))
 
 def ver(request, id):
 
@@ -119,78 +117,164 @@ def ver(request, id):
 
     return HttpResponse(template.render(contexto, request))
 
+def menuListar(usuario, habilitados):
+    menu = [[],[]]
 
-def ReporteClientesExcel(request):
-    # Obtenemos todos los clientes de nuestra base de datos
+    if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados"):
+        menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
+    if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados"):
+        menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clienets deshabilitados") )
+
+    if usuario.has_perm("GestionDeClientes.cliente_crear"):
+        menu[1].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
+    return [ item for item in menu if len(item) ]
+
+def verHabilitados(request, habilitados=True):
+    """ Listado de clientes habilitados """
+    global clientesFiltrados
+
     clientes = Cliente.objects.habilitados()
-    clientes = clientes.filter(tools.paramsToFilter(request.GET, Cliente))
 
+    gestor = GestorListadoQuerySet(
+        campos=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+            ["orden_localidad", "Localidad"],
+            ["orden_tipoDeCliente", "Tipo De Cliente"],
+        ],
+        clases={"filtrado" : FiltradoForm},
+        queryset=clientes,
+        mapaFiltrado= Cliente.MAPPER,
+        mapaOrden= clientes.MAPEO_ORDEN
+    )
+
+    
+    gestor.cargar(request)
+
+    clientesFiltrados = gestor.queryset
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
-    contexto = {
-        'clientes' : clientes,
-        'usuario' : request.user,
+    context = {
+        "gestor" : gestor, 
+        "menu" : menuListar(request.user, True),
     }
-    #[MOD]
-    """var=1
-    if (var==1):
-        # Creamos el libro de trabajo
-        wb = Workbook()
-        # Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
-        ws = wb.active
-        # En la celda B1 ponemos el texto 'REPORTE DE CLIENTES'
-        ws['B1'] = 'REPORTE DE CLIENTES'
-        # Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
-        ws.merge_cells('B1:E1')
-        # Creamos los encabezados desde la celda B3 hasta la E3
-        ws['B3'] = 'DNI'
-        ws['C3'] = 'NOMBRES'
-        ws['D3'] = 'APELLIDOS'
-        ws['E3'] = 'DIRECCION'
-        cont = 4
-        # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
-        for cliente in clientes:
-            ws.cell(row=cont, column=2).value = cliente.dniCuit
-            ws.cell(row=cont, column=3).value = cliente.nombres
-            ws.cell(row=cont, column=4).value = cliente.apellidos
-            ws.cell(row=cont, column=5).value = cliente.direccion
-            cont = cont + 1
-        # Establecemos el nombre del archivo
-        nombre_archivo = "ReporteClientesExcel.xlsx"
-        # Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
-        response = HttpResponse(content_type="application/ms-excel")
-        contenido = "attachment; filename={0}".format(nombre_archivo)
-        response["Content-Disposition"] = contenido
-        wb.save(response)
-        return response
-        """
-    return HttpResponse(template.render(contexto,request))
+    return HttpResponse(template.render ( context, request ))
 
 
+def verDeshabilitados(request):
+    """ Listado de clientes deshabilitados """
+    global clientesFiltrados
+    gestor = GestorListadoQuerySet(
+        orden=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+            ["orden_localidad", "Localidad"],
+            ["orden_tipoDeCliente", "Tipo De Cliente"],
+        ],
+        claseFiltros=FiltradoForm,
+    )
 
+    clientes = Cliente.objects.deshabilitados()
+    gestor.cargar(request, clientes)
+    gestor.ordenar()
+    
+    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
+        gestor.filtrar()
+
+    clientesFiltrados = gestor.queryset
+    template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
+    context = {"gestor" : gestor}
+    return HttpResponse (template.render (context, request))
+
+def ListadoClientesExcel(request):
+    # Creamos el libro de trabajo
+    wb = Workbook()
+    # Definimos como nuestra hoja de trabajo, la hoja activa, por defecto la primera del libro
+    ws = wb.active
+    ws = wb.worksheets[0]
+    # En la celda B1 ponemos el texto 'LISTADO DE CLIENTES'
+    ws['B1'] = 'LISTADO DE CLIENTES'
+    # Juntamos las celdas desde la B1 hasta la E1, formando una sola celda
+    ws.merge_cells('B1:F1')
+    # Creamos los encabezados desde la celda B3 hasta la E3
+    ws['B3'] = 'DNI/CUIT'
+    ws['C3'] = 'NOMBRES'
+    ws['D3'] = 'APELLIDOS'
+    ws['E3'] = 'LOCALIDAD'
+    ws['F3'] = 'TIPO DE CLIENTE'
+    cont = 5
+    # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+    for cliente in clientesFiltrados:
+        ws.cell(row=cont, column=2).value = cliente.dniCuit
+        ws.cell(row=cont, column=3).value = cliente.nombres
+        ws.cell(row=cont, column=4).value = cliente.apellidos
+        ws.cell(row=cont, column=5).value = cliente.localidad
+        ws.cell(row=cont, column=6).value = cliente.tipoDeCliente
+        cont = cont + 1
+
+    column_widths = []
+    for row in ws.rows:
+        for i, cell in enumerate(row):
+            if len(column_widths) > i:
+                if len(str(cell.value)) > column_widths[i]:
+                    column_widths[i] = len(str(cell.value))
+            else:
+                column_widths += [len(str(cell.value))]
+
+    for i, column_width in enumerate(column_widths):
+         ws.column_dimensions[get_column_letter(i+1)].width = column_width
+
+    # Establecemos el nombre del archivo
+    nombre_archivo = "ListadoClientes.xlsx"
+    # Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
+    response = HttpResponse(content_type="application/ms-excel")
+    contenido = "attachment; filename={0}".format(nombre_archivo)
+    response["Content-Disposition"] = contenido
+    wb.save(response)
+    return response
+
+def ListadoClientesPDF(request):
+    print("GET")
+    # Indicamos el tipo de contenido a devolver, en este caso un pdf
+    response = HttpResponse(content_type='application/pdf')
+    # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+    buffer = BytesIO()
+    # Canvas nos permite hacer el reporte con coordenadas X y Y
+    pdf = canvas.Canvas(buffer)
+    # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+    cabecera(pdf)
+    y = 500
+    tabla(pdf, y, clientesFiltrados)
+    # Con show page hacemos un corte de página para pasar a la siguiente
+    pdf.showPage()
+    pdf.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
 
 def cabecera(pdf):
+    print("CABECERA")
     # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
-    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat.png'
+    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
     # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
-    pdf.drawImage(archivo_imagen, 60, 750, 120, 90, preserveAspectRatio=True)
+    pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
     # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
     pdf.setFont("Helvetica", 16)
     # Dibujamos una cadena en la ubicación X,Y especificada
-    pdf.drawString(230, 790, u"VETERINARIA PATAGONICA")
+    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
     pdf.setFont("Helvetica", 14)
-    pdf.drawString(260, 770, u"REPORTE DE CLIENTES")
-
+    pdf.drawString(220, 770, u"LISTADO DE CLIENTES")
 
 def tabla(pdf, y, clientes):
+    print("TABLA")
     # Creamos una tupla de encabezados para neustra tabla
-    encabezados = ('DNI', 'Nombres', 'Apellidos', 'Direccion')
+    encabezados = ('DNI/CUIT', 'Nombres', 'Apellidos', 'Localidad', 'Tipo de Cliente')
     # Creamos una lista de tuplas que van a contener a las personas
-    #clientes = Cliente.objects.habilitados().filter(nombres='Karina')
-
-    detalles = [(cliente.dniCuit, cliente.nombres, cliente.apellidos, cliente.direccion) for cliente in
-                clientes]
+    detalles = [(cliente.dniCuit, cliente.nombres, cliente.apellidos, cliente.localidad, cliente.tipoDeCliente) for cliente in clientes]
     # Establecemos el tamaño de cada una de las columnas de la tabla
-    detalle_orden = Table([encabezados] + detalles, colWidths=[2 * cm, 5 * cm, 5 * cm, 7 * cm])
+    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 5 * cm, 5 * cm, 4 * cm, 3 * cm])
     # Aplicamos estilos a las celdas de la tabla
     detalle_orden.setStyle(TableStyle(
         [
@@ -205,116 +289,13 @@ def tabla(pdf, y, clientes):
     # Establecemos el tamaño de la hoja que ocupará la tabla
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
-    detalle_orden.drawOn(pdf, 40, y)
-
-def ReporteClientesPDF(request):
-    # Obtenemos los clientes de nuestra base de datos
-
-
-    clientes = Cliente.objects.habilitados().filter(tools.paramsToFilter(request.session, Cliente))
-
-
-    template = loader.get_template('GestionDeClientes/verHabilitados.html')
-    contexto = {
-        'clientes': clientes,
-        'usuario': request.user,
-    }
-    var =1
-    if (var==1):
-        # Indicamos el tipo de contenido a devolver, en este caso un pdf
-        response = HttpResponse(content_type='application/pdf')
-        # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
-        buffer = BytesIO()
-        # Canvas nos permite hacer el reporte con coordenadas X y Y
-        pdf = canvas.Canvas(buffer)
-        # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
-        cabecera(pdf)
-        y = 500
-        tabla(pdf, y, clientes)
-
-        # Con show page hacemos un corte de página para pasar a la siguiente
-        pdf.showPage()
-        pdf.save()
-        pdf = buffer.getvalue()
-        buffer.close()
-        response.write(pdf)
-        return response
-    return HttpResponse(template.render(contexto,request))
-
-def verHabilitados(request, irA=0):
-    clientesQuery = Cliente.objects.habilitados()
-    clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
-
-    template = loader.get_template('GestionDeClientes/verHabilitados.html')
-
-    paginator = Paginator(clientesQuery, 1)
-    page = request.GET.get('page')
-
-    try:
-        clientes = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        clientes = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        clientes = paginator.page(paginator.num_pages)
-
-    contexto = {
-        'clientesQuery' : clientesQuery,
-        'usuario' : request.user,
-        'clientes': clientes,
-    }
-    return HttpResponse(template.render(contexto, request))
-
-def verDeshabilitados(request):
-    clientesQuery = Cliente.objects.deshabilitados()
-    clientesQuery = clientesQuery.filter(tools.paramsToFilter(request.GET, Cliente))
-
-    template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
-
-    paginator = Paginator(clientesQuery, 15)
-    page = request.GET.get('page')
-
-    try:
-        clientes = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        clientes = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        clientes = paginator.page(paginator.num_pages)
-
-    contexto = {
-        'clientesQuery' : clientesQuery,
-        'usuario' : request.user,
-        'clientes': clientes,
-    }
-
-    return HttpResponse(template.render(contexto, request))
-
-
-
+    detalle_orden.drawOn(pdf, 20, y)
 
 @login_required
-def documentationCliente(request, tipo):
-    if (tipo==1):
-        template = loader.get_template('GestionDeClientes/manual_ayuda_cliente/build/archivos/botonHD.html')
-    elif(tipo==2):
-        template = loader.get_template('GestionDeClientes/manual_ayuda_cliente/build/archivos/criteriosBusqueda.html')
-
+def ayudaContextualCliente(request):
+# Redireccionamos la ayuda contextual
+    template = loader.get_template('GestionDeClientes/ayudaContextualCliente.html')
     contexto = {
-        'clientes': clientes,
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))
-
-@login_required
-def documentation(request):
-
-    template = loader.get_template('GestionDeClientes/manual_ayuda_cliente/build/index.html')
-    contexto = {
-        'clientes': clientes,
         'usuario': request.user,
     }
 

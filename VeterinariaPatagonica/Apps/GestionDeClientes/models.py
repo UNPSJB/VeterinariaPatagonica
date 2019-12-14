@@ -3,14 +3,34 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from VeterinariaPatagonica import tools
 from decimal import Decimal
 from django.db.models import Q
+from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
 
 # Create your models here.
 
 #Esta clase se comunica con la BD
-class BaseClienteManager(models.Manager):
-    pass
+class ClienteBaseManager(models.Manager):
+    def __init__(self, tipo=None):
+        super().__init__()
+        self.tipo = tipo
 
-ClienteManager = BaseClienteManager.from_queryset(tools.BajasLogicasQuerySet)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tipo is not None:
+            qs = qs.filter(tipo=self.tipo)
+        return qs
+
+class ClienteQueryset(VeterinariaPatagonicaQuerySet):
+
+    MAPEO_ORDEN = {
+        "orden_dniCuit" : ["dniCuit"],
+        "orden_apellidos" : ["apellidos"],
+        "orden_nombres" : ["nombres"],
+        "orden_direccion" : ["direccion"],
+        "orden_localidad" : ["localidad"],
+        "orden_tipoDeCliente" : ["tipoDeCliente"],
+    }
+
+ClienteManager = ClienteBaseManager.from_queryset(ClienteQueryset)
 
 class Cliente (models.Model):
 
@@ -33,6 +53,8 @@ class Cliente (models.Model):
         "dniCuit": "dniCuit__icontains",
         "nombres": "nombres__icontains",
         "apellidos": "apellidos__icontains",
+        "localidad": "localidad__icontains",
+        "tipoDeCliente": "tipoDeCliente__icontains",
         "mascotas": lambda value: Q(mascota__nombre__icontains=value),
     }
 
@@ -66,6 +88,19 @@ class Cliente (models.Model):
     CC_MIN_PRECIO = Decimal(0)
     CC_MAX_PRECIO = Decimal(3000.00)
     PRECIO = PARTE_ENTERA + PARTE_DECIMAL
+
+    DESC_PARTE_ENTERA = 3
+    PARTE_DECIMAL = 2
+    DESC_MIN = Decimal(0)
+    DESC_MAX = Decimal(100.00)
+    DEFAULT = Decimal(0)
+    DESCUENTO = DESC_PARTE_ENTERA + PARTE_DECIMAL
+
+    
+    CC_PARTE_ENTERA = 4
+    CC_MIN_PRECIO = Decimal(0)
+    CC_MAX_PRECIO = Decimal(3000.00)
+    PRECIO = CC_PARTE_ENTERA + PARTE_DECIMAL
 
     dniCuit = models.CharField(
         help_text= "Dni/Cuit del Cliente",
@@ -170,6 +205,7 @@ class Cliente (models.Model):
     )
 
     tipoDeCliente = models.CharField(
+        help_text="Tipo de cliente",
         max_length=1,
         choices=TIPODECLIENTE,
         default='C',
@@ -181,13 +217,6 @@ class Cliente (models.Model):
         }
     )
 
-
-    DESC_PARTE_ENTERA = 3
-    PARTE_DECIMAL = 2
-    DESC_MIN = Decimal(0)
-    DESC_MAX = Decimal(100.00)
-    DEFAULT = Decimal(0)
-    DESCUENTO = DESC_PARTE_ENTERA + PARTE_DECIMAL
 
     descuentoServicio = models.DecimalField(
         max_digits= DESCUENTO,
@@ -212,10 +241,6 @@ class Cliente (models.Model):
     )
 
 
-    CC_PARTE_ENTERA = 4
-    CC_MIN_PRECIO = Decimal(0)
-    CC_MAX_PRECIO = Decimal(3000.00)
-    PRECIO = CC_PARTE_ENTERA + PARTE_DECIMAL
 
     cuentaCorriente = models.DecimalField(
         max_digits = PRECIO,

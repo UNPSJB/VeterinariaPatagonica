@@ -1,11 +1,16 @@
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
 {% load static %}
 
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+{% endblock %}
+
 {% block titulo %}
 Gestion de Clientes | {{titulo}}
 {% endblock %}
 
-{% block clienteTitulo %}
+{% block tituloSeccion %}
 {% if titulo == 1 %}
     Nuevo Cliente
 {% endif %}
@@ -14,7 +19,7 @@ Gestion de Clientes | {{titulo}}
 {% endif %}
 {% endblock %}
 
-{% block clienteSubtitulo %}
+{% block subtitulo %}
 {% if titulo == 1 %}
     Agrega un Cliente al listado
 {% endif %}
@@ -23,18 +28,26 @@ Gestion de Clientes | {{titulo}}
 {% endif %}
 {% endblock %}
 
-{% block clienteContenido %}
+{% block contenido %}
 
-    <div class="clienteCuerpo">
-        <form class="form-horizontal formulario" action="" method="post">
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
 
-            {% csrf_token %}
+        {% csrf_token %}
 
-            {% include 'GestionDeClientes/snippetCliente.html' with campos=formulario accion="Guardar Datos"%}
+        {% if form.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!--{% include 'GestionDeClientes/snippetCliente.html' with campos=form accion="Guardar Datos"%}-->
+        {% include "./snippets/form.html" with accion="Guardar Datos" %}
 
 
-        </form>
-    </div>
+    </form>
 
 {% endblock %}
 
@@ -42,3 +55,4 @@ Gestion de Clientes | {{titulo}}
     {{block.super}}
     <script src="{% static 'js/gestion-clientes.js' %}"></script>
 {% endblock paginaJavascript %}
+

@@ -1,31 +1,21 @@
 {% extends "sitioBase.html" %}
 {% load static %}
 
-{% block paginaEstilos %}
-  {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/GestionDeClientes.css' %}">
-{% endblock paginaEstilos %}
-
 {% block paginaSeccionGeneral %}
   <section>
 
       {% block secciones %}
+      {% include './snippets/secciones.html' with pagina='default' %}
       {% endblock %}
 
-    <h4 class="clienteTitulo">
-      {% block clienteTitulo %}
-      {% endblock clienteTitulo %}
-    </h4>
-    <br>
-    <div class="clienteLineaTitulo"> </div>
+      <h4 class="titulo">
+        {% block tituloSeccion %}
+        {% endblock %}
+      </h4>
 
-    <p class="clienteSubtitulo">
-      {% block clienteSubtitulo %}
-      {% endblock clienteSubtitulo%}
-    </p>
-
-  {% block clienteContenido %}
-  {% endblock clienteContenido %}
+      {% block contenido %}
+      {% endblock contenido %}
+      
   </section>
 {% endblock paginaSeccionGeneral %}
 
