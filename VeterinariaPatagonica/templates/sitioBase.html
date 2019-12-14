@@ -115,16 +115,16 @@
               <p class= "text-primary">Crear un Servicio</p>
             </div>
             <div class="col-xs-6 col-sm-4 col-md-3">
-              <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button" id="imagenServicio"></a>
-              <p class= "text-primary">Crear un Servicio</p>
-            </div>
-            <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "facturas:facturar" %}" role="button" id="imagenFactura"></a>
               <p class= "text-primary">Crear una Factura</p>
             </div>
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button" id="imagenTipoDeAtencion"></a>
               <p class= "text-primary">Crear un Tipo de Atención</p>
+            </div>
+            <div class="col-xs-6 col-sm-4 col-md-3">
+              <a class="btn btn-primary cuadradito" href="{% url "practicas:cirugia:crear:practica" %}" role="button" id="imagenCirugia"></a>
+              <p class= "text-primary">Crear una Cirugía</p>
             </div>
           </section>
         {% endblock paginaSeccionGeneral %}
