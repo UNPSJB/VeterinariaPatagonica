@@ -12,10 +12,10 @@ Gestion de Clientes | {{titulo}}
 
 {% block tituloSeccion %}
 {% if titulo == 1 %}
-    Nuevo Cliente
+    {% include "snippets/titulo.html" with titulo="Nuevo Cliente" %}
 {% endif %}
 {% if titulo == 2 %}
-    Modificar Cliente
+    {% include "snippets/titulo.html" with titulo="Modificar Cliente" %}
 {% endif %}
 {% endblock %}
 
@@ -43,7 +43,6 @@ Gestion de Clientes | {{titulo}}
             </div>
         {% endif %}
 
-        <!--{% include 'GestionDeClientes/snippetCliente.html' with campos=form accion="Guardar Datos"%}-->
         {% include "./snippets/form.html" with accion="Guardar Datos" %}
 
 

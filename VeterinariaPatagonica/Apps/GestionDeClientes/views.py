@@ -32,6 +32,71 @@ def clientes(request):
     template = loader.get_template('GestionDeClientes/GestionDeClientes.html')#Cargo el template desde la carpeta templates/GestionDeClientes.
     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
 
+def menuVer(usuario, cliente):
+
+    menu = [[],[],[]]
+
+    if usuario.has_perm("GestionDeClientes.cliente_modificar"):
+        menu[0].append( (reverse("clientes:clienteModificar", args=(cliente.id,)), "Modificar cliente") )
+        if cliente.baja:
+            menu[0].append( (reverse("clientes:clienteHabilitar", args=(cliente.id,)), "Habilitar cliente") )
+        else:
+            menu[0].append( (reverse("clientes:clienteDeshabilitar", args=(cliente.id,)), "Deshabilitar cliente") )
+
+    if usuario.has_perm("GestionDeClientes.cliente_listar_habilitados"):
+        menu[1].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
+    if usuario.has_perm("GestionDeClientes.cliente_listar_no_habilitados"):
+        menu[1].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
+
+    if usuario.has_perm("GestionDeClientes.cliente_crear"):
+        menu[2].append( (reverse("clientes:clienteCrear"), "Crear cliente") )
+
+    return [ item for item in menu if len(item) ]
+
+def menuListar(usuario, habilitados):
+    menu = [[],[]]
+
+    if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados"):
+        menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
+    if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados"):
+        menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clienets deshabilitados") )
+
+    if usuario.has_perm("GestionDeClientes.cliente_crear"):
+        menu[1].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
+    return [ item for item in menu if len(item) ]
+
+def menuModificar(usuario, cliente):
+
+    menu = [[],[],[],[]]
+
+    menu[0].append( (reverse("clientes:clienteVer", args=(cliente.id,)), "Ver cliente") )
+
+    if cliente.baja:
+        menu[1].append( (reverse("clientes:clienteHabilitar", args=(cliente.id,)), "Habilitar cliente") )
+    else:
+        menu[1].append( (reverse("clientes:clienteDeshabilitar", args=(cliente.id,)), "Deshabilitar cliente") )
+
+    if usuario.has_perm("GestionDeClientes.cliente_listar_habilitados"):
+        menu[2].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
+    if usuario.has_perm("GestionDeClientes.cliente_listar_no_habilitados"):
+        menu[2].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
+
+    if usuario.has_perm("GestionDeClientes.cliente_crear"):
+        menu[3].append( (reverse("clientes:clienteCrear"), "Crear cliente") )
+
+    return [ item for item in menu if len(item) ]
+
+def menuCrear(usuario, cliente):
+
+    menu = [[],[],[],[]]
+
+    if usuario.has_perm("GestionDeClientes.cliente_listar_habilitados"):
+        menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
+    if usuario.has_perm("GestionDeClientes.cliente_listar_no_habilitados"):
+        menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
+
+    return [ item for item in menu if len(item) ]
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeClientes.add_Cliente', raise_exception=True)
 def modificar(request, id= None, irAMascotas=1): #irAMascotas=1 -> False, irAMasotas=0 -> True
@@ -46,14 +111,15 @@ def modificar(request, id= None, irAMascotas=1): #irAMascotas=1 -> False, irAMas
 
     if request.method == 'POST':
         form = ClienteForm(request.POST, instance=cliente)
-        #print(formulario)
         if form.is_valid():
             cliente = form.save()
             return HttpResponseRedirect("/GestionDeClientes/ver/{}".format(cliente.id))
         else:
             context['form'] = form
+            context['menu'] = menuModificar(request.user, cliente)
     else:
         context['form'] = ClienteForm(instance=cliente)
+        context['menu'] = menuCrear(request.user, cliente)
     template = loader.get_template('GestionDeClientes/formulario.html')
     return HttpResponse(template.render(context, request))
 
@@ -112,28 +178,46 @@ def ver(request, id):
     template = loader.get_template('GestionDeClientes/ver.html')
     contexto = {
         'cliente': cliente,
-        'usuario': request.user
+        'usuario': request.user,
+        "menu" : menuVer(request.user, cliente)
     }
 
     return HttpResponse(template.render(contexto, request))
 
-def menuListar(usuario, habilitados):
-    menu = [[],[]]
-
-    if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados"):
-        menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
-    if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados"):
-        menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clienets deshabilitados") )
-
-    if usuario.has_perm("GestionDeClientes.cliente_crear"):
-        menu[1].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
-    return [ item for item in menu if len(item) ]
-
 def verHabilitados(request, habilitados=True):
     """ Listado de clientes habilitados """
-    global clientesFiltrados
 
     clientes = Cliente.objects.habilitados()
+
+    gestor = GestorListadoQuerySet(
+        campos=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+            ["orden_localidad", "Localidad"],
+            ["orden_tipoDeCliente", "Tipo De Cliente"],
+        ],
+        clases={"filtrado" : FiltradoForm},
+        queryset=clientes,
+        mapaFiltrado= Cliente.MAPPER,
+        mapaOrden= clientes.MAPEO_ORDEN
+    )
+   
+    gestor.cargar(request)
+
+    template = loader.get_template('GestionDeClientes/verHabilitados.html')
+    context = {
+        "gestor" : gestor, 
+        "menu" : menuListar(request.user, habilitados),
+    }
+    return HttpResponse(template.render ( context, request ))
+
+
+def verDeshabilitados(request, habilitados=False):
+    """ Listado de clientes deshabilitados """
+    global clientesFiltrados
+
+    clientes = Cliente.objects.deshabilitados()
 
     gestor = GestorListadoQuerySet(
         campos=[
@@ -153,38 +237,10 @@ def verHabilitados(request, habilitados=True):
     gestor.cargar(request)
 
     clientesFiltrados = gestor.queryset
-    template = loader.get_template('GestionDeClientes/verHabilitados.html')
-    context = {
-        "gestor" : gestor, 
-        "menu" : menuListar(request.user, True),
-    }
-    return HttpResponse(template.render ( context, request ))
-
-
-def verDeshabilitados(request):
-    """ Listado de clientes deshabilitados """
-    global clientesFiltrados
-    gestor = GestorListadoQuerySet(
-        orden=[
-            ["orden_dniCuit", "DNI/CUIT"],
-            ["orden_apellidos", "Apellidos"],
-            ["orden_nombres", "Nombres"],
-            ["orden_localidad", "Localidad"],
-            ["orden_tipoDeCliente", "Tipo De Cliente"],
-        ],
-        claseFiltros=FiltradoForm,
-    )
-
-    clientes = Cliente.objects.deshabilitados()
-    gestor.cargar(request, clientes)
-    gestor.ordenar()
-    
-    if gestor.formFiltros.is_valid() and gestor.formFiltros.filtros():
-        gestor.filtrar()
-
-    clientesFiltrados = gestor.queryset
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
-    context = {"gestor" : gestor}
+    context = {
+        "gestor" : gestor,
+        "menu" : menuListar(request.user, habilitados),}
     return HttpResponse (template.render (context, request))
 
 def ListadoClientesExcel(request):

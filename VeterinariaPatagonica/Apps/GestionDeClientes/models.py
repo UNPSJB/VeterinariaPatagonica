@@ -205,7 +205,7 @@ class Cliente (models.Model):
     )
 
     tipoDeCliente = models.CharField(
-        help_text="Tipo de cliente",
+        help_text="Seleccione el tipo de cliente",
         max_length=1,
         choices=TIPODECLIENTE,
         default='C',
@@ -219,7 +219,7 @@ class Cliente (models.Model):
 
 
     descuentoServicio = models.DecimalField(
-        help_text="Tipo de cliente Especial",
+        help_text="Los clientes especiales pueden tener un descuento en los serivios",
         max_digits= DESCUENTO,
         decimal_places= PARTE_DECIMAL,
         default= DEFAULT,
@@ -231,6 +231,7 @@ class Cliente (models.Model):
     )
 
     descuentoProducto = models.DecimalField(
+        help_text="Los clientes especiales pueden tener un descuento en los productos que compren",
         max_digits=DESCUENTO,
         decimal_places=PARTE_DECIMAL,
         default=DEFAULT,

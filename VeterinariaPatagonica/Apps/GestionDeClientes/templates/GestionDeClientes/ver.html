@@ -5,7 +5,7 @@ Gestion de Clientes | Ver Cliente
 {% endblock %}
 
 {% block tituloSeccion %}
-Ver Cliente
+{% include "snippets/titulo.html" with titulo="Cliente: "|add:cliente.dniCuit %}
 {% endblock %}
 
 {% block subtitulo %}
@@ -14,10 +14,7 @@ Muestra datos del cliente
 
 {% block contenido %}
 
-    {% include './snippets/acciones.html' with item=cliente seccion='ver' %}
-
     <div>
-        <p> <strong>Identificador: </strong>{{ cliente.id }}</p>
         <p> <strong>Tipo De Cliente: </strong>{{cliente.tipoDeCliente}} ({% if cliente.baja %}Deshabilitado{% else %}Habilitado{% endif %})</p>
         <p> <strong>Dni/CUIT: </strong>{{cliente.dniCuit}}</p>
         <p> <strong>Nombres:</strong> {{ cliente.nombres }} </p>
@@ -27,9 +24,10 @@ Muestra datos del cliente
         <p> <strong>Celular: </strong>{{cliente.celular}}</p>
         <p><strong>Telefono:</strong>{{ cliente.telefono }}</p>
         <p> <strong>Email:</strong>{{cliente.email}}</p>
-        <p id="porcentajeDescuentoServicio"> <strong>Descuento Servicio:</strong> {{cliente.descuentoServicio}} %</p>
-        <p> <strong>Descuento Producto: </strong>{{cliente.descuentoProducto}} %</p>
-        <!--<p> <strong>Cuenta Corriente: $</strong>{{cliente.cuentaCorriente}}</p>-->
+        {% if cliente.tipoDeCliente == 'E'%}
+          <p id="porcentajeDescuentoServicio"> <strong>Descuento Servicio:</strong> {{cliente.descuentoServicio}} %</p>
+          <p> <strong>Descuento Producto: </strong>{{cliente.descuentoProducto}} %</p>
+        {% endif %}
     </div>
 
     <div class= "col-sm-offset-11">

@@ -1,50 +1,182 @@
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
-
+{% load static %}
 {% block titulo %}
-Gestion de Clientes | Ver Deshabilitados
+Listado de Clientes Deshabilitados
 {% endblock %}
-
 {% block tituloSeccion %}
-Clientes Deshabilitados
+{% include "snippets/titulo.html" with titulo="Listado de Clientes Deshabilitados" %}
 {% endblock %}
-
-{% block subtitulo %}
-Actualmente <strong>no</strong> disponibles
-{% endblock %}
-
-{% block secciones %}
-{% include './snippets/secciones.html' with pagina='verDeshabilitados' %}
-{% endblock %}
-
 {% block contenido %}
-
-    {% if gestor.numero_items %}
-
-        {% include "./snippets/listado.html" %}
-
-    {% else %}
-
-        <p><strong>No hay clientes deshabilitados</strong></p>
-
+{% with demasiados=20 %}
+<div class="contenedor">
+    {% if gestor.numeroErrores %}
+    <div class="errores">
+        <b>Por favor revise los siguientes errores:</b>
+        <ul>
+        {% include "snippets/formErrores.html" with form=gestor.erroresValidacion %}
+        </ul>
+    </div>
     {% endif %}
-
-    <div class="menu-colapsable" >
-        <div class="item-colapsable" >
-            <a role="button" href="#cliente-acciones" data-toggle="collapse">
-                <i class="glyphicon glyphicon-tasks"></i>
-                <span>Acciones</span>
-            </a>
-            <div class="contenido-colapsable collapse in" id="cliente-acciones">
-                <ul class="acciones sinestilo">
-    
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'clientes:clientesListadoEXCEL' %}">Imprimir listado en Excel     
-                        <i class="glyphicon glyphicon-list-alt" ></i></a></li>
-                    <li><a  class="btn btn-sm btn-default" href="{%url 'clientes:clientesListadoPDF'%}">Imprimir listado en PDF     
-                        <i class="glyphicon glyphicon-file" > </i></a></li>
-    
-                </ul>
+    <form class="form-inline listado" action="{{ request.path }}" method="GET">
+        <div class="form-inline sombreado">
+            {% if gestor.filtrar %}
+            <div class="row fila boton-filtrado">
+            {% block botonFiltrado %}
+            <div class="col-xs-12 col-sm-12 col-md-12 columna">
+                <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
+                    <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de clientes
+                </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: Filtrado según nombre de cliente</li><li><b>Tipo</b>: Mostrar sólo clientes correspondientes del tipo seleccionado</li><li><b>Precio</b>: Mostrar sólo clientes con el precio ingresado</li></ul>" html=True placement="bottom" %}
+            </div>
+            {% endblock %}
+            </div>
+            <div class="row fila filtrado" id="filtradoResultados">
+            {% block formFiltrado %}
+            {% with form=gestor.filtrado %}
+            {% for campo in form %}
+            <div class="col-xs-12 col-sm-4 col-md-4 form-group {{ campo.name }} {% if campo.errors %}has-error{% endif %}">
+            {{ campo }}
+            </div>
+            {% endfor %}
+            {% endwith %}
+            {% endblock %}
+            </div>
+            {% endif %}
+            {% if gestor.seleccionar %}
+            <div class="row fila boton-seleccion">
+                {% block botonSeleccion %}
+                <div class="col-xs-12 col-sm-12 col-md-12 columna">
+                    <a class="boton" href="javascript:;" onclick="alternar('iconoCampos', 'seleccionCampos', 'fa-chevron-up', 'fa-chevron-down');"><i id="iconoCampos" class="fa fa-chevron-down"></i>Seleccion de campos</a>
+                    {% include "snippets/ayuda.html" with id="ayuda-seleccion-campos" content="<p>Opciones para ocultar/mostrar campos del listado.</p><p>Es obligatorio que haya algun campo visible</p>" html=True placement="bottom" %}
+                </div>
+                {% endblock %}
+            </div>
+            <div class="row hidden fila seleccion" id="seleccionCampos">
+                {% block formSeleccion %}
+                {% for opcion in gestor.seleccion.seleccionados %}
+                <div class="form-group col-xs-6 col-sm-4 col-md-3 seleccionar {{ field.name }}">
+                    {{ opcion.tag }}
+                    <label for="{{ opcion.id_for_label }}" class="control-label">{{ opcion.choice_label }}</label>
+                </div>
+                {% endfor %}
+                {% endblock %}
+            </div>
+            {% endif %}
+            <div class="row fila submit">
+                {% block submit %}
+                <div class="col-xs-4 col-sm-3 col-md-2 form-group pull-right submit">
+                    <button class="btn btn-sm btn-default" value="" type="submit">Actualizar</button>
+                </div>
+                {% if gestor.paginar %}
+                {{ gestor.paginacion.pagina_actual }}
+                <div class="col-xs-8 col-sm-5 col-md-4 form-group pull-right {{ gestor.paginacion.cantidad.name }} {% if gestor.paginacion.cantidad.errors %}has-error{% endif %}">
+                    <div class="input-group">
+                        <div class="input-group-addon"> {{ gestor.paginacion.cantidad.label }} </div>
+                        {{ gestor.paginacion.cantidad }}
+                    </div>
+                </div>
+                {% endif %}
+                {% endblock %}
             </div>
         </div>
-    </div>
-
+        {% if gestor.numeroItems %}
+        <div class="resumen-resultados">
+        {% block resumenResultados %}
+        <b>Mostrando {{ gestor.itemsActuales.count }} s de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
+        {% endblock %}
+            {% if gestor.itemsActuales.count > demasiados %}<b><a name="iniciodelistado" href="#findelistado">Ir al final del listado.</a></b>{% endif %}
+        </div>
+        {% if gestor.paginar and gestor.itemsActuales.count > demasiados %}
+        <div class="paginacion">
+        {{ gestor.paginacion.pagina }}
+        </div>
+        {% endif %}
+        <div class="table-responsive">
+            {% if gestor.ordenar %}
+            <div class="orden-campos hidden">
+                {% for field in gestor.orden.hidden_fields %}
+                    {{ field }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <table class="table table-bordered items">
+                <colgroup>
+                {% for campo in gestor %}
+                    <col class="columna {{ campo.nombre }}"/>
+                {% endfor %}
+                </colgroup>
+                <thead>
+                {% if gestor.ordenar %}
+                    <tr>
+                    {% for opcion in gestor.orden.ordenar %}
+                        <th><button {{ opcion }}>
+                            {{ opcion.choice_label }}
+                            {% if opcion.data.selected %}
+                            {% if opcion.data.value.0 == "+" %}
+                            <i class="fa fa-caret-up"></i>
+                            {% else %}
+                            <i class="fa fa-caret-down"></i>
+                            {% endif %}
+                            {% endif %}
+                        </button></th>
+                    {% endfor %}
+                    </tr>
+                {% else %}
+                    <tr>
+                    {% for campo in gestor %}
+                        <th><span class="{{ campo.nombre }}">
+                            {{ campo.etiqueta }}
+                        </span></th>
+                    {% endfor %}
+                    </tr>
+                {% endif %}
+                </thead>
+                <tbody>
+                {% block resultados %}
+                {% for cliente in gestor.itemsActuales %}
+                    {% if perms.GestionDeClientes.cliente_ver_habilitados %}
+                    <tr onclick="cambiarUbicacion('{% url 'clientes:clienteVer' cliente.id %}');"  class="activa">
+                    {% else %}
+                    <tr class="inactiva">
+                    {% endif %}
+                    {% if gestor.orden_dniCuit.visible %}
+                        <td>{{ cliente.dniCuit }}</td>
+                    {% endif %}
+                    {% if gestor.orden_apellidos.visible %}
+                        <td>{{ cliente.apellidos }}</td>
+                    {% endif %}
+                    {% if gestor.orden_nombres.visible %}
+                        <td>{{ cliente.nombres}}</td>
+                    {% endif %}
+                    {% if gestor.orden_localidad.visible %}
+                    <td>{{ cliente.localidad}}</td>
+                    {% endif %}
+                    {% if gestor.orden_tipoDeCliente.visible %}
+                    <td>{{ cliente.tipoDeCliente}}</td>
+                    {% endif %}
+                    </tr>
+                {% endfor %}
+                {% endblock %}
+                </tbody>
+            </table>
+        </div>
+        {% if gestor.itemsActuales.count > demasiados %}
+        <a name="findelistado" href="#iniciodelistado">
+            <b>Volver al inicio del listado</b>
+        </a>
+        {% endif %}
+        {% else %}
+        <div class="sin-resultados">
+        {% block sinResultados %}
+        <b>No se encontraron clientes </b>
+        {% endblock %}
+        </div>
+        {% endif %}
+        {% if gestor.paginar %}
+        <div class="paginacion">
+            {{ gestor.paginacion.pagina }}
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endwith %}
 {% endblock %}

@@ -1,10 +1,10 @@
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
 {% load static %}
 {% block titulo %}
-Listado de Clientes
+Listado de Clientes Habilitados
 {% endblock %}
 {% block tituloSeccion %}
-{% include "snippets/titulo.html" with titulo="Listado de Clientes" %}
+{% include "snippets/titulo.html" with titulo="Listado de Clientes Habilitados" %}
 {% endblock %}
 {% block contenido %}
 {% with demasiados=20 %}
@@ -25,7 +25,7 @@ Listado de Clientes
             <div class="col-xs-12 col-sm-12 col-md-12 columna">
                 <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
                     <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de clientes
-                </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: Filtrado según nombre de servicio</li><li><b>Tipo</b>: Mostrar sólo servicios correspondientes del tipo seleccionado</li><li><b>Precio</b>: Mostrar sólo servicios con el precio ingresado</li></ul>" html=True placement="bottom" %}
+                </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: Filtrado según nombre de cliente</li><li><b>Tipo</b>: Mostrar sólo clientes correspondientes del tipo seleccionado</li><li><b>Precio</b>: Mostrar sólo clientes con el precio ingresado</li></ul>" html=True placement="bottom" %}
             </div>
             {% endblock %}
             </div>
@@ -81,7 +81,7 @@ Listado de Clientes
         {% if gestor.numeroItems %}
         <div class="resumen-resultados">
         {% block resumenResultados %}
-        <b>Mostrando {{ gestor.itemsActuales.count }} servicios de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
+        <b>Mostrando {{ gestor.itemsActuales.count }} s de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
         {% endblock %}
             {% if gestor.itemsActuales.count > demasiados %}<b><a name="iniciodelistado" href="#findelistado">Ir al final del listado.</a></b>{% endif %}
         </div>
@@ -145,13 +145,13 @@ Listado de Clientes
                         <td>{{ cliente.apellidos }}</td>
                     {% endif %}
                     {% if gestor.orden_nombres.visible %}
-                        <td>${{ cliente.nombres}}</td>
+                        <td>{{ cliente.nombres}}</td>
                     {% endif %}
                     {% if gestor.orden_localidad.visible %}
-                    <td>${{ cliente.localidad}}</td>
+                    <td>{{ cliente.localidad}}</td>
                     {% endif %}
                     {% if gestor.orden_tipoDeCliente.visible %}
-                    <td>${{ cliente.tipoDeCliente}}</td>
+                    <td>{{ cliente.tipoDeCliente}}</td>
                     {% endif %}
                     </tr>
                 {% endfor %}
