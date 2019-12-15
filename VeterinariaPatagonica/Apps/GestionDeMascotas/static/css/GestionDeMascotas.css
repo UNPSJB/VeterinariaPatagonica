@@ -1,0 +1,102 @@
+.mascotaSecciones {
+  padding: 0px;
+  margin-top: 0px;
+  text-align: right;
+}
+
+.mascotaTitulo {
+  margin-top: 10px;
+  margin-bottom:3px;
+  font-weight: normal;
+}
+
+.mascotaSubtitulo {
+  margin: 3px 0px 20px 0px;
+  font-style: italic;
+  color: #555;
+}
+
+.mascotaLineaTitulo {
+  border-bottom: 1px solid #DDD;
+}
+
+.mascotaCuerpo {
+  padding: 0px;
+  margin-top: 5px;
+}
+
+#mascotaHabilitadosCrear {
+  clear: both;
+  margin-bottom: 10px;
+}
+
+.mascotaEtiqueta {
+  text-align: left;
+  font-weight: bold;
+  margin: 0px 0px 5px 0px;
+  padding: 0px;
+}
+
+.mascota-aviso-eliminacion {
+  text-align: center;
+  text-weight: bold;
+  margin: 20px 0px 20px 0px;
+}
+
+.mascotaItemAcciones a {
+  margin: 10px 0px 10px 0px;
+}
+
+.mascota-accion-listado {
+  font-size: 110%;
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+}
+.mascota-accion-listado:hover {
+  text-decoration: none;
+}
+
+.mascotaListado thead {
+  background-color: transparent;
+  color: #2A3F54;
+}
+
+.mascota-listado,
+.mascota-listado thead,
+.mascota-listado thead tr,
+.mascota-listado thead tr th,
+.mascota-listado tbody,
+.mascota-listado tbody tr,
+.mascota-listado tbody tr, {
+  border: 0px solid #FFF;
+}
+
+table.table.mascotaListado {
+  border: 0px solid #FFF;
+}
+
+.mascota-listado>tbody>tr>td {
+    padding-top: 9px;
+    padding-left: 4px;
+    border-top: 1px solid #DDD !important;
+}
+
+.wrapper-simple {
+    text-align: center;
+    margin: 0 auto;
+    display: block;
+    width: 45px;
+    height: 40px;
+    padding: 10px 5px;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fefaf4), to(#f4ede2));
+    border-radius: 5px;
+    box-shadow: inset rgba(255, 254, 255, 1) 0 0.1em 2px,
+                    #b7a082 0 1px 2px;
+    position: relative;
+    color: orange;
+}
+
+.naranja{
+    color: orange;
+}
+

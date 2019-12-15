@@ -1,54 +1,49 @@
 {% extends 'GestionDeMascotas/GestionDeMascotas.html' %}
+{% load static %}
 
 {% block paginaEstilos %}
-
     {{ block.super }}
-    {{formulario.media.css}}
-
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block titulo %}
-Gestion de Mascotas | Crear mascota
+Gestion de Mascotas | {{titulo}}
 {% endblock %}
 
-{% block mascotaTitulo %}
+{% block tituloSeccion %}
 {% if titulo == 1 %}
-    Nueva Mascota
+    {% include "snippets/titulo.html" with titulo="Nueva Mascota" %}
 {% endif %}
 {% if titulo == 2 %}
-    Modificar Mascota
+    {% include "snippets/titulo.html" with titulo="Modificar Mascota" %}
 {% endif %}
 {% endblock %}
 
-{% block mascotaSubtitulo %}
-{% if titulo == 1 %}
-    Agrega una Mascota al listado
-{% endif %}
-{% if titulo == 2 %}
-    Modifica datos de la Mascota
-{% endif %}
-{% endblock %}
+{% block contenido %}
+{{form.media}}
+
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% include "./snippets/form.html" with accion="Guardar Datos" %}
 
 
-{% block mascotaContenido %}
-
-    <div class="mascotaCuerpo">
-        <form class="form-horizontal" action="" method="post">
-
-            {% csrf_token %}
-
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" %}
-
-        </form>
-    </div>
-
-    
-
+    </form>
 
 {% endblock %}
-
 
 {% block paginaJavascript %}
-    {{ block.super }}
-    {{formulario.media.js}}
-{% endblock %}
+    {{block.super}}
+    <script src="{% static 'js/GestionDeMascotas.js' %}"></script>
+{% endblock paginaJavascript %}

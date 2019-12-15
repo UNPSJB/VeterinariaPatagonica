@@ -1,0 +1,58 @@
+<form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
+
+    <div class="hidden orden-listado">
+        {% for field in gestor.formOrden %}
+            {{ field }}
+        {% endfor %}
+        {{ gestor.formPagina.desde }}
+    </div>
+
+    <div class="sombreado" id="filtrar-mascotas">
+        {{ gestor.formFiltros.patente }}
+        {{ gestor.formFiltros.nombre }}
+        {{ gestor.formFiltros.cliente }}
+        {{ gestor.formFiltros.especie }}
+        {{ gestor.formPagina.resultados }}
+        <button class="btn btn-default filtrar" type="submit">Filtrar</button>
+    </div>
+
+    {% if gestor.numero_items %}
+        <table class="table table-bordered table-responsive items">
+            <colgroup>
+                <col class="columna{% if gestor.encabezado.orden_patente.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_nombre.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_cliente.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_especie.activa %} activa{% endif %}"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_patente %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombre %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_cliente %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_especie %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mascota in gestor.items_actuales %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'mascotas:mascotaVer' mascota.id %}">
+                                {{ mascota.patente }}</a>
+                        </td>
+                            <td> <p>{{mascota.nombre}}</p></td>
+                            <td> <p>{{mascota.cliente }}</p></td>
+                            <td> <p>{{mascota.especie }}</p></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+        {% include "snippets/paginacion.html" with links=gestor.paginas%}
+        </div>
+    </form>
+    {% else %}
+
+        <p><strong>No hay mascotas que mostrar</strong></p>
+
+    {% endif %}

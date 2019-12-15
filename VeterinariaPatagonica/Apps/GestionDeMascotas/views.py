@@ -5,14 +5,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 from .models import Mascota
-from .forms import MascotaFormFactory
+from .forms import MascotaFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from dal import autocomplete
 from django.db.models import Q
-from Apps.GestionDeClientes.models import Cliente
 from django.urls import reverse_lazy
-
+from django.urls import reverse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from Apps.GestionDeClientes.models import Cliente
+from VeterinariaPatagonica.tools import GestorListadoQuerySet
 
 def mascota(request):
     context = {}
@@ -24,14 +25,79 @@ def mascota(request):
 def dispatch(self, *args, **kwargs):
     return super(Mascota, self).dispatch(*args, **kwargs)
 
+def menuVer(usuario, mascota):
+
+    menu = [[],[],[]]
+
+    if usuario.has_perm("GestionDeMascotas.mascota_modificar"):
+        menu[0].append( (reverse("mascotas:mascotaModificar", args=(mascota.id,)), "Modificar mascota") )
+        if mascota.baja:
+            menu[0].append( (reverse("mascotas:mascotaHabilitar", args=(mascota.id,)), "Habilitar mascota") )
+        else:
+            menu[0].append( (reverse("mascotas:mascotaDeshabilitar", args=(mascota.id,)), "Deshabilitar mascota") )
+
+    if usuario.has_perm("GestionDeMascotas.mascota_listar_habilitados"):
+        menu[1].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
+    if usuario.has_perm("GestionDeMascotas.mascota_listar_no_habilitados"):
+        menu[1].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
+
+    if usuario.has_perm("GestionDeMascotas.mascota_crear"):
+        menu[2].append( (reverse("mascotas:mascotaCrear"), "Crear mascota") )
+
+    return [ item for item in menu if len(item) ]
+
+def menuListar(usuario, habilitados):
+    menu = [[],[]]
+
+    if (not habilitados) and usuario.has_perm("GestionDeMascotas.mascota_ver_habilitados"):
+        menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
+    if habilitados and usuario.has_perm("GestionDeMascotas.mascota_ver_no_habilitados"):
+        menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
+
+    if usuario.has_perm("GestionDeMascotas.mascota_crear"):
+        menu[1].append( (reverse("mascotas:mascotaCrear"), "Crear Mascota") )
+    return [ item for item in menu if len(item) ]
+
+def menuModificar(usuario, mascota):
+
+    menu = [[],[],[],[]]
+
+    menu[0].append( (reverse("mascotas:mascotaVer", args=(mascota.id,)), "Ver mascota") )
+
+    if mascota.baja:
+        menu[1].append( (reverse("mascotas:mascotaHabilitar", args=(mascota.id,)), "Habilitar mascota") )
+    else:
+        menu[1].append( (reverse("mascotas:mascotaDeshabilitar", args=(mascota.id,)), "Deshabilitar mascota") )
+
+    if usuario.has_perm("GestionDeMascotas.mascota_listar_habilitados"):
+        menu[2].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
+    if usuario.has_perm("GestionDeMascotas.mascota_listar_no_habilitados"):
+        menu[2].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
+
+    if usuario.has_perm("GestionDeMascotas.mascota_crear"):
+        menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear mascota") )
+
+    return [ item for item in menu if len(item) ]
+
+def menuCrear(usuario, mascota):
+
+    menu = [[],[],[],[]]
+
+    if usuario.has_perm("GestionDeMascotas.mascota_listar_habilitados"):
+        menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitados") )
+    if usuario.has_perm("GestionDeMascotas.mascota_listar_no_habilitados"):
+        menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitados") )
+
+    return [ item for item in menu if len(item) ]
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
 def modificar(request, id= None, cliente_id=None):
     mascota = Mascota.objects.get(id=id) if id is not None else None
-    cliente = None
+    mascota = None
     if cliente_id:
-        cliente = Cliente.objects.get(pk=cliente_id)
-    MascotaForm = MascotaFormFactory(mascota, cliente)
+        mascota = Cliente.objects.get(pk=cliente_id)
+    MascotaForm = MascotaFormFactory(mascota, mascota)
 
     if (id==None):
         context = {"titulo": 1, 'usuario': request.user}
@@ -48,9 +114,11 @@ def modificar(request, id= None, cliente_id=None):
             mascota = formulario.save()
             return HttpResponseRedirect("/GestionDeMascotas/ver/{}".format(mascota.id))
         else:
-            context['formulario'] = formulario
+            context['form'] = formulario
+            context['menu'] = menuModificar(request.user, mascota)
     else:
-        context['formulario'] = MascotaForm(instance=mascota)
+        context['form'] = MascotaForm(instance=mascota)
+        context['menu'] = menuCrear(request.user, mascota)
     template = loader.get_template('GestionDeMascotas/formulario.html')
     return HttpResponse(template.render(context, request))
 
@@ -103,67 +171,66 @@ def eliminar(request, id):
 def ver(request, id):
 
     try:
-        mascotas = Mascota.objects.get(id=id)
+        mascota = Mascota.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404("No encontrado", "La mascota con patente={} no existe.".format(id))
 
 
     template = loader.get_template('GestionDeMascotas/ver.html')
     contexto = {
-        'mascota': mascotas,
-        'usuario': request.user
-    }
-    return HttpResponse(template.render(contexto, request))
-
-
-
-def verHabilitados(request):
-    mascotasQuery = Mascota.objects.habilitados()
-    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
-    template = loader.get_template('GestionDeMascotas/verHabilitados.html')
-
-    paginator = Paginator(mascotasQuery, 3)
-    page = request.GET.get('page')
-
-    try:
-        mascotas = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        mascotas = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        mascotas = paginator.page(paginator.num_pages)
-
-    contexto = {
-        'mascotasQuery': mascotasQuery,
+        'mascota': mascota,
         'usuario': request.user,
-        'mascotas': mascotas,
+        "menu" : menuVer(request.user, mascota)
     }
     return HttpResponse(template.render(contexto, request))
 
-def verDeshabilitados(request):
-    mascotasQuery = Mascota.objects.deshabilitados()
-    mascotasQuery = mascotasQuery.filter(tools.paramsToFilter(request.GET, Mascota))
+
+
+def verHabilitados(request, habilitados=True):
+
+    mascotas = Mascota.objects.habilitados()
+    gestor = GestorListadoQuerySet(
+        campos=[
+            ["orden_patente", "Patente"],
+            ["orden_nombre", "Nombre"],
+            ["orden_cliente", "Dueño"],
+            ["orden_especie", "Especie"],
+        ],
+        clases={"filtrado" : FiltradoForm},
+        queryset=mascotas,
+        mapaFiltrado= Mascota.MAPPER,
+        mapaOrden= mascotas.MAPEO_ORDEN
+    )
+  
+    gestor.cargar(request)
+
+    template = loader.get_template('GestionDeMascotas/verHabilitados.html')
+    contexto = {
+        "gestor" : gestor,
+        "menu" : menuListar(request.user, habilitados),}
+    return HttpResponse(template.render(contexto, request))
+
+def verDeshabilitados(request, habilitados=False):
+    mascotas = Mascota.objects.deshabilitados()
+    gestor = GestorListadoQuerySet(
+        campos=[
+            ["orden_patente", "Patente"],
+            ["orden_nombre", "Nombre"],
+            ["orden_cliente", "Dueño"],
+            ["orden_especie", "Especie"],
+        ],
+        clases={"filtrado" : FiltradoForm},
+        queryset=mascotas,
+        mapaFiltrado= Mascota.MAPPER,
+        mapaOrden= mascotas.MAPEO_ORDEN
+    )
+  
+    gestor.cargar(request)
 
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
-
-    paginator = Paginator(mascotasQuery, 3)
-    page = request.GET.get('page')
-
-    try:
-        mascotas = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        mascotas = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        mascotas = paginator.page(paginator.num_pages)
-
     contexto = {
-        'mascotasQuery': mascotasQuery,
-        'usuario': request.user,
-        'mascotas': mascotas,
-    }
+        "gestor" : gestor,
+        "menu" : menuListar(request.user, habilitados),}
     return HttpResponse(template.render(contexto, request))
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
