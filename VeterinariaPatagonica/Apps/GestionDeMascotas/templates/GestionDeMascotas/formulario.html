@@ -45,5 +45,23 @@ Gestion de Mascotas | {{titulo}}
 
 {% block paginaJavascript %}
     {{block.super}}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
     <script src="{% static 'js/GestionDeMascotas.js' %}"></script>
-{% endblock paginaJavascript %}
+    <script type="text/javascript">
+    $(function () {
+            var today = new Date();
+            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+            var time = today.getHours() + ":" + today.getMinutes();
+            var dateTime = date+' '+time;
+            $("#id_fechaNacimiento").datetimepicker({
+                locale: 'es',
+                format: 'L',
+                maxDate: new Date()
+            });
+
+    });
+
+    </script>
+{% endblock %}
