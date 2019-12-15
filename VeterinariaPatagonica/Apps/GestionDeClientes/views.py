@@ -59,7 +59,7 @@ def menuListar(usuario, habilitados):
     if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados"):
         menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
     if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados"):
-        menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clienets deshabilitados") )
+        menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
 
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
         menu[1].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
@@ -215,8 +215,6 @@ def verHabilitados(request, habilitados=True):
 
 def verDeshabilitados(request, habilitados=False):
     """ Listado de clientes deshabilitados """
-    global clientesFiltrados
-
     clientes = Cliente.objects.deshabilitados()
 
     gestor = GestorListadoQuerySet(
@@ -233,10 +231,7 @@ def verDeshabilitados(request, habilitados=False):
         mapaOrden= clientes.MAPEO_ORDEN
     )
 
-    
     gestor.cargar(request)
-
-    clientesFiltrados = gestor.queryset
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
     context = {
         "gestor" : gestor,
