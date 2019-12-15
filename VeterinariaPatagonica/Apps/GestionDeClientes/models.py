@@ -42,7 +42,9 @@ class Cliente (models.Model):
             ("cliente_ver_habilitados", "ver_habilitados"),
             ("cliente_listar_habilitados", "listar_habilitados"),
             ("cliente_ver_no_habilitados", "ver_no_habilitados"),
-            ("cliente_listar_no_habilitados", "listar_no_habilitados")
+            ("cliente_listar_no_habilitados", "listar_no_habilitados"),
+            ("cliente_exportar_excel_habilitados", "exportar_habilitados_excel"),
+            ("cliente_exportar_excel_deshabilitados", "exportar_deshabilitados_excel"),
         )
         default_permissions = ()
         ordering = ["apellidos", "nombres"]
@@ -55,7 +57,7 @@ class Cliente (models.Model):
         "apellidos": "apellidos__icontains",
         "localidad": "localidad__icontains",
         "tipoDeCliente": "tipoDeCliente__icontains",
-        "mascotas": lambda value: Q(mascota__nombre__icontains=value),
+        #"mascotas": lambda value: Q(mascota__nombre__icontains=value),
     }
 
     REGEX_NOMBRE = '^[0-9a-zA-Z-_ .]{3,100}$'

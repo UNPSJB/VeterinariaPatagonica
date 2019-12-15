@@ -20,5 +20,5 @@ urlpatterns = [
     path('listado_clientes_excel/', clientes_views.ListadoClientesExcel, name="clientesListadoEXCEL"),
     path('listado_clientes_pdf/', clientes_views.ListadoClientesPDF, name="clientesListadoPDF"),
     path('ayudaCliente/', clientes_views.ayudaContextualCliente, name="ayudaCliente"),
-
+    #path('listado_clientes_excel/', clientes_views.exportar,{"formato" : "xlsx"} , name="clientesListadoEXCEL"),
 ]

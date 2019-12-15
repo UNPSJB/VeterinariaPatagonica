@@ -15,6 +15,17 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Apps.GestionDeClientes.models import Cliente
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 
+from django.conf import settings
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from django.views.generic import View
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+from openpyxl import Workbook
+
+mascotasFiltradas = []
+
 def mascota(request):
     context = {}
     template = loader.get_template('GestionDeMascotas/GestionDeMascotas.html')
@@ -47,15 +58,21 @@ def menuVer(usuario, mascota):
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
-    menu = [[],[]]
+    menu = [[], [], [], []]
 
     if (not habilitados) and usuario.has_perm("GestionDeMascotas.mascota_ver_habilitados"):
-        menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
-    if habilitados and usuario.has_perm("GestionDeMascotas.mascota_ver_no_habilitados"):
-        menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
 
+        menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
+        menu[1].append( (reverse("mascotas:mascotasListadoExcel"), "Exportar mascotas deshabilitados"))
+        menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas deshabilitados"))
+    if habilitados and usuario.has_perm("GestionDeMascotas.mascota_ver_no_habilitados"):
+
+        menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
+        menu[1].append( (reverse("mascotas:mascotasListadoExcel"), "Exportar mascotas habilitados") )
+        menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas habilitados") )
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
-        menu[1].append( (reverse("mascotas:mascotaCrear"), "Crear Mascota") )
+        menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear Mascota") )
+
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, mascota):
@@ -187,7 +204,8 @@ def ver(request, id):
 
 
 def verHabilitados(request, habilitados=True):
-
+    
+    global mascotasFiltradas
     mascotas = Mascota.objects.habilitados()
     gestor = GestorListadoQuerySet(
         campos=[
@@ -203,7 +221,7 @@ def verHabilitados(request, habilitados=True):
     )
   
     gestor.cargar(request)
-
+    mascotasFiltradas = gestor.queryset
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
     contexto = {
         "gestor" : gestor,
@@ -211,6 +229,8 @@ def verHabilitados(request, habilitados=True):
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request, habilitados=False):
+    
+    global mascotasFiltradas
     mascotas = Mascota.objects.deshabilitados()
     gestor = GestorListadoQuerySet(
         campos=[
@@ -226,12 +246,98 @@ def verDeshabilitados(request, habilitados=False):
     )
   
     gestor.cargar(request)
-
+    mascotasFiltradas = gestor.queryset
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
     contexto = {
         "gestor" : gestor,
         "menu" : menuListar(request.user, habilitados),}
     return HttpResponse(template.render(contexto, request))
+
+def ListadoMascotasExcel(request):
+    wb = Workbook()
+    ws = wb.active
+    ws['B1'] = 'LISTADO DE MASCOTAS'
+    ws.merge_cells('B1:E1')
+    ws['B3'] = 'PATENTE'
+    ws['C3'] = 'NOMBRE'
+    ws['D3'] = 'DUEÑO'
+    ws['E3'] = 'ESPECIE'
+    cont = 4
+    for mascota in mascotasFiltradas:
+        ws.cell(row=cont, column=2).value = mascota.patente
+        ws.cell(row=cont, column=3).value = mascota.nombre
+        ws.cell(row=cont, column=4).value = str(mascota.cliente)
+        ws.cell(row=cont, column=5).value = mascota.especie
+        cont = cont + 1
+    
+    column_widths = []
+    for row in ws.rows:
+        for i, cell in enumerate(row):
+            if len(column_widths) > i:
+                if len(str(cell.value)) > column_widths[i]:
+                    column_widths[i] = len(str(cell.value))
+            else:
+                column_widths += [len(str(cell.value))]
+
+    for i, column_width in enumerate(column_widths):
+         ws.column_dimensions[get_column_letter(i+1)].width = column_width
+
+
+    nombre_archivo = "ListadoMascotas.xlsx"
+
+    response = HttpResponse(content_type="application/ms-excel")
+    contenido = "attachment; filename={0}".format(nombre_archivo)
+    response["Content-Disposition"] = contenido
+    wb.save(response)
+    return response
+
+def ListadoMascotasPDF(request):
+    response = HttpResponse(content_type='application/pdf')
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer)
+    cabecera(pdf)
+    y = 650
+    tabla(pdf, y, mascotasFiltradas)
+    pdf.showPage()
+    pdf.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
+
+def cabecera(pdf):
+    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
+    pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
+    pdf.setFont("Helvetica", 16)
+    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.setFont("Helvetica", 14)
+    pdf.drawString(220, 770, u"LISTADO DE MASCOTAS")
+
+def tabla(pdf, y, mascotas):
+    encabezados = ('Patente', 'Nombre', 'Dueño', 'Especie')
+
+    detalles = [(mascota.patente, mascota.nombre, mascota.cliente, mascota.especie) for mascota in mascotas]
+    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 4 * cm, 5 * cm, 4 * cm])
+    detalle_orden.setStyle(TableStyle(
+        [
+            ('ALIGN', (0, 0), (3, 0), 'CENTER'),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ]
+    ))
+    detalle_orden.wrapOn(pdf, 800, 600)
+    detalle_orden.drawOn(pdf, 65, y)
+
+@login_required
+def ayudaContextualMascota(request):
+
+    template = loader.get_template('GestionDeMascotas/ayudaContextualMascota.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))
+
 
 class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
@@ -245,12 +351,3 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
 
         return qs
 
-@login_required
-def ayudaContextualMascota(request):
-
-    template = loader.get_template('GestionDeMascotas/ayudaContextualMascota.html')
-    contexto = {
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))

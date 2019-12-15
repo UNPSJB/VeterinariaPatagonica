@@ -104,7 +104,6 @@ class FiltradoForm(forms.Form):
         ("apellidos", "Apellidos"),
         ("localidad", "Localiad"),
         ("tipoDeCliente", "TipoDeCliente"),
-        ("mascota", "Mascota"),
     )
 
     dniCuit = forms.CharField(
@@ -147,14 +146,6 @@ class FiltradoForm(forms.Form):
         })
     )
 
-    mascota = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "placeholder":"Mascota...",
-            "class":"form-control"
-        })
-    )
-
     segun = forms.ChoiceField(
         label="Ordenar segun",
         choices=criterios,
@@ -173,7 +164,7 @@ class FiltradoForm(forms.Form):
         retorno = {}
         if self.is_valid():
 
-            fields = ("dniCuit", "apellidos", "nombres", "localidad", "tipoDeCliente", "mascota")
+            fields = ("dniCuit", "apellidos", "nombres", "localidad", "tipoDeCliente")
             for field in fields:
                     if field in self.cleaned_data and self.cleaned_data[field]:
                         retorno[field] = self.cleaned_data[field]

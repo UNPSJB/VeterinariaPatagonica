@@ -18,6 +18,8 @@ urlpatterns = [
     path('verHabilitados/', mascotas_views.verHabilitados, name='mascotaVerHabilitados'),
     path('verDeshabilitados/', mascotas_views.verDeshabilitados, name='mascotaVerDeshabilitados'),
     path('clienteAutocomplete/', mascotas_views.clienteAutocomplete.as_view(), name='mascotaClienteAutocomplete'),
+    path('listado_mascotas_excel/', mascotas_views.ListadoMascotasExcel, name="mascotasListadoExcel"),
+    path('listado_mascotas_pdf/', mascotas_views.ListadoMascotasPDF, name="mascotasListadoPDF"),
     path('ayudaMascota/', mascotas_views.ayudaContextualMascota, name='ayudaMascota'),
 
 

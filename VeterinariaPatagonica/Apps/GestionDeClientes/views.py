@@ -9,6 +9,7 @@ from .forms import ClienteFormFactory, FiltradoForm
 from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
+from VeterinariaPatagonica.forms import ExportarForm
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
@@ -54,15 +55,26 @@ def menuVer(usuario, cliente):
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
-    menu = [[],[]]
+    menu = [[],[],[],[]]
 
-    if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados"):
+    if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados") \
+        and usuario.has_perm("GestionDeClientes.cliente_exportar_excel_habilitados"):
+
         menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
-    if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados"):
+        menu[1].append( (reverse("clientes:clientesListadoEXCEL"), "Exportar clientes deshabilitados"))
+        menu[2].append( (reverse("clientes:clientesListadoPDF"), "Imprimir clientes deshabilitados"))
+    
+    if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados") \
+        and usuario.has_perm("GestionDeClientes.cliente_exportar_excel_deshabilitados"):
+
         menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
+        menu[1].append( (reverse("clientes:clientesListadoEXCEL"), "Exportar clientes habilitados") )
+        menu[2].append( (reverse("clientes:clientesListadoPDF"), "Imprimir clientes habilitados") )
 
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
-        menu[1].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
+
+        menu[3].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
+        
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, cliente):
@@ -186,7 +198,7 @@ def ver(request, id):
 
 def verHabilitados(request, habilitados=True):
     """ Listado de clientes habilitados """
-
+    global clientesFiltrados
     clientes = Cliente.objects.habilitados()
 
     gestor = GestorListadoQuerySet(
@@ -204,7 +216,7 @@ def verHabilitados(request, habilitados=True):
     )
    
     gestor.cargar(request)
-
+    clientesFiltrados = gestor.queryset
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
     context = {
         "gestor" : gestor, 
@@ -215,6 +227,7 @@ def verHabilitados(request, habilitados=True):
 
 def verDeshabilitados(request, habilitados=False):
     """ Listado de clientes deshabilitados """
+    global clientesFiltrados
     clientes = Cliente.objects.deshabilitados()
 
     gestor = GestorListadoQuerySet(
@@ -232,11 +245,62 @@ def verDeshabilitados(request, habilitados=False):
     )
 
     gestor.cargar(request)
+    clientesFiltrados = gestor.queryset
     template = loader.get_template('GestionDeClientes/verDeshabilitados.html')
     context = {
         "gestor" : gestor,
         "menu" : menuListar(request.user, habilitados),}
     return HttpResponse (template.render (context, request))
+
+def exportar(request, formato=None):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (LOGIN_URL, request.path))
+
+    permitidas = filtrosPara(request.user, "exportar_%s" % formato)
+    if permitidas is None:
+        raise PermissionDenied()
+    clientes = Cliente.objects.filter(permitidas)
+
+    gestor = GestorListadoQuerySet(
+        campos=[
+            ["orden_dniCuit", "DNI/CUIT"],
+            ["orden_apellidos", "Apellidos"],
+            ["orden_nombres", "Nombres"],
+            ["orden_localidad", "Localidad"],
+            ["orden_tipoDeCliente", "Tipo De Cliente"],
+        ],
+        clases={"filtrado" : FiltradoForm},
+        queryset=clientes,
+        mapaFiltrado= Cliente.MAPPER,
+        mapaOrden= clientes.MAPEO_ORDEN
+    )
+
+    gestor.cargar(request)
+    gestor.paginacion["cantidad"].label = "Clientes por pagina"
+    exportar = ExportarForm(request.GET)
+    accion = exportar.accion()
+    visibles = [ gestor[campo]["visible"] for campo in gestor.columnas ]
+    encabezados = [ gestor[campo]["etiqueta"] for campo in gestor.columnasVisibles ]
+
+    if formato=="xlsx":
+        listar=respuestaXlsx
+
+    if accion=="exportar_pagina":
+        response = listar(gestor.itemsActuales(), visibles, encabezados)
+    elif accion=="exportar_todos":
+        response = listar(gestor.items(), visibles, encabezados)
+    else:
+        template = loader.get_template("OtraGestionDeFacturas/exportar.html")
+        context = {
+            "formato" : formato,
+            "gestor" : gestor,
+            "exportar" : exportar,
+            "menu" : menuListar(request.user, "exportar_"+formato),
+        }
+        response = HttpResponse(template.render(context, request))
+    return response
+
 
 def ListadoClientesExcel(request):
     # Creamos el libro de trabajo
@@ -256,6 +320,7 @@ def ListadoClientesExcel(request):
     ws['F3'] = 'TIPO DE CLIENTE'
     cont = 5
     # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
+ 
     for cliente in clientesFiltrados:
         ws.cell(row=cont, column=2).value = cliente.dniCuit
         ws.cell(row=cont, column=3).value = cliente.nombres
@@ -263,6 +328,7 @@ def ListadoClientesExcel(request):
         ws.cell(row=cont, column=5).value = cliente.localidad
         ws.cell(row=cont, column=6).value = cliente.tipoDeCliente
         cont = cont + 1
+
 
     column_widths = []
     for row in ws.rows:
@@ -324,6 +390,7 @@ def tabla(pdf, y, clientes):
     encabezados = ('DNI/CUIT', 'Nombres', 'Apellidos', 'Localidad', 'Tipo de Cliente')
     # Creamos una lista de tuplas que van a contener a las personas
     detalles = [(cliente.dniCuit, cliente.nombres, cliente.apellidos, cliente.localidad, cliente.tipoDeCliente) for cliente in clientes]
+    
     # Establecemos el tamaño de cada una de las columnas de la tabla
     detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 5 * cm, 5 * cm, 4 * cm, 3 * cm])
     # Aplicamos estilos a las celdas de la tabla
@@ -340,7 +407,7 @@ def tabla(pdf, y, clientes):
     # Establecemos el tamaño de la hoja que ocupará la tabla
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
-    detalle_orden.drawOn(pdf, 20, y)
+    detalle_orden.drawOn(pdf, 30, y)
 
 @login_required
 def ayudaContextualCliente(request):

@@ -21,3 +21,10 @@ def clientesParaPagina(queryset, pagina, paginas):
     m = pagina * CLIENTES_POR_PAGINA
 
     return queryset[n:m]
+
+def menuExportar(usuario, formato, area):
+    menu = [[],[]]
+    if formato != "xlsx":
+        itemExportar(usuario, menu[0], "xlsx", area)
+    itemListar(usuario, menu[1], area)
+    return [ item for item in menu if len(item) ]
