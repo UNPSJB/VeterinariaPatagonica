@@ -4,41 +4,20 @@
 Gestion de Rubros | Ver Rubro
 {% endblock %}
 
-{% block secciones %}
-    {% include './seccionesSnippet.html' with pagina='default' %}
+{% block tituloSeccion %}
+{% include "snippets/titulo.html" with titulo="Rubro: "|add:rubro.nombre %}
 {% endblock %}
 
-{% block rubroTitulo %}
-Ver Rubro
-{% endblock %}
+{% block contenido %}
 
-{% block rubroSubtitulo %}
-Muestra datos del rubro
-{% endblock %}
-
-{% block rubroContenido %}
-
-    {% include './accionesSnippet.html' with item=rubro seccion='ver' %}
-
-    <div class="rubroCuerpo">
-
-        {% if rubro %}
-        <div class="well">
-            <p>Identificador: {{ rubro.id }}</p>
-            <p>Nombres: {{ rubro.nombre }} </p>
-            <p>Descripcion: {{ rubro.descripcion}}</p>
-
-        </div>
-        {% else %}
-
-            <p> El rubro no existe </p>
-
-        {% endif %}
-
+    <div>
+        <p> <strong> Identificador: </strong>{{ rubro.id }}</p>
+        <p> <strong> Nombres: </strong>{{ rubro.nombre }} </p>
+        <p> <strong> Descripcion: </strong>{{ rubro.descripcion}}</p>
     </div>
     <div class= "col-sm-offset-11">
       <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
     </div>
 
 
-{% endblock rubroContenido %}
+{% endblock contenido %}

@@ -1,35 +1,29 @@
 {% extends "sitioBase.html" %}
 {% load static %}
 
-{% block paginaEstilos %}
-    {{ block.super }}
-        <link rel="stylesheet" href="{% static 'css/GestionDeProductos.css' %}">
-{% endblock paginaEstilos %}
-
 {% block paginaSeccionGeneral %}
-    <section>
-        {% block secciones %}
+  <section>
+
+      {% block secciones %}
+      {% endblock %}
+
+      <h4 class="titulo">
+        {% block tituloSeccion %}
         {% endblock %}
+      </h4>
+      </p>
 
-        <h4 class="productoTitulo">
-            {% block productoTitulo %}
-            {% endblock productoTitulo %}
-        </h4>
-        <br>
-        <div class="productoLineaTitulo"> </div>
-
-        <p class="productoSubtitulo">
-            {% block productoSubtitulo %}
-            {% endblock productoSubtitulo %}
-        </p>
-
-    {% block productoContenido %}
-    {% endblock productoContenido %}
-    </section>
+      {% block contenido %}
+      {% endblock contenido %}
+      
+  </section>
 {% endblock paginaSeccionGeneral %}
 
 
 {% block footer %}
-  <p>Para mas información de los Productos haga click aquí<p>
+  <p>Para mas información  de los Productos haga click aquí<p>
 {% endblock footer %}
 
+{% block paginaJavascript %}
+    {{block.super}}
+{% endblock paginaJavascript %}

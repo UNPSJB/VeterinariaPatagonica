@@ -1,0 +1,102 @@
+.clienteSecciones {
+    padding: 0px;
+    margin-top: 0px;
+    text-align: right;
+  }
+  
+  .clienteTitulo {
+    margin-top: 10px;
+    margin-bottom:3px;
+    font-weight: normal;
+  }
+  
+  .clienteSubtitulo {
+    margin: 3px 0px 20px 0px;
+    font-style: italic;
+    color: #555;
+  }
+  
+  .clienteLineaTitulo {
+    border-bottom: 1px solid #DDD;
+  }
+  
+  .clienteCuerpo {
+    padding: 0px;
+    margin-top: 5px;
+  }
+  
+  .clienteHabilitadosCrear {
+    clear: both;
+    margin-bottom: 10px;
+  }
+  
+  .clienteEtiqueta {
+    text-align: left;
+    font-weight: bold;
+    margin: 0px 0px 5px 0px;
+    padding: 0px;
+  }
+  
+  .clientes-aviso-eliminacion {
+    text-align: center;
+    text-weight: bold;
+    margin: 20px 0px 20px 0px;
+  }
+  
+  .clienteItemAcciones a {
+    margin: 10px 0px 10px 0px;
+  }
+  
+  .cliente-accion-listado {
+    font-size: 110%;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+  }
+  .cliente-accion-listado:hover {
+    text-decoration: none;
+  }
+  
+  .clienteListado thead {
+    background-color: transparent;
+    color: #2A3F54;
+  }
+  
+  .clienteListado,
+  .clienteListado thead,
+  .clienteListado thead tr,
+  .clienteListado thead tr th,
+  .clienteListado tbody,
+  .clienteListado tbody tr,
+  .clienteListado tbody tr, {
+    border: 0px solid #FFF;
+  }
+  
+  table.table.clienteListado {
+    border: 0px solid #FFF;
+  }
+  
+  .clienteListado>tbody>tr>td {
+      padding-top: 9px;
+      padding-left: 4px;
+      border-top: 1px solid #DDD !important;
+  }
+  
+  .wrapper-simple {
+      text-align: center;
+      margin: 0 auto;
+      display: block;
+      width: 45px;
+      height: 40px;
+      padding: 10px 5px;
+      background: -webkit-gradient(linear, left top, left bottom, from(#fefaf4), to(#f4ede2));
+      border-radius: 5px;
+      box-shadow: inset rgba(255, 254, 255, 1) 0 0.1em 2px,
+                      #b7a082 0 1px 2px;
+      position: relative;
+      color: orange;
+  }
+  
+  .naranja{
+      color: orange;
+  }
+  

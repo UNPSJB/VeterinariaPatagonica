@@ -4,11 +4,11 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from Apps.GestionDeRubros import models as grmodels
 from VeterinariaPatagonica import tools
 from decimal import Decimal
-
-
+from django.db.models import Q
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from django.core.exceptions import ValidationError
 from django.db.models import F
+from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
 
 # Create your models here.
 
@@ -37,9 +37,25 @@ class ProductoQuerySet(tools.BajasLogicasQuerySet):
                 )
 
 class BaseProductoManager(models.Manager):
-    pass
+    def __init__(self, tipo=None):
+        super().__init__()
+        self.tipo = tipo
 
-ProductoManager = BaseProductoManager.from_queryset(ProductoQuerySet)
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tipo is not None:
+            qs = qs.filter(tipo=self.tipo)
+        return qs
+
+class ProductoQueryset(VeterinariaPatagonicaQuerySet):
+        MAPEO_ORDEN = {
+        "orden_nombre": ["nombre"],
+        "orden_marca": ["marca"],
+        "orden_formaDePresentacion": ["formaDePresentacion"],
+        "orden_precioPorUnidad": ["precioPorUnidad"],
+    }
+
+ProductoManager = BaseProductoManager.from_queryset(ProductoQueryset)
 
 class Producto (models.Model):
 
@@ -51,7 +67,8 @@ class Producto (models.Model):
             ("producto_ver_habilitados", "ver_habilitados"),
             ("producto_listar_habilitados", "listar_habilitados"),
             ("producto_ver_no_habilitados", "ver_no_habilitados"),
-            ("producto_listar_no_habilitados", "listar_no_habilitados")
+            ("producto_listar_no_habilitados", "listar_no_habilitados"),
+            ('deshabilitar_producto', 'deshabilitar_producto')
         )
         default_permissions = ()
         ordering = ["nombre", "marca"]
@@ -219,7 +236,6 @@ class Producto (models.Model):
     )
 
     baja = models.BooleanField(default=False)
-
 
     objects = ProductoManager()
 
