@@ -28,7 +28,7 @@ from reportlab.lib.units import cm
 from reportlab.lib import colors
 
 
-serviciosFiltrados = [] 
+serviciosFiltrados = []
 
 def menuVer(usuario, servicio):
 
@@ -49,7 +49,7 @@ def menuVer(usuario, servicio):
     if usuario.has_perm("GestionDeServicios.servicio_crear"):
         menu[2].append( (reverse("servicios:servicioCrear"), "Crear servicio") )
 
-    menu[3].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios")) 
+    menu[3].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
 
     return [ item for item in menu if len(item) ]
 
@@ -62,7 +62,7 @@ def menuListar(usuario, habilitados):
         menu[0].append( (reverse("servicios:servicioVerHabilitados"), "Listar servicios habilitados") )
         menu[1].append( (reverse("servicios:serviciosListadoEXCEL"), "Exportar servicios deshabilitados"))
         menu[2].append( (reverse("servicios:serviciosListadoPDF"), "Imprimir servicios deshabilitados"))
-    
+
     if habilitados and usuario.has_perm("GestionDeServicios.cliente_ver_no_habilitados") \
         and usuario.has_perm("GestionDeServicios.cliente_exportar_excel_deshabilitados"):
 
@@ -74,20 +74,20 @@ def menuListar(usuario, habilitados):
 
         menu[3].append( (reverse("servicios:servicioCrear"), "Crear Servicio") )
 
-    menu[4].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios")) 
-        
+    menu[4].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
+
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, servicio):
 
     menu = [[],[],[],[],[]]
+    if (servicio):
+        menu[0].append( (reverse("servicios:servicioVer", args=(servicio.id,)), "Ver servicio") )
 
-    menu[0].append( (reverse("servicios:servicioVer", args=(servicio.id,)), "Ver servicio") )
-
-    if servicio.baja:
-        menu[1].append( (reverse("servicios:servicioHabilitar", args=(servicio.id,)), "Habilitar servicio") )
-    else:
-        menu[1].append( (reverse("servicios:servicioDeshabilitar", args=(servicio.id,)), "Deshabilitar servicio") )
+        if servicio.baja:
+            menu[1].append( (reverse("servicios:servicioHabilitar", args=(servicio.id,)), "Habilitar servicio") )
+        else:
+            menu[1].append( (reverse("servicios:servicioDeshabilitar", args=(servicio.id,)), "Deshabilitar servicio") )
 
     if usuario.has_perm("GestionDeServicios.servicio_listar_habilitados"):
         menu[2].append( (reverse("servicios:servicioVerHabilitados"), "Listar servicios habilitados") )
@@ -96,8 +96,8 @@ def menuModificar(usuario, servicio):
 
     if usuario.has_perm("GestionDeServicios.servicio_crear"):
         menu[3].append( (reverse("servicios:servicioCrear"), "Crear servicio") )
-    
-    menu[4].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios")) 
+
+    menu[4].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
 
     return [ item for item in menu if len(item) ]
 
@@ -346,7 +346,7 @@ def ListadoServiciosExcel(request):
     ws['D3'] = 'PRECIO DE MANO DE OBRA'
     cont = 5
     # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
- 
+
     for servicio in serviciosFiltrados:
         ws.cell(row=cont, column=2).value = servicio.nombre
         ws.cell(row=cont, column=3).value = servicio.tipo
@@ -455,6 +455,3 @@ class FiltradoServiciosForm(forms.Form):
                 campo:valor for campo,valor in self.cleaned_data.items() if valor
             })
         return retorno
-
-
-
