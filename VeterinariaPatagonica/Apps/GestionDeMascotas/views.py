@@ -38,7 +38,7 @@ def dispatch(self, *args, **kwargs):
 
 def menuVer(usuario, mascota):
 
-    menu = [[],[],[]]
+    menu = [[],[],[],[]]
 
     if usuario.has_perm("GestionDeMascotas.mascota_modificar"):
         menu[0].append( (reverse("mascotas:mascotaModificar", args=(mascota.id,)), "Modificar mascota") )
@@ -55,10 +55,12 @@ def menuVer(usuario, mascota):
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[2].append( (reverse("mascotas:mascotaCrear"), "Crear mascota") )
 
+    menu[3].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
+
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
-    menu = [[], [], [], []]
+    menu = [[], [], [], [], []]
 
     if (not habilitados) and usuario.has_perm("GestionDeMascotas.mascota_ver_habilitados"):
 
@@ -73,11 +75,13 @@ def menuListar(usuario, habilitados):
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear Mascota") )
 
+    menu[4].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
+
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, mascota):
 
-    menu = [[],[],[],[]]
+    menu = [[],[],[],[],[]]
 
     menu[0].append( (reverse("mascotas:mascotaVer", args=(mascota.id,)), "Ver mascota") )
 
@@ -93,6 +97,8 @@ def menuModificar(usuario, mascota):
 
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear mascota") )
+    
+    menu[3].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
 
     return [ item for item in menu if len(item) ]
 
@@ -104,6 +110,8 @@ def menuCrear(usuario, mascota):
         menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitados") )
     if usuario.has_perm("GestionDeMascotas.mascota_listar_no_habilitados"):
         menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitados") )
+    
+    menu[1].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
 
     return [ item for item in menu if len(item) ]
 
@@ -111,10 +119,10 @@ def menuCrear(usuario, mascota):
 @permission_required('GestionDeMascotas.add_Mascota', raise_exception=True)
 def modificar(request, id= None, cliente_id=None):
     mascota = Mascota.objects.get(id=id) if id is not None else None
-    mascota = None
+    cliente = None
     if cliente_id:
-        mascota = Cliente.objects.get(pk=cliente_id)
-    MascotaForm = MascotaFormFactory(mascota, mascota)
+        cliente = Cliente.objects.get(pk=cliente_id)
+    MascotaForm = MascotaFormFactory(mascota, cliente)
 
     if (id==None):
         context = {"titulo": 1, 'usuario': request.user}
@@ -123,8 +131,7 @@ def modificar(request, id= None, cliente_id=None):
 
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
-
-
+        
         if formulario.is_valid():
             mascota = formulario.save()
             mascota.generadorDePatente(mascota.id)
@@ -331,7 +338,7 @@ def tabla(pdf, y, mascotas):
 @login_required
 def ayudaContextualMascota(request):
 
-    template = loader.get_template('GestionDeMascotas/ayudaContextualMascota.html')
+    template = loader.get_template('GestionDeMascotas/AyudaGestiondeMascotas.html')
     contexto = {
         'usuario': request.user,
     }

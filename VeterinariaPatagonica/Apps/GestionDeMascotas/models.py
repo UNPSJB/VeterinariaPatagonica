@@ -98,7 +98,7 @@ class Mascota(models.Model):
     )
 
     fechaNacimiento = models.DateField(
-        help_text="Fecha de la nacimiento de la mascota",
+        help_text="Fecha de nacimiento de la mascota",
         unique=False,
         null=False,
         blank=False,

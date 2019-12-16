@@ -125,20 +125,6 @@ class FiltradoForm(forms.Form):
         })
     )
 
-    segun = forms.ChoiceField(
-        label="Ordenar segun",
-        choices=criterios,
-        required=False,
-        widget=forms.Select(attrs={"class":"form-control"}),
-    )
-
-    orden = forms.ChoiceField(
-        label="Orden",
-        choices=ordenes,
-        required=False,
-        widget=forms.Select(attrs={"class":"form-control"}),
-    )
-
     def filtros(self):
         retorno = {}
         if self.is_valid():
