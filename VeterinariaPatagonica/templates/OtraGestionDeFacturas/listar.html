@@ -181,7 +181,7 @@ Listado de facturas
                             <td>${{ factura.total }}</td>
                         {% endif %}
                         {% if gestor.pago.visible %}
-                            <td>{% if factura.pago %}${{ factura.pago.importeTotal|floatformat:2 }}{% endif %}</td>
+                            <td>{% if factura.pago %}${{ factura.pago.importeTotal|floatformat:2 }}{% else %} $0 {% endif %}</td>
                         {% endif %}
                         {% if gestor.precioPractica.visible %}
                             <td>{% if factura.practica %}${{ factura.practica.precio|floatformat:2 }}{% endif %}</td>
@@ -201,8 +201,10 @@ Listado de facturas
                         </tr>
                     {% endfor %}
                     {% endblock %}
+
                 </tbody>
             </table>
+
         </div>
         {% if gestor.itemsActuales.count > demasiados %}
         <a name="findelistado" href="#iniciodelistado">
