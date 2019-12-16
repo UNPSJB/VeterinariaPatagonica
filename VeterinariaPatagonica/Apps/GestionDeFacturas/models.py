@@ -13,7 +13,7 @@ from Apps.GestionDePagos.models import Pago
 REGEXTIPO = '^[A-B-C]{1}$'
 MAXTIPO = 1
 MAXDECIMAL = 2
-MAXDIGITO = 6
+MAXDIGITO = 8
 
 MAX_DIGITOS_AJUSTES = 5
 MAX_DECIMALES_AJUSTES = 2

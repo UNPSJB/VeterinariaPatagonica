@@ -66,6 +66,7 @@ class Servicio(models.Model):
     MAX_PRECIO = Decimal(100000.00)
     PRECIO = MAX_ENTERO + MAX_DECIMAL
 
+    
 
     tipo = models.CharField(
         help_text="Tipo de Servicio (Consulta-Cirugia)",

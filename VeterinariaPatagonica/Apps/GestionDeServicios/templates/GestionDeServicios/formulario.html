@@ -38,8 +38,27 @@ Gestion de Servicios | Crear Servicios
       </div>
   {% endif %}
 
-  {% include "./snippets/form.html" with accion="Guardar Datos" %}
+  {% include "./snippets/form.html"%}
+  <div class= "col-xs-12">
+    <div class="col-xs-12 well" >
+      {{formset.management_form}}
+      {% for form in formset %}
+        <div class="col-xs-7" id="item-{{forloop.counter}}">
+          {{form}}
+        </div>
+      {% endfor %}
+      <div class="col-xs-5" id="buttons">
+        <div>
+          <a id="button-add" class="btn btn-primary btn-sm pull-right" role="button">
+            Agregar Producto &raquo;
+          </a>
+        </div>
+      </div>
 
-
+    </div>
+  </div>
+  <div>
+    <button type="button submit" name="button">Guardar datos</button>
+  </div>
 </form>
 {% endblock %}
