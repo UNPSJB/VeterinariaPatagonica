@@ -35,7 +35,7 @@ def clientes(request):
 
 def menuVer(usuario, cliente):
 
-    menu = [[],[],[]]
+    menu = [[],[],[],[]]
 
     if usuario.has_perm("GestionDeClientes.cliente_modificar"):
         menu[0].append( (reverse("clientes:clienteModificar", args=(cliente.id,)), "Modificar cliente") )
@@ -52,10 +52,12 @@ def menuVer(usuario, cliente):
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
         menu[2].append( (reverse("clientes:clienteCrear"), "Crear cliente") )
 
+    menu[3].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes")) 
+
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
-    menu = [[],[],[],[]]
+    menu = [[],[],[],[],[]]
 
     if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados") \
         and usuario.has_perm("GestionDeClientes.cliente_exportar_excel_habilitados"):
@@ -74,12 +76,14 @@ def menuListar(usuario, habilitados):
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
 
         menu[3].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
+
+    menu[4].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes")) 
         
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, cliente):
 
-    menu = [[],[],[],[]]
+    menu = [[],[],[],[],[]]
 
     menu[0].append( (reverse("clientes:clienteVer", args=(cliente.id,)), "Ver cliente") )
 
@@ -95,6 +99,8 @@ def menuModificar(usuario, cliente):
 
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
         menu[3].append( (reverse("clientes:clienteCrear"), "Crear cliente") )
+    
+    menu[4].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes")) 
 
     return [ item for item in menu if len(item) ]
 
@@ -106,6 +112,8 @@ def menuCrear(usuario, cliente):
         menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
     if usuario.has_perm("GestionDeClientes.cliente_listar_no_habilitados"):
         menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
+
+    menu[1].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes"))
 
     return [ item for item in menu if len(item) ]
 
