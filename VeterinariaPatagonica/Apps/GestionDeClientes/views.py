@@ -420,7 +420,7 @@ def tabla(pdf, y, clientes):
 @login_required
 def ayudaContextualCliente(request):
 # Redireccionamos la ayuda contextual
-    template = loader.get_template('GestionDeClientes/ayudaContextualCliente.html')
+    template = loader.get_template('GestionDeClientes/AyudaGestiondeClientes.html')
     contexto = {
         'usuario': request.user,
     }
