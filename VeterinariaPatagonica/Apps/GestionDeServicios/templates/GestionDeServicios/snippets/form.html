@@ -1,0 +1,27 @@
+<div class="form-group {{ form.tipo.name }} {% if form.tipo.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.tipo %}
+</div>
+<div class="form-group {{ form.nombre.name }} {% if form.nombre.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.nombre %}
+</div>
+<div class="form-group {{ form.descripcion.name }} {% if form.descripcion.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.descripcion %}
+</div>
+<div class="form-group {{ form.tiempoEstimado.name }} {% if form.tiempoEstimado.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.tiempoEstimado %}
+</div>
+<div class="form-group {{ form.precioManoDeObra.name }} {% if form.precioManoDeObra.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.precioManoDeObra %}
+</div>
+<div class="form-group {{ form.productos.name }} {% if form.productos.errors %}has-error{% endif %}">
+    {% include "snippets/field.html" with field=form.productos %}
+</div>
+{% if accion %}
+<div class="form-group">
+    <div class=row>
+        <div class="col-sm-offset-4 col-sm-8">
+            <button type="submit" name="submit-accion" value="{{ accion }}" class="btn btn-sm btn-default">{{ accion|capfirst }}</button>
+        </div>
+     </div>
+</div>
+{% endif %}

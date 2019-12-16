@@ -1,0 +1,185 @@
+{% extends "OtraGestionDeServicios/GestionDeServicios.html" %}
+{% load static %}
+{% block titulo %}
+{% if tipo == "Habilitados" %}
+    Listado de servicios habilitados
+{%else %}
+    Listado de servicios deshabilitados
+{%endif%}
+{% endblock %}
+{% block servicio-titulo %}
+{% if tipo == "habilitados" %}
+    {% include "snippets/titulo.html" with titulo="Listado de Servicios Habilitados" %}
+{%else %}
+    {% include "snippets/titulo.html" with titulo="Listado de Servicios Deshabilitados" %}
+{%endif%}
+
+{% endblock %}
+{% block servicio-contenido %}
+{% with demasiados=20 %}
+<div class="contenedor">
+    {% if gestor.numeroErrores %}
+    <div class="errores">
+        <b>Por favor revise los siguientes errores:</b>
+        <ul>
+        {% include "snippets/formErrores.html" with form=gestor.erroresValidacion %}
+        </ul>
+    </div>
+    {% endif %}
+    <form class="form-inline listado" action="{{ request.path }}" method="GET">
+        <div class="form-inline sombreado">
+            {% if gestor.filtrar %}
+            <div class="row fila boton-filtrado">
+            {% block botonFiltrado %}
+            <div class="col-xs-12 col-sm-12 col-md-12 columna">
+                <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
+                    <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de servicios
+                </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: Filtrado según nombre de servicio</li><li><b>Tipo</b>: Mostrar sólo servicios correspondientes del tipo seleccionado</li><li><b>Precio</b>: Mostrar sólo servicios con el precio ingresado</li></ul>" html=True placement="bottom" %}
+            </div>
+            {% endblock %}
+            </div>
+            <div class="row fila filtrado" id="filtradoResultados">
+            {% block formFiltrado %}
+            {% with form=gestor.filtrado %}
+            {% for campo in form %}
+            <div class="col-xs-12 col-sm-4 col-md-4 form-group {{ campo.name }} {% if campo.errors %}has-error{% endif %}">
+            {{ campo }}
+            </div>
+            {% endfor %}
+            {% endwith %}
+            {% endblock %}
+            </div>
+            {% endif %}
+            {% if gestor.seleccionar %}
+            <div class="row fila boton-seleccion">
+                {% block botonSeleccion %}
+                <div class="col-xs-12 col-sm-12 col-md-12 columna">
+                    <a class="boton" href="javascript:;" onclick="alternar('iconoCampos', 'seleccionCampos', 'fa-chevron-up', 'fa-chevron-down');"><i id="iconoCampos" class="fa fa-chevron-down"></i>Seleccion de campos</a>
+                    {% include "snippets/ayuda.html" with id="ayuda-seleccion-campos" content="<p>Opciones para ocultar/mostrar campos del listado.</p><p>Es obligatorio que haya algun campo visible</p>" html=True placement="bottom" %}
+                </div>
+                {% endblock %}
+            </div>
+            <div class="row hidden fila seleccion" id="seleccionCampos">
+                {% block formSeleccion %}
+                {% for opcion in gestor.seleccion.seleccionados %}
+                <div class="form-group col-xs-6 col-sm-4 col-md-3 seleccionar {{ field.name }}">
+                    {{ opcion.tag }}
+                    <label for="{{ opcion.id_for_label }}" class="control-label">{{ opcion.choice_label }}</label>
+                </div>
+                {% endfor %}
+                {% endblock %}
+            </div>
+            {% endif %}
+            <div class="row fila submit">
+                {% block submit %}
+                <div class="col-xs-4 col-sm-3 col-md-2 form-group pull-right submit">
+                    <button class="btn btn-sm btn-default" value="" type="submit">Actualizar</button>
+                </div>
+                {% if gestor.paginar %}
+                {{ gestor.paginacion.pagina_actual }}
+                <div class="col-xs-8 col-sm-5 col-md-4 form-group pull-right {{ gestor.paginacion.cantidad.name }} {% if gestor.paginacion.cantidad.errors %}has-error{% endif %}">
+                    <div class="input-group">
+                        <div class="input-group-addon"> {{ gestor.paginacion.cantidad.label }} </div>
+                        {{ gestor.paginacion.cantidad }}
+                    </div>
+                </div>
+                {% endif %}
+                {% endblock %}
+            </div>
+        </div>
+        {% if gestor.numeroItems %}
+        <div class="resumen-resultados">
+        {% block resumenResultados %}
+        <b>Mostrando {{ gestor.itemsActuales.count }} servicios de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
+        {% endblock %}
+            {% if gestor.itemsActuales.count > demasiados %}<b><a name="iniciodelistado" href="#findelistado">Ir al final del listado.</a></b>{% endif %}
+        </div>
+        {% if gestor.paginar and gestor.itemsActuales.count > demasiados %}
+        <div class="paginacion">
+        {{ gestor.paginacion.pagina }}
+        </div>
+        {% endif %}
+        <div class="table-responsive">
+            {% if gestor.ordenar %}
+            <div class="orden-campos hidden">
+                {% for field in gestor.orden.hidden_fields %}
+                    {{ field }}
+                {% endfor %}
+            </div>
+            {% endif %}
+            <table class="table table-bordered items">
+                <colgroup>
+                {% for campo in gestor %}
+                    <col class="columna {{ campo.nombre }}"/>
+                {% endfor %}
+                </colgroup>
+                <thead>
+                {% if gestor.ordenar %}
+                    <tr>
+                    {% for opcion in gestor.orden.ordenar %}
+                        <th><button {{ opcion }}>
+                            {{ opcion.choice_label }}
+                            {% if opcion.data.selected %}
+                            {% if opcion.data.value.0 == "+" %}
+                            <i class="fa fa-caret-up"></i>
+                            {% else %}
+                            <i class="fa fa-caret-down"></i>
+                            {% endif %}
+                            {% endif %}
+                        </button></th>
+                    {% endfor %}
+                    </tr>
+                {% else %}
+                    <tr>
+                    {% for campo in gestor %}
+                        <th><span class="{{ campo.nombre }}">
+                            {{ campo.etiqueta }}
+                        </span></th>
+                    {% endfor %}
+                    </tr>
+                {% endif %}
+                </thead>
+                <tbody>
+                {% block resultados %}
+                {% for servicio in gestor.itemsActuales %}
+                    {% if perms.GestionDeServicios.servicio_ver_habilitados %}
+                    <tr onclick="cambiarUbicacion('{% url "servicios:servicioVer" servicio.id %}');"  class="activa">
+                    {% else %}
+                    <tr class="inactiva">
+                    {% endif %}
+                    {% if gestor.nombre.visible %}
+                        <td>{{ servicio.nombre|capfirst }}</td>
+                    {% endif %}
+                    {% if gestor.tipo.visible %}
+                        <td>{{ servicio.get_tipo_display }}</td>
+                    {% endif %}
+                    {% if gestor.precio.visible %}
+                        <td>${{ servicio.precioManoDeObra|floatformat:2 }}</td>
+                    {% endif %}
+                    </tr>
+                {% endfor %}
+                {% endblock %}
+                </tbody>
+            </table>
+        </div>
+        {% if gestor.itemsActuales.count > demasiados %}
+        <a name="findelistado" href="#iniciodelistado">
+            <b>Volver al inicio del listado</b>
+        </a>
+        {% endif %}
+        {% else %}
+        <div class="sin-resultados">
+        {% block sinResultados %}
+        <b>No se encontraron servicios </b>
+        {% endblock %}
+        </div>
+        {% endif %}
+        {% if gestor.paginar %}
+        <div class="paginacion">
+            {{ gestor.paginacion.pagina }}
+        </div>
+        {% endif %}
+    </form>
+</div>
+{% endwith %}
+{% endblock %}

@@ -16,6 +16,7 @@ urlpatterns = [
     path('verHabilitados/', servicios_views.listar, {"habilitados":True}, name='servicioVerHabilitados'),
     path('verDeshabilitados/', servicios_views.listar, {"habilitados":False}, name='servicioVerDeshabilitados'),
     path('ayudaServicio/', servicios_views.ayudaContextualServicio, name='ayudaServicio'),
-
+    path('listado_servicios_excel/', servicios_views.ListadoServiciosExcel, name="serviciosListadoEXCEL"),
+    path('listado_servicios_pdf/', servicios_views.ListadoServiciosPDF, name="serviciosListadoPDF"),
     #path('volver/',servicios_views.volver, name='volver'),
 ]

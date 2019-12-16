@@ -9,22 +9,19 @@
 
 {% block paginaSeccionGeneral %}
   <section>
+
+
     {% block secciones %}
     {% endblock %}
-    <h4 class="servicioTitulo">
-      {% block servicioTitulo %}
-      {% endblock servicioTitulo %}
+
+    <h4 class="titulo">
+      {% block tituloSeccion %}
+      {% endblock %}
     </h4>
-    <br>
-    <div class="servicioLineaTitulo"> </div>
-    {% block errores %}
-    {% endblock errores %}
-    <p class="servicioSubtitulo">
-      {% block servicioSubtitulo %}
-      {% endblock servicioSubtitulo%}
-    </p>
-  {% block servicioContenido %}
-  {% endblock servicioContenido %}
+
+    {% block servicioContenido %}
+    {% endblock servicioContenido %}
+
   </section>
 
 

@@ -6,6 +6,15 @@
 Gestion de Servicios | Crear Servicios
 {% endblock %}
 
+{% block tituloSeccion %}
+{% if titulo == 1 %}
+    {% include "snippets/titulo.html" with titulo="Nuevo Servicio" %}
+{% endif %}
+{% if titulo == 2 %}
+    {% include "snippets/titulo.html" with titulo="Modificar Servicio" %}
+{% endif %}
+{% endblock %}
+
 {% block servicioTitulo %}
 {% if titulo == 1 %}
     Nuevo Servicio
@@ -15,20 +24,22 @@ Gestion de Servicios | Crear Servicios
 {% endif %}
 {% endblock %}
 
-{% block servicioSubtitulo %}
-{% if titulo == 1 %}
-    Agrega un Servicio al listado
-{% endif %}
-{% if titulo == 2 %}
-    Modifica datos del Servicio
-{% endif %}
-{% endblock %}
-
 {% block servicioContenido %}
-  <div class="servicioCuerpo">
-    <form class="form-horizontal formulario" action="" method="post">
-      {% csrf_token %}
-      {% include './snippetServicios.html' with form=formulario formset=formset accion="Guardar datos" %}
-    </form>
-  </div>
+<form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+
+  {% csrf_token %}
+
+  {% if form.errors %}
+      <div class="errores">
+          <strong>Por favor revise los siguientes errores:</strong>
+          <ul>
+              {% include "snippets/formErrores.html" %}
+          </ul>
+      </div>
+  {% endif %}
+
+  {% include "./snippets/form.html" with accion="Guardar Datos" %}
+
+
+</form>
 {% endblock %}
