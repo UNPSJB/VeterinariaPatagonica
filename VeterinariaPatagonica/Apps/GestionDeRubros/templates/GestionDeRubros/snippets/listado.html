@@ -1,0 +1,50 @@
+<form class="form-inline listado" action="{{ request.get_full_path }}" method="GET">
+
+    <div class="hidden orden-listado">
+        {% for field in gestor.formOrden %}
+            {{ field }}
+        {% endfor %}
+        {{ gestor.formPagina.desde }}
+    </div>
+
+    <div class="sombreado" id="filtrar-clientes">
+        {{ gestor.formFiltros.nombre }}
+        {{ gestor.formFiltros.descripcion }}
+        {{ gestor.formPagina.resultados }}
+        <button class="btn btn-default filtrar" type="submit">Filtrar</button>
+    </div>
+
+    {% if gestor.numero_items %}
+        <table class="table table-bordered table-responsive items">
+            <colgroup>
+                <col class="columna{% if gestor.encabezado.orden_nombre.activa %} activa{% endif %}"/>
+                <col class="columna{% if gestor.encabezado.orden_descripcion.activa %} activa{% endif %}"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_nombre %}</th>
+                    <th>{% include "snippets/encabezado.html" with columna=gestor.encabezado.orden_descripcion %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for rubro in gestor.items_actuales %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'clientes:clienteVer' cliente.id %}">
+                                {{ cliente.nombre }}</a>
+                        </td>
+                            <td> <p>{{cliente.descripcion}}</p></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div>
+        {% include "snippets/paginacion.html" with links=gestor.paginas%}
+        </div>
+    </form>
+    {% else %}
+
+        <p><strong>No hay rubros que mostrar</strong></p>
+
+    {% endif %}

@@ -1,50 +1,48 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
+{% load static %}
 
 {% block paginaEstilos %}
-    {{formulario.media.css}}
     {{ block.super }}
-
-
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
+    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block titulo %}
-Gestion de Productos | Crear Producto
+Gestion de Productos | {{titulo}}
 {% endblock %}
 
-{% block productoTitulo %}
+{% block tituloSeccion %}
 {% if titulo == 1 %}
-    Nuevo Producto
+    {% include "snippets/titulo.html" with titulo="Nuevo Producto" %}
 {% endif %}
 {% if titulo == 2 %}
-    Modificar Producto
+    {% include "snippets/titulo.html" with titulo="Modificar Producto" %}
 {% endif %}
 {% endblock %}
 
-{% block productoSubtitulo %}
-{% if titulo == 1 %}
-    Agrega un Producto al listado
-{% endif %}
-{% if titulo == 2 %}
-    Modifica datos del Producto
-{% endif %}
+{% block contenido %}
+
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
+
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
+
+        {% include "./snippets/form.html" with accion="Guardar Datos" %}
+
+
+    </form>
+
 {% endblock %}
-
-{% block productoContenido %}
-
-    <div class="productoCuerpo">
-        <form class="form-horizontal formulario" action="" method="post">
-
-            {% csrf_token %}
-
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar datos" %}
-
-        </form>
-    </div>
-
-{% endblock %}
-
 
 {% block paginaJavascript %}
-    {{ block.super }}
-    {{formulario.media.js}}
-{% endblock %}
+    {{block.super}}
+    <script src="{% static 'js/gestion-productos.js' %}"></script>
+{% endblock paginaJavascript %}

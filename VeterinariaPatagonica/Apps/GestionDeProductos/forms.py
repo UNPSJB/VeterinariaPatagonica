@@ -16,7 +16,7 @@ rubro = forms.DateField(
 
 )
 
-def ProductoFormFactory(producto=None):
+def ProductoFormFactory(producto=None, rubro=None):
     campos = [ 'marca', 'descripcion',
                'formaDePresentacion', 'stock',
                'precioDeCompra', 'precioPorUnidad',
@@ -30,6 +30,9 @@ def ProductoFormFactory(producto=None):
         class Meta:
             model = Producto
             fields = campos
+            widget_rubro = autocomplete.ModelSelect2(url='/GestionDeProductos/rubroAutocomplete')
+            if rubro:
+                widget_rubro = autocomplete.ModelSelect2(url='/GestionDeProductos/rubroAutocomplete/?q={}'.format(rubro.nombre))
             labels = {
                 'nombre':'Nombre:',
                 'marca': 'Marca:',
@@ -63,7 +66,7 @@ def ProductoFormFactory(producto=None):
                 'formaDePresentacion' : forms.Select(),
                 'precioPorUnidad': forms.NumberInput(),
                 'precioDeCompra': forms.NumberInput(),
-                'rubro' : autocomplete.ModelSelect2(url='/GestionDeProductos/rubroAutocomplete'),
+                'rubro' : widget_rubro,
             }
 
 
@@ -83,3 +86,91 @@ def ProductoFormFactory(producto=None):
                     })
 
     return ProductoForm
+
+class FiltradoForm(forms.Form):
+
+    ordenes = (
+        ("d", "Descendente"),
+        ("a", "Ascendente"),
+    )
+
+    criterios = (
+        ("nombre", "Nombre"),
+        ("marca", "Marca"),
+        ("formaDePresentacion", "Forma de Presentación"),
+        ("precioPorUnidadMayor", "Precio por Unidad Mayor"),
+        ("precioPorUnidadMenor", "Precio por Unidad Menor"),
+    )
+
+    nombre = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Nombre...",
+            "class":"form-control"
+        })
+    )
+
+    marca = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Marca...",
+            "class":"form-control",
+        })
+    )
+
+    formaDePresentacion = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Forma De Presentación...",
+            "class":"form-control",
+        })
+    )
+
+    precioPorUnidadMayor = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Precio mayor que...",
+            "class":"form-control",
+        })
+    )
+
+    precioPorUnidadMenor = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            "placeholder":"Precio menor que...",
+            "class":"form-control",
+        })
+    )
+
+    segun = forms.ChoiceField(
+        label="Ordenar segun",
+        choices=criterios,
+        required=False,
+        widget=forms.Select(attrs={"class":"form-control"}),
+    )
+
+    orden = forms.ChoiceField(
+        label="Orden",
+        choices=ordenes,
+        required=False,
+        widget=forms.Select(attrs={"class":"form-control"}),
+    )
+
+    def filtros(self):
+        retorno = {}
+        if self.is_valid():
+            fields = ("nombre", "marca", "formaDePresentacion","precioPorUnidadMayor","precioPorUnidadMenor")
+            for field in fields:
+                if field in self.cleaned_data and self.cleaned_data[field]:
+                    retorno[field] = self.cleaned_data[field]
+        return retorno
+
+    def criterio(self):
+        if self.cleaned_data and "segun" in self.cleaned_data:
+            return self.cleaned_data["segun"]
+        return None
+
+    def ascendente(self):
+        if self.cleaned_data and "orden" in self.cleaned_data:
+            return (self.cleaned_data["orden"] == "a")
+        return None

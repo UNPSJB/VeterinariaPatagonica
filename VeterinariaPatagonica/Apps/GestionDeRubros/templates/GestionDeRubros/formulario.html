@@ -1,21 +1,25 @@
 {% extends 'GestionDeRubros/GestionDeRubros.html' %}
 {% load static %}
 
-{% block titulo %}
-Gestion de Rubros | Crear Rubros
+{% block paginaEstilos %}
+    {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 
-{% block rubroTitulo %}
+{% block titulo %}
+Gestion de Rubros | {{titulo}}
+{% endblock %}
+
+{% block tituloSeccion %}
 {% if titulo == 1 %}
-    Nuevo Rubro
+    {% include "snippets/titulo.html" with titulo="Nuevo Rubro" %}
 {% endif %}
 {% if titulo == 2 %}
-    Modificar Rubro
+    {% include "snippets/titulo.html" with titulo="Modificar Rubro" %}
 {% endif %}
 {% endblock %}
 
-{% block rubroSubtitulo %}
-
+{% block subtitulo %}
 {% if titulo == 1 %}
     Agrega un Rubro al listado
 {% endif %}
@@ -24,16 +28,28 @@ Gestion de Rubros | Crear Rubros
 {% endif %}
 {% endblock %}
 
-{% block rubroContenido %}
+{% block contenido %}
 
-    <div class="rubroCuerpo">
-        <form class="form-horizontal formulario" action="" method="post">
+    <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
 
-            {% csrf_token %}
+        {% csrf_token %}
 
-            {% include 'formularios/snippet.html' with campos=formulario accion="Guardar Datos" accion2=""%}
+        {% if form.errors %}
+            <div class="errores">
+                <strong>Por favor revise los siguientes errores:</strong>
+                <ul>
+                    {% include "snippets/formErrores.html" %}
+                </ul>
+            </div>
+        {% endif %}
 
-        </form>
-    </div>
+        {% include "./snippets/form.html" with accion="Guardar Datos" %}
+
+    </form>
 
 {% endblock %}
+
+{% block paginaJavascript %}
+    {{block.super}}
+    <script src="{% static 'js/gestion-rubros.js' %}"></script>
+{% endblock paginaJavascript %}
