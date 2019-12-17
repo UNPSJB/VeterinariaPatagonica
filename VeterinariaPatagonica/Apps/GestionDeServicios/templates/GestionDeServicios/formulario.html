@@ -32,9 +32,7 @@ Gestion de Servicios | Crear Servicios
   {% if form.errors %}
       <div class="errores">
           <strong>Por favor revise los siguientes errores:</strong>
-          <ul>
-              {% include "snippets/formErrores.html" %}
-          </ul>
+          <ul>{% include "snippets/formErrores.html" %}</ul>
       </div>
   {% endif %}
 
