@@ -97,7 +97,9 @@ class TipoDeAtencion(models.Model):
             ("tipodeatencion_ver_habilitados", "ver_habilitados"),
             ("tipodeatencion_listar_habilitados", "listar_habilitados"),
             ("tipodeatencion_ver_no_habilitados", "ver_no_habilitados"),
-            ("tipodeatencion_listar_no_habilitados", "listar_no_habilitados")
+            ("tipodeatencion_listar_no_habilitados", "listar_no_habilitados"),
+            ("tipodeatencion_exportar_excel_habilitados", "exportar_habilitados_excel"),
+            ("tipodeatencion_exportar_excel_deshabilitados", "exportar_deshabilitados_excel"),
         )
         default_permissions = ()
 

@@ -4,11 +4,11 @@
 Gestion de Servicio | Ver Servicio
 {% endblock titulo %}
 
-{% block tituloSeccion %}
+{% block servicio-titulo %}
 {% include "snippets/titulo.html" with titulo="Servicio: "|add:servicio.nombre %}
 {% endblock %}
 
-{% block servicioContenido %}
+{% block servicio-contenido %}
 
         {% if servicio %}
           <div>
@@ -49,4 +49,4 @@ Gestion de Servicio | Ver Servicio
       <a><span class="glyphicon glyphicon-arrow-left" type=button onClick="javascript:history.go(-1);" data-toggle="tooltip" data-placement="bottom" title="Volver atrás."></a>
     </div>
 
-{% endblock servicioContenido %}
+{% endblock servicio-contenido %}

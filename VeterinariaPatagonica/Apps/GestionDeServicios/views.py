@@ -49,8 +49,6 @@ def menuVer(usuario, servicio):
     if usuario.has_perm("GestionDeServicios.servicio_crear"):
         menu[2].append( (reverse("servicios:servicioCrear"), "Crear servicio") )
 
-    menu[3].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
-
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
@@ -74,8 +72,6 @@ def menuListar(usuario, habilitados):
 
         menu[3].append( (reverse("servicios:servicioCrear"), "Crear Servicio") )
 
-    menu[4].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
-
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, servicio):
@@ -97,8 +93,6 @@ def menuModificar(usuario, servicio):
     if usuario.has_perm("GestionDeServicios.servicio_crear"):
         menu[3].append( (reverse("servicios:servicioCrear"), "Crear servicio") )
 
-    menu[4].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
-
     return [ item for item in menu if len(item) ]
 
 def menuCrear(usuario, servicio):
@@ -109,8 +103,6 @@ def menuCrear(usuario, servicio):
         menu[0].append( (reverse("servicios:servicioVerHabilitados"), "Listar servicios habilitados") )
     if usuario.has_perm("GestionDeServicios.servicio_listar_no_habilitados"):
         menu[0].append( (reverse("servicios:servicioVerDeshabilitados"), "Listar servicios deshabilitados") )
-
-    menu[1].append((reverse("servicios:ayudaServicio"), "Ayuda sobre Gestión de Servicios"))
 
     return [ item for item in menu if len(item) ]
 

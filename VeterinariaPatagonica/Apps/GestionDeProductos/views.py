@@ -373,3 +373,13 @@ def tabla(pdf, y, productos):
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
     detalle_orden.drawOn(pdf, 20, y)
+
+class rubroAutocomplete(autocomplete.Select2QuerySetView):
+
+    def get_queryset(self):
+        # Don't forget to filter out results depending on the visitor !
+        qs = Rubro.objects.all()
+        if self.q:
+            qs = qs.filter(Q(nombre__icontains=self.q))
+
+        return qs

@@ -11,21 +11,12 @@
                 <div class="separador"></div>
                 {% endif %}
                 <ul class="seccion">
-                {% for url, etiqueta in seccion %}
-                    {% if etiqueta == "Ayuda sobre Gestión de Clientes" %}
-                    <li>
-                        <a href="{{ url }}" target="_blank">
-                            <div class="etiqueta">{{ etiqueta|capfirst }}</div>
-                        </a>
-                    </li>
-                    {% else %}  
-
+                {% for url, etiqueta in seccion %} 
                     <li>
                         <a href="{{ url }}">
                             <div class="etiqueta">{{ etiqueta|capfirst }}</div>
                         </a>
                     </li>
-                    {% endif %}
                 {% endfor %}
                 </ul>
             {% endfor %}

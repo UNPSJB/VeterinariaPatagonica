@@ -10,6 +10,7 @@ from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 from VeterinariaPatagonica.forms import ExportarForm
+from Apps.GestionDePracticas.models import *
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
@@ -52,8 +53,6 @@ def menuVer(usuario, cliente):
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
         menu[2].append( (reverse("clientes:clienteCrear"), "Crear cliente") )
 
-    menu[3].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes")) 
-
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
@@ -76,8 +75,6 @@ def menuListar(usuario, habilitados):
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
 
         menu[3].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
-
-    menu[4].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes")) 
         
     return [ item for item in menu if len(item) ]
 
@@ -99,8 +96,6 @@ def menuModificar(usuario, cliente):
 
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
         menu[3].append( (reverse("clientes:clienteCrear"), "Crear cliente") )
-    
-    menu[4].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes")) 
 
     return [ item for item in menu if len(item) ]
 
@@ -112,8 +107,6 @@ def menuCrear(usuario, cliente):
         menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
     if usuario.has_perm("GestionDeClientes.cliente_listar_no_habilitados"):
         menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
-
-    menu[1].append((reverse("clientes:ayudaCliente"), "Ayuda sobre Gestión de Clientes"))
 
     return [ item for item in menu if len(item) ]
 
@@ -164,6 +157,16 @@ def deshabilitar(request, id):
         cliente = Cliente.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
+    
+    practicas = Practica.objects.enEstado([Programada, Realizada]).filter(cliente=cliente).count()
+
+    if practicas > 0:
+        raise VeterinariaPatagonicaError("Error","El cliente tiene practicas realizadas")
+    
+    practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
+    if practicas > 0:
+        raise VeterinariaPatagonicaError("Error","El cliente tiene practicas facturadas sin pagar")
+    
 
     cliente.baja = True
     cliente.save()
