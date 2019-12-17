@@ -13,7 +13,6 @@ rubro = forms.DateField(
         'required': "el rubro es obligatorio"
     },
     validators=[],
-
 )
 
 def ProductoFormFactory(producto=None, rubro=None):
@@ -142,19 +141,19 @@ class FiltradoForm(forms.Form):
         })
     )
 
-    segun = forms.ChoiceField(
+    """segun = forms.ChoiceField(
         label="Ordenar segun",
         choices=criterios,
         required=False,
         widget=forms.Select(attrs={"class":"form-control"}),
-    )
+    )"""
 
-    orden = forms.ChoiceField(
+    """orden = forms.ChoiceField(
         label="Orden",
         choices=ordenes,
         required=False,
         widget=forms.Select(attrs={"class":"form-control"}),
-    )
+    )"""
 
     def filtros(self):
         retorno = {}

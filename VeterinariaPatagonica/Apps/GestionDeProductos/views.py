@@ -255,9 +255,8 @@ def eliminar(request, id):
         return HttpResponse( template.render( context, request) )
 
 class rubroAutocomplete(autocomplete.Select2QuerySetView):
-
     def get_queryset(self):
-        # Don't forget to filter out results depending on the visitor !
+        # Don't forget to filter out results depending on the visitor!
         qs = Rubro.objects.all()
         if self.q:
             qs = qs.filter(Q(nombre__icontains=self.q))
@@ -272,7 +271,6 @@ def ayudaContextualProducto(request):
     contexto = {
         'usuario': request.user,
     }
-
     return HttpResponse(template.render(contexto, request))
 
 def ListadoProductosExcel(request):
@@ -287,11 +285,15 @@ def ListadoProductosExcel(request):
     # Creamos los encabezados desde la celda B3 hasta la E3
     ws['B3'] = 'NOMBRE'
     ws['C3'] = 'MARCA'
-    cont = 5
+    ws['D3'] = 'FORMA DE PRESENTACIÓN'
+    ws['E3'] = 'PRECIO POR UNIDAD'
+    cont = 4
     # Recorremos el conjunto de productos y vamos escribiendo cada uno de los datos en las celdas
     for producto in productosFiltrados:
         ws.cell(row=cont, column=2).value = producto.nombre
         ws.cell(row=cont, column=3).value = producto.marca
+        ws.cell(row=cont, column=4).value = producto.formaDePresentacion
+        ws.cell(row=cont, column=5).value = producto.precioPorUnidad
         cont = cont + 1
     
     column_widths = []
