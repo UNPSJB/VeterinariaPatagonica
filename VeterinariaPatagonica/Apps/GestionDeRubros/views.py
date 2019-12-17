@@ -113,7 +113,7 @@ def menuCrear(usuario, rubro):
         menu[0].append( (reverse("rubros:rubroVerHabilitados"), "Listar rubros habilitados") )
     if usuario.has_perm("GestionDeRubros.rubro_listar_no_habilitados"):
         menu[0].append( (reverse("rubros:rubroVerDeshabilitados"), "Listar rubros deshabilitados") )
-    menu[1].append((reverse("rubros:ayudaRubro"), "Ayuda sobre Gestión de Rubros"))
+
     return [ item for item in menu if len(item) ]
 
 
