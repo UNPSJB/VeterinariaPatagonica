@@ -12,8 +12,25 @@ from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
 
 # Create your models here.
 
+class BaseProductoManager(models.Manager):
+    def __init__(self, tipo=None):
+        super().__init__()
+        self.tipo = tipo
 
-class ProductoQuerySet(tools.BajasLogicasQuerySet):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tipo is not None:
+            qs = qs.filter(tipo=self.tipo)
+        return qs
+
+class ProductoQueryset(VeterinariaPatagonicaQuerySet):
+    MAPEO_ORDEN = {
+        "orden_nombre": ["nombre"],
+        "orden_marca": ["marca"],
+        "orden_formaDePresentacion": ["formaDePresentacion"],
+        "orden_precioPorUnidad": ["precioPorUnidad"],
+    }
+
     def insumos(self):
         return self.filter(precioPorUnidad__lte=Decimal(0))
     def productos(self):
@@ -29,25 +46,6 @@ class ProductoQuerySet(tools.BajasLogicasQuerySet):
                 )
             producto.full_clean()
             producto.save()
-
-class BaseProductoManager(models.Manager):
-    def __init__(self, tipo=None):
-        super().__init__()
-        self.tipo = tipo
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        if self.tipo is not None:
-            qs = qs.filter(tipo=self.tipo)
-        return qs
-
-class ProductoQueryset(VeterinariaPatagonicaQuerySet):
-        MAPEO_ORDEN = {
-        "orden_nombre": ["nombre"],
-        "orden_marca": ["marca"],
-        "orden_formaDePresentacion": ["formaDePresentacion"],
-        "orden_precioPorUnidad": ["precioPorUnidad"],
-    }
 
 ProductoManager = BaseProductoManager.from_queryset(ProductoQueryset)
 

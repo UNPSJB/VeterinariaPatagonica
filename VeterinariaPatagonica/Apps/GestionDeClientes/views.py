@@ -82,12 +82,13 @@ def menuModificar(usuario, cliente):
 
     menu = [[],[],[],[],[]]
 
-    menu[0].append( (reverse("clientes:clienteVer", args=(cliente.id,)), "Ver cliente") )
+    if cliente is not None:
+        menu[0].append( (reverse("clientes:clienteVer", args=(cliente.id,)), "Ver cliente") )
 
-    if cliente.baja:
-        menu[1].append( (reverse("clientes:clienteHabilitar", args=(cliente.id,)), "Habilitar cliente") )
-    else:
-        menu[1].append( (reverse("clientes:clienteDeshabilitar", args=(cliente.id,)), "Deshabilitar cliente") )
+        if cliente.baja:
+            menu[1].append( (reverse("clientes:clienteHabilitar", args=(cliente.id,)), "Habilitar cliente") )
+        else:
+            menu[1].append( (reverse("clientes:clienteDeshabilitar", args=(cliente.id,)), "Deshabilitar cliente") )
 
     if usuario.has_perm("GestionDeClientes.cliente_listar_habilitados"):
         menu[2].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )

@@ -2,9 +2,9 @@
 {% load static %}
 
 {% block paginaEstilos %}
+    {{ form.media.css }}
     {{ block.super }}
     <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
-    <link href="{% static "css/tema-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block titulo %}
@@ -43,6 +43,7 @@ Gestion de Productos/Insumos | {{titulo}}
 {% endblock %}
 
 {% block paginaJavascript %}
+    {{ form.media.js }}
     {{block.super}}
     <script src="{% static 'js/gestion-productos.js' %}"></script>
 {% endblock paginaJavascript %}
