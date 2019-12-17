@@ -13,7 +13,7 @@ urlpatterns = [
     path("deshabilitar/<int:id>/", views.cambioEstado, {"baja" : True}, name="deshabilitar"),
     path("habilitar/<int:id>/", views.cambioEstado, {"baja" : False}, name="habilitar"),
     path("ayudaTipoDeAtencion", views.ayudaContextualTipoDeAtencion, name='ayudaTipoDeAtencion'),
-    path('listado_tiposdeatencion_excel/', views.ayudaContextualTipoDeAtencion, name="tdaListadoEXCEL"),
-    path('listado_tiposdeatencion_pdf/', views.ayudaContextualTipoDeAtencion, name="tdaListadoPDF"),
+    path('listado_tiposdeatencion_excel/', views.ListadoTdasExcel, name="tdaListadoEXCEL"),
+    path('listado_tiposdeatencion_pdf/', views.ListadoTdasPDF, name="tdaListadoPDF"),
 
 ]

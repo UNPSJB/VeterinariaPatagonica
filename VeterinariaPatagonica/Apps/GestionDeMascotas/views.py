@@ -15,6 +15,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Apps.GestionDeClientes.models import Cliente
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 
+#Vista genérica para mostrar resultados
+from django.views.generic.base import TemplateView
+#Workbook nos permite crear libros en excel
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+
+#Importamos settings para poder tener a la mano la ruta de la carpeta media
 from django.conf import settings
 from io import BytesIO
 from reportlab.pdfgen import canvas
@@ -22,7 +29,6 @@ from django.views.generic import View
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
-from openpyxl import Workbook
 
 mascotasFiltradas = []
 
