@@ -241,7 +241,7 @@ class EstadoRealizable(Estado):
 
         with transaction.atomic():
 
-            Producto.objects.actualizarStock(actualizacionStock)
+            #Producto.objects.actualizarStock(actualizacionStock)
             realizada = Realizada(
                 usuario=usuario,
                 practica=self.practica,

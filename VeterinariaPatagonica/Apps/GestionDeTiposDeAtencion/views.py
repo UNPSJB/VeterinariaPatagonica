@@ -95,15 +95,20 @@ def permisosListar(habilitados):
 
 
 def menuListar(usuario, habilitados):
-    menu = [[],[]]
+    menu = [[],[],[],[]]
 
     if (not habilitados) and usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados"):
         menu[0].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
+        menu[1].append( (reverse("tiposDeAtencion:tdaListadoEXCEL"), "Exportar tipos de atención deshabilitados") )
+        menu[2].append( (reverse("tiposDeAtencion:tdaListadoPDF"), "Imprimir tipos de atención deshabilitados") )
+
     if habilitados and usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados"):
         menu[0].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
+        menu[1].append( (reverse("tiposDeAtencion:tdaListadoEXCEL"), "Exportar tipos de atención habilitados") )
+        menu[2].append( (reverse("tiposDeAtencion:tdaListadoPDF"), "Imprimir tipos de atención habilitados") )
 
     if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
-        menu[1].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )
+        menu[3].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )
     return [ item for item in menu if len(item) ]
 
 
