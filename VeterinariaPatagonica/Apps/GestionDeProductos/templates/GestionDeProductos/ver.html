@@ -1,11 +1,11 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
 
 {% block titulo %}
-Gestion de Productos | Ver Producto
+Gestion de Productos/Insumos | Ver Producto/Insumo
 {% endblock %}
 
 {% block tituloSeccion %}
-{% include "snippets/titulo.html" with titulo="Producto: "|add:producto.nombre %}
+{% include "snippets/titulo.html" with titulo="Producto/Insumo: "|add:producto.nombre %}
 {% endblock %}
 
 {% block contenido %}

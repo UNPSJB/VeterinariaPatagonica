@@ -8,15 +8,15 @@
 {% endblock %}
 
 {% block titulo %}
-Gestion de Productos | {{titulo}}
+Gestion de Productos/Insumos | {{titulo}}
 {% endblock %}
 
 {% block tituloSeccion %}
 {% if titulo == 1 %}
-    {% include "snippets/titulo.html" with titulo="Nuevo Producto" %}
+    {% include "snippets/titulo.html" with titulo="Nuevo Producto/Insumo" %}
 {% endif %}
 {% if titulo == 2 %}
-    {% include "snippets/titulo.html" with titulo="Modificar Producto" %}
+    {% include "snippets/titulo.html" with titulo="Modificar Producto/Insumo" %}
 {% endif %}
 {% endblock %}
 
