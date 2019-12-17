@@ -13,7 +13,7 @@ $(function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
 			total += 1;
-			field = `<div class="col-xs-7" id="item-${total}">${field}</div>`;
+			field = `<div class="col-xs-10" id="item-${total}">${field}</div>`;
 			$("#id_form-TOTAL_FORMS").val(total);
 			$buttons.before(field);
 		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",total)}
