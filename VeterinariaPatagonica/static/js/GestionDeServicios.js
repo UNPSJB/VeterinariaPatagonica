@@ -1,5 +1,5 @@
 $(function() {
-	console.log("INGRESE");
+	console.log("INGRESÉ AL JS DE SERVICIOS-------------------------------");
 	let total = Number($("#id_form-TOTAL_FORMS").val());
 	let initial = $("#id_form-INITIAL_FORMS").val();
 	let min = Number($("#id_form-MIN_NUM_FORMS").val());
@@ -13,9 +13,10 @@ $(function() {
 		if (total < max) {
 			let field = template.replace(RegExp(`form-ITEM`,"g"), `form-${total}`);
 			total += 1;
-			field = `<div class="col-xs-7" id="item-${total}">${field}</div>`;
+			field = `<div class="col-xs-10" id="item-${total}">${field}</div>`;
 			$("#id_form-TOTAL_FORMS").val(total);
 			$buttons.before(field);
+			
 		} else{ console.log("Número máximo de productos alcanzado. NUMERO MAXIMO = %d",total)}
 		console.log("ADD - Total al finalizar = %d",total);
 	}
