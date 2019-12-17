@@ -1,17 +1,10 @@
 {% if errores %}
-    <div class="errores">
-        {% for error in errores %}
-        <div class="error {{ error.clase }}">
-            <b>{{ error.titulo }}</b>
-            <p>{{ error.descripcion }}</p>
-            {% if error.sugerencias %}
-                <ul class="sugerencias">
-                {% for sugerencia in error.sugerencias %}
-                    <li><a class="sugerencia" href="{{ sugerencia.href }}">{{ sugerencia.contenido }}</a></li>
-                {% endfor %}
-                </ul>
-            {% endif %}
-        </div>
-        {% endfor %}
+<div class="errores">
+    {% for error in errores %}
+    <div class="error">
+        <b>{{ error.titulo }}</b>
+        <p>{{ error.descripcion }}</p>
     </div>
+    {% endfor %}
+</div>
 {% endif %}

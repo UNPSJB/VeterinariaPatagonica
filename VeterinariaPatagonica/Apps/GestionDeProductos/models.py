@@ -19,22 +19,16 @@ class ProductoQuerySet(tools.BajasLogicasQuerySet):
     def productos(self):
         return self.filter(precioPorUnidad__gt=Decimal(0))
     def actualizarStock(self, actualizacion):
-        productos = {
-            producto.id : producto for producto in self.filter(
-                id__in=actualizacion.keys()
-            )
-        }
-
-        for id, diferencia in actualizacion.items():
-            productos[id].stock += actualizacion[id]
-            try:
-                productos[id].full_clean()
-                productos[id].save()
-            except ValidationError as error:
+        for idProducto, diferencia in actualizacion.items():
+            producto = Producto.objects.habilitados().get(id=idProducto)
+            producto.stock += actualizacion[idProducto]
+            if producto.stock < 0:
                 raise VeterinariaPatagonicaError(
                     "Error al actualizar stock",
-                    "%s - El stock no es suficiente." % productos[id],
+                    "Stock insuficiente del producto %s '%d'" % (producto.nombre, producto.id)
                 )
+            producto.full_clean()
+            producto.save()
 
 class BaseProductoManager(models.Manager):
     def __init__(self, tipo=None):

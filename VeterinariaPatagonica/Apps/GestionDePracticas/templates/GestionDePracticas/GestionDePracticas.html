@@ -6,10 +6,19 @@
 {% endblock %}
 {% block paginaSeccionGeneral %}
     <section>
-        <h3 class="titulo">
-        {% block practica-titulo %}
-        {% endblock %}
-        </h3>
+        <div class="row">
+            <div class="col-xs-10 col-sm-11 col-md-11">
+                <h3 class="titulo">
+                {% block practica-titulo %}
+                {% endblock %}
+                </h3>
+            </div>
+            <div class="col-xs-2 col-sm-1 col-md-1 link-ayuda-contextual">
+                <a href="javascript:;">
+                    <i class="glyphicon glyphicon-book"></i>
+                </a>
+            </div>
+        </div>
         {% block practica-contenido %}
         {% endblock %}
     </section>
