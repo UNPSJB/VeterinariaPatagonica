@@ -838,8 +838,8 @@ table.detalles>tbody>tr.total {
 /* Otras */
 
 .errores {
-    padding: 15px 15px 5px;
-    margin: 15px;
+    padding: 15px;
+    margin: 0px 15px 15px 15px;
     background-color: #EDC;
     color: #A94442;
     border: solid 1px #A94442;
@@ -1089,4 +1089,10 @@ a.link-ayuda:focus {
 }
 .resumen>.bloque>.dato {
     padding: 5px 0px;
+}
+
+
+.link-ayuda-contextual {
+    text-align: right;
+    font-size: 15px;
 }

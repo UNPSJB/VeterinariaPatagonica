@@ -130,7 +130,6 @@ def menuListar(usuario, accion):
 
 
 def filtrosPara(usuario, accion):
-    permisos = usuario.get_all_permissions()
     filtros = []
     retorno = None
     if usuario.has_perm("GestionDeFacturas.factura_%s_pagas" % accion):
@@ -146,20 +145,17 @@ def filtrosPara(usuario, accion):
 
 
 
-def respuestaXlsx(resultados, visibles, encabezados=None):
+def listarXlsx(nombre, resultados, visibles, encabezados=None):
 
-    filename = "facturas-%s" % datetime.now().strftime("%d%m%Y-%H%M%S-%f")
     libro = Workbook()
-    hoja = libro.create_sheet(filename, 0)
+    hoja = libro.create_sheet(nombre, 0)
     fila = 1
-
     if encabezados:
         columna = 1
         for encabezado in encabezados:
             celda = hoja.cell(fila, columna, encabezado)
             columna += 1
         fila += 1
-
     for resultado in resultados:
         columna = 1
         if visibles[0]:
@@ -196,10 +192,7 @@ def respuestaXlsx(resultados, visibles, encabezados=None):
             celda = hoja.cell(fila, columna, fecha)
             columna += 1
         fila += 1
-
-    response = HttpResponse(guardarWorkbook(libro), content_type="application/ms-excel")
-    response["Content-Disposition"] = "attachment; filename=%s.xlsx" % filename
-    return response
+    return guardarWorkbook(libro)
 
 
 def facturarPractica(request, id):
@@ -464,17 +457,8 @@ def exportar(request, formato=None):
     gestor.paginacion["cantidad"].label = "Facturas por pagina"
     exportar = ExportarForm(request.GET)
     accion = exportar.accion()
-    visibles = [ gestor[campo]["visible"] for campo in gestor.columnas ]
-    encabezados = [ gestor[campo]["etiqueta"] for campo in gestor.columnasVisibles ]
 
-    if formato=="xlsx":
-        listar=respuestaXlsx
-
-    if accion=="exportar_pagina":
-        response = listar(gestor.itemsActuales(), visibles, encabezados)
-    elif accion=="exportar_todos":
-        response = listar(gestor.items(), visibles, encabezados)
-    else:
+    if accion == "":
         template = loader.get_template("OtraGestionDeFacturas/exportar.html")
         context = {
             "formato" : formato,
@@ -482,8 +466,21 @@ def exportar(request, formato=None):
             "exportar" : exportar,
             "menu" : menuListar(request.user, "exportar_"+formato),
         }
-        response = HttpResponse(template.render(context, request))
-    return response
+        retorno = HttpResponse(template.render(context, request))
+    else:
+        nombre = "facturas-%s" % datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+        visibles = [ gestor[campo]["visible"] for campo in gestor.columnas ]
+        encabezados = [ gestor[campo]["etiqueta"] for campo in gestor.columnasVisibles ]
+
+        if accion=="exportar_pagina":
+            facturas = gestor.itemsActuales()
+        elif accion=="exportar_todos":
+            facturas = gestor.items()
+
+        contenido = listarXlsx("facturas", facturas, visibles, encabezados)
+        retorno = HttpResponse(contenido, content_type="application/ms-excel")
+        retorno["Content-Disposition"] = "attachment; filename=%s.xlsx" % nombre
+    return retorno
 
 
 # Create your views here.

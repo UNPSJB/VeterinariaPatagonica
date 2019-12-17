@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.urls import reverse
 from django.db import transaction
 from django.db.models import Q
+from django.db.utils import Error as dbError
 
 from VeterinariaPatagonica.tools import GestorListadoQuerySet, R
 from VeterinariaPatagonica.areas import Areas
@@ -29,12 +30,10 @@ def pathModificar(tipo, id):
     )
 
 
-
 def pathTerminar(tipo, id):
     return reverse(
         "%s:%s:crear:terminar" % (config("app_name"), tipo), args=(id,)
     )
-
 
 
 def pathModificarProductos(tipo, id):
@@ -43,12 +42,10 @@ def pathModificarProductos(tipo, id):
     )
 
 
-
 def pathInicializar(tipo, accion, id):
     return reverse(
         "%s:%s:crear:%s" %(config("app_name"), tipo, accion), args=(id,)
     )
-
 
 
 def pathVer(tipo, id, estado=None):
@@ -57,12 +54,10 @@ def pathVer(tipo, id, estado=None):
     ) + ("" if estado is None else "?estado=%d" % estado)
 
 
-
 def pathListar(tipo):
     return reverse(
         "%s:%s:listar" % (config("app_name"), tipo)
     )
-
 
 
 def pathListarRealizaciones():
@@ -71,12 +66,10 @@ def pathListarRealizaciones():
     )
 
 
-
 def pathListarTurnosPendientes(tipo):
     return reverse(
         "%s:%s:turnos" % (config("app_name"), tipo)
     )
-
 
 
 def pathExportar(tipo, formato):
@@ -85,12 +78,10 @@ def pathExportar(tipo, formato):
     )
 
 
-
 def pathCrear(tipo):
     return reverse(
         "%s:%s:crear:practica" % (config("app_name"), tipo)
     )
-
 
 
 def pathModificarRealizacion(tipo, id):
@@ -99,12 +90,10 @@ def pathModificarRealizacion(tipo, id):
     )
 
 
-
 def pathModificarInformacionClinica(tipo, id):
     return reverse(
         "%s:%s:modificar:informacionClinica" % (config("app_name"), tipo), args=(id,)
     )
-
 
 
 def pathVerInformacionClinica(tipo, id):
@@ -113,12 +102,10 @@ def pathVerInformacionClinica(tipo, id):
     )
 
 
-
 def pathActualizar(tipo, accion, id):
     return reverse(
         "%s:%s:actualizaciones:%s" % (config("app_name"), tipo, accion), args=(id,)
     )
-
 
 
 def pathFacturar(id):
@@ -127,138 +114,24 @@ def pathFacturar(id):
     )
 
 
-
 def pathReporte(tipo):
     return reverse(
         "%s:%s:reporte" % (config("app_name"), tipo)
     )
 
 
-
-def errorDatos(excepcion, tipo=None, id=None, **kwargs):
-
-    error= {
-        "clase" : "error",
-        "titulo" : excepcion.titulo,
-        "descripcion" : excepcion.descripcion,
-        "sugerencias" : []
+def errorAccion(accion=None, descripcion=None):
+    titulo = "Error"
+    if isinstance(accion, Practica.Acciones):
+        accion = accion.value
+    if type(accion)==str:
+        titulo += " al %s" % accion
+    if descripcion is None:
+        descripcion = "Ocurrio un error, la accion no pudo completarse."
+    return {
+        "titulo" : titulo,
+        "descripcion" : descripcion,
     }
-
-    if (tipo is not None) and (id is not None):
-        error["sugerencias"].append(
-            {
-                "href" : pathModificar(tipo, id),
-                "contenido" : "Volver a completar datos erroneos"
-            }
-        )
-        error["sugerencias"].append(
-            {
-                "href" : pathTerminar(tipo, id),
-                "contenido" : "Cancelar la creacion"
-            }
-        )
-
-    return error
-
-
-
-def errorSolicitud(excepcion, tipo=None, **kwargs):
-
-    error = {
-        "clase" : "error",
-        "titulo" : excepcion.titulo,
-        "descripcion" : excepcion.descripcion,
-        "sugerencias" : []
-    }
-
-    if tipo is not None:
-        error["sugerencias"].append(
-            {
-                "href" : pathCrear(tipo),
-                "contenido" : "Crear nueva %s" % tipo
-            }
-        )
-
-    return error
-
-
-
-def errorBD(tipo=None, id=None, **kwargs):
-
-    error = {
-        "clase" : "error",
-        "titulo" : "Error al guardar datos enviados",
-        "descripcion" : "Ocurrio un error al intentar guardar los datos recibidos: ",
-        "sugerencias" : []
-    }
-
-    if (tipo is not None) and (id is not None):
-        error["sugerencias"].append(
-            {
-                "href" : pathTerminar(tipo, id),
-                "contenido" : "Cancelar la creacion"
-            }
-        )
-
-    return error
-
-
-
-def errorAccion(practica=None, accion=None, **kwargs):
-
-    if accion is None:
-        accion = "modificar"
-
-    if practica is None:
-        tipo = "practica"
-    else:
-        tipo = practica.nombreTipo()
-
-    if "descripcion" in kwargs:
-        descripcion = kwargs["descripcion"]
-    else:
-        descripcion = "Ocurrio un error al intentar %s, la modificacion no pudo completarse." % accion
-
-    detalles = kwargs["detalles"] if "detalles" in kwargs else ""
-
-    error= {
-        "clase" : "error",
-        "titulo" : "Error durante modificacion de %s" % tipo,
-        "descripcion" :  "%s %s" % (descripcion, detalles),
-        "sugerencias" : []
-    }
-
-    if (practica is not None):
-        error["sugerencias"].append(
-            {
-                "href" : pathVer(tipo, practica.id),
-                "contenido" : "Ver el estado actual de la practica"
-            }
-        )
-
-    return error
-
-
-
-def errorProducto(error, tipo=None, id=None, **kwargs):
-
-    error = {
-        "clase" : "error",
-        "titulo" : error.titulo,
-        "descripcion" : error.descripcion,
-        "sugerencias" : []
-    }
-
-    if (tipo is not None) and (id is not None):
-        error["sugerencias"].append(
-            {
-                "href" : pathTerminar(tipo, id),
-                "contenido" : "Cancelar la creacion"
-            }
-        )
-
-    return error
-
 
 
 def idCrearPractica(session):
@@ -272,12 +145,10 @@ def idCrearPractica(session):
     return id
 
 
-
 def guardar(session, id, etiqueta, datos):
 
     clave = "practicas_crear_%d_%s" % (id, etiqueta)
     session[clave] = datos
-
 
 
 def obtener(session, id, etiqueta):
@@ -293,21 +164,19 @@ def obtener(session, id, etiqueta):
     return session[clave]
 
 
-
 def eliminar(session, id):
 
     etiquetas = (
         "tipo",
-        "practicaData",
-        "serviciosData",
-        "productosData"
+        "initialPractica",
+        "initialServicios",
+        "initialProductos"
     )
 
     for etiqueta in etiquetas:
         clave = "practicas_crear_%d_%s" % (id, etiqueta)
         if clave in session:
             del session[clave]
-
 
 
 def crearContexto(request, idCreacion, tipoPractica=None):
@@ -327,7 +196,6 @@ def crearContexto(request, idCreacion, tipoPractica=None):
     }
 
 
-
 def calcularPrecio(detalles, tipoDeAtencion=None):
 
     ajuste = 0
@@ -338,13 +206,11 @@ def calcularPrecio(detalles, tipoDeAtencion=None):
     return precioProductos + precioServicios + ajuste
 
 
-
 def calcularDuracion(servicios):
 
     return sum([
         (detalle.servicio.tiempoEstimado * detalle.cantidad) for detalle in servicios
     ])
-
 
 
 def buscarProductos(servicios):
@@ -353,52 +219,38 @@ def buscarProductos(servicios):
     datos = {}
 
     for detalleServicio in servicios:
-
-        servicio = Servicio.objects.get(id=detalleServicio['servicio'])
+        try:
+            servicio = Servicio.objects.habilitados().get(id=detalleServicio["servicio"])
+        except Servicio.DoesNotExist:
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "El servicio con id %d no existe o se encuentra deshabilitado" % detalleServicio["servicio"]
+            )
         cantidadServicio = detalleServicio['cantidad']
 
         for detalleProducto in servicio.servicio_productos.all():
+            if not detalleProducto.producto.baja:
+                producto = detalleProducto.producto.id
+                cantidadProducto = detalleProducto.cantidad
 
-            producto = detalleProducto.producto
-            if producto.baja:
-                raise VeterinariaPatagonicaError(
-                    "Error",
-                    "El producto '%s' (%d) del servicio '%s' (%d)  no esta habilitado" % (
-                        producto.nombre,
-                        producto.id,
-                        servicio.nombre,
-                        servicio.id,
-                    )
-                )
+                if producto not in datos:
+                    datos[producto] = 0
 
-            cantidadProducto = detalleProducto.cantidad
-            producto = detalleProducto.producto.id
-
-            if producto not in datos:
-                datos[producto] = 0
-
-            datos[producto] += cantidadServicio * cantidadProducto
+                datos[producto] += cantidadServicio * cantidadProducto
 
     for producto, cantidad in datos.items():
         listado.append({
-                'producto' : producto,
-                'cantidad' : cantidad
+            'producto' : producto,
+            'cantidad' : cantidad
         })
 
     return listado
 
 
-
 def crearDetallesServicios(datos):
 
     cantidades = { detalle["servicio"] : detalle["cantidad"] for detalle in datos }
-    servicios  = Servicio.objects.filter( id__in=cantidades.keys() )
-
-    if len(servicios) < len(cantidades):
-        raise VeterinariaPatagonicaError(
-            "Error al recuperar datos",
-            "Hubo un error al intentar recuperar elementos de la base de datos"
-        )
+    servicios  = Servicio.objects.habilitados().filter( id__in=cantidades.keys() )
 
     detalles = []
     for servicio in servicios:
@@ -411,17 +263,10 @@ def crearDetallesServicios(datos):
     return detalles
 
 
-
 def crearDetallesProductos(datos):
 
     cantidades = { detalle["producto"] : detalle["cantidad"] for detalle in datos }
-    productos  = Producto.objects.filter( id__in=cantidades.keys() )
-
-    if len(productos) < len(cantidades):
-        raise VeterinariaPatagonicaError(
-            "Error al recuperar datos",
-            "Hubo un error al intentar recuperar elementos de la base de datos"
-        )
+    productos  = Producto.objects.habilitados().filter( id__in=cantidades.keys() )
 
     detalles = []
     for producto in productos:
@@ -434,14 +279,13 @@ def crearDetallesProductos(datos):
     return detalles
 
 
-
 def obtenerDetalles(request, idCreacion):
 
-    productosData = obtener(request.session, idCreacion, "productosData")
-    productos = crearDetallesProductos(productosData)
+    initialProductos = obtener(request.session, idCreacion, "initialProductos")
+    productos = crearDetallesProductos(initialProductos)
 
-    serviciosData = obtener(request.session, idCreacion, "serviciosData")
-    servicios = crearDetallesServicios(serviciosData)
+    initialServicios = obtener(request.session, idCreacion, "initialServicios")
+    servicios = crearDetallesServicios(initialServicios)
 
     return {
         "productos" : productos,
@@ -449,35 +293,56 @@ def obtenerDetalles(request, idCreacion):
     }
 
 
-
 def obtenerPractica(request, idCreacion):
 
+    initial = obtener(request.session, idCreacion, "initialPractica")
     tipo = obtener(request.session, idCreacion, "tipo")
-    practica = Practica(tipo=Areas.codificar(tipo))
-    practicaData = obtener(request.session, idCreacion, "practicaData")
-    formPractica = PracticaForm(practicaData, instance=practica)
-    if not formPractica.is_valid():
-        raise VeterinariaPatagonicaError(
-            "Error al recuperar datos",
-            "Error al recrear el formulario, los datos no son validos."
-        )
-
-    practica = formPractica.save(commit=False)
+    tipo = Areas.codificar(tipo)
+    practica = Practica(
+        tipo=tipo,
+        cliente_id=initial["cliente"],
+        tipoDeAtencion_id=initial["tipoDeAtencion"]
+    )
     return practica
 
+
+def verificarHabilitados(practica, servicios, productos):
+
+    if practica.cliente.baja:
+        raise VeterinariaPatagonicaError(descripcion="El cliente con DNI/CUIT %s no se encuentra habilitado." % practica.cliente.dniCuit)
+    if practica.mascota is not None and practica.mascota.baja:
+        raise VeterinariaPatagonicaError(descripcion="La mascota con patente %s no se encuentra habilitada." % practica.mascota.patente)
+    if practica.tipoDeAtencion.baja:
+        raise VeterinariaPatagonicaError(descripcion="El tipo de atención '%s' (%d) no se encuentra habilitado." % (practica.tipoDeAtencion.id, practica.tipoDeAtencion.nombre))
+    for detalle in servicios:
+        if detalle.servicio.baja:
+            raise VeterinariaPatagonicaError(descripcion="El servicio '%s' (%d) no se encuentra habilitado." % (detalle.servicio.nombre, detalle.servicio.id))
+    for detalle in productos:
+        if detalle.producto.baja:
+            raise VeterinariaPatagonicaError(descripcion="El producto '%s' (%d) no se encuentra habilitado." % (detalle.producto.nombre, detalle.producto.id))
 
 
 def persistir(usuario, practica, detalles, accion, argumentos):
 
-    with transaction.atomic():
-
-        practica.save(force_insert=True, usuario=usuario)
-        practica.practica_servicios.set(detalles["servicios"], bulk=False)
-        practica.practica_productos.set(detalles["productos"], bulk=False)
+    try:
+        with transaction.atomic():
+            practica.save(force_insert=True, usuario=usuario)
+            practica.practica_servicios.set(detalles["servicios"], bulk=False)
+            practica.practica_productos.set(detalles["productos"], bulk=False)
+            verificarHabilitados(practica, detalles["servicios"], detalles["productos"])
+    except dbError as excepcion:
+        raise VeterinariaPatagonicaError(
+            "Error en base de datos",
+            "Ocurrio un error al intentar guardar los datos, la %s no pudo ser creada" % practica.nombreTipo()
+        )
+    try:
         practica.hacer(usuario, accion, **argumentos)
-
+    except:
+        PracticaProducto.objects.filter(practica=practica.id).delete()
+        PracticaServicio.objects.filter(practica=practica.id).delete()
+        practica.delete()
+        raise
     return practica
-
 
 
 def accionesIniciales(usuario, area):
@@ -487,7 +352,6 @@ def accionesIniciales(usuario, area):
             retorno.add(actualizacion)
 
     return retorno
-
 
 
 def verificarCreacion(practica, accion):
@@ -506,7 +370,6 @@ def verificarCreacion(practica, accion):
             titulo="Solicitud erronea",
             descripcion=descripcion
         )
-
 
 
 def verificarPractica(practica):
@@ -539,7 +402,6 @@ def verificarPractica(practica):
         )
 
 
-
 def verificarEstado(practica, estados):
 
     actual = practica.estado()
@@ -552,7 +414,6 @@ def verificarEstado(practica, estados):
         )
 
 
-
 def verificarAccion(practica, accion):
 
     if not practica.esPosible(accion):
@@ -560,7 +421,6 @@ def verificarAccion(practica, accion):
             "Solicitud erronea",
             "No se puede %s una practica que se encuentre %s" % (accion.name, practica.nombreEstado()),
         )
-
 
 
 def formPresupuestar(*args, vigencia=config("vigencia"), **kwargs):
@@ -578,7 +438,6 @@ def formPresupuestar(*args, vigencia=config("vigencia"), **kwargs):
     kwargs["initial"] = initial
 
     return PresupuestadaForm(*args, mascota_required=False, **kwargs)
-
 
 
 def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None, **kwargs):
@@ -617,7 +476,6 @@ def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None,
     return ProgramadaForm(*args, precio=precio, practica=practica, **kwargs)
 
 
-
 def formReprogramar(*args, practica=None, **kwargs):
 
     if practica is not None:
@@ -639,7 +497,6 @@ def formReprogramar(*args, practica=None, **kwargs):
     kwargs["initial"].update(initial)
 
     return ReprogramadaForm(*args, practica=practica, **kwargs)
-
 
 
 def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
@@ -672,7 +529,6 @@ def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
     return RealizadaForm(*args, practica=practica, **kwargs)
 
 
-
 def itemReporte(usuario, seccion, area):
     nombre = area.nombre()
     nombrePlural = area.nombrePlural()
@@ -682,14 +538,12 @@ def itemReporte(usuario, seccion, area):
         )
 
 
-
 def itemCrear(usuario, seccion, area):
     nombre = area.nombre()
     if usuario.has_perm("GestionDePracticas.crear_%s_atendida" % nombre):
         seccion.append(
             (pathCrear(nombre), "Crear %s" % nombre)
         )
-
 
 
 def itemListarTurnos(usuario, seccion, area):
@@ -702,14 +556,12 @@ def itemListarTurnos(usuario, seccion, area):
         )
 
 
-
 def itemListarRealizaciones(usuario, seccion):
 
     if permisos.filtroPermitidas(usuario, Practica.Acciones.realizar) is not None:
         seccion.append(
             (pathListarRealizaciones(), "Listar practicas realizadas por %s" % usuario.username)
         )
-
 
 
 def itemListar(usuario, seccion, area):
@@ -720,14 +572,12 @@ def itemListar(usuario, seccion, area):
         )
 
 
-
 def itemExportar(usuario, seccion, formato, area):
     nombre = area.nombre()
     if permisos.filtroPermitidas(usuario, Practica.Acciones["exportar_"+formato], areas=area) is not None:
         seccion.append(
             (pathExportar(nombre, formato), "Exportar %ss en formato %s" % (nombre, formato))
         )
-
 
 
 def itemsAcciones(usuario, seccion, acciones, practica):
@@ -751,7 +601,6 @@ def itemsAcciones(usuario, seccion, acciones, practica):
         if permisos.paraPractica(usuario, accion, practica):
             url = generadoresUrls[accion](practica)
             seccion.append( (url, accion) )
-
 
 
 def menuAcciones(usuario, accion, practica):
@@ -802,14 +651,12 @@ def menuAcciones(usuario, accion, practica):
     return [ item for item in menu if len(item) ]
 
 
-
 def menuExportar(usuario, formato, area):
     menu = [[],[]]
     if formato != "xlsx":
         itemExportar(usuario, menu[0], "xlsx", area)
     itemListar(usuario, menu[1], area)
     return [ item for item in menu if len(item) ]
-
 
 
 def enlacesHistorial(usuario, practica, actual):
@@ -825,7 +672,6 @@ def enlacesHistorial(usuario, practica, actual):
             enlaces.append( [url, estado.related()] )
 
     return enlaces
-
 
 
 class GestorListadoPractica(GestorListadoQuerySet):
@@ -852,7 +698,6 @@ class GestorListadoPractica(GestorListadoQuerySet):
             self.queryset,
             **opciones
         )
-
 
 
 class GestorListadoRealizacion(GestorListadoQuerySet):
@@ -884,8 +729,6 @@ class GestorListadoRealizacion(GestorListadoQuerySet):
             self.queryset,
             **opciones
         )
-
-
 
 
 class GestorListadoTurnos(GestorListadoQuerySet):

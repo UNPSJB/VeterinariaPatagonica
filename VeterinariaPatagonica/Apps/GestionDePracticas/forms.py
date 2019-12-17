@@ -141,7 +141,9 @@ class PracticaForm(forms.ModelForm):
         self.fields["tipoDeAtencion"].empty_label = None
         self.fields["tipoDeAtencion"].label = "Tipo de atención"
         self.fields["tipoDeAtencion"].queryset = TipoDeAtencion.objects.habilitados()
-
+        self.fields["cliente"].empty_label = None
+        self.fields["cliente"].label = "Cliente"
+        self.fields["cliente"].queryset = Cliente.objects.habilitados()
 
 
 class PresupuestadaForm(DesdeHastaForm, ActualizarPracticaBaseForm):
@@ -522,7 +524,7 @@ class CirugiaServicioForm(PracticaServicioForm):
         widget=ModelSelect2(
             url=reverse_lazy(
                 "autocomplete:servicio",
-                args=(Areas.Q.codigo,)
+                args=(Areas.Q.codigo(),)
             ),
             attrs={
                 "data-allow-clear": "false",

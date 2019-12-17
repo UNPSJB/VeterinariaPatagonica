@@ -30,9 +30,11 @@ class Areas(Enum):
         return [ area.nombrePlural() for area in Areas ]
 
     def codificar(nombre):
+        retorno = None
         for area in Areas:
             if area.nombre() == nombre or area.nombrePlural() == nombre:
-                return area.codigo()
+                retorno = area.codigo()
+        return retorno
 
     def paresOrdenados():
         return [

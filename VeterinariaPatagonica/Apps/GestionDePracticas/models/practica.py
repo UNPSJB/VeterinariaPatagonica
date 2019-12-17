@@ -5,7 +5,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from django.core.exceptions import ObjectDoesNotExist
 
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet, R
+from VeterinariaPatagonica.tools import R
 from VeterinariaPatagonica.areas import Areas
 from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeProductos.models import Producto
@@ -29,7 +29,7 @@ class PracticaBaseManager(models.Manager):
             qs = qs.filter(tipo=self.tipo)
         return qs
 
-class PracticaQuerySet(VeterinariaPatagonicaQuerySet):
+class PracticaQuerySet(models.QuerySet):
 
     MAPEO_FILTRADO = {
         "tipo" : "tipo",

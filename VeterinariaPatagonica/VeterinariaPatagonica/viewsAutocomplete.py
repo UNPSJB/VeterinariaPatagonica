@@ -347,11 +347,14 @@ class PracticaRealizadaAutocomplete(Autocomplete):
         queryset = Practica.objects.none()
         cliente = self.forwarded["cliente"] if "cliente" in self.forwarded else None
         if cliente is not None:
-
-            queryset = Practica.objects.enEstado(Realizada).filter(cliente__id=int(cliente))
+            try:
+                cliente = int(cliente)
+            except:
+                cliente = None
+            queryset = Practica.objects.enEstado(Realizada).filter(cliente__id=cliente)
             queryset = Estado.anotarPracticas(
                 queryset,
-                actualizada_por=True,
+                atendida_por=True,
                 estado_actual=True
             ).filter(self.filtros)
 

@@ -11,24 +11,22 @@ from .models.practica import Practica
 from .models.estado import *
 from .gestionDePracticas import *
 from .forms import  FiltradoRealizacionesForm
+from . import reportes
 
 from openpyxl import Workbook
 
 
-def listarXlsx(tipo, resultados, visibles, encabezados=None):
+def listarXlsx(nombre, resultados, visibles, encabezados=None):
 
-    filename = "%s-%s" % (tipo, datetime.now().strftime("%d%m%Y-%H%M%S-%f"))
     libro = Workbook()
-    hoja = libro.create_sheet(filename, 0)
+    hoja = libro.create_sheet(nombre, 0)
     fila = 1
-
     if encabezados:
         columna = 1
         for encabezado in encabezados:
             celda = hoja.cell(fila, columna, encabezado)
             columna += 1
         fila += 1
-
     for resultado in resultados:
         columna = 1
         if visibles[0]:
@@ -63,10 +61,81 @@ def listarXlsx(tipo, resultados, visibles, encabezados=None):
             celda = hoja.cell(fila, columna, resultado.nombre_atendida_por)
             columna += 1
         fila += 1
+    return guardarWorkbook(libro)
 
-    response = HttpResponse(guardarWorkbook(libro), content_type="application/ms-excel")
-    response["Content-Disposition"] = "attachment; filename=%s.xlsx" % filename
-    return response
+
+def reporteHtml(area, practicas, hoy, dias):
+
+    fecha = hoy - timedelta(days=dias["perfiles"])
+    antes, despues = reportes.clasificarRealizaciones(practicas, fecha)
+    datosAntes = reportes.datosPerfiles(
+        reportes.contarRealizaciones(antes)
+    )
+    datosDespues = reportes.datosPerfiles(
+        reportes.contarRealizaciones(despues)
+    )
+    perfiles = {
+        "dias" : dias["perfiles"],
+        "fecha" : fecha,
+        "datos" : {
+            "antes" : datosAntes,
+            "despues" : datosDespues,
+        },
+    }
+
+    fecha = hoy - timedelta(days=dias["realizaciones"])
+    datos = reportes.datosRealizacionesPorDia(
+        reportes.realizacionesEntre(practicas, fecha, hoy)
+    )
+    realizacionesPorDia = {
+        "dias" : dias["realizaciones"],
+        "fecha" : fecha,
+        "datos" : datos,
+    }
+
+    fecha = hoy - timedelta(days=dias["actualizaciones"])
+    seleccionadas = reportes.creadasEntre(practicas, fecha, hoy)
+    porcentajesActualizacion = {
+        "datos" : None,
+        "dias" : dias["actualizaciones"],
+        "fecha" : fecha,
+    }
+    if seleccionadas:
+        datos = reportes.datosPorcentajesActualizacion(
+            reportes.calcularNiveles(seleccionadas, area)
+        )
+        porcentajesActualizacion["datos"] = datos
+
+    fecha = hoy - timedelta(days=dias["tiposdeatencion"])
+    tdas = reportes.buscarTDA(practicas, fecha)
+    habilitados = tdas.filter(baja=False)
+    deshabilitados = tdas.filter(baja=True)
+    tiposDeAtencion = {
+        "fecha" : fecha,
+        "dias" : dias["tiposdeatencion"],
+        "habilitados" : habilitados.count(),
+        "deshabilitados" : deshabilitados.count(),
+    }
+    if habilitados:
+        normales, raros, descarte = reportes.clasificar(reportes.preparar(habilitados))
+        datosNormales = reportes.datosTiposDeAtencion(normales)
+        datosRaros = reportes.datosTiposDeAtencion(raros)
+        tiposDeAtencion["normales"] = normales
+        tiposDeAtencion["raros"] = raros
+        tiposDeAtencion["descarte"] = descarte
+        tiposDeAtencion["datos"] = {
+            "normales" : datosNormales,
+            "raros" : datosRaros,
+        }
+
+    return {
+        "hoy" : hoy,
+        "tipo" : area.nombre(),
+        "perfiles" : perfiles,
+        "realizacionesPorDia" : realizacionesPorDia,
+        "porcentajesActualizacion" : porcentajesActualizacion,
+        "tiposDeAtencion" : tiposDeAtencion,
+    }
 
 
 def realizaciones(request):

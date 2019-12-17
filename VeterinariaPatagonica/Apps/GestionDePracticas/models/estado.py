@@ -2,10 +2,12 @@ from datetime import timedelta, datetime
 from decimal import Decimal
 
 from django.db import models
+from django.db.utils import Error as dbError
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import transaction
 
+from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from Apps.GestionDeServicios.models import Servicio
 from Apps.GestionDeProductos.models import Producto
 from .practica import *
@@ -16,6 +18,20 @@ __all__ = (
     "Realizada", "RealizadaServicio", "RealizadaProducto",
     "Cancelada", "Facturada"
 )
+
+
+def verificarHabilitados(practica):
+
+    if practica.cliente.baja:
+        raise VeterinariaPatagonicaError(descripcion="El cliente con DNI/CUIT %s no se encuentra habilitado." % practica.cliente.dniCuit)
+    if practica.mascota is not None and practica.mascota.baja:
+        raise VeterinariaPatagonicaError(descripcion="La mascota con patente %s no se encuentra habilitada." % practica.mascota.patente)
+    for detalle in practica.practica_servicios.all():
+        if detalle.servicio.baja:
+            raise VeterinariaPatagonicaError(descripcion="El servicio '%s' (%d) no se encuentra habilitado." % (detalle.servicio.nombre, detalle.servicio.id))
+    for detalle in practica.practica_productos.all():
+        if detalle.producto.baja:
+            raise VeterinariaPatagonicaError(descripcion="El producto '%s' (%d) no se encuentra habilitado." % (detalle.producto.nombre, detalle.producto.id))
 
 
 class EstadoManager(models.Manager):
@@ -31,9 +47,9 @@ class EstadoManager(models.Manager):
                 )
                 creada.save(force_insert=True)
             else:
-                raise Exception("La practica tiene estados asociados, no puede ser inicializada")
+                raise VeterinariaPatagonicaError(descripcion="La practica tiene estados asociados, no puede ser inicializada")
         else:
-            raise Exception("La practica a inicializar no es accesible desde el model manager")
+            raise VeterinariaPatagonicaError(descripcion="La practica a inicializar no es accesible desde el model manager")
 
     def inicial(self):
 
@@ -43,10 +59,9 @@ class EstadoManager(models.Manager):
             if queryset.count() != 0:
                 return queryset.get(tipo=Creada.TIPO)
             else:
-                raise Exception("La practica no fue inicializada, no tiene estados asociados")
+                raise VeterinariaPatagonicaError(descripcion="La practica no fue inicializada, no tiene estados asociados")
         else:
-            raise Exception("La practica a inicializar no es accesible desde el model manager")
-
+            raise VeterinariaPatagonicaError(descripcion="La practica a inicializar no es accesible desde el model manager")
 
 
     def realizacion(self):
@@ -58,10 +73,9 @@ class EstadoManager(models.Manager):
             if queryset.count() > 0:
                 return queryset.get(tipo=Realizada.TIPO).related()
             else:
-                raise Exception("La practica no fue inicializada, no tiene estados asociados")
+                raise VeterinariaPatagonicaError(descripcion="La practica no fue inicializada, no tiene estados asociados")
         else:
-            raise Exception("La practica a inicializar no es accesible desde el model manager")
-
+            raise VeterinariaPatagonicaError(descripcion="La practica a inicializar no es accesible desde el model manager")
 
 
 class Estado(models.Model):
@@ -194,7 +208,6 @@ class Estado(models.Model):
         return self.__class__.__name__
 
 
-
 class EstadoCancelable(Estado):
 
     class Meta:
@@ -211,13 +224,19 @@ class EstadoCancelable(Estado):
         return cancelada
 
 
-
 class EstadoRealizable(Estado):
 
     class Meta:
         abstract = True
 
+
     def realizar(self, usuario, inicio, finalizacion, condicionPreviaMascota="", resultados=""):
+
+        if self.practica.mascota is None:
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La practica no tiene mascota"
+            )
 
         servicios = [
             RealizadaServicio(
@@ -239,24 +258,28 @@ class EstadoRealizable(Estado):
             detalle.producto.id : -detalle.cantidad for detalle in productos
         }
 
-        with transaction.atomic():
-
-            #Producto.objects.actualizarStock(actualizacionStock)
-            realizada = Realizada(
-                usuario=usuario,
-                practica=self.practica,
-                inicio=inicio,
-                finalizacion=finalizacion,
-                condicionPreviaMascota=condicionPreviaMascota,
-                resultados=resultados,
+        try:
+            with transaction.atomic():
+                realizada = Realizada(
+                    usuario=usuario,
+                    practica=self.practica,
+                    inicio=inicio,
+                    finalizacion=finalizacion,
+                    condicionPreviaMascota=condicionPreviaMascota,
+                    resultados=resultados,
+                )
+                realizada.save(force_insert=True)
+                realizada.realizada_servicios.set(servicios, bulk=False)
+                realizada.realizada_productos.set(productos, bulk=False)
+                verificarHabilitados(self.practica)
+                Producto.objects.actualizarStock(actualizacionStock)
+                realizada.completarPrecio()
+        except dbError as excepcion:
+            raise VeterinariaPatagonicaError(
+                "Error en base de datos",
+                "Ocurrio un error al intentar guardar los datos, la %s no pudo ser realizada" % self.practica.nombreTipo()
             )
-            realizada.save(force_insert=True)
-            realizada.realizada_servicios.set(servicios, bulk=False)
-            realizada.realizada_productos.set(productos, bulk=False)
-            realizada.completarPrecio()
-
         return realizada
-
 
 
 class EstadoProgramable(Estado):
@@ -267,26 +290,40 @@ class EstadoProgramable(Estado):
     def programar(self, usuario, inicio, finalizacion, adelanto):
 
         if self.practica.adelanto is not None:
-            raise Exception("La practica ya tiene adelanto registrado")
-
-        with transaction.atomic():
-            programada = Programada(
-                usuario=usuario,
-                practica=self.practica,
-                inicio=inicio,
-                finalizacion=finalizacion,
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La practica ya tiene adelanto registrado"
             )
-            programada.save(force_insert=True)
-            adelanto = Adelanto(
-                turno=programada,
-                importe=adelanto
-            )
-            adelanto.save(force_insert=True)
-            self.practica.adelanto = adelanto
-            self.practica.save(force_update=True)
 
+        if self.practica.mascota is None:
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La practica no tiene mascota"
+            )
+
+        try:
+            with transaction.atomic():
+                programada = Programada(
+                    usuario=usuario,
+                    practica=self.practica,
+                    inicio=inicio,
+                    finalizacion=finalizacion,
+                )
+                programada.save(force_insert=True)
+                adelanto = Adelanto(
+                    turno=programada,
+                    importe=adelanto
+                )
+                adelanto.save(force_insert=True)
+                self.practica.adelanto = adelanto
+                self.practica.save(force_update=True)
+                verificarHabilitados(self.practica)
+        except dbError as excepcion:
+            raise VeterinariaPatagonicaError(
+                "Error en base de datos",
+                "Ocurrio un error al intentar guardar los datos, la %s no pudo ser programada" % self.practica.nombreTipo()
+            )
         return programada
-
 
 
 class Creada(EstadoRealizable, EstadoCancelable, EstadoProgramable):
@@ -319,14 +356,23 @@ class Creada(EstadoRealizable, EstadoCancelable, EstadoProgramable):
         return set()
 
     def presupuestar(self, usuario, diasMantenimiento):
-        presupuestada = Presupuestada(
-            usuario=usuario,
-            practica = self.practica,
-            diasMantenimiento=diasMantenimiento,
-        )
-        presupuestada.save(force_insert=True)
-        return presupuestada
 
+        try:
+            with transaction.atomic():
+                presupuestada = Presupuestada(
+                    usuario=usuario,
+                    practica = self.practica,
+                    diasMantenimiento=diasMantenimiento,
+                )
+                presupuestada.save(force_insert=True)
+                verificarHabilitados(self.practica)
+        except dbError as excepcion:
+            raise VeterinariaPatagonicaError(
+                "Error en base de datos",
+                "Ocurrio un error al intentar guardar los datos, la %s no pudo ser presupuestada" % self.practica.nombreTipo()
+            )
+
+        return presupuestada
 
 
 class ProgramadaManager(EstadoManager):
@@ -552,7 +598,6 @@ class Programada(EstadoCancelable, EstadoRealizable):
         ).exclude(id=self.id)
 
 
-
 class Presupuestada(EstadoRealizable, EstadoProgramable):
     TIPO = 3
     class Meta:
@@ -594,45 +639,6 @@ class Presupuestada(EstadoRealizable, EstadoProgramable):
         ]) | Presupuestada.actualizaciones()
 
 
-    def anotarPracticas(practicas, **kwargs):
-        practicas = Estado.anotarPracticas(practicas, **kwargs)
-
-        if kwargs.get("presupuesto_vigente", False):
-            originales = practicas.values("id")
-            practicas = practicas.annotate(
-                marca_presupuesto=models.F("estado__marca")
-            ).filter(id__in=originales)
-            practicas = practicas.annotate(
-                tiempo_mantenimiento=models.ExpressionWrapper(
-                    models.F("estado__presupuestada__diasMantenimiento")*86400000000,
-                    output_field=models.DurationField()
-                )
-            )
-            practicas = practicas.annotate(
-                tiempo_transcurrido=models.ExpressionWrapper(
-                    models.Value(datetime.now(), output_field=models.DateTimeField()) - models.F("marca_presupuesto"),
-                    output_field=models.DurationField()
-                )
-            )
-            practicas = practicas.annotate(
-                presupuesto_vigente=models.Case(
-                    models.When(
-                        estado__tipo=Presupuestada.TIPO,
-                        tiempo_transcurrido__lt=models.F("tiempo_mantenimiento"),
-                        then=models.Value(True)
-                    ),
-                    models.When(
-                        estado__tipo=Presupuestada.TIPO,
-                        tiempo_transcurrido__gte=models.F("tiempo_mantenimiento"),
-                        then=models.Value(False)
-                    ),
-                    default=models.Value(None),
-                    output_field=models.NullBooleanField()
-                )
-            )
-
-        return practicas
-
     diasMantenimiento = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(1,"Los dias de mantenimiento del presupuesto deben ser mas que cero")
@@ -666,7 +672,6 @@ class Presupuestada(EstadoRealizable, EstadoProgramable):
         if (self.diasVigencia() == 0):
             return set()
         return super().accionesPosibles()
-
 
 
 class Realizada(Estado):
@@ -827,7 +832,6 @@ class Realizada(Estado):
         practica.save(force_update=True)
 
 
-
 class RealizadaServicio(models.Model):
 
     class Meta:
@@ -880,7 +884,6 @@ class RealizadaServicio(models.Model):
         return self.cantidad * self.precio
 
 
-
 class RealizadaProducto(models.Model):
 
     class Meta:
@@ -929,7 +932,6 @@ class RealizadaProducto(models.Model):
         super().save(*args, **kwargs)
 
 
-
 class Cancelada(Estado):
     TIPO = 4
     class Meta:
@@ -956,7 +958,6 @@ class Cancelada(Estado):
             Practica.Acciones.ver_informacion_general,
             Practica.Acciones.ver_detalle_estado,
         ])
-
 
 
 class Facturada(Estado):
@@ -990,30 +991,6 @@ class Facturada(Estado):
             Practica.Acciones.ver_detalle_estado,
             Practica.Acciones.ver_informacion_clinica,
         ])
-
-
-    def anotarPracticas(practicas, **kwargs):
-        practicas = Estado.anotarPracticas(practicas, **kwargs)
-
-        if kwargs.get("facturacion_paga", False):
-            practicas = practicas.annotate(
-                facturacion_paga=models.Case(
-                    models.When(
-                        estado__tipo=Facturada.TIPO,
-                        factura__pago__isnull=False,
-                        then=models.Value(True)
-                    ),
-                    models.When(
-                        estado__tipo=Facturada.TIPO,
-                        factura__pago__isnull=True,
-                        then=models.Value(False)
-                    ),
-                    default=models.Value(None),
-                    output_field=models.NullBooleanField()
-                )
-            )
-
-        return practicas
 
 
 for Klass in (Creada, Presupuestada, Programada, Realizada, Facturada, Cancelada):

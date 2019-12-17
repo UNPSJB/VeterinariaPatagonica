@@ -14,9 +14,8 @@ from VeterinariaPatagonica import pdf
 from .models.practica import Practica
 from .models.estado import *
 from .gestionDePracticas import *
-from .views import listarXlsx
+from .views import listarXlsx, reporteHtml
 from . import reportes
-from django.contrib.auth.decorators import login_required
 
 
 def contextoCreacion(request, idCreacion):
@@ -27,7 +26,6 @@ def contextoCreacion(request, idCreacion):
     )
 
 
-
 def contextoModificacion(practica, accion=None):
     return {
         "tipo" : Areas.C.nombre(),
@@ -35,7 +33,6 @@ def contextoModificacion(practica, accion=None):
         "accion" : accion,
         "errores" : [],
     }
-
 
 
 def listar(request):
@@ -112,7 +109,6 @@ def listar(request):
     return HttpResponse(template.render( context, request ))
 
 
-
 def exportar(request, formato=None):
 
     if isinstance(request.user, AnonymousUser):
@@ -140,7 +136,7 @@ def exportar(request, formato=None):
             ["tipodeatencion", "Tipo de Atención"],
             ["precio", "Precio"],
             ["marcacreacion", "Creación"],
-            ["marcaultimaactualizacion", "Última Actualización"],
+            ["marcaultimaactualizacion", "Ultima Actualización"],
             ["creadapor", "Creada por"],
             ["atendidapor", "Atendida por"],
         ],
@@ -168,17 +164,8 @@ def exportar(request, formato=None):
     gestor.paginacion["cantidad"].label = "Consultas por página"
     exportar = ExportarForm(request.GET)
     accion = exportar.accion()
-    visibles = [ gestor[campo]["visible"] for campo in gestor.columnas ]
-    encabezados = [ gestor[campo]["etiqueta"] for campo in gestor.columnasVisibles ]
 
-    if formato=="xlsx":
-        listar=listarXlsx
-
-    if accion=="exportar_pagina":
-        response = listar(Areas.C.nombre(), gestor.itemsActuales(), visibles, encabezados)
-    elif accion=="exportar_todos":
-        response = listar(Areas.C.nombre(), gestor.items(), visibles, encabezados)
-    else:
+    if accion == "":
         template = loader.get_template(plantilla("exportar", "consultas"))
         context = {
             "formato" : formato,
@@ -186,8 +173,21 @@ def exportar(request, formato=None):
             "exportar" : exportar,
             "menu" : menuExportar(request.user, formato, Areas.C),
         }
-        response = HttpResponse(template.render(context, request))
-    return response
+        retorno = HttpResponse(template.render(context, request))
+    else:
+        nombre = "consultas-%s" % datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+        visibles = [ gestor[campo]["visible"] for campo in gestor.columnas ]
+        encabezados = [ gestor[campo]["etiqueta"] for campo in gestor.columnasVisibles ]
+
+        if accion=="exportar_pagina":
+            consultas = gestor.itemsActuales()
+        elif accion=="exportar_todos":
+            consultas = gestor.items()
+
+        contenido = listarXlsx("consultas", consultas, visibles, encabezados)
+        retorno = HttpResponse(contenido, content_type="application/ms-excel")
+        retorno["Content-Disposition"] = "attachment; filename=%s.xlsx" % nombre
+    return retorno
 
 
 def ver(request, id):
@@ -225,7 +225,6 @@ def ver(request, id):
     return HttpResponse(template.render( context, request ))
 
 
-
 def crear(request):
 
     if isinstance(request.user, AnonymousUser):
@@ -235,54 +234,47 @@ def crear(request):
         raise PermissionDenied()
 
     context = { "tipo" : Areas.C.nombre(), "errores" : [] }
+    acciones = accionesIniciales(request.user, Areas.C)
 
-    try:
-        acciones = accionesIniciales(request.user, Areas.C)
+    if request.method == "POST":
 
-        if request.method == "POST":
+        formCreacion = CreacionForm(acciones, request.POST)
+        formPractica = PracticaForm(request.POST)
+        formsetServicios = ConsultaServicioFormSet(request.POST, prefix="servicio")
 
-            formCreacion = CreacionForm(acciones, request.POST)
-            formPractica = PracticaForm(request.POST)
-            formsetServicios = ConsultaServicioFormSet(request.POST, prefix="servicio")
+        if formPractica.is_valid() and formsetServicios.is_valid() and formCreacion.is_valid():
 
-            if formPractica.is_valid() and formsetServicios.is_valid() and formCreacion.is_valid():
+            idCreacion = idCrearPractica(request.session)
+            servicios = formsetServicios.cleaned_data
+            practica = { attr : obj.id for attr, obj in formPractica.cleaned_data.items() }
+            accion = formCreacion.accion()
 
-                idCreacion = idCrearPractica(request.session)
-                servicios = formsetServicios.cleaned_data
-                accion = formCreacion.accion()
+            guardar(request.session, idCreacion, "tipo", Areas.C.nombre())
+            guardar(request.session, idCreacion, "initialPractica", practica)
+            guardar(request.session, idCreacion, "initialServicios", servicios)
 
-                guardar(request.session, idCreacion, "tipo", Areas.C.nombre())
-                guardar(request.session, idCreacion, "practicaData", formPractica.data)
-                guardar(request.session, idCreacion, "serviciosData", servicios)
+            try:
+                productos = buscarProductos(servicios)
+            except VeterinariaPatagonicaError as error:
+                context["errores"].append(error)
+            else:
+                guardar(request.session, idCreacion, "initialProductos", productos)
+                if accion:
+                    return HttpResponseRedirect(pathInicializar(Areas.C.nombre(), accion, idCreacion))
 
-                try:
-                    productos = buscarProductos(servicios)
-                except VeterinariaPatagonicaError as error:
-                    context["errores"].append( errorDatos(error, Areas.C.nombre(), idCreacion) )
-                else:
-                    guardar(request.session, idCreacion, "productosData", productos)
+                return HttpResponseRedirect(pathModificar(Areas.C.nombre(), idCreacion))
+    else:
 
-                    if accion:
-                        return HttpResponseRedirect(pathInicializar(Areas.C.nombre(), accion, idCreacion))
+        formCreacion = CreacionForm(acciones)
+        formPractica = PracticaForm()
+        formsetServicios = ConsultaServicioFormSet(prefix="servicio")
 
-                    return HttpResponseRedirect(pathModificar(Areas.C.nombre(), idCreacion))
-        else:
-
-            formCreacion = CreacionForm(acciones)
-            formPractica = PracticaForm()
-            formsetServicios = ConsultaServicioFormSet(prefix="servicio")
-
-        context["formPractica"] = formPractica
-        context["formsetServicios"] = formsetServicios
-        context["acciones"] = formCreacion
-
-
-    except VeterinariaPatagonicaError as error:
-        context["errores"] .append( errorSolicitud(error) )
+    context["formPractica"] = formPractica
+    context["formsetServicios"] = formsetServicios
+    context["acciones"] = formCreacion
 
     template = loader.get_template(plantilla("crear", "crear"))
     return HttpResponse(template.render(context, request))
-
 
 
 def modificar(request, idCreacion):
@@ -296,60 +288,57 @@ def modificar(request, idCreacion):
     try:
         context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.C.nombre())] }
+        context = { "errores": [error] }
     else:
-
+        try:
+            initialPractica = obtener(request.session, idCreacion, "initialPractica")
+        except VeterinariaPatagonicaError as error:
+            context["errores"].append(error)
+            initialPractica = {}
+        try:
+            initialServicios = obtener(request.session, idCreacion, "initialServicios")
+        except VeterinariaPatagonicaError as error:
+            context["errores"].append(error)
+            initialServicios = ()
         acciones = accionesIniciales(request.user, Areas.C)
 
         if request.method == "POST":
 
             formCreacion = CreacionForm(acciones, request.POST)
-            formPractica = PracticaForm(request.POST)
-            formsetServicios = ConsultaServicioFormSet(request.POST, prefix="servicio")
+            formPractica = PracticaForm(request.POST, initial=initialPractica)
+            formsetServicios = ConsultaServicioFormSet(request.POST, initial=initialServicios, prefix="servicio")
 
             if formPractica.is_valid() and formsetServicios.is_valid() and formCreacion.is_valid():
-
                 accion = formCreacion.accion()
-                servicios = formsetServicios.cleaned_data
 
-                try:
-                    productos = buscarProductos(servicios)
-                except VeterinariaPatagonicaError as error:
-                    context["errores"].append( errorDatos(error, Areas.C.nombre(), idCreacion) )
-                else:
+                if formPractica.has_changed():
+                    initialPractica = { attr : obj.id for attr, obj in formPractica.cleaned_data.items() }
+                    guardar(request.session, idCreacion, "initialPractica", initialPractica)
 
-                    guardar(request.session, idCreacion, "practicaData", formPractica.data)
-                    guardar(request.session, idCreacion, "serviciosData", servicios)
-                    guardar(request.session, idCreacion, "productosData", productos)
+                if formsetServicios.has_changed():
+                    servicios = formsetServicios.cleaned_data
+                    try:
+                        productos = buscarProductos(servicios)
+                    except VeterinariaPatagonicaError as error:
+                        context["errores"].append(error)
+                        accion = None
+                    else:
+                        guardar(request.session, idCreacion, "initialServicios", servicios)
+                        guardar(request.session, idCreacion, "initialProductos", productos)
 
-                    if accion:
-                        return HttpResponseRedirect(pathInicializar(Areas.C.nombre(), accion, idCreacion))
+                if accion:
+                    return HttpResponseRedirect(pathInicializar(Areas.C.nombre(), accion, idCreacion))
         else:
-
-            try:
-                data = obtener(request.session, idCreacion, "practicaData")
-            except VeterinariaPatagonicaError as error:
-                context["errores"].append(errorDatos(error))
-                data = None
-            formPractica = PracticaForm(data)
-
-            try:
-                servicios = obtener(request.session, idCreacion, "serviciosData")
-            except VeterinariaPatagonicaError as error:
-                context["errores"].append(errorDatos(error))
-                servicios = ()
-
-            formsetServicios = ConsultaServicioFormSet(initial=servicios, prefix="servicio")
+            formPractica = PracticaForm(initial=initialPractica)
+            formsetServicios = ConsultaServicioFormSet(initial=initialServicios, prefix="servicio")
             formCreacion = CreacionForm(acciones)
 
         practica = obtenerPractica(request, idCreacion)
         detalles = obtenerDetalles(request, idCreacion)
-        precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
-        duracion = calcularDuracion(detalles["servicios"])
         context["practica"] = practica
         context["detalles"] = detalles
-        context["precio"] = precio
-        context["duracion"] = duracion
+        context["precio"]   = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
+        context["duracion"] = calcularDuracion(detalles["servicios"])
 
         context["formPractica"] = formPractica
         context["formsetServicios"] = formsetServicios
@@ -357,7 +346,6 @@ def modificar(request, idCreacion):
 
     template = loader.get_template(plantilla("crear", "modificar"))
     return HttpResponse(template.render(context, request))
-
 
 
 def modificarProductos(request, idCreacion):
@@ -371,48 +359,45 @@ def modificarProductos(request, idCreacion):
     try:
         context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.C.nombre())] }
+        context = { "errores": [error] }
     else:
 
+        try:
+            productosInitial = obtener(request.session, context["id"], "initialProductos")
+        except VeterinariaPatagonicaError as error:
+            context["errores"].append(error)
+            productosInitial = ()
         acciones = accionesIniciales(request.user, Areas.C)
-        practica = obtenerPractica(request, idCreacion)
 
         if request.method == "POST":
 
+            formset = PracticaProductoFormSet(request.POST, initial=productosInitial, prefix="producto")
             formCreacion = CreacionForm(acciones, request.POST)
-            formset = PracticaProductoFormSet(request.POST, prefix="producto")
 
             if formset.is_valid() and formCreacion.is_valid():
+                if formset.has_changed():
+                    guardar(request.session, context["id"], "initialProductos", formset.cleaned_data)
 
                 accion = formCreacion.accion()
-                guardar(request.session, context["id"], "productosData", formset.cleaned_data)
-
                 if accion:
                     return HttpResponseRedirect(pathInicializar(context["tipo"], accion, context["id"]))
-
         else:
-            try:
-                productosInitial = obtener(request.session, context["id"], "productosData")
-            except VeterinariaPatagonicaError as error:
-                context["errores"].append(errorDatos(error))
-                productosInitial = ()
 
             formset = PracticaProductoFormSet(initial=productosInitial, prefix="producto")
             formCreacion = CreacionForm(acciones)
 
+        practica = obtenerPractica(request, idCreacion)
         detalles = obtenerDetalles(request, idCreacion)
-        precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
-        duracion = calcularDuracion(detalles["servicios"])
-        context["formset"] = formset
         context["practica"] = practica
         context["detalles"] = detalles
-        context["precio"] = precio
-        context["duracion"] = duracion
+        context["precio"]   = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
+        context["duracion"] = calcularDuracion(detalles["servicios"])
         context["acciones"] = formCreacion
+
+        context["formset"] = formset
 
     template = loader.get_template(plantilla("crear", "productos"))
     return HttpResponse(template.render(context, request))
-
 
 
 def crearPresupuestada(request, idCreacion):
@@ -426,14 +411,11 @@ def crearPresupuestada(request, idCreacion):
     try:
         context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.C.nombre())] }
+        context = { "errores": [error] }
     else:
-
         try:
             practica = obtenerPractica(request, idCreacion)
             detalles = obtenerDetalles(request, idCreacion)
-            precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
-            duracion = calcularDuracion(detalles["servicios"])
 
             if request.method == "POST":
 
@@ -442,14 +424,13 @@ def crearPresupuestada(request, idCreacion):
                     accion = form.accion()
                     datos = form.datos()
                     form.actualizarPractica()
-
                     try:
                         practica = persistir(request.user, practica, detalles, accion, datos)
-                    except ErrorBD as error:
-                        context["errores"].append(errorBD(**context))
+                    except VeterinariaPatagonicaError as error:
+                        context["errores"].append(error)
                     else:
                         eliminar(request.session, idCreacion)
-                        return HttpResponseRedirect(pathVer(context["tipo"], practica.pk))
+                        return HttpResponseRedirect(pathVer(context["tipo"], practica.id))
 
             else:
                 form = formPresupuestar(practica=practica)
@@ -457,17 +438,16 @@ def crearPresupuestada(request, idCreacion):
             context["form"] = form
             context["practica"] = practica
             context["detalles"] = detalles
-            context["precio"] = precio
-            context["duracion"] = duracion
+            context["precio"] = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
+            context["duracion"] = calcularDuracion(detalles["servicios"])
             context["accion"] = "Crear presupuesto"
 
 
         except VeterinariaPatagonicaError as error:
-            context["errores"].append(errorDatos(error, **context))
+            context["errores"].append(error)
 
     template = loader.get_template(plantilla("crear", "presupuestada"))
     return HttpResponse(template.render(context, request))
-
 
 
 def crearRealizada(request, idCreacion):
@@ -481,13 +461,13 @@ def crearRealizada(request, idCreacion):
     try:
         context = contextoCreacion(request, idCreacion)
     except VeterinariaPatagonicaError as error:
-        context = { "errores": [errorSolicitud(error, Areas.C.nombre())] }
+        context = { "errores": [error] }
     else:
         try:
             practica = obtenerPractica(request, idCreacion)
             verificarCreacion(practica, Practica.Acciones.realizar.name)
-
             detalles = obtenerDetalles(request, idCreacion)
+
             precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
             duracion = calcularDuracion(detalles["servicios"])
 
@@ -498,16 +478,13 @@ def crearRealizada(request, idCreacion):
                     accion = form.accion()
                     datos = form.datos()
                     form.actualizarPractica()
-
                     try:
                         practica = persistir(request.user, practica, detalles, accion, datos)
-                    except ErrorBD as error:
-                            context["errores"].append(errorBD(**context))
                     except VeterinariaPatagonicaError as error:
-                        context["errores"] = [ errorProducto(error) ]
+                        context["errores"].append(error)
                     else:
                         eliminar(request.session, idCreacion)
-                        return HttpResponseRedirect(pathVer(context["tipo"], practica.pk))
+                        return HttpResponseRedirect(pathVer(context["tipo"], practica.id))
 
             else:
                 form = formRealizar(practica=practica, duracion=duracion)
@@ -520,11 +497,10 @@ def crearRealizada(request, idCreacion):
             context["accion"] = "Registrar realizacion"
 
         except VeterinariaPatagonicaError as error:
-            context["errores"].append(errorDatos(error, **context))
+            context["errores"].append(error)
 
     template = loader.get_template(plantilla("crear", "realizada"))
     return HttpResponse(template.render(context, request))
-
 
 
 def terminarCreacion(request, idCreacion):
@@ -540,18 +516,24 @@ def terminarCreacion(request, idCreacion):
     return HttpResponseRedirect(pathListar(Areas.C.nombre()))
 
 
-
 def realizar(request, id):
 
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
+    context = { "tipo" : Areas.C.nombre(), "errores" : [] }
+
     try:
         practica = Practica.consultas.get(id=id)
         verificarPractica(practica)
         verificarAccion(practica, Practica.Acciones.realizar)
+    except Practica.DoesNotExist as error:
+        context["errores"].append(errorAccion(
+            Practica.Acciones.realizar,
+            "Consulta no encontrada"
+        ))
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.C.nombre(), "errores" : [errorSolicitud(error)] }
+        context["errores"].append(error)
     else:
 
         if not permisos.paraPractica(request.user, Practica.Acciones.realizar, practica):
@@ -561,7 +543,6 @@ def realizar(request, id):
         duracion = calcularDuracion(practica.practica_servicios.all())
 
         if request.method == "POST":
-
             form = formRealizar(request.POST, practica=practica, duracion=duracion)
 
             if form.is_valid():
@@ -573,9 +554,9 @@ def realizar(request, id):
                     practica.save(force_update=True)
                     practica.hacer(request.user, accion, **datos)
                 except VeterinariaPatagonicaError as error:
-                    context["errores"].append(errorAccion(practica, accion, descripcion=error.descripcion))
+                    context["errores"].append(error)
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.pk,))
+                    return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.id,))
 
         else:
             form = formRealizar(practica=practica, duracion=duracion)
@@ -589,24 +570,30 @@ def realizar(request, id):
     return HttpResponse(template.render(context, request))
 
 
-
 def modificarRealizacion(request, id):
 
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
+    context = { "tipo" : Areas.C.nombre(), "accion" : None, "errores" : [] }
+
     try:
-        practica = Practica.consultas.get(id=id)
+        practica = Practica.quirurgicas.get(id=id)
         verificarEstado(practica, [Realizada])
+    except Practica.DoesNotExist as error:
+        context["errores"].append(errorAccion(
+            Practica.Acciones.modificar,
+            "Consulta no encontrada"
+        ))
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.C.nombre(), "errores" : [errorSolicitud(error)] }
+        context["errores"].append(error)
     else:
 
         if not permisos.paraPractica(request.user, Practica.Acciones.modificar, practica):
             raise PermissionDenied()
 
+        context["accion"] = "Guardar"
         realizada = practica.estado()
-        context = { "tipo" : Areas.C.nombre(), "accion" : "Guardar" }
 
         if request.method == "POST":
 
@@ -620,13 +607,13 @@ def modificarRealizacion(request, id):
                         servicios.save()
                         productos.save()
                         realizada.completarPrecio()
-                except ErrorBD as error:
-                    context["errores"] = [ errorBD() ]
-                except VeterinariaPatagonicaError as error:
-                    context["errores"] = [ errorProducto(error) ]
-
+                except dbError as error:
+                    context["errores"] = [errorAccion(
+                        Practica.Acciones.modificar_realizacion,
+                        "Error al guardar datos"
+                    )]
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.pk))
+                    return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.id))
 
         else:
             servicios = PracticaRealizadaServicioFormSet(instancia=realizada, prefix="servicio_realizado")
@@ -640,27 +627,31 @@ def modificarRealizacion(request, id):
     return HttpResponse(template.render(context, request))
 
 
-
 def modificarInformacionClinica(request, id):
 
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
+    context = { "tipo" : Areas.C.nombre(), "accion" : None, "errores" : [] }
     try:
-        practica = Practica.consultas.get(id=id)
+        practica = Practica.quirurgicas.get(id=id)
         verificarEstado(practica, [Realizada])
+    except Practica.DoesNotExist as error:
+        context["errores"].append(errorAccion(
+            Practica.Acciones.modificar_informacion_clinica,
+            "Consulta no encontrada"
+        ))
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.C.nombre(), "errores" : [errorSolicitud(error)] }
+        context["errores"].append(error)
     else:
 
         if not permisos.paraPractica(request.user, Practica.Acciones.modificar_informacion_clinica, practica):
             raise PermissionDenied()
 
+        context["accion"] = "Guardar"
         realizada = practica.estado()
-        context = { "tipo" : Areas.C.nombre(), "accion" : "Guardar" }
 
         if request.method == "POST":
-
             generales = ObservacionesGeneralesForm(request.POST, instance=realizada, prefix="observaciones_generales")
             servicios = ObservacionesServiciosFormSet(request.POST, instance=realizada)
 
@@ -668,10 +659,13 @@ def modificarInformacionClinica(request, id):
                 try:
                     generales.save()
                     servicios.save()
-                except ErrorBD as error:
-                    context["errores"] = [ errorBD() ]
+                except dbError as error:
+                    context["errores"] = [errorAccion(
+                        Practica.Acciones.modificar_informacion_clinica,
+                        "Error al guardar datos"
+                    )]
                 else:
-                    return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.pk))
+                    return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.id))
 
         else:
             generales = ObservacionesGeneralesForm(instance=realizada, prefix="observaciones_generales")
@@ -685,29 +679,34 @@ def modificarInformacionClinica(request, id):
     return HttpResponse(template.render(context, request))
 
 
-
 def verInformacionClinica(request, id):
 
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
+    context = { "tipo" : Areas.C.nombre(), "accion" : None, "errores" : [] }
+
     try:
-        practica = Practica.consultas.get(id=id)
+        practica = Practica.quirurgicas.get(id=id)
         verificarEstado(practica, [Realizada, Facturada])
+    except Practica.DoesNotExist as error:
+        context["errores"].append(errorAccion(
+            Practica.Acciones.ver_informacion_clinica,
+            "Consulta no encontrada"
+        ))
     except VeterinariaPatagonicaError as error:
-        context = { "tipo" : Areas.C.nombre(), "errores" : [errorSolicitud(error)] }
+        context["errores"].append(error)
     else:
 
         if not permisos.paraPractica(request.user, Practica.Acciones.ver_informacion_clinica, practica):
             raise PermissionDenied()
 
         realizada = practica.estados.realizacion()
-        context = {
-            "tipo" : Areas.C.nombre(),
-            "practica" : practica,
-            "realizada" : realizada,
-            "menu" : menuAcciones(request.user, Practica.Acciones.ver_informacion_clinica, practica)
-        }
+
+        context["accion"] = "Guardar"
+        context["practica"] = practica,
+        context["realizada"] = realizada,
+        context["menu"] = menuAcciones(request.user, Practica.Acciones.ver_informacion_clinica, practica)
 
     template = loader.get_template(plantilla("ver", "informacionClinica"))
     return HttpResponse(template.render(context, request))
@@ -725,74 +724,6 @@ def reportePdf(practicas, hoy, dias):
     y = -54 + reportes.tiposDeAtencion(canvas, y, practicas, hoy, dias["tiposdeatencion"])
 
     return pdf.terminar(canvas)
-
-
-def reporteHtml(practicas, hoy, dias):
-
-    fecha = hoy - timedelta(days=dias["perfiles"])
-    antes, despues = reportes.clasificarRealizaciones(practicas, fecha)
-    perfiles = {
-        "dias" : dias["perfiles"],
-        "fecha" : fecha,
-        "datos" : {
-            "antes" : reportes.datosPerfiles(
-                reportes.contarRealizaciones(antes)
-            ),
-            "despues" : reportes.datosPerfiles(
-                reportes.contarRealizaciones(despues)
-            ),
-        }
-    }
-
-    fecha = hoy - timedelta(days=dias["realizaciones"])
-    realizacionesPorDia = {
-        "dias" : dias["realizaciones"],
-        "fecha" : fecha,
-        "datos" : reportes.datosRealizacionesPorDia(
-            reportes.realizacionesEntre(practicas, fecha, hoy)
-        ),
-    }
-
-    fecha = hoy - timedelta(days=dias["actualizaciones"])
-    seleccionadas = reportes.creadasEntre(practicas, fecha, hoy)
-    porcentajesActualizacion = {
-        "datos" : None,
-        "dias" : dias["actualizaciones"],
-        "fecha" : fecha,
-    }
-    if seleccionadas:
-        porcentajesActualizacion["datos"] = reportes.datosPorcentajesActualizacion(
-            reportes.calcularNiveles(seleccionadas, Areas.C)
-        )
-
-    fecha = hoy - timedelta(days=dias["tiposdeatencion"])
-    tdas = reportes.buscarTDA(practicas, fecha)
-    habilitados = tdas.filter(baja=False)
-    deshabilitados = tdas.filter(baja=True)
-    tiposDeAtencion = {
-        "fecha" : fecha,
-        "dias" : dias["tiposdeatencion"],
-        "habilitados" : habilitados.count(),
-        "deshabilitados" : deshabilitados.count(),
-    }
-    if habilitados:
-        normales, raros, descarte = reportes.clasificar(reportes.preparar(habilitados))
-        tiposDeAtencion["normales"] = normales
-        tiposDeAtencion["raros"] = raros
-        tiposDeAtencion["descarte"] = descarte
-        tiposDeAtencion["datos"] = {
-            "normales" : reportes.datosTiposDeAtencion(normales),
-            "raros" : reportes.datosTiposDeAtencion(raros),
-        }
-
-    return {
-        "hoy" : hoy,
-        "tipo" : Areas.C.nombre(),
-        "perfiles" : perfiles,
-        "realizacionesPorDia" : realizacionesPorDia,
-        "porcentajesActualizacion" : porcentajesActualizacion,
-        "tiposDeAtencion" : tiposDeAtencion,
-    }
 
 
 def reporte(request):
@@ -816,19 +747,9 @@ def reporte(request):
         retorno["Content-Disposition"] = "attachment; filename=%s.pdf" % nombre
 
     else:
-        context = reporteHtml(practicas, hoy, dias)
+        context = reporteHtml(Areas.C, practicas, hoy, dias)
         context["form"] = form
         template = loader.get_template(plantilla("reportes"))
         retorno = HttpResponse(template.render(context, request))
 
     return retorno
-
-@login_required
-def ayudaContextualConsulta(request):
-
-    template = loader.get_template('GestionDePracticas/ayudaContextualConsultas.html')
-    contexto = {
-        'usuario': request.user,
-    }
-
-    return HttpResponse(template.render(contexto, request))

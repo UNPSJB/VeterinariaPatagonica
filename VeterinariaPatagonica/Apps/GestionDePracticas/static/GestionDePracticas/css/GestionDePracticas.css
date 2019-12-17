@@ -98,42 +98,14 @@ ul.historial li {
 .referencias,
 .grafico {
     text-align: center;
+    overflow: auto;
 }
 .grafico .leyenda {
     font-weight: bold;
 }
-#formulario {
-    margin-bottom: 20px;
-}
-#grafico-perfil-tda-antes>canvas,
-#grafico-perfil-tda-despues>canvas {
-    width: 300px;
-    height: 300px;
-}
-#grafico-realizaciones>canvas {
-    width: 600px;
-    height: 300px;    
-}
-#grafico-actualizaciones>canvas.consulta {
-    width: 400px;
-    height: 250px;    
-}
-#grafico-actualizaciones>canvas.cirugia {
-    width: 500px;
-    height: 250px;    
-}
-#grafico-tda-normales>canvas.barras,
-#grafico-tda-raros>canvas.barras {
-    width: 500px;
-    height: 300px;    
-}
-#grafico-tda-normales>canvas.radar,
-#grafico-tda-raros>canvas.radar {
-    width: 500px;
-    height: 500px;    
-}
-
-
 .grafico>canvas {
     border: 1px solid gray;
+}
+#formulario {
+    margin-bottom: 20px;
 }
