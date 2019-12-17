@@ -27,7 +27,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
 
-productosFiltrados = [] 
+productosFiltrados = []
 
 def producto(request):
     context = {}#Defino un contexto.
@@ -43,22 +43,22 @@ def menuVer(usuario, producto):
     menu = [[],[],[],[]]
 
     if usuario.has_perm("GestionDeProductos.producto_modificar"):
-        menu[0].append( (reverse("productos:productoModificar", args=(producto.id,)), "Modificar producto") )
+        menu[0].append( (reverse("productos:productoModificar", args=(producto.id,)), "Modificar producto/insumo") )
         if producto.baja:
-            menu[0].append( (reverse("productos:productoHabilitar", args=(producto.id,)), "Habilitar producto") )
+            menu[0].append( (reverse("productos:productoHabilitar", args=(producto.id,)), "Habilitar producto/insumo") )
         else:
-            menu[0].append( (reverse("productos:productoDeshabilitar", args=(producto.id,)), "Deshabilitar producto") )
+            menu[0].append( (reverse("productos:productoDeshabilitar", args=(producto.id,)), "Deshabilitar producto/insumo") )
 
     if usuario.has_perm("GestionDeProductos.producto_listar_habilitados"):
-        menu[1].append( (reverse("productos:productoVerHabilitados"), "Listar productos habilitadas") )
+        menu[1].append( (reverse("productos:productoVerHabilitados"), "Listar productos/insumos habilitados") )
     if usuario.has_perm("GestionDeProductos.producto_listar_no_habilitados"):
-        menu[1].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos deshabilitadas") )
+        menu[1].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos/insumos deshabilitados") )
 
     if usuario.has_perm("GestionDeProductos.producto_crear"):
-        menu[2].append( (reverse("productos:productoCrear"), "Crear producto") )
+        menu[2].append( (reverse("productos:productoCrear"), "Crear producto/insumo") )
 
-    menu[3].append((reverse("productos:ayudaProducto"), "Ayuda sobre Gestión de Productos"))
-   
+
+
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
@@ -66,19 +66,18 @@ def menuListar(usuario, habilitados):
 
     if (not habilitados) and usuario.has_perm("GestionDeProductos.producto_ver_habilitados"):
 
-        menu[0].append( (reverse("productos:productoVerHabilitados"), "Listar productos habilitadas") )
-        menu[1].append( (reverse("productos:productosListadoExcel"), "Exportar productos deshabilitados"))
-        menu[2].append( (reverse("productos:productosListadoPDF"), "Imprimir productos deshabilitados"))
-    
-    if habilitados and usuario.has_perm("GestionDeProductos.producto_ver_no_habilitados"):
-        menu[0].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos deshabilitadas") )
-        menu[1].append( (reverse("productos:productosListadoExcel"), "Exportar productos habilitados") )
-        menu[2].append( (reverse("productos:productosListadoPDF"), "Imprimir productos habilitados") )
-    
-    if usuario.has_perm("GestionDeProductos.producto_crear"):
-        menu[3].append( (reverse("productos:productoCrear"), "Crear Producto") )
+        menu[0].append( (reverse("productos:productoVerHabilitados"), "Listar productos/insumos habilitados") )
+        menu[1].append( (reverse("productos:productosListadoExcel"), "Exportar productos/insumos deshabilitados"))
+        menu[2].append( (reverse("productos:productosListadoPDF"), "Imprimir productos/insumos deshabilitados"))
 
-    menu[4].append((reverse("productos:ayudaProducto"), "Ayuda sobre Gestión de Productos"))
+    if habilitados and usuario.has_perm("GestionDeProductos.producto_ver_no_habilitados"):
+        menu[0].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos/insumos deshabilitados") )
+        menu[1].append( (reverse("productos:productosListadoExcel"), "Exportar productos/insumos habilitados") )
+        menu[2].append( (reverse("productos:productosListadoPDF"), "Imprimir productos/insumos habilitados") )
+
+    if usuario.has_perm("GestionDeProductos.producto_crear"):
+        menu[3].append( (reverse("productos:productoCrear"), "Crear Producto/Insumo") )
+
 
     return [ item for item in menu if len(item) ]
 
@@ -86,23 +85,22 @@ def menuModificar(usuario, producto):
 
     menu = [[],[],[],[],[]]
 
-    menu[0].append( (reverse("productos:productoVer", args=(producto.id,)), "Ver producto") )
+    menu[0].append( (reverse("productos:productoVer", args=(producto.id,)), "Ver producto/insumo") )
 
     if producto.baja:
-        menu[1].append( (reverse("productos:productoHabilitar", args=(producto.id,)), "Habilitar producto") )
+        menu[1].append( (reverse("productos:productoHabilitar", args=(producto.id,)), "Habilitar producto/insumo") )
     else:
-        menu[1].append( (reverse("productos:productoDeshabilitar", args=(producto.id,)), "Deshabilitar producto") )
+        menu[1].append( (reverse("productos:productoDeshabilitar", args=(producto.id,)), "Deshabilitar producto/insumo") )
 
     if usuario.has_perm("GestionDeProductos.producto_listar_habilitados"):
-        menu[2].append( (reverse("productos:productoVerHabilitados"), "Listar productos habilitadas") )
+        menu[2].append( (reverse("productos:productoVerHabilitados"), "Listar productos/insumos habilitados") )
     if usuario.has_perm("GestionDeProductos.producto_listar_no_habilitados"):
-        menu[2].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos deshabilitadas") )
+        menu[2].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos/insumos deshabilitados") )
 
     if usuario.has_perm("GestionDeProductos.producto_crear"):
-        menu[3].append( (reverse("productos:productoCrear"), "Crear producto") )
-    
-    menu[4].append((reverse("productos:ayudaProducto"), "Ayuda sobre Gestión de Productos"))
-    
+        menu[3].append( (reverse("productos:productoCrear"), "Crear producto/insumo") )
+
+
     return [ item for item in menu if len(item) ]
 
 def menuCrear(usuario, producto):
@@ -110,10 +108,9 @@ def menuCrear(usuario, producto):
     menu = [[],[],[],[]]
 
     if usuario.has_perm("GestionDeProductos.producto_listar_habilitados"):
-        menu[0].append( (reverse("productos:productoVerHabilitados"), "Listar productos habilitados") )
+        menu[0].append( (reverse("productos:productoVerHabilitados"), "Listar productos/insumos habilitados") )
     if usuario.has_perm("GestionDeProductos.producto_listar_no_habilitados"):
-        menu[0].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos deshabilitados") )
-    menu[1].append((reverse("productos:ayudaProducto"), "Ayuda sobre Gestión de Productos"))
+        menu[0].append( (reverse("productos:productoVerDeshabilitados"), "Listar productos/insumos deshabilitados") )
     return [ item for item in menu if len(item) ]
 
 
@@ -157,7 +154,7 @@ def verHabilitados(request, habilitados=True):
         mapaFiltrado= Producto.MAPPER,
         mapaOrden= productos.MAPEO_ORDEN
     )
-  
+
     gestor.cargar(request)
     productosFiltrados = gestor.queryset
     template = loader.get_template('GestionDeProductos/verHabilitados.html')
@@ -185,7 +182,7 @@ def verDeshabilitados(request, habilitados=False):
 
     gestor.cargar(request)
     productosFiltrados = gestor.queryset
-    
+
     template = loader.get_template('GestionDeProductos/verDeshabilitados.html')
     contexto = {
         "gestor" : gestor,
@@ -295,7 +292,7 @@ def ListadoProductosExcel(request):
         ws.cell(row=cont, column=4).value = producto.formaDePresentacion
         ws.cell(row=cont, column=5).value = producto.precioPorUnidad
         cont = cont + 1
-    
+
     column_widths = []
     for row in ws.rows:
         for i, cell in enumerate(row):
@@ -307,7 +304,7 @@ def ListadoProductosExcel(request):
 
     for i, column_width in enumerate(column_widths):
          ws.column_dimensions[get_column_letter(i+1)].width = column_width
-    
+
     # Establecemos el nombre del archivo
     nombre_archivo = "ListadoProductos.xlsx"
     # Definimos que el tipo de respuesta a devolver es un archivo de microsoft excel
