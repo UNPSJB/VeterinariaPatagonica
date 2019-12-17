@@ -7,10 +7,20 @@
       {% block secciones %}
       {% endblock %}
 
-      <h4 class="titulo">
-        {% block tituloSeccion %}
-        {% endblock %}
-      </h4>
+      <div class="row">
+          <div class="col-xs-10 col-sm-11 col-md-11">
+            <h4 class="titulo">
+              {% block tituloSeccion %}
+              {% endblock %}
+            </h4>
+          </div>
+          <div class="col-xs-2 col-sm-1 col-md-1">
+            <a href="{% url 'clientes:ayudaCliente' %}">
+              <i class="glyphicon glyphicon-book"></i>
+            </a>
+          </div>
+      </div>
+
 
       {% block contenido %}
       {% endblock contenido %}

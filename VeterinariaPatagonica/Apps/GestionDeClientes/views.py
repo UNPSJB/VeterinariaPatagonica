@@ -10,6 +10,7 @@ from VeterinariaPatagonica import tools
 from .gestionDeClientes import *
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 from VeterinariaPatagonica.forms import ExportarForm
+from Apps.GestionDePracticas.models import *
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
@@ -164,6 +165,16 @@ def deshabilitar(request, id):
         cliente = Cliente.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
+    
+    practicas = Practica.objects.enEstado([Programada, Realizada]).filter(cliente=cliente).count()
+
+    if practicas > 0:
+        raise VeterinariaPatagonicaError("Error","El cliente tiene practicas realizadas")
+    
+    practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
+    if practicas > 0:
+        raise VeterinariaPatagonicaError("Error","El cliente tiene practicas facturadas sin pagar")
+    
 
     cliente.baja = True
     cliente.save()
