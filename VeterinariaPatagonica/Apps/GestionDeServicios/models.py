@@ -172,4 +172,5 @@ class ServicioProducto(models.Model):
     cantidad = models.PositiveIntegerField()
 
     def precioTotal(self):
-        return self.producto.precioEnUnidad(self.cantidad)
+        return self.producto.precioDeCompra * self.cantidad
+        #return self.producto.precioEnUnidad(self.cantidad)
