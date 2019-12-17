@@ -6,7 +6,7 @@
 Gestion de Servicios | Crear Servicios
 {% endblock %}
 
-{% block tituloSeccion %}
+{% block servicio-titulo %}
 {% if titulo == 1 %}
     {% include "snippets/titulo.html" with titulo="Nuevo Servicio" %}
 {% endif %}
@@ -24,7 +24,7 @@ Gestion de Servicios | Crear Servicios
 {% endif %}
 {% endblock %}
 
-{% block servicioContenido %}
+{% block servicio-contenido %}
 <form class="form-horizontal formulario" action="{{ request.path }}" method="post">
 
   {% csrf_token %}

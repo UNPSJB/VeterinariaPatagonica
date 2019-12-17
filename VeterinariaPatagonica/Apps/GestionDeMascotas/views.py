@@ -55,8 +55,6 @@ def menuVer(usuario, mascota):
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[2].append( (reverse("mascotas:mascotaCrear"), "Crear mascota") )
 
-    menu[3].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
-
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
@@ -74,8 +72,6 @@ def menuListar(usuario, habilitados):
         menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas habilitados") )
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear Mascota") )
-
-    menu[4].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
 
     return [ item for item in menu if len(item) ]
 
@@ -97,8 +93,6 @@ def menuModificar(usuario, mascota):
 
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear mascota") )
-    
-    menu[3].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
 
     return [ item for item in menu if len(item) ]
 
@@ -110,8 +104,6 @@ def menuCrear(usuario, mascota):
         menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitados") )
     if usuario.has_perm("GestionDeMascotas.mascota_listar_no_habilitados"):
         menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitados") )
-    
-    menu[1].append((reverse("mascotas:ayudaMascota"), "Ayuda sobre Gestión de Mascotas")) 
 
     return [ item for item in menu if len(item) ]
 
