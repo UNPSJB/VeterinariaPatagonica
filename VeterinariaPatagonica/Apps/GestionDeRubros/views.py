@@ -242,7 +242,7 @@ def verDeshabilitados(request, habilitados=False):
     )
     gestor.cargar(request)
     rubrosFiltrados = gestor.queryset
-    template = loader.get_template('GestionDeRubros/verHabilitados.html')
+    template = loader.get_template('GestionDeRubros/verDeshabilitados.html')
     context = {
         "gestor": gestor,
         "menu" : menuListar(request.user, habilitados),
@@ -357,3 +357,4 @@ def tabla(pdf, y, rubros):
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
     detalle_orden.drawOn(pdf, 20, y)
+    

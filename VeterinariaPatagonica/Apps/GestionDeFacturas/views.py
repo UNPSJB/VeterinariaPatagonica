@@ -496,6 +496,13 @@ def exportar(request, formato=None):
         retorno["Content-Disposition"] = "attachment; filename=%s.xlsx" % nombre
     return retorno
 
+def ayudaContextualCosto(request):
+# Redireccionamos la ayuda contextual
+    template = loader.get_template('GestionDeFacturas/ayudaGestiondeCostos.html')
+    contexto = {
+        'usuario': request.user,
+    }
+    return HttpResponse(template.render(contexto, request))
 
 # Create your views here.
 
