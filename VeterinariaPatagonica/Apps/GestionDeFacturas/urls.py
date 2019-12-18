@@ -25,4 +25,5 @@ urlpatterns = [
     path("exportar/", include(([
         path("xlsx/", views.exportar, {"formato" : "xlsx"}, name="xlsx"),
     ], "exportar"))),
+    path('ayudaCostos/', views.ayudaContextualCosto, name="ayudaCostos"),
 ]

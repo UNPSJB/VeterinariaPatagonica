@@ -2,11 +2,22 @@
 {% load static %}
 {% block paginaSeccionGeneral %}
     <section>
-        <h3 class="titulo">
-        {% block factura-titulo %}
-        {% endblock %}
-        </h3>
+        <div class="row">
+            <div class="col-xs-10 col-sm-11 col-md-11">
+              <h4 class="titulo">
+                {% block factura-titulo %}
+                {% endblock %}
+              </h4>
+            </div>
+            <div class="col-xs-2 col-sm-1 col-md-1">
+              <a href="{% url 'facturas:ayudaCostos' %}" target="_blank">
+                <i class="glyphicon glyphicon-book"></i>
+              </a>
+            </div>
+        </div>
         {% block factura-contenido %}
         {% endblock %}
     </section>
+
+    
 {% endblock %}

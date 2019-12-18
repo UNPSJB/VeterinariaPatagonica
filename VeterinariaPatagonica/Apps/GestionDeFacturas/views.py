@@ -231,10 +231,17 @@ def facturarPractica(request, id):
             if form.is_valid() and formset.is_valid():
 
                 if acciones.accion()=="guardar":
+                    detalles = formset.productos()
+                    actualizacion = {
+                        detalle.producto.id : -detalle.cantidad for detalle in detalles
+                    }
                     try:
                         with transaction.atomic():
+                            Producto.objects.actualizarStock(actualizacion)
                             factura = form.crearFactura()
                             practica.hacer(request.user, Practica.Acciones.facturar.name)
+                    except VeterinariaPatagonicaError as error:
+                        context["errores"].append(error)
                     except ErrorBD as error:
                         context["errores"].append({
                             "titulo":"Error al guardar datos",
@@ -285,14 +292,21 @@ def facturar(request):
                 if practica is not None:
                     verificarFacturacion(request.user, practica)
             except VeterinariaPatagonicaError as error:
-                context["errores"].appned(error.diccionario())
+                context["errores"].append(error)
             else:
                 if acciones.accion()=="guardar":
+                    detalles = formset.productos()
+                    actualizacion = {
+                        detalle.producto.id : -detalle.cantidad for detalle in detalles
+                    }
                     try:
                         with transaction.atomic():
+                            Producto.objects.actualizarStock(actualizacion)
                             factura = form.crearFactura()
                             if practica is not None:
                                 practica.hacer(request.user, Practica.Acciones.facturar.name)
+                    except VeterinariaPatagonicaError as error:
+                        context["errores"].append(error)
                     except ErrorBD as error:
                         context["errores"].append({
                             "titulo":"Error al guardar datos",
@@ -482,6 +496,13 @@ def exportar(request, formato=None):
         retorno["Content-Disposition"] = "attachment; filename=%s.xlsx" % nombre
     return retorno
 
+def ayudaContextualCosto(request):
+# Redireccionamos la ayuda contextual
+    template = loader.get_template('GestionDeFacturas/ayudaGestiondeCostos.html')
+    contexto = {
+        'usuario': request.user,
+    }
+    return HttpResponse(template.render(contexto, request))
 
 # Create your views here.
 

@@ -753,3 +753,15 @@ def reporte(request):
         retorno = HttpResponse(template.render(context, request))
 
     return retorno
+
+def ayudaContextualConsulta(request):
+
+    if isinstance(request.user, AnonymousUser):
+        return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
+        
+    template = loader.get_template('GestionDePracticas/ayudaContextualConsultas.html')
+    contexto = {
+        'usuario': request.user,
+    }
+
+    return HttpResponse(template.render(contexto, request))

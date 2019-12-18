@@ -205,10 +205,38 @@ class Factura(models.Model):
 
     def calcularTotal(self, detalles=[], descuento=0, recargo=0, practica=None):
         importe = Decimal(0)
+        importeDetalles = Decimal(0)
+        importePractica = Decimal(0)
+        print("------------------------")
+        print("Descuento de producto: ",self.cliente.descuentoProducto)
+        print("Descuento de servicio: ",self.cliente.descuentoServicio)
+        #Obtengo los valores de los descuentos del cliente.
+        if(self.cliente):
+            descuentoServicio = self.cliente.descuentoServicio
+            descuentoProducto = self.cliente.descuentoProducto
+        else:
+            descuentoServicio = 0
+            descuentoProducto = 0
+
+        #Obtengo el valor de la práctica con el descuento del cliente aplicado.
         if practica is not None:
-            importe += practica.precio
+            if descuentoServicio > 0 :
+                importePractica = practica.precio + ((practica.precio * descuentoServicio) /100)
+            else:
+                importePractica = practica.precio
+
+
+        # if practica is not None:
+        #     importe += practica.precio
         for detalle in detalles:
-            importe += detalle.subtotal
+            importeDetalles += detalle.subtotal
+        print("Subtotal = ",importeDetalles)
+        #Obtengo el valor de los productos con el descuento del cliente aplicado.
+        if descuentoProducto>0:
+            importeDetalles = importeDetalles - ((importeDetalles*descuentoProducto)/100)
+        
+        if (importeDetalles>0 or importePractica>0):
+            importe = importeDetalles + importePractica
         if (descuento != recargo):
             importe += importe * (recargo-descuento) / 100
         return importe

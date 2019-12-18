@@ -1,10 +1,10 @@
 {% extends 'GestionDeProductos/GestionDeProductos.html' %}
 {% load static %}
 {% block titulo %}
-Listado de Productos Habilitados
+Listado de Productos/Insumos Habilitados
 {% endblock %}
 {% block tituloSeccion %}
-{% include "snippets/titulo.html" with titulo="Listado de Productos Habilitados" %}
+{% include "snippets/titulo.html" with titulo="Listado de Productos/Insumos Habilitados" %}
 {% endblock %}
 {% block contenido %}
 {% with demasiados=20 %}
@@ -24,8 +24,8 @@ Listado de Productos Habilitados
             {% block botonFiltrado %}
             <div class="col-xs-12 col-sm-12 col-md-12 columna">
                 <a class="boton" href="javascript:;" onclick="alternar('iconoFiltrado', 'filtradoResultados', 'fa-chevron-up', 'fa-chevron-down');">
-                    <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de productos
-                </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: Filtrado según nombre del producto</li><li><b>Marca</b>: Mostrar sólo las productos correspondientes a la marca ingresada</li><li><b>Forma de Presentación</b>: Filtrado según la forma de presentación de producto</li><li><li><b>Precio por Unidad Mayor</b>: Filtrado según el precio por unidad mayor del producto</li><b>Precio por Unidad Menor</b>: Filtrado según el precio por unidad menor del producto</li><li><b>Precio por Unidad Mayor</b>: Filtrado según el precio por unidad mayor del producto</li></ul>" html=True placement="bottom" %}
+                    <i id="iconoFiltrado" class="fa fa-chevron-up"></i>Filtrado de productos/insumos
+                </a> {% include "snippets/ayuda.html" with id="ayuda-filtrado" content="<p>Opciones de filtrado:</p><ul><li><b>Nombre</b>: Filtrado según nombre del producto/insumo</li><li><b>Marca</b>: Mostrar sólo las productos/insumos correspondientes a la marca ingresada</li><li><b>Forma de Presentación</b>: Filtrado según la forma de presentación de producto/insumo</li><li><li><b>Precio por Unidad Mayor</b>: Filtrado según el precio por unidad mayor del producto/insumo</li><b>Precio por Unidad Menor</b>: Filtrado según el precio por unidad menor del producto/insumo</li><li><b>Precio por Unidad Mayor</b>: Filtrado según el precio por unidad mayor del producto/insumo</li></ul>" html=True placement="bottom" %}
             </div>
             {% endblock %}
             </div>
@@ -81,7 +81,7 @@ Listado de Productos Habilitados
         {% if gestor.numeroItems %}
         <div class="resumen-resultados">
         {% block resumenResultados %}
-        <b>Mostrando {{ gestor.itemsActuales.count }} productos de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
+        <b>Mostrando {{ gestor.itemsActuales.count }} productos/insumos de {{ gestor.numeroItems }} encontrados. Resultados del {{ gestor.rangoActual.0 }} al {{ gestor.rangoActual.1 }}.</b>
         {% endblock %}
             {% if gestor.itemsActuales.count > demasiados %}<b><a name="iniciodelistado" href="#findelistado">Ir al final del listado.</a></b>{% endif %}
         </div>
@@ -163,7 +163,7 @@ Listado de Productos Habilitados
         {% else %}
         <div class="sin-resultados">
         {% block sinResultados %}
-        <b>No se encontraron productos </b>
+        <b>No se encontraron productos ni insumos </b>
         {% endblock %}
         </div>
         {% endif %}

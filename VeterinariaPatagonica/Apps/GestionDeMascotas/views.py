@@ -15,6 +15,13 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from Apps.GestionDeClientes.models import Cliente
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 
+#Vista genérica para mostrar resultados
+from django.views.generic.base import TemplateView
+#Workbook nos permite crear libros en excel
+from openpyxl import Workbook
+from openpyxl.utils import get_column_letter
+
+#Importamos settings para poder tener a la mano la ruta de la carpeta media
 from django.conf import settings
 from io import BytesIO
 from reportlab.pdfgen import canvas
@@ -22,7 +29,6 @@ from django.views.generic import View
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
-from openpyxl import Workbook
 
 mascotasFiltradas = []
 
@@ -63,13 +69,13 @@ def menuListar(usuario, habilitados):
     if (not habilitados) and usuario.has_perm("GestionDeMascotas.mascota_ver_habilitados"):
 
         menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
-        menu[1].append( (reverse("mascotas:mascotasListadoExcel"), "Exportar mascotas deshabilitados"))
-        menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas deshabilitados"))
+        menu[1].append( (reverse("mascotas:mascotasListadoExcel"), "Exportar mascotas deshabilitadas"))
+        menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas deshabilitadas"))
     if habilitados and usuario.has_perm("GestionDeMascotas.mascota_ver_no_habilitados"):
 
         menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
-        menu[1].append( (reverse("mascotas:mascotasListadoExcel"), "Exportar mascotas habilitados") )
-        menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas habilitados") )
+        menu[1].append( (reverse("mascotas:mascotasListadoExcel"), "Exportar mascotas habilitadas") )
+        menu[2].append( (reverse("mascotas:mascotasListadoPDF"), "Imprimir mascotas habilitadas") )
     if usuario.has_perm("GestionDeMascotas.mascota_crear"):
         menu[3].append( (reverse("mascotas:mascotaCrear"), "Crear Mascota") )
 
@@ -101,9 +107,9 @@ def menuCrear(usuario, mascota):
     menu = [[],[],[],[]]
 
     if usuario.has_perm("GestionDeMascotas.mascota_listar_habilitados"):
-        menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitados") )
+        menu[0].append( (reverse("mascotas:mascotaVerHabilitados"), "Listar mascotas habilitadas") )
     if usuario.has_perm("GestionDeMascotas.mascota_listar_no_habilitados"):
-        menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitados") )
+        menu[0].append( (reverse("mascotas:mascotaVerDeshabilitados"), "Listar mascotas deshabilitadas") )
 
     return [ item for item in menu if len(item) ]
 
@@ -123,7 +129,7 @@ def modificar(request, id= None, cliente_id=None):
 
     if request.method == 'POST':
         formulario = MascotaForm(request.POST, instance=mascota)
-        
+
         if formulario.is_valid():
             mascota = formulario.save()
             mascota.generadorDePatente(mascota.id)
@@ -203,7 +209,7 @@ def ver(request, id):
 
 
 def verHabilitados(request, habilitados=True):
-    
+
     global mascotasFiltradas
     mascotas = Mascota.objects.habilitados()
     gestor = GestorListadoQuerySet(
@@ -218,7 +224,7 @@ def verHabilitados(request, habilitados=True):
         mapaFiltrado= Mascota.MAPPER,
         mapaOrden= mascotas.MAPEO_ORDEN
     )
-  
+
     gestor.cargar(request)
     mascotasFiltradas = gestor.queryset
     template = loader.get_template('GestionDeMascotas/verHabilitados.html')
@@ -228,7 +234,7 @@ def verHabilitados(request, habilitados=True):
     return HttpResponse(template.render(contexto, request))
 
 def verDeshabilitados(request, habilitados=False):
-    
+
     global mascotasFiltradas
     mascotas = Mascota.objects.deshabilitados()
     gestor = GestorListadoQuerySet(
@@ -243,7 +249,7 @@ def verDeshabilitados(request, habilitados=False):
         mapaFiltrado= Mascota.MAPPER,
         mapaOrden= mascotas.MAPEO_ORDEN
     )
-  
+
     gestor.cargar(request)
     mascotasFiltradas = gestor.queryset
     template = loader.get_template('GestionDeMascotas/verDeshabilitados.html')
@@ -268,7 +274,7 @@ def ListadoMascotasExcel(request):
         ws.cell(row=cont, column=4).value = str(mascota.cliente)
         ws.cell(row=cont, column=5).value = mascota.especie
         cont = cont + 1
-    
+
     column_widths = []
     for row in ws.rows:
         for i, cell in enumerate(row):
@@ -349,4 +355,3 @@ class clienteAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
 
         return qs
-

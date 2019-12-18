@@ -29,7 +29,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
 
-rubrosFiltrados = [] 
+rubrosFiltrados = []
 
 def rubros(request):
     context = {}#Defino el contexto.
@@ -59,8 +59,7 @@ def menuVer(usuario, rubro):
     if usuario.has_perm("GestionDeRubros.rubro_crear"):
         menu[2].append( (reverse("rubros:rubroCrear"), "Crear rubro") )
 
-    menu[3].append((reverse("rubros:ayudaRubro"), "Ayuda sobre Gestión de Rubros"))
-   
+
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
@@ -71,16 +70,15 @@ def menuListar(usuario, habilitados):
         menu[0].append( (reverse("rubros:rubroVerHabilitados"), "Listar rubros habilitados") )
         menu[1].append( (reverse("rubros:rubrosListadoExcel"), "Exportar rubros deshabilitados"))
         menu[2].append( (reverse("rubros:rubrosListadoPDF"), "Imprimir rubros deshabilitados"))
-    
+
     if habilitados and usuario.has_perm("GestionDeRubros.rubro_ver_no_habilitados"):
         menu[0].append( (reverse("rubros:rubroVerDeshabilitados"), "Listar rubros deshabilitados") )
         menu[1].append( (reverse("rubros:rubrosListadoExcel"), "Exportar rubros habilitados") )
         menu[2].append( (reverse("rubros:rubrosListadoPDF"), "Imprimir rubros habilitados") )
-    
+
     if usuario.has_perm("GestionDeRubros.rubro_crear"):
         menu[3].append( (reverse("rubros:rubroCrear"), "Crear Rubro") )
 
-    menu[4].append((reverse("rubros:ayudaRubro"), "Ayuda sobre Gestión de Rubros"))
 
     return [ item for item in menu if len(item) ]
 
@@ -102,9 +100,9 @@ def menuModificar(usuario, rubro):
 
     if usuario.has_perm("GestionDeRubros.rubro_crear"):
         menu[3].append( (reverse("rubros:rubroCrear"), "Crear rubro") )
-    
-    menu[4].append((reverse("rubros:ayudaRubro"), "Ayuda sobre Gestión de Rubros"))
-    
+
+
+
     return [ item for item in menu if len(item) ]
 
 def menuCrear(usuario, rubro):
@@ -115,7 +113,7 @@ def menuCrear(usuario, rubro):
         menu[0].append( (reverse("rubros:rubroVerHabilitados"), "Listar rubros habilitados") )
     if usuario.has_perm("GestionDeRubros.rubro_listar_no_habilitados"):
         menu[0].append( (reverse("rubros:rubroVerDeshabilitados"), "Listar rubros deshabilitados") )
-    menu[1].append((reverse("rubros:ayudaRubro"), "Ayuda sobre Gestión de Rubros"))
+
     return [ item for item in menu if len(item) ]
 
 
@@ -244,7 +242,7 @@ def verDeshabilitados(request, habilitados=False):
     )
     gestor.cargar(request)
     rubrosFiltrados = gestor.queryset
-    template = loader.get_template('GestionDeRubros/verHabilitados.html')
+    template = loader.get_template('GestionDeRubros/verDeshabilitados.html')
     context = {
         "gestor": gestor,
         "menu" : menuListar(request.user, habilitados),
@@ -359,3 +357,4 @@ def tabla(pdf, y, rubros):
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
     detalle_orden.drawOn(pdf, 20, y)
+    
