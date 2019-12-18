@@ -72,7 +72,7 @@ class FiltradoForm(forms.Form):
         })
     )
 
-    segun = forms.ChoiceField(
+    """segun = forms.ChoiceField(
         label="Ordenar segun",
         choices=criterios,
         required=False,
@@ -84,7 +84,7 @@ class FiltradoForm(forms.Form):
         choices=ordenes,
         required=False,
         widget=forms.Select(attrs={"class":"form-control"}),
-    )
+    )"""
 
     def filtros(self):
         retorno = {}
