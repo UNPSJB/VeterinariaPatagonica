@@ -153,7 +153,7 @@ def verHabilitados(request, habilitados=True):
             ["orden_nombre", "Nombre"],
             ["orden_marca", "Marca"],
             ["orden_formaDePresentacion", "Forma de Presentacion"],
-            ["orden_precioPorUnidad", "Precio por Unidad"],
+            ["orden_precioPorUnidad", "Precio De Venta"],
         ],
         clases={"filtrado" : FiltradoForm},
         queryset=productos,
