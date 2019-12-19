@@ -217,10 +217,10 @@ def deshabilitar(request, id):
     except ObjectDoesNotExist:
         raise Http404()
 
-    practicas = Practica.objects.enEstado([Presupuestada]).filter(producto=producto).count()
+    '''practicas = Practica.objects.enEstado([Presupuestada]).filter(producto=producto).count()
 
     if practicas > 0:
-        raise VeterinariaPatagonicaError("Error","El producto se encuentra en practicas presupuestadas")
+        raise VeterinariaPatagonicaError("Error","El producto se encuentra en practicas presupuestadas")'''
     
 
     producto.baja = True
