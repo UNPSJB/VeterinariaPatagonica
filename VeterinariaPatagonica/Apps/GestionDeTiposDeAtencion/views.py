@@ -361,7 +361,7 @@ def ListadoTdasPDF(request):
     pdf = canvas.Canvas(buffer)
     # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
     cabecera(pdf)
-    y = 500
+    y = 700
     tabla(pdf, y, tdasFiltrados)
     # Con show page hacemos un corte de página para pasar a la siguiente
     pdf.showPage()
@@ -380,8 +380,8 @@ def cabecera(pdf):
     # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
     pdf.setFont("Helvetica", 16)
     # Dibujamos una cadena en la ubicación X,Y especificada
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
-    pdf.setFont("Helvetica", 14)
+    pdf.drawString(190, 790, u"VETERINARIA PATAGÓNICA")
+    pdf.setFont("Helvetica", 10)
     pdf.drawString(220, 770, u"LISTADO DE TIPOS DE ATENCIÓN")
 
 def tabla(pdf, y, tiposDeAtencion):
@@ -389,10 +389,15 @@ def tabla(pdf, y, tiposDeAtencion):
     # Creamos una tupla de encabezados para neustra tabla
     encabezados = ('Nombre', 'Emergencia', 'Lugar de atención', 'Recargo %', 'Inicio Franja Horaria', 'Fin Franja Horaria')
     # Creamos una lista de tuplas que van a contener a las personas
-    detalles = [(tda.nombre, tda.emergencia, tda.lugar, tda.recargo, tda.inicioFranjaHoraria, tda.finFranjaHoraria) for tda in tiposDeAtencion]
+
+    detalles = []
+    for tda in tiposDeAtencion:
+        y -= 20
+        t = (tda.nombre, tda.emergencia, tda.lugar, tda.recargo, tda.inicioFranjaHoraria, tda.finFranjaHoraria)
+        detalles.append(t)
     
     # Establecemos el tamaño de cada una de las columnas de la tabla
-    detalle_orden = Table([encabezados] + detalles, colWidths=[5 * cm, 2 * cm, 3 * cm, 2 * cm, 3 * cm, 3 * cm])
+    detalle_orden = Table([encabezados] + detalles, colWidths=[6.5 * cm, 2 * cm, 3 * cm, 2 * cm, 3 * cm, 3 * cm])
     # Aplicamos estilos a las celdas de la tabla
     detalle_orden.setStyle(TableStyle(
         [
@@ -401,7 +406,7 @@ def tabla(pdf, y, tiposDeAtencion):
             # Los bordes de todas las celdas serán de color negro y con un grosor de 1
             ('GRID', (0, 0), (-1, -1), 1, colors.black),
             # El tamaño de las letras de cada una de las celdas será de 10
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('FONTSIZE', (0, 0), (-1, -1), 8),
         ]
     ))
     # Establecemos el tamaño de la hoja que ocupará la tabla

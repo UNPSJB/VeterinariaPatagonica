@@ -15,9 +15,12 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 from VeterinariaPatagonica.forms import ExportarForm
 
+#Vista genérica para mostrar resultados
+from django.views.generic.base import TemplateView
 #Workbook nos permite crear libros en excel
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
+
 #Importamos settings para poder tener a la mano la ruta de la carpeta media
 from django.conf import settings
 from io import BytesIO
@@ -324,7 +327,7 @@ def ListadoProductosPDF(request):
     pdf = canvas.Canvas(buffer)
     # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
     cabecera(pdf)
-    y = 500
+    y = 730
     tabla(pdf, y, productosFiltrados)
     # Con show page hacemos un corte de página para pasar a la siguiente
     pdf.showPage()
@@ -343,18 +346,23 @@ def cabecera(pdf):
     # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
     pdf.setFont("Helvetica", 16)
     # Dibujamos una cadena en la ubicación X,Y especificada
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.drawString(190, 790, u"VETERINARIA PATAGÓNICA")
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE PRODUCTOS")
 
 def tabla(pdf, y, productos):
     print("TABLA")
     # Creamos una tupla de encabezados para neustra tabla
-    encabezados = ('Nombre', 'Marca')
+    encabezados = ('Nombre', 'Marca', 'Forma de Presentación', 'Precio')
     # Creamos una lista de tuplas que van a contener a los productos
-    detalles = [(producto.nombre, producto.marca) for producto in productos]
+    detalles = []
+    for producto in productos:
+        y -= 20
+        p = (producto.nombre, producto.marca, producto.formaDePresentacion, producto.precioPorUnidad)
+        detalles.append(p)
+
     # Establecemos el tamaño de cada una de las columnas de la tabla
-    detalle_orden = Table([encabezados] + detalles, colWidths=[5 * cm, 5 * cm])
+    detalle_orden = Table([encabezados] + detalles, colWidths=[5 * cm, 4 * cm, 4 * cm, 4 * cm])
     # Aplicamos estilos a las celdas de la tabla
     detalle_orden.setStyle(TableStyle(
         [
@@ -369,7 +377,7 @@ def tabla(pdf, y, productos):
     # Establecemos el tamaño de la hoja que ocupará la tabla
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
-    detalle_orden.drawOn(pdf, 20, y)
+    detalle_orden.drawOn(pdf, 60, y)
 
 class rubroAutocomplete(autocomplete.Select2QuerySetView):
 
