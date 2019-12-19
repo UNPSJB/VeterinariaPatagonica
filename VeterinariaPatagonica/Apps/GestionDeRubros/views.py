@@ -311,7 +311,7 @@ def ListadoRubrosPDF(request):
     pdf = canvas.Canvas(buffer)
     # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
     cabecera(pdf)
-    y = 500
+    y = 700
     tabla(pdf, y, rubrosFiltrados)
     # Con show page hacemos un corte de página para pasar a la siguiente
     pdf.showPage()
@@ -330,7 +330,7 @@ def cabecera(pdf):
     # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
     pdf.setFont("Helvetica", 16)
     # Dibujamos una cadena en la ubicación X,Y especificada
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.drawString(190, 790, u"VETERINARIA PATAGÓNICA")
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE RUBROS")
 
@@ -339,9 +339,13 @@ def tabla(pdf, y, rubros):
     # Creamos una tupla de encabezados para neustra tabla
     encabezados = ('Nombre', 'Descripcion')
     # Creamos una lista de tuplas que van a contener a las personas
-    detalles = [(rubro.nombre, rubro.descripcion) for rubro in rubros]
+    detalles = []
+    for rubro in rubros:
+        y -= 20
+        r = (rubro.nombre, rubro.descripcion)
+        detalles.append(r)
     # Establecemos el tamaño de cada una de las columnas de la tabla
-    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm,5 * cm, 5 * cm])
+    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm,5 * cm])
     # Aplicamos estilos a las celdas de la tabla
     detalle_orden.setStyle(TableStyle(
         [

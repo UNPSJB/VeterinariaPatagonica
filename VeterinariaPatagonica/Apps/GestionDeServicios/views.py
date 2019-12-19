@@ -265,6 +265,7 @@ def ayudaContextualServicio(request):
     }
 
     return HttpResponse(template.render(contexto, request))
+
 #def volver(request, id):
 #    return HttpResponseRedirect(request.META.get('HTTP_REFERER','/'))
 
@@ -369,7 +370,6 @@ def ListadoServiciosExcel(request):
     return response
 
 def ListadoServiciosPDF(request):
-    print("GET")
     # Indicamos el tipo de contenido a devolver, en este caso un pdf
     response = HttpResponse(content_type='application/pdf')
     # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
@@ -378,7 +378,7 @@ def ListadoServiciosPDF(request):
     pdf = canvas.Canvas(buffer)
     # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
     cabecera(pdf)
-    y = 500
+    y = 730
     tabla(pdf, y, serviciosFiltrados)
     # Con show page hacemos un corte de página para pasar a la siguiente
     pdf.showPage()
@@ -389,7 +389,6 @@ def ListadoServiciosPDF(request):
     return response
 
 def cabecera(pdf):
-    print("CABECERA")
     # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
     archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
     # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
@@ -397,21 +396,23 @@ def cabecera(pdf):
     # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
     pdf.setFont("Helvetica", 16)
     # Dibujamos una cadena en la ubicación X,Y especificada
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.drawString(190, 790, u"VETERINARIA PATAGÓNICA")
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE SERVICIOS")
 
 def tabla(pdf, y, servicios):
-    print("TABLA")
     # Creamos una tupla de encabezados para neustra tabla
-    encabezados = ('Nombre', 'Tipo', 'Precio de mano de obra')
+    encabezados = ('Nombre', 'Tipo', 'Precio de mano de obra', 'Tiempo Estimado (min)')
 
-    # Creamos una lista de tuplas que van a contener a las personas
-    detalles = [(servicio.nombre, servicio.tipo, servicio.precioManoDeObra) for servicio in servicios]
+    # Creamos una lista de tuplas que van a contener a los servicios
+    detalles = []
+    for servicio in servicios:
+        y -= 20
+        s = (servicio.nombre, servicio.tipo, servicio.precioManoDeObra, servicio.tiempoEstimado)
+        detalles.append(s)
 
     # Establecemos el tamaño de cada una de las columnas de la tabla
-    detalle_orden = Table([encabezados] + detalles, colWidths=[5 * cm, 5 * cm, 5 * cm])
-    print("HOLAAA")
+    detalle_orden = Table([encabezados] + detalles, colWidths=[5 * cm, 2 * cm, 4 * cm, 4 * cm])
     # Aplicamos estilos a las celdas de la tabla
     detalle_orden.setStyle(TableStyle(
         [
@@ -426,7 +427,7 @@ def tabla(pdf, y, servicios):
     # Establecemos el tamaño de la hoja que ocupará la tabla
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
-    detalle_orden.drawOn(pdf, 30, y)
+    detalle_orden.drawOn(pdf, 70, y)
 
 class FiltradoServiciosForm(forms.Form):
     nombre = forms.CharField(

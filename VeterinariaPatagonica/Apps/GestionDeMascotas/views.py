@@ -301,7 +301,7 @@ def ListadoMascotasPDF(request):
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer)
     cabecera(pdf)
-    y = 650
+    y = 730
     tabla(pdf, y, mascotasFiltradas)
     pdf.showPage()
     pdf.save()
@@ -314,15 +314,20 @@ def cabecera(pdf):
     archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
     pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
     pdf.setFont("Helvetica", 16)
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.drawString(190, 790, u"VETERINARIA PATAGÓNICA")
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE MASCOTAS")
 
 def tabla(pdf, y, mascotas):
     encabezados = ('Patente', 'Nombre', 'Dueño', 'Especie')
 
-    detalles = [(mascota.patente, mascota.nombre, mascota.cliente, mascota.especie) for mascota in mascotas]
-    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 4 * cm, 5 * cm, 4 * cm])
+    detalles = []
+    for mascota in mascotas:
+        y -= 20
+        m = (mascota.patente, mascota.nombre, mascota.cliente, mascota.especie)
+        detalles.append(m)
+
+    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 4 * cm, 6 * cm, 3 * cm])
     detalle_orden.setStyle(TableStyle(
         [
             ('ALIGN', (0, 0), (3, 0), 'CENTER'),
