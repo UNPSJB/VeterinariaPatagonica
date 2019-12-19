@@ -50,20 +50,20 @@ def menuModificar(usuario, tipoDeAtencion):
 
     menu = [[],[],[],[]]
 
-    menu[0].append( (reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)), "Ver tipo de atención") )
+    '''menu[0].append( (reverse("tiposDeAtencion:ver", args=(tipoDeAtencion.id,)), "Ver tipo de atención") )'''
 
-    if tipoDeAtencion.baja:
+    '''if tipoDeAtencion.baja:
         menu[1].append( (reverse("tiposDeAtencion:habilitar", args=(tipoDeAtencion.id,)), "Habilitar tipo de atención") )
     else:
-        menu[1].append( (reverse("tiposDeAtencion:deshabilitar", args=(tipoDeAtencion.id,)), "Deshabilitar tipo de atención") )
+        menu[1].append( (reverse("tiposDeAtencion:deshabilitar", args=(tipoDeAtencion.id,)), "Deshabilitar tipo de atención") )'''
 
     if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_habilitados"):
-        menu[2].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
+        menu[0].append( (reverse("tiposDeAtencion:habilitados"), "Listar tipos de atención habilitados") )
     if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_listar_no_habilitados"):
-        menu[2].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
+        menu[1].append( (reverse("tiposDeAtencion:deshabilitados"), "Listar tipos de atención deshabilitados") )
 
-    if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
-        menu[3].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )
+    '''if usuario.has_perm("GestionDeTiposDeAtencion.tipodeatencion_crear"):
+        menu[3].append( (reverse("tiposDeAtencion:crear"), "Crear tipo de atención") )'''
 
     return [ item for item in menu if len(item) ]
 

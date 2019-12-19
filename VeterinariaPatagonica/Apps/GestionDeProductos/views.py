@@ -14,6 +14,7 @@ from Apps.GestionDeRubros.models import Rubro
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from VeterinariaPatagonica.tools import GestorListadoQuerySet
 from VeterinariaPatagonica.forms import ExportarForm
+from Apps.GestionDePracticas.models import *
 
 #Vista genérica para mostrar resultados
 from django.views.generic.base import TemplateView
@@ -215,6 +216,12 @@ def deshabilitar(request, id):
         producto = Producto.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
+
+    practicas = Practica.objects.enEstado([Presupuestada]).filter(producto=producto).count()
+
+    if practicas > 0:
+        raise VeterinariaPatagonicaError("Error","El producto se encuentra en practicas presupuestadas")
+    
 
     producto.baja = True
     producto.save()
