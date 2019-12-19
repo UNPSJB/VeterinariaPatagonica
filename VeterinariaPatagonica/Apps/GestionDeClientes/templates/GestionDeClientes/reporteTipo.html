@@ -1,0 +1,50 @@
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+{% load static %}
+{% block tituloSeccion %}
+Reportes de Tipos de Clientes
+{% endblock %}
+
+
+{% block contenido %}
+<p>total de facturas: {{cantidad}}</p>
+    {% for field in facturas %}                       
+    <p> {{ field }}</p>
+    {% endfor %}
+<p>Clientes que compraron y son comunes</p>
+    {% for field in comun %}                       
+    <p> {{ field }}</p>
+    {% endfor %}
+<p>Clientes que compraron y son especiales</p>
+    {% for field in especial %}                       
+    <p> {{ field }}</p>
+    {% endfor %}
+
+    <script src="{% static 'vendor/chartjs/Chart.js' %}"></script>
+    <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
+    <canvas id="myChart" width="250" height="250"></canvas>
+
+    <script>
+        let miCanvas = document.getElementById("myChart").getContext("2d");
+
+        var cantidadC = "{{cantidadC}}"
+        var cantidadE = "{{cantidadE}}"
+        var chart = new Chart(miCanvas, {
+            type: "doughnut",
+            data:{
+                labels:["Especial", "Comun"],
+                datasets: [
+                    {
+                        label: "Mi grafica",
+                        backgroundColor: ["#FF6384","#63FF84"],
+                        borderColor: "rgb(100,200,255)",
+                        data: [cantidadE,cantidadC]
+                    }
+                ]
+
+            }
+        }
+
+        )
+    </script>
+
+{% endblock contenido %}

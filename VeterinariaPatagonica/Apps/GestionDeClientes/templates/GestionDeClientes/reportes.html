@@ -1,0 +1,43 @@
+{% extends 'GestionDeClientes/GestionDeClientes.html' %}
+{% load static %}
+{% block tituloSeccion %}
+Reporte de clientes al {{ hoy|date:"d/m/Y" }}
+{% endblock %}
+{% block contenido %}
+<div class="contenedor">
+    <form id="formulario" class="form-horizontal" action="{{ request.path }}" method="GET">
+        {% if form.errors %}
+        <div class="errores">
+            <b>Por favor revise los siguientes errores:</b>
+            <ul>
+                {% include "snippets/formErrores.html" %}
+            </ul>
+        </div>
+        {% endif %}
+        {% for field in form %}
+        <div class="form-group {{ field.name }} {% if field.errors %}has-error{% endif %}">
+            <div class=row>
+                <label for="{{ field.id_for_label }}" class="col-xs-12 col-sm-7 col-md-5 etiqueta control-label">
+                {{ field.label }}
+                </label>
+                <div class="col-xs-12 col-sm-5 col-md-7 control">
+                    {% if field.help_text %}
+                    {% include "./ayuda.html" with content=field.help_text id=field.id_for_label|add:"_help_text" %}
+                    {% endif %}
+                    {{ field }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </form>
+    <div id="porTipo">
+
+        <div><a id="" class="btn btn-sm btn-default"  href="{% url 'clientes:reporteTipo' %}"> Reporte Tipo </a></div>
+    </div> 
+    <div id="porCantidad">
+        <div><a id="" class="btn btn-sm btn-default"  href="{% url 'clientes:reporte' %}"> Reporte </a></div>
+    </div>
+
+
+</div>
+{% endblock %}

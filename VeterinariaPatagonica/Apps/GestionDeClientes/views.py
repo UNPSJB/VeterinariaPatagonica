@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.template import loader, RequestContext
-from django.http import Http404, HttpResponse, HttpResponseRedirect
+from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required, permission_required
 from django.urls import reverse
@@ -26,6 +26,17 @@ from django.views.generic import View
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib import colors
+
+from Apps.GestionDeFacturas.models import Factura
+from django.db.models import Q
+from django.db.models import Count, Sum, Max
+import operator
+import json
+from random import randint
+from django.views.generic import TemplateView
+from chartjs.views.lines import BaseLineChartView
+
+from datetime import datetime
 
 clientesFiltrados = [] 
 
@@ -56,7 +67,7 @@ def menuVer(usuario, cliente):
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
-    menu = [[],[],[],[],[]]
+    menu = [[],[],[],[],[],[]]
 
     if (not habilitados) and usuario.has_perm("GestionDeClientes.cliente_ver_habilitados") \
         and usuario.has_perm("GestionDeClientes.cliente_exportar_excel_habilitados"):
@@ -64,17 +75,18 @@ def menuListar(usuario, habilitados):
         menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
         menu[1].append( (reverse("clientes:clientesListadoEXCEL"), "Exportar clientes deshabilitados"))
         menu[2].append( (reverse("clientes:clientesListadoPDF"), "Imprimir clientes deshabilitados"))
-    
+  
     if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados") \
         and usuario.has_perm("GestionDeClientes.cliente_exportar_excel_deshabilitados"):
 
         menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
         menu[1].append( (reverse("clientes:clientesListadoEXCEL"), "Exportar clientes habilitados") )
         menu[2].append( (reverse("clientes:clientesListadoPDF"), "Imprimir clientes habilitados") )
+        menu[3].append( (reverse("clientes:reportes"), "Reportes de Clientes"))
 
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
 
-        menu[3].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
+        menu[4].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
         
     return [ item for item in menu if len(item) ]
 
@@ -364,7 +376,6 @@ def ListadoClientesExcel(request):
     return response
 
 def ListadoClientesPDF(request):
-    print("GET")
     # Indicamos el tipo de contenido a devolver, en este caso un pdf
     response = HttpResponse(content_type='application/pdf')
     # La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
@@ -373,7 +384,7 @@ def ListadoClientesPDF(request):
     pdf = canvas.Canvas(buffer)
     # Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
     cabecera(pdf)
-    y = 500
+    y = 700
     tabla(pdf, y, clientesFiltrados)
     # Con show page hacemos un corte de página para pasar a la siguiente
     pdf.showPage()
@@ -384,7 +395,6 @@ def ListadoClientesPDF(request):
     return response
 
 def cabecera(pdf):
-    print("CABECERA")
     # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
     archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
     # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
@@ -392,19 +402,21 @@ def cabecera(pdf):
     # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
     pdf.setFont("Helvetica", 16)
     # Dibujamos una cadena en la ubicación X,Y especificada
-    pdf.drawString(190, 790, u"VETERINARIA PATAGONICA")
+    pdf.drawString(190, 790, u"VETERINARIA PATAGÓNICA")
     pdf.setFont("Helvetica", 14)
     pdf.drawString(220, 770, u"LISTADO DE CLIENTES")
 
 def tabla(pdf, y, clientes):
-    print("TABLA")
     # Creamos una tupla de encabezados para neustra tabla
     encabezados = ('DNI/CUIT', 'Nombres', 'Apellidos', 'Localidad', 'Tipo de Cliente')
     # Creamos una lista de tuplas que van a contener a las personas
-    detalles = [(cliente.dniCuit, cliente.nombres, cliente.apellidos, cliente.localidad, cliente.tipoDeCliente) for cliente in clientes]
-    
+    detalles = []
+    for cliente in clientes:
+        y -= 20
+        c = (cliente.dniCuit, cliente.nombres, cliente.apellidos, cliente.localidad, cliente.tipoDeCliente)
+        detalles.append(c)
     # Establecemos el tamaño de cada una de las columnas de la tabla
-    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 5 * cm, 5 * cm, 4 * cm, 3 * cm])
+    detalle_orden = Table([encabezados] + detalles, colWidths=[3 * cm, 4 * cm, 4 * cm, 4 * cm, 3 * cm])
     # Aplicamos estilos a las celdas de la tabla
     detalle_orden.setStyle(TableStyle(
         [
@@ -419,7 +431,7 @@ def tabla(pdf, y, clientes):
     # Establecemos el tamaño de la hoja que ocupará la tabla
     detalle_orden.wrapOn(pdf, 800, 600)
     # Definimos la coordenada donde se dibujará la tabla
-    detalle_orden.drawOn(pdf, 30, y)
+    detalle_orden.drawOn(pdf, 35, y)
 
 @login_required
 def ayudaContextualCliente(request):
@@ -429,3 +441,140 @@ def ayudaContextualCliente(request):
         'usuario': request.user,
     }
     return HttpResponse(template.render(contexto, request))
+
+@login_required
+def reportes(request):
+# Redireccionamos la ayuda contextual
+    hoy = datetime.now().date()
+    template = loader.get_template('GestionDeClientes/reportes.html')
+    contexto = {
+        'usuario': request.user,
+        'hoy': hoy
+    }
+    return HttpResponse(template.render(contexto, request))
+
+def reporteTipo(request):
+
+    #Obtengo clientes segun el tipo
+    clientesEspecial = Factura.objects.filter(Q(cliente__tipoDeCliente__icontains='E'))
+    cantidadEspecial = clientesEspecial.count()
+    clientesComun = Factura.objects.filter(Q(cliente__tipoDeCliente__icontains='C'))
+    cantidadComun = clientesComun.count()
+
+    #Obtengo las facturas y su cantidad
+    facturasAll = Factura.objects.all()
+    facturasCount = Factura.objects.count()
+
+    data= {
+        "cantidadC": cantidadComun,
+        "cantidadE": cantidadEspecial,
+    }
+
+
+    template = loader.get_template('GestionDeClientes/reporteTipo.html')
+    context = {
+        "comun" : clientesComun,
+        "especial" : clientesEspecial,
+        "facturas" : facturasAll,
+        "cantidad" : facturasCount,
+        "cantidadC": cantidadComun,
+        "cantidadE": cantidadEspecial,
+        }
+    #return JsonResponse(data)
+    return HttpResponse(template.render(context, request))
+    #return HttpResponse(json.dumps(data), content_type='application/json; utf-8')
+
+def reporteTopCliente(request):
+
+    totales = []
+    diccionarioClientesTop={}
+    jason = []
+    data = []
+    clientesConFacturas = []
+
+    gastos = []
+    clientesG = []
+    #Obtengo los clientes que gastaron mas de 500
+    clientes = Cliente.objects.all()
+    for cliente in clientes:
+        facturasPorCliente = Factura.objects.filter(cliente=cliente)
+        totalDeFacturas = facturasPorCliente.aggregate(Sum('total'))
+        #totalDeFacturas = totalDeFacturas.aggregate(Max('total'))
+        if facturasPorCliente.exists():
+            clientesConFacturas.append(facturasPorCliente)
+            #totales.append(totalDeFacturas.value)
+            if "total__sum" in totalDeFacturas:
+                totales.append(totalDeFacturas["total__sum"])
+                diccionarioClientesTop={
+                    'clientedni': cliente.dniCuit,
+                    'clientenombre': cliente.nombres,
+                    'clienteapellido': cliente.apellidos,
+                    'gasto': totalDeFacturas["total__sum"]}
+                jason.append(diccionarioClientesTop)
+
+    mayor= 500
+    for top in jason:
+        gasto= top["gasto"]
+        if gasto > mayor:
+            data.append(top)
+
+    for numero in data:
+        gasto = numero["gasto"]
+        gasto = int(gasto)
+        gastos.append(gasto)
+
+    for cliente in data:
+        cli = cliente["clientedni"]
+        #cli = (cli)
+        clientesG.append(cli)
+    
+    print("aHDG",gastos)
+    print("CLIIIEN",clientesG)
+
+    labels= ["Lu", "Benja"]
+    datas = [22, 26]
+    template = loader.get_template('GestionDeClientes/reporte.html')
+    context = {
+        "tt": totales,
+        "diccionario": jason,
+        "otra": clientesConFacturas,
+        "data": data,
+        "gastos": gastos,
+        "clientes": clientesG,
+        "labels" : labels,
+        "datas": datas,
+        }
+    #return HttpResponse(json.dumps(data), content_type='application/json; utf-8')
+    return HttpResponse(template.render(context, request))
+
+def get_data (request, *args, **kwargs):
+    data = {
+        "sales": 100,
+        "customer": 10
+    }
+    return JsonResponse(data)
+
+'''from flask import Flask
+from flask import render_template
+from datetime import time'''
+ 
+ 
+'''app = Flask(__name__)
+ 
+ 
+@app.route("/simple_chart")
+def chart():
+    legend = 'Monthly Data'
+    labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
+    values = [10, 9, 8, 7, 6, 4, 7, 8]
+    return render_template('chart.html', values=values, labels=labels, legend=legend)
+
+app = Flask(__name__)
+ 
+ 
+@app.route("/")
+def result():
+    legend = 'Monthly Data'
+    labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
+    values = [10, 9, 8, 7, 6, 4, 7, 8]
+    return render_template('result.html', values=values, labels=labels, legend=legend)'''
