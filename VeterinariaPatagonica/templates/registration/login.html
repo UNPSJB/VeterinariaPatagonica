@@ -9,7 +9,7 @@
     
      <title>
     {% block title %}
-      Veterinaria Patagonica | Iniciar Sesion
+      Veterinaria Patagónica | Iniciar Sesión
     {% endblock title %}
     </title>
 
@@ -23,7 +23,7 @@
         {% block principal %}
           <div class="col-xs-12">
           <section class="principal">
-            <h3>Bienvenido  al  Sistema  de  Veterinaria  Patagonica</h3>
+            <h3>Bienvenido  al  Sistema  de  Veterinaria  Patagónica</h3>
             <form action="{{ url_actual }}?proxima={{ url_proxima }}" method="post">
               {% csrf_token %}
               <div id="inputs">
@@ -33,7 +33,7 @@
                 <button class="btn btn-default submit" type="submit" >Iniciar sesión</button>
             </form>
 
-            <h2><i class="fa fa-paw"></i> Veterinaria Patagonica</h2>
+            <h2><i class="fa fa-paw"></i> Veterinaria Patagónica</h2>
           </section>
         </div>
         {% endblock principal %}
