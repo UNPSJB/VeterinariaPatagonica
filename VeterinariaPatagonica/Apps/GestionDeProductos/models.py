@@ -134,7 +134,7 @@ class Producto (models.Model):
     )'''
 
     nombre = models.CharField(
-        help_text="Nombre del Producto",
+        help_text="Nombre del Producto / Insumo",
         max_length = MAX_NOMBRE,
         unique = False,
         null = False,
@@ -146,7 +146,7 @@ class Producto (models.Model):
             })
 
     marca = models.CharField(
-        help_text="Marca del Producto",
+        help_text="Marca del Producto / Insumo",
         max_length = MAX_NOMBRE,
         unique = False,
         null = False,
@@ -160,14 +160,14 @@ class Producto (models.Model):
     )
 
     stock = models.IntegerField(
-        help_text="Stock del Producto",
+        help_text="Stock del Producto / Insumo",
         validators=[
             MinValueValidator(STOCK_MIN_VALUE, message=("El Stock no puede ser menor a {}").format(STOCK_MIN_VALUE)),
         ]
     )
 
     formaDePresentacion = models.PositiveSmallIntegerField(
-        help_text="Forma de Presentacion del Producto",
+        help_text="Forma de Presentacion del Producto / Insumo",
         choices=UNIDADES,
         unique=False,
         null=False,
@@ -179,7 +179,7 @@ class Producto (models.Model):
     )
 
     precioPorUnidad = models.DecimalField(
-        help_text="Precio del Producto",
+        help_text="Precio del Producto / Insumo",
         max_digits=PRECIO,
         decimal_places=MAX_DECIMAL,
         validators=[
@@ -190,7 +190,7 @@ class Producto (models.Model):
 
 
     precioDeCompra = models.DecimalField(
-        help_text="Precio de Compra del Producto",
+        help_text="Precio de Compra del Producto / Insumo",
         max_digits = PRECIO,
         unique=False,
         null=False,
@@ -216,7 +216,7 @@ class Producto (models.Model):
     )
 
     descripcion = models.TextField(
-        help_text="Descripcion del Rubro",
+        help_text="Descripcion del Producto / Insumo",
         max_length=MAXDESCRIPCION,
         unique=False,
         null=True,
