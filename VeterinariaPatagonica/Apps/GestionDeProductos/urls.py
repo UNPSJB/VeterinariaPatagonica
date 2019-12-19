@@ -18,6 +18,6 @@ urlpatterns = [
     path('listado_productos_excel/', productos_views.ListadoProductosExcel, name="productosListadoExcel"),
     path('listado_productos_pdf/', productos_views.ListadoProductosPDF, name="productosListadoPDF"),
     path('ayudaProducto/', productos_views.ayudaContextualProducto, name='ayudaProducto'),
-    #path('reporte_productos_vendidos/', productos_views.reporteProductosVendidos, name = 'reporteProductosVendidos'),
+    path('reporte_productos_vendidos/', productos_views.reporteProductosVendidos, name = 'reporteProductosVendidos'),
 ]
 
