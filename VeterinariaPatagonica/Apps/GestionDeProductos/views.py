@@ -62,7 +62,7 @@ def menuVer(usuario, producto):
     return [ item for item in menu if len(item) ]
 
 def menuListar(usuario, habilitados):
-    menu = [[], [], [], [], []]
+    menu = [[], [], [], [], [], []]
 
     if (not habilitados) and usuario.has_perm("GestionDeProductos.producto_ver_habilitados"):
 
@@ -77,6 +77,8 @@ def menuListar(usuario, habilitados):
 
     if usuario.has_perm("GestionDeProductos.producto_crear"):
         menu[3].append( (reverse("productos:productoCrear"), "Crear Producto/Insumo") )
+
+    menu[4].append( (reverse("productos:reporteProductosVendidos"), "Ver reporte Producto/Insumo mas vendidos") )
 
 
     return [ item for item in menu if len(item) ]
@@ -314,6 +316,75 @@ def ListadoProductosExcel(request):
     wb.save(response)
     return response
 
+##
+#
+# REPORTE DE PRODUCTOS VENDIDOS POR DIA 
+#
+##
+from reportlab.lib.pagesizes import A4
+from reportlab.graphics.charts.linecharts import HorizontalLineChart
+from reportlab.graphics.charts.lineplots import LinePlot
+from reportlab.graphics.shapes import Drawing
+from Apps.GestionDeFacturas.models import Factura, DetalleFactura
+from Apps.GestionDePagos.models import Pago
+
+
+
+def reporteProductosVendidos(request):
+    print('GET')
+    response = HttpResponse(content_type='application/pdf')
+    #response['Content-Disposition'] = 'attachment; filename = productos-vendidos.pdf' 
+    buffer = BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=A4)
+    pdf.setTitle('Reporte productos vendidos')
+    cabeceraReporte(pdf)
+    graficoLineal(pdf)    
+    pdf.showPage()
+    pdf.save()
+    pdf = buffer.getvalue()
+    buffer.close()
+    response.write(pdf)
+    return response
+
+#obtener los productos pagados de las facturas 
+def obtenerQuerysetPagos():
+    pagosPorMes =[0,0,0,0,0,0,0,0,0,0,0,0]
+    pagos = Pago.objects.all()
+    for pago in pagos:
+        mesPago = pago.fecha.strftime("%m")
+        pagosPorMes[int(mesPago)-1] += pago.importeTotal
+    return pagosPorMes
+
+def graficoLineal (pdf):
+    querysetPagos = obtenerQuerysetPagos()
+    print(querysetPagos)
+    drawing = Drawing(400, 200)
+    data = [(querysetPagos)]
+    pdf = HorizontalLineChart()
+    pdf.x = 50
+    pdf.y = 50
+    pdf.height = 125
+    pdf.width = 300
+    pdf.data = data
+    pdf.joinedLines = 1
+    catNames = 'Jan Feb Mar Apr May Jun Jul Aug'.split(' ')
+    pdf.categoryAxis.categoryNames = catNames
+    pdf.categoryAxis.labels.boxAnchor = 'n'
+    #pdf.lineLabels.fontName = 'FreeSans'
+    mayor = 0
+    for pago in querysetPagos:
+        if (pago>mayor):
+            mayor = pago 
+
+    pdf.valueAxis.valueMin = 0
+    pdf.valueAxis.valueMax = pago
+    pdf.valueAxis.valueStep = 5000
+    pdf.lineLabelFormat = '%2.0f'
+    pdf.lines[0].strokeWidth = 2
+    pdf.lines[1].strokeWidth = 1.5
+    drawing.add(pdf)
+    drawing.save(formats=['pdf'], outDir='.', fnRoot='test')
+
 def ListadoProductosPDF(request):
     print("GET")
     # Indicamos el tipo de contenido a devolver, en este caso un pdf
@@ -333,6 +404,19 @@ def ListadoProductosPDF(request):
     buffer.close()
     response.write(pdf)
     return response
+
+def cabeceraReporte(pdf):
+    print("CABECERA REPORTE")
+    # Utilizamos el archivo logo_vetpat.png que está guardado en la carpeta media/imagenes
+    archivo_imagen = settings.MEDIA_ROOT + '/imagenes/logo_vetpat2.jpeg'
+    # Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+    pdf.drawImage(archivo_imagen, 20, 750, 120, 90, preserveAspectRatio=True)
+    # Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
+    pdf.setFont("Helvetica", 16)
+    # Dibujamos una cadena en la ubicación X,Y especificada
+    pdf.drawString(200, 790, u"VETERINARIA PATAGONICA")
+    pdf.setFont("Helvetica", 14)
+    pdf.drawString(175, 770, u"REPORTE DE PRODUCTOS VENDIDOS")
 
 def cabecera(pdf):
     print("CABECERA")

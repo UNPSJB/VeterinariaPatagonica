@@ -106,6 +106,7 @@ def menuCrear(usuario, servicio):
 
     return [ item for item in menu if len(item) ]
 
+
 @login_required(redirect_field_name='proxima')
 @permission_required('GestionDeServicios.add_Servicio', raise_exception=True)
 def modificar(request, id = None):

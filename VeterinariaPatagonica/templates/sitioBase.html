@@ -104,24 +104,30 @@
             </div>
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "productos:productoCrear" %}" role="button" id="imagenProducto"></a>
-              <p class= "text-primary">Crear un Producto</p>
+              <p class= "text-primary">Crear un Producto / Insumo</p>
             </div>
             <div class="col-xs-6 col-sm-4 col-md-3">
             <a class="btn btn-primary cuadradito" href="{% url "practicas:consulta:crear:practica" %}" role="button" id="imagenConsulta"></a>
             <p class= "text-primary">Crear una Consulta</p>
             </div>
+            {% if request.user.esGerente %}
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "servicios:servicioCrear" %}" role="button" id="imagenServicio"></a>
               <p class= "text-primary">Crear un Servicio</p>
             </div>
+            {% endif %}
+            {% if request.user.esGerente or request.user.esAdministrativo%}
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "facturas:facturar" %}" role="button" id="imagenFactura"></a>
               <p class= "text-primary">Crear una Factura</p>
             </div>
+            {% endif %}
+            {% if request.user.esGerente %}
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "tiposdeatencion:crear" %}" role="button" id="imagenTipoDeAtencion"></a>
               <p class= "text-primary">Crear un Tipo de Atención</p>
             </div>
+            {% endif %}
             <div class="col-xs-6 col-sm-4 col-md-3">
               <a class="btn btn-primary cuadradito" href="{% url "practicas:cirugia:crear:practica" %}" role="button" id="imagenCirugia"></a>
               <p class= "text-primary">Crear una Cirugía</p>
