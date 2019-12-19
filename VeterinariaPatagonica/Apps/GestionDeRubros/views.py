@@ -94,9 +94,9 @@ def menuModificar(usuario, rubro):
         menu[1].append( (reverse("rubros:rubroDeshabilitar", args=(rubro.id,)), "Deshabilitar rubro") )
 
     if usuario.has_perm("GestionDeRubros.rubro_listar_habilitados"):
-        menu[2].append( (reverse("rubros:rubroVerHabilitados"), "Listar rubros habilitadas") )
+        menu[2].append( (reverse("rubros:rubroVerHabilitados"), "Listar rubros habilitados") )
     if usuario.has_perm("GestionDeRubros.rubro_listar_no_habilitados"):
-        menu[2].append( (reverse("rubros:rubroVerDeshabilitados"), "Listar rubros deshabilitadas") )
+        menu[2].append( (reverse("rubros:rubroVerDeshabilitados"), "Listar rubros deshabilitados") )
 
     if usuario.has_perm("GestionDeRubros.rubro_crear"):
         menu[3].append( (reverse("rubros:rubroCrear"), "Crear rubro") )
