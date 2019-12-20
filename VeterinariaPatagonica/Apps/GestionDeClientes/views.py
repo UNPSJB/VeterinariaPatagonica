@@ -38,7 +38,7 @@ from chartjs.views.lines import BaseLineChartView
 
 from datetime import datetime
 
-clientesFiltrados = [] 
+clientesFiltrados = []
 
 def clientes(request):
     context = {}#Defino el contexto.
@@ -75,7 +75,7 @@ def menuListar(usuario, habilitados):
         menu[0].append( (reverse("clientes:clienteVerHabilitados"), "Listar clientes habilitados") )
         menu[1].append( (reverse("clientes:clientesListadoEXCEL"), "Exportar clientes deshabilitados"))
         menu[2].append( (reverse("clientes:clientesListadoPDF"), "Imprimir clientes deshabilitados"))
-  
+
     if habilitados and usuario.has_perm("GestionDeClientes.cliente_ver_no_habilitados") \
         and usuario.has_perm("GestionDeClientes.cliente_exportar_excel_deshabilitados"):
 
@@ -87,7 +87,7 @@ def menuListar(usuario, habilitados):
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
 
         menu[4].append( (reverse("clientes:clienteCrear"), "Crear Cliente") )
-        
+
     return [ item for item in menu if len(item) ]
 
 def menuModificar(usuario, cliente):
@@ -170,16 +170,16 @@ def deshabilitar(request, id):
         cliente = Cliente.objects.get(id=id)
     except ObjectDoesNotExist:
         raise Http404()
-    
+
     practicas = Practica.objects.enEstado([Programada, Realizada]).filter(cliente=cliente).count()
 
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El cliente tiene practicas realizadas")
-    
     practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
+    
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El cliente tiene practicas facturadas sin pagar")
-    
+
 
     cliente.baja = True
     cliente.save()
@@ -238,12 +238,12 @@ def verHabilitados(request, habilitados=True):
         mapaFiltrado= Cliente.MAPPER,
         mapaOrden= clientes.MAPEO_ORDEN
     )
-   
+
     gestor.cargar(request)
     clientesFiltrados = gestor.queryset
     template = loader.get_template('GestionDeClientes/verHabilitados.html')
     context = {
-        "gestor" : gestor, 
+        "gestor" : gestor,
         "menu" : menuListar(request.user, habilitados),
     }
     return HttpResponse(template.render ( context, request ))
@@ -344,7 +344,7 @@ def ListadoClientesExcel(request):
     ws['F3'] = 'TIPO DE CLIENTE'
     cont = 5
     # Recorremos el conjunto de personas y vamos escribiendo cada uno de los datos en las celdas
- 
+
     for cliente in clientesFiltrados:
         ws.cell(row=cont, column=2).value = cliente.dniCuit
         ws.cell(row=cont, column=3).value = cliente.nombres
@@ -527,7 +527,7 @@ def reporteTopCliente(request):
         cli = cliente["clientedni"]
         #cli = (cli)
         clientesG.append(cli)
-    
+
     print("aHDG",gastos)
     print("CLIIIEN",clientesG)
 
@@ -557,11 +557,11 @@ def get_data (request, *args, **kwargs):
 '''from flask import Flask
 from flask import render_template
 from datetime import time'''
- 
- 
+
+
 '''app = Flask(__name__)
- 
- 
+
+
 @app.route("/simple_chart")
 def chart():
     legend = 'Monthly Data'
@@ -570,8 +570,8 @@ def chart():
     return render_template('chart.html', values=values, labels=labels, legend=legend)
 
 app = Flask(__name__)
- 
- 
+
+
 @app.route("/")
 def result():
     legend = 'Monthly Data'

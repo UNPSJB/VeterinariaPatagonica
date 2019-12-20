@@ -68,13 +68,14 @@ def menuVer(usuario, pago):
     return [ item for item in menu if len(item)]
 
 def menuListar(usuario):
-    menu = [[]]
+    menu = [[],[]]
     poseidos = usuario.get_all_permissions()
 
     pagas = "GestionDeFacturas.factura_listar_pagas"
     noPagas = "GestionDeFacturas.factura_listar_no_pagas"
     if (pagas in poseidos) or (noPagas in poseidos):
         menu[0].append( (reverse("facturas:listar"), "Listar facturas") )
+        menu[1].append( (reverse("productos:reporteProductosVendidos"), "Ver reporte de ingresos reales por mes"))
 
     return [ item for item in menu if len(item)]
 

@@ -82,7 +82,7 @@ def menuListar(usuario, habilitados):
     if usuario.has_perm("GestionDeProductos.producto_crear"):
         menu[3].append( (reverse("productos:productoCrear"), "Crear Producto/Insumo") )
 
-    menu[4].append( (reverse("productos:reporteProductosVendidos"), "Ver reporte Producto/Insumo mas vendidos") )
+    menu[4].append( (reverse("productos:reporteProductosVendidos"), "Ver reporte de ingresos reales por mes") )
 
 
     return [ item for item in menu if len(item) ]
@@ -341,6 +341,7 @@ from Apps.GestionDePagos.models import Pago
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.graphics import renderPDF
+from decimal import Decimal
 
 
 def reporteProductosVendidos(request):
@@ -354,7 +355,7 @@ def reporteProductosVendidos(request):
     dibujo = graficoLineal(pdf)
     x=20
     y=330
-    renderPDF.draw(dibujo, pdf, x, y)
+    renderPDF.draw( dibujo, pdf, x, y)
     pdf.showPage()
     pdf.save()
     pdf = buffer.getvalue()
@@ -364,11 +365,13 @@ def reporteProductosVendidos(request):
 
 #obtener los productos pagados de las facturas
 def obtenerQuerysetPagos():
+    importeFactura=Decimal('0')
     pagosPorMes =[0,0,0,0,0,0,0,0,0,0,0,0]
     pagos = Pago.objects.all()
     for pago in pagos:
+        importeFactura = float(pago.factura.total)
         mesPago = pago.fecha.strftime("%m")
-        pagosPorMes[int(mesPago)-1] += pago.importeTotal
+        pagosPorMes[int(mesPago)-1] += importeFactura
     return pagosPorMes
 
 def graficoLineal (pdf):
@@ -389,13 +392,9 @@ def graficoLineal (pdf):
     pdf.categoryAxis.categoryNames = catNames
     pdf.categoryAxis.labels.boxAnchor = 'n'
     #pdf.lineLabels.fontName = 'FreeSans'
-    mayor = 0
-    for pago in querysetPagos:
-        if (pago>mayor):
-            mayor = pago
-    mayor2 = max(querysetPagos)
+    mayor = max(querysetPagos)
     pdf.valueAxis.valueMin = 0
-    pdf.valueAxis.valueMax = mayor2
+    pdf.valueAxis.valueMax = mayor
     pdf.valueAxis.valueStep = mayor/10
     pdf.lineLabelFormat = '%2.0f'
     pdf.lines[0].strokeWidth = 2
