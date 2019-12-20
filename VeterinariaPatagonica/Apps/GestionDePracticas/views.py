@@ -197,7 +197,7 @@ def realizaciones(request):
     itemListarTurnos(usuario, menu[0], Areas.Q)
     itemCrear(usuario, menu[1], Areas.C)
     itemCrear(usuario, menu[1], Areas.Q)
-
+    
     template = loader.get_template( plantilla("listar", "realizaciones") )
     context = {
         "tipo" : None,

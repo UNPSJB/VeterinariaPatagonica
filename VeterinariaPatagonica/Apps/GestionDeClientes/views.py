@@ -176,7 +176,8 @@ def deshabilitar(request, id):
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El cliente tiene practicas realizadas")
     
-    practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
+    #practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
+    practicas = Factura.objects.filter(practica__cliente=cliente, pago=None).count()
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El cliente tiene practicas facturadas sin pagar")
     
