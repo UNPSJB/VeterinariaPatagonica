@@ -1,4 +1,4 @@
-{% extends "OtraGestionDePagos/GestionDePagos.html" %}
+{% extends "./GestionDePagos.html" %}
 {% load static %}
 {% block paginaEstilos %}
     {{ block.super }}
@@ -171,10 +171,7 @@ Listado de pagos
                     {% if gestor.fechaFactura.visible %}
                         <td>{{ pago.factura.fecha|date:"d/m/y" }}</td>
                     {% endif %}
-                    {% if gestor.importePago.visible %}
-                        <td>${{ pago.importeTotal|floatformat:2 }}</td>
-                    {% endif %}
-                    {% if gestor.importeFactura.visible %}
+                    {% if gestor.importe.visible %}
                         <td>${{ pago.factura.total|floatformat:2 }}</td>
                     {% endif %}
                     {% if gestor.cliente.visible %}

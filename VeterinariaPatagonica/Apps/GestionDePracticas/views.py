@@ -200,6 +200,7 @@ def realizaciones(request):
 
     template = loader.get_template( plantilla("listar", "realizaciones") )
     context = {
+        "tipo" : None,
         "gestor" : gestor,
         "practicas" : practicas,
         "menu" : [ seccion for seccion in menu if len(seccion) ],

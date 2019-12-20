@@ -1,4 +1,4 @@
-{% extends "OtraGestionDePagos/GestionDePagos.html" %}
+{% extends 'OtraGestionDePagos/GestionDePagos.html' %}
 {% block titulo %}
 Ver pago
 {% endblock %}
@@ -13,7 +13,7 @@ Ver pago
         <div class="col-xs-12 col-sm-6 col-md-6">
             <p><b>Identificador:</b> {{ pago.id }}</p>
             <p><b>Fecha de emisión:</b> {{ pago.fecha|date:"d/m/y" }}</p>
-            <p><b>Importe:</b> ${{ pago.importeTotal|floatformat:2 }}</p>
+            <p><b>Importe:</b> ${{ pago.factura.total|floatformat:2 }}</p>
         </div>
         <div class="col-xs-12 col-sm-6 col-md-6">
         {% if perms.GestionDeFacturas.factura_ver_pagas %}

@@ -3,6 +3,7 @@
 {% block paginaEstilos %}
     {{ formset.media.css }}
     {{ block.super }}
+    <link href="{% static "vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" %}" rel="stylesheet">
 {% endblock %}
 {% block titulo %}
 Facturar
@@ -25,7 +26,40 @@ Facturar
             </table>
           </div>
 
+<<<<<<< HEAD
 
+=======
+            {% if factura.total is not None %}
+            <div class="cuadro">
+                <div class="row cuadro-contenido resumen">
+                    {% if factura.cliente and factura.cliente.tipoDeCliente == "E" %}
+                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                        <div class="dato descuento-servicio">
+                            <i class="fa fa-dot-circle-o"></i><b>Descuento en servicios:</b> %<span class="valor">{{ factura.cliente.descuentoServicio|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                        <div class="dato descuento-productos">
+                            <i class="fa fa-dot-circle-o"></i><b>Descuento en productos:</b> %<span class="valor">{{ factura.cliente.descuentoProducto|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                        <div class="dato importe">
+                            <i class="fa fa-dot-circle-o"></i><b>Importe:</b> $<span class="valor">{{ factura.total|floatformat:2 }}</span>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                    {% if factura.practica.adelanto %}
+                        <div class="dato adelanto">
+                            <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> $<span class="valor">{{ factura.practica.adelanto.importe|floatformat:2 }}</span>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+>>>>>>> 2efa3b06c67ec95a53b43bda7ee5d9eb0e5157b1
             {% csrf_token %}
             <div id="form-facturar-errores">
                 {% if form.errors or formset.total_error_count %}
@@ -39,7 +73,12 @@ Facturar
                 {% endif %}
             </div>
             {% block formularioFactura %}
-            {% include "snippets/form.html" with accion=None %}
+            {% include "snippets/field.html" with field=form.cliente %}
+            {% include "snippets/field.html" with field=form.practica %}
+            {% include "snippets/field.html" with field=form.tipo %}
+            {% include "snippets/calendarField.html" with field=form.fecha %}
+            {% include "snippets/field.html" with field=form.recargo %}
+            {% include "snippets/field.html" with field=form.descuento %}
             {% endblock %}
             <div class="form-group productos">
                 <div class="row productos">
@@ -76,7 +115,11 @@ Facturar
 </div>
 {% endblock %}
 {% block paginaJavascript %}
+    {{ formset.media.js }}
     {{ block.super }}
+    <script src="{% static "vendor/moment/moment.js" %}"></script>
+    <script src="{% static "vendor/moment/locale/es.js" %}"></script>
+    <script src="{% static "vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" %}"></script>
     <script type="text/javascript">
         var validadores = [
             {
@@ -89,9 +132,23 @@ Facturar
                 }
             }
         ]
-
         var productos = document.getElementById('{{ formset.prefix }}-formset');
         actualizarEliminar(productos);
+        document.onreadystatechange = function(){
+            $("#{{ form.fecha.name|add:"_calendar" }}").datetimepicker({
+                locale:"es",
+                format: 'L',
+            });
+        }
     </script>
-    {{ formset.media.js }}
 {% endblock %}
+
+
+
+
+
+
+
+
+
+

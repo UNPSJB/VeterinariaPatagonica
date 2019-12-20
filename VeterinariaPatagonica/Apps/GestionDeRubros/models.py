@@ -3,7 +3,6 @@ from django.core.validators import RegexValidator
 from VeterinariaPatagonica import tools
 from django.db.models import Q
 from VeterinariaPatagonica.tools import BajasLogicasQuerySet
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
 
 # Create your models here.
 

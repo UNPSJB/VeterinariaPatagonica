@@ -78,14 +78,34 @@ def menuListar(usuario):
 
     return [ item for item in menu if len(item)]
 
-def facturasAdeudadas(usuario, cliente, maxima):
-    retorno = None
-    if usuario.has_perm("GestionDeFacturas.factura_listar"):
-        retorno = Factura.objects.filter(
-            cliente=cliente,
-            pago=None
-        ).order_by("fecha")[0:maxima]
+
+def facturasAdeudadas(factura, tope):
+    retorno = Factura.objects.filter(
+        cliente=factura.cliente,
+        pago=None
+    ).exclude(
+        id=factura.id
+    ).order_by("fecha")[0:tope]
     return retorno
+
+
+def buscarFactura(id):
+    factura = None
+    try:
+        factura = Factura.objects.get(id=id)
+    except Factura.DoesNotExist:
+        raise VeterinariaPatagonicaError(
+            "Error",
+            "Factura %d no encontrada" % id
+        )
+    else:
+        if factura.estaPaga():
+            raise VeterinariaPatagonicaError(
+                "Factura paga",
+                "Ya se encuentra registrado el pago de la factura %d" % id
+            )
+
+    return factura
 
 
 def crear(request, id):
@@ -96,43 +116,31 @@ def crear(request, id):
     if not request.user.has_perm("GestionDePagos.pago_crear"):
         raise PermissionDenied()
 
+    context = { "errores" : [], "accion" : None }
+
     try:
-        factura = Factura.objects.get(id=id)
-        if factura.estaPaga():
-            raise VeterinariaPatagonicaError(
-                "Factura paga",
-                "Ya se encuentra registrado el pago de la factura %d" % factura.id
-            )
-    except VeterinariaPatagonicaError as excepcion:
-        context = {
-            "errores" : [excepcion.error()],
-            "accion" : None ,
-            "menu" : menuCrear(request.user, factura)
-        }
+        factura = buscarFactura(id)
+    except VeterinariaPatagonicaError as error:
+        context["errores"].append(error)
     else:
-        context = {
-            "errores" : [],
-            "accion" : "Guardar",
-            "menu" : menuCrear(request.user, factura),
-            "facturasAdeudadas" : facturasAdeudadas(request.user, factura.cliente, 5),
-            "factura" : factura,
-        }
+        context["accion"] = "Guardar"
+        context["menu"] = menuCrear(request.user, factura)
+        context["factura"] = factura
+        if request.user.has_perm("GestionDeFacturas.factura_listar"):
+            otras = facturasAdeudadas(factura, 10)
+            context["otrasAdeudadas"] = otras
 
         if request.method == "POST":
             form = PagoForm(request.POST)
-
             if form.is_valid():
-                pago = Pago(
-                    importeTotal=factura.total,
-                    factura=factura
-                )
+                pago = Pago(factura=factura)
                 try:
                     pago.save(force_insert=True)
-                except ErrorBD as error:
-                        context["errores"].append({
-                            "titulo":"Error al guardar datos",
-                            "descripcion":"No se pudo guardar el pago en la base de datos."
-                        })
+                except dbError as error:
+                    context["errores"].append({
+                        "titulo":"Error al guardar datos",
+                        "descripcion":"No se pudo guardar el pago en la base de datos."
+                    })
                 else:
                     return HttpResponseRedirect(
                         reverse("pagos:ver", args=(pago.id,))
@@ -144,6 +152,7 @@ def crear(request, id):
 
     template = loader.get_template("OtraGestionDePagos/crear.html")
     return HttpResponse(template.render(context, request))
+
 
 def listar(request):
 
@@ -157,10 +166,9 @@ def listar(request):
 
     gestor = GestorListadoQuerySet(
         campos = [
-            ["fechaPago", "Fecha"],
+            ["fechaPago", "Fecha de pago"],
             ["fechaFactura", "Fecha de facturación"],
-            ["importePago", "Importe"],
-            ["importeFactura", "Importe de facturación"],
+            ["importe", "Importe"],
             ["cliente", "Cliente"],
             ["numeroFactura", "Numero de factura"],
             ["tipoFactura", "Tipo de factura"],
@@ -168,7 +176,7 @@ def listar(request):
         iniciales={
             "seleccion" : (
                 "fechaPago",
-                "importePago",
+                "importe",
                 "cliente",
                 "numeroFactura",
                 "tipoFactura",
@@ -193,14 +201,13 @@ def listar(request):
             "tipo_factura" : "factura__tipo",
             "fecha_desde" : "fecha__gte",
             "fecha_hasta" : "fecha__lte",
-            "importe_desde" : "importeTotal__gte",
-            "importe_hasta" : "importeTotal__lte",
+            "importe_desde" : "factura__total__gte",
+            "importe_hasta" : "factura__total__lte",
         },
         mapaOrden={
             "fechaPago" : ["fecha"],
             "fechaFactura" : ["factura__fecha"],
-            "importePago" : ["importeTotal"],
-            "importeFactura" : ["factura__total"],
+            "importe" : ["factura__total"],
             "cliente" : ["factura__cliente__apellidos", "factura__cliente__nombres"],
             "numeroFactura" : ["factura__id"],
             "tipoFactura" : ["factura__tipo"],
@@ -235,126 +242,3 @@ def ver(request, id):
 
     template = loader.get_template("OtraGestionDePagos/ver.html")
     return HttpResponse(template.render( context, request ))
-
-
-
-# from django.shortcuts import render
-# from django.template import loader
-# from django.http import Http404, HttpResponse, HttpResponseRedirect
-# from django.core.exceptions import ObjectDoesNotExist
-# from django.contrib.auth.decorators import login_required, permission_required
-# from .models import Pago
-# #from .forms import PagoFormFactory
-# from .forms import PagoForm
-# from Apps.GestionDeFacturas.models import Factura
-# from VeterinariaPatagonica import tools
-# from django.utils import timezone
-
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-# def pago(request):
-
-#     context = {}#Defino el contexto.
-#     template = loader.get_template('GestionDePagos/GestionDePagos.html')#Cargo el template desde la carpeta templates/GestionDePagos.
-#     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
-
-
-# @login_required(redirect_field_name='proxima')
-# @permission_required('GestionDePagos.add_Pago', raise_exception=True)
-# def crear(request, idFactura = None): #, factura_id=None
-
-#     factura = Factura.objects.get(id=idFactura)
-#     context = {'usuario': request.user}
-
-#     pagos= len(Pago.objects.filter(factura=idFactura))
-
-#     if not pagos:
-
-#         pago=Pago(importeTotal=factura.sumar_total_adelanto, factura=factura)
-
-#         if request.method == 'POST':
-#             formulario = PagoForm(request.POST, instance=pago)
-#             if formulario.is_valid():
-#                 pago = formulario.save()
-#                 return HttpResponseRedirect("/GestionDePagos/ver/{}".format(pago.id))
-#             else:
-#                 context['formulario'] = formulario
-#         else:
-#             context['formulario'] = PagoForm(instance=pago)
-#     #else:
-
-#     template = loader.get_template('GestionDePagos/formulario.html')
-#     return HttpResponse(template.render(context, request))
-
-#     '''factura = None
-#     if factura_id:
-#         factura = Factura.objects.get(pk=factura_id)
-#     PagoForm = PagoFormFactory(pago, factura)'''
-
-
-
-
-
-# @login_required(redirect_field_name='proxima')
-# @permission_required('GestionDePagos.delete_Pago', raise_exception=True)
-# def eliminar(request, id):
-
-#     try:
-#         pago = Pago.objects.get(id=id)
-#     except ObjectDoesNotExist:
-#         raise Http404()
-
-#     if request.method == 'POST':
-
-#         pago.delete()
-#         return HttpResponseRedirect( "/GestionDePagos/" )
-
-#     else:
-
-#         template = loader.get_template('GestionDePagos/eliminar.html')
-#         context = {
-#             'usuario' : request.user,
-#             'id' : id
-#         }
-
-#         return HttpResponse( template.render( context, request) )
-
-# def ver(request, id):
-
-#     try:
-#         pago = Pago.objects.get(id=id)
-#     except ObjectDoesNotExist:
-#         raise Http404("No encontrado", "El pago con id={} no existe.".format(id))
-
-#     template = loader.get_template('GestionDePagos/ver.html')
-#     contexto = {
-#         'pago': pago,
-#         'usuario': request.user
-#     }
-
-#     return HttpResponse(template.render(contexto, request))
-
-# def listar(request):
-#     pagosQuery = Pago.objects.all()
-#     pagos = pagosQuery.filter(tools.paramsToFilter(request.GET, Pago))
-#     template = loader.get_template('GestionDePagos/listar.html')
-
-
-#     paginator = Paginator(pagosQuery, 1)
-#     page = request.GET.get('page')
-
-#     try:
-#         pagos = paginator.page(page)
-#     except PageNotAnInteger:
-#         # If page is not an integer, deliver first page.
-#         pagos = paginator.page(1)
-#     except EmptyPage:
-#         # If page is out of range (e.g. 9999), deliver last page of results.
-#         pagos = paginator.page(paginator.num_pages)
-
-#     contexto = {
-#         'pagosQuery' : pagosQuery,
-#         'usuario' : request.user,
-#         'pagos': pagos,
-#     }
-#     return HttpResponse(template.render(contexto, request))

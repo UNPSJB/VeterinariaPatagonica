@@ -29,5 +29,8 @@ Facturar practica
             </div>
         </div>
     </div>
-    {% include "snippets/form.html" with accion=None %}
+    {% include "snippets/field.html" with field=form.tipo %}
+    {% include "snippets/calendarField.html" with field=form.fecha %}
+    {% include "snippets/field.html" with field=form.recargo %}
+    {% include "snippets/field.html" with field=form.descuento %}
 {% endblock %}

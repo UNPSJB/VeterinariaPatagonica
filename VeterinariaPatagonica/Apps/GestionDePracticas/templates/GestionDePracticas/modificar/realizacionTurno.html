@@ -4,6 +4,26 @@
 {{ servicios.media.css }}
 {{ productos.media.css }}
 {{ block.super }}
+<style type="text/css">
+.cuadro-contenido .row>.seccion {
+    font-style: italic;
+    color: #777;
+    padding: 3px  0px;
+}
+.cuadro-contenido .row {
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+}
+.cuadro-contenido .fijos>.row>.seccion,
+.cuadro-contenido .fijos>.row>.form-group {
+    margin: 0px !important;
+    padding: 2px !important;
+}
+.cuadro-contenido .fijos>.row>.form-group.cantidad>.cuasi-control {
+    padding: 4px 6px;
+}
+</style>
 {% endblock %}
 {% block titulo %}
 Modificar {{ tipo }}
@@ -33,6 +53,32 @@ Modificar {{ tipo }}
                         <b>Servicios realizados</b> {% include "snippets/ayuda.html" with id="ayuda-servicios-realizados" content="Puede modificar el listado de servicios realizados a la mascota durante la atención junto con la cantidad de veces que se realizó cada uno. No pueden haber servicios duplicados." placement="bottom" %}
                     </div>
                     <div class="cuadro-contenido">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11 seccion">
+                                Servicios programados
+                            </div>
+                        </div>
+                        <div class="fijos">
+                        {% for detalle in realizada.serviciosFijos %}
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-2 col-md-1 form-group cantidad ">
+                                <div class="cuasi-control">
+                                    {{ detalle.cantidad }}
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-10 col-md-11 form-group servicio ">
+                                <div class="cuasi-control">
+                                    {{ detalle.servicio.get_tipo_display|capfirst }}: {{ detalle.servicio.nombre }} ${{ detalle.servicio.precioManoDeObra|floatformat:2 }} ({{ detalle.servicio.tiempoEstimado }} min.)
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11 seccion">
+                                Nuevos servicios
+                            </div>
+                        </div>
                         {% include "snippets/formset.html" with formset=servicios %}
                     </div>
                 </div>
@@ -51,6 +97,32 @@ Modificar {{ tipo }}
                         <b>Productos utilizados</b> {% include "snippets/ayuda.html" with id="ayuda-productos-utilizados" content="Puede modificar el listado de productos y cantidades de producto utilizados durante la realizacion de los servicios. No pueden haber productos duplicados." placement="bottom" %}
                     </div>
                     <div class="cuadro-contenido">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11 seccion">
+                                Productos programados
+                            </div>
+                        </div>
+                        <div class="fijos">
+                        {% for detalle in realizada.productosFijos %}
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-2 col-md-1 form-group cantidad ">
+                                <div class="cuasi-control">
+                                    {{ detalle.cantidad }}
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-10 col-md-11 form-group servicio ">
+                                <div class="cuasi-control">
+                                    {{ detalle.producto.nombre }} ${{ detalle.producto.precioDeCompra|floatformat:2 }} ({{ detalle.producto.stock }} en stock)
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-offset-2 col-sm-10 col-md-offset-1 col-md-11 seccion">
+                                Nuevos productos
+                            </div>
+                        </div>
                         {% include "snippets/formset.html" with formset=productos %}
                     </div>
                 </div>
@@ -71,7 +143,7 @@ Modificar {{ tipo }}
             {
                 "validador" : validarFormset,
                 "argumentos" : {
-                    "validarCantidades" : true,
+                    "validarCantidades" : false,
                     "comparador" : compararServicios,
                     "formset_id" : "{{ servicios.prefix }}-formset",
                     "errores" : document.getElementById("formset-{{ servicios.prefix }}-errores"),
@@ -80,7 +152,7 @@ Modificar {{ tipo }}
             {
                 "validador" : validarFormset,
                 "argumentos" : {
-                    "validarCantidades" : true,
+                    "validarCantidades" : false,
                     "comparador" : compararProductos,
                     "formset_id" : "{{ productos.prefix }}-formset",
                     "errores" : document.getElementById("formset-{{ productos.prefix }}-errores"),

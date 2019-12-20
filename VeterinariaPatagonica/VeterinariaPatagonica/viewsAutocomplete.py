@@ -17,7 +17,6 @@ from dal.autocomplete import Select2QuerySetView
 from django.db.models import Count, Sum, Q, Value, When, Case, CharField
 
 
-
 def servicioSelectLabel(servicio):
     retorno = servicio.nombre
     if servicio.descripcion:
@@ -25,37 +24,37 @@ def servicioSelectLabel(servicio):
     return retorno
 
 
-
 def servicioSelectLabelActiva(servicio):
-    return "%10s:  %s $%.2f  (%d min.)" % (
+    return "%s: %s $%.2f (%d min)" % (
         servicio.get_tipo_display().capitalize(),
         servicio.nombre,
-        servicio.precioTotal(),
+        servicio.precioManoDeObra,
         servicio.tiempoEstimado
     )
 
 
-
 def productoSelectLabel(producto):
-    retorno = "Producto" if producto.precioPorUnidad > 0 else "Insumo"
-    retorno = "%s: %s - %s" % (retorno, producto.marca, producto.nombre)
-    if producto.descripcion:
-        retorno = "%s (%s)" % (retorno, producto.descripcion)
-    return "%s en %s" % (retorno, producto.rubro.nombre)
-
+    return "%s - %s (rubro %s)" % (
+        producto.marca,
+        producto.nombre,
+        producto.rubro.nombre
+    )
 
 
 def productoSelectLabelActiva(producto):
     nombre = producto.nombre
-    compra = producto.precioDeCompra
+    presentacion = producto.get_formaDePresentacion_display()
     venta = producto.precioPorUnidad
     stock = producto.stock
-    presentacion = producto.get_formaDePresentacion_display()
-    if venta > 0:
-        return "Producto:  %s X %s $%.2f  (%d en stock)" % (nombre, presentacion, venta, stock)
-    else:
-        return "Insumo:    %s X %s $%.2f  (%d en stock)" % (nombre, presentacion, compra, stock)
+    return "%s X %s $%.2f  (%d en stock)" % (nombre, presentacion, venta, stock)
 
+
+def insumoSelectLabelActiva(producto):
+    nombre = producto.nombre
+    presentacion = producto.get_formaDePresentacion_display()
+    compra = producto.precioDeCompra
+    stock = producto.stock
+    return "%s X %s $%.2f  (%d en stock)" % (nombre, presentacion, compra, stock)
 
 
 def tipoDeAtencionSelectLabel(tipoDeAtencion):
@@ -64,7 +63,6 @@ def tipoDeAtencionSelectLabel(tipoDeAtencion):
     retorno = " (fuera de horario)" if not validoAhora else ""
 
     return "%s%s: %s" % (tipoDeAtencion.nombre, retorno, tipoDeAtencion.descripcion)
-
 
 
 def tipoDeAtencionSelectLabelActiva(tipoDeAtencion):
@@ -86,7 +84,6 @@ def tipoDeAtencionSelectLabelActiva(tipoDeAtencion):
     )
 
 
-
 def clienteSelectLabel(cliente):
     return "%s: %s %s (Cliente %s)" % (
         cliente.dniCuit,
@@ -96,21 +93,18 @@ def clienteSelectLabel(cliente):
     )
 
 
-
 def mascotaSelectLabel(mascota):
     return "%s: %s (%s %s)" % (mascota.patente, mascota.nombre, mascota.especie, mascota.raza)
-
 
 
 def practicaRealizadaSelectLabel(practica):
     return "%s: $%.2f\t(%s, realizada a '%s' de %s)" % (
         str(practica),
-        practica.precio,
+        practica.estados.realizacion().total(),
         practica.tipoDeAtencion.nombre,
         practica.mascota.nombre,
         str(practica.cliente)
     )
-
 
 
 class Autocomplete(Select2QuerySetView):
@@ -133,7 +127,6 @@ class Autocomplete(Select2QuerySetView):
             response = HttpResponse()
             response.status_code = 403
         return response
-
 
 
 class ServicioAutocomplete(Autocomplete):
@@ -189,32 +182,15 @@ class ServicioAutocomplete(Autocomplete):
         return servicioSelectLabelActiva(result)
 
 
-
 class ProductoAutocomplete(Autocomplete):
 
-    tipos = ("insumos", "productos")
-    tipo = None
     permisos_necesarios = (
         "GestionDeProductos.producto_listar_habilitados",
         "GestionDeProductos.producto_ver_habilitados"
     )
 
-    def dispatch(self, request, tipo=None, *args, **kwargs):
-        response = None
-        if (tipo is None) or (tipo in self.tipos):
-            self.tipo = tipo
-            response = super().dispatch(request, *args, **kwargs)
-        else:
-            response = HttpResponse()
-            response.status_code = 404
-        return response
-
     def get_queryset(self):
-        queryset = Producto.objects.habilitados()
-        if self.tipo == "insumos":
-            queryset = queryset.filter(precioPorUnidad=0)
-        elif self.tipo == "productos":
-            queryset = queryset.filter(precioPorUnidad__gt=0)
+        queryset = Producto.objects.habilitados().filter(precioPorUnidad__gt=0)
         if self.q:
             query = {
                 "marca__icontains" : self.q,
@@ -222,15 +198,6 @@ class ProductoAutocomplete(Autocomplete):
                 "descripcion__icontains" : self.q,
                 "rubro__nombre__icontains" : self.q
             }
-            if self.tipo is None:
-                queryset = queryset.annotate(
-                    nombre_tipo=Case(
-                        When(Q(precioPorUnidad=0), then=Value("insumo")),
-                        default=Value("producto"),
-                        output_field=CharField()
-                    )
-                )
-                query["nombre_tipo__icontains"] = self.q
             queryset = queryset.filter(R(**query)).annotate(
                 cuenta_practicas=Count("practica")
             ).order_by("-cuenta_practicas")
@@ -242,6 +209,33 @@ class ProductoAutocomplete(Autocomplete):
     def get_selected_result_label(self, result):
         return productoSelectLabelActiva(result)
 
+
+class InsumoAutocomplete(Autocomplete):
+
+    permisos_necesarios = (
+        "GestionDeProductos.producto_listar_habilitados",
+        "GestionDeProductos.producto_ver_habilitados"
+    )
+
+    def get_queryset(self):
+        queryset = Producto.objects.habilitados()
+        if self.q:
+            query = {
+                "marca__icontains" : self.q,
+                "nombre__icontains" : self.q,
+                "descripcion__icontains" : self.q,
+                "rubro__nombre__icontains" : self.q
+            }
+            queryset = queryset.filter(R(**query)).annotate(
+                cuenta_practicas=Count("practica")
+            ).order_by("-cuenta_practicas")
+        return queryset
+
+    def get_result_label(self, result):
+        return productoSelectLabel(result)
+
+    def get_selected_result_label(self, result):
+        return insumoSelectLabelActiva(result)
 
 
 class TipoDeAtencionAutocomplete(Autocomplete):
@@ -267,7 +261,6 @@ class TipoDeAtencionAutocomplete(Autocomplete):
         return tipoDeAtencionSelectLabelActiva(result)
 
 
-
 class ClienteAutocomplete(Autocomplete):
 
     permisos_necesarios = (
@@ -287,7 +280,6 @@ class ClienteAutocomplete(Autocomplete):
 
     def get_result_label(self, result):
         return clienteSelectLabel(result)
-
 
 
 class MascotaAutocomplete(Autocomplete):
@@ -326,7 +318,6 @@ class MascotaAutocomplete(Autocomplete):
 
     def get_result_label(self, result):
         return mascotaSelectLabel(result)
-
 
 
 class PracticaRealizadaAutocomplete(Autocomplete):
