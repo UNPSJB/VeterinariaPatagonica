@@ -104,8 +104,37 @@ ul.historial li {
     font-weight: bold;
 }
 .grafico>canvas {
-    border: 1px solid gray;
+    border: none;
 }
 #formulario {
     margin-bottom: 20px;
+}
+
+
+#grafico-perfil-tda-despues,
+#grafico-perfil-tda-antes {
+    min-width: 250px;
+    min-height: 250px;
+}
+#grafico-realizaciones {
+    min-width: 500px;
+    min-height: 300px;
+}
+#grafico-actualizaciones.cirugia {
+    min-height: 350px;
+    min-width: 400px;
+}
+#grafico-actualizaciones.consulta {
+    min-height: 350px;
+    min-width: 350px;
+}
+#grafico-tda-raros.radar,
+#grafico-tda-normales.radar {
+    min-height: 400px;
+    min-width: 400px;
+}
+#grafico-tda-raros.barras,
+#grafico-tda-normales.barras {
+    min-height: 350px;
+    min-width: 400px;
 }

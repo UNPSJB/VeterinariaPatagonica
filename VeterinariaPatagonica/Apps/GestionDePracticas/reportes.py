@@ -255,10 +255,10 @@ def datosPerfiles(cantidades, titulo=None):
                 "Emergencia en veterinaria"
             ],
             "colores" : [
-                "#FED777",
+                "#F79646",
                 "#AA5523",
                 "#772200",
-                "#EF9000"
+                "#E36C0A"
             ],
             "data" : data,
             "labels" : [ "%.2f %%"%(100*n) for n in data ],
@@ -397,7 +397,7 @@ def tiposDeAtencion(canvas, y, practicas, hasta, dias):
         habilitados = tdas.filter(baja=False)
         deshabilitados = tdas.filter(baja=True)
         if deshabilitados:
-            y = -5 + pdf.texto(canvas, y, "Hay registradas %d prácticas con tipos de atención deshabilitados creadas desde el día %s." % (sum(tda.cantidad_practicas for tda in deshabilitados), fecha.strftime("%d/%m/%y")))
+            y = -5 + pdf.texto(canvas, y, "Hay registradas %d prácticas con tipos de atención deshabilitados facturadas desde el día %s." % (sum(tda.cantidad_practicas for tda in deshabilitados), fecha.strftime("%d/%m/%y")))
         if habilitados:
             normales, raros, descarte = clasificar(preparar(habilitados))
             if raros:
@@ -421,7 +421,7 @@ def tiposDeAtencion(canvas, y, practicas, hasta, dias):
                 y = -5 + pdf.texto(canvas, y, "Los tipos de atención sin analizar son:")
                 y = -45 + tabular(canvas, y, descarte)
         else:
-            y = -5 + pdf.texto(canvas, y, "No se han creado prácticas con ninguno de los tipos de atención habilitados desde el día %s." % fecha.strftime("%d/%m/%y"))
+            y = -5 + pdf.texto(canvas, y, "No se han facturado prácticas con ninguno de los tipos de atención habilitados desde el día %s." % fecha.strftime("%d/%m/%y"))
     else:
-        y = -5 + pdf.texto(canvas, y, "No se han creado prácticas desde el día %s."%fecha.strftime("%d/%m/%y"))
+        y = -5 + pdf.texto(canvas, y, "No se han facturado prácticas desde el día %s."%fecha.strftime("%d/%m/%y"))
     return y

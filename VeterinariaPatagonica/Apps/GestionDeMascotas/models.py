@@ -3,7 +3,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 from django.db.models import Q
 from Apps.GestionDeClientes import models as gcmodels
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 
 # Create your models here.
 class BaseMascotaManager(models.Manager):
@@ -17,7 +17,7 @@ class BaseMascotaManager(models.Manager):
             qs = qs.filter(tipo=self.tipo)
         return qs
 
-class MascotaQueryset(VeterinariaPatagonicaQuerySet):
+class MascotaQueryset(BajasLogicasQuerySet):
         MAPEO_ORDEN = {
         "orden_patente" : ["patente"],
         "orden_nombre" : ["nombre"],

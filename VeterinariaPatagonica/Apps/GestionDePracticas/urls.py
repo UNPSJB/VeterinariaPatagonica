@@ -38,7 +38,7 @@ urlpatterns = [
         ], "exportar"))),
 
         path("reporte/", consultas.reporte, name="reporte"),
-        path("ayudaConsulta/", consultas.ayudaContextualConsulta, name="ayudaConsulta"),
+        path("ayuda/", consultas.ayuda, name="ayuda"),
 
     ], "consulta"))),
 
@@ -78,7 +78,7 @@ urlpatterns = [
         ], "exportar"))),
 
         path("reporte/", cirugias.reporte, name="reporte"),
-        path("ayudaCirugia/", cirugias.ayudaContextualCirugia, name="ayudaCirugia"),
+        path("ayuda/", cirugias.ayuda, name="ayuda")
 
 
     ], "cirugia"))),

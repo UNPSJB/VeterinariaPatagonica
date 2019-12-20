@@ -16,7 +16,6 @@ from Apps.GestionDeTiposDeAtencion.models import TipoDeAtencion
 __all__ = ("Practica", "PracticaServicio", "PracticaProducto", "Adelanto")
 
 
-
 class PracticaBaseManager(models.Manager):
 
     def __init__(self, tipo=None):
@@ -120,9 +119,7 @@ class PracticaQuerySet(models.QuerySet):
         )
 
 
-
 PracticaManager = PracticaBaseManager.from_queryset(PracticaQuerySet)
-
 
 
 class Practica(models.Model):
@@ -261,10 +258,9 @@ class Practica(models.Model):
         editable=False
     )
 
-    # Es mejor guardar el precio que sacar la cuenta en funcion de los subtotales?
     precio = models.DecimalField(
             blank=True,
-            default=Decimal(0),
+            null=True,
             max_digits = MAX_DIGITOS,
             decimal_places = MAX_DECIMALES,
             validators = [
@@ -317,7 +313,6 @@ class Practica(models.Model):
     )
 
 
-
     adelanto = models.OneToOneField(
         "Adelanto",
         blank=True,
@@ -327,10 +322,8 @@ class Practica(models.Model):
     )
 
 
-
     def __str__(self):
         return "%s número %d" % ( self.nombreTipo(), self.id )
-
 
 
     def save(self, *args, usuario=None, **kwargs):
@@ -343,16 +336,13 @@ class Practica(models.Model):
                 self.estados.inicializar(usuario)
 
 
-
     def estado(self):
         if self.estados.exists():
             return self.estados.latest().related()
 
 
-
     def estados_related(self):
         return [estado.related() for estado in self.estados.all()]
-
 
 
     def hacer(self, usuario, accion, *args, **kwargs):
@@ -371,40 +361,32 @@ class Practica(models.Model):
             raise Exception("La accion: %s solicitada no se pudo realizar sobre el estado %s" % (accion, estado_actual))
 
 
-
     def actualizaciones(self):
         return Practica.Acciones.actualizaciones(self.tipo)
-
 
 
     def acciones(self):
         return Practica.Acciones.acciones(self.tipo)
 
 
-
     def duracion(self):
         return sum([servicio.servicio.tiempoEstimado * servicio.cantidad for servicio in self.practica_servicios.all()])
-
 
 
     def esPosible(self, accion):
         return accion in self.estado().accionesPosibles()
 
 
-
     def enEstado(self, estado):
         return isinstance(self.estado(), estado)
-
 
 
     def nombreEstado(self):
         return str(self.estado())
 
 
-
     def nombreTipo(self):
         return Areas[self.tipo].nombre()
-
 
 
     def importeServicios(self):
@@ -413,22 +395,18 @@ class Practica(models.Model):
         ])
 
 
-
     def importeProductos(self):
         return sum([
             detalle.precioTotal() for detalle in self.practica_productos.all()
         ])
 
 
-
     def ajusteServicios(self):
         return self.importeServicios() * self.tipoDeAtencion.recargo / Decimal(100)
 
 
-
     def ajusteProductos(self):
         return self.importeProductos() * self.tipoDeAtencion.recargo / Decimal(100)
-
 
 
     def totalServicios(self):
@@ -439,7 +417,6 @@ class Practica(models.Model):
         return total + ajuste
 
 
-
     def totalProductos(self):
 
         productos = [ detalle for detalle in self.practica_productos.all() ]
@@ -448,10 +425,8 @@ class Practica(models.Model):
         return total + ajuste
 
 
-
     def total(self):
         return self.totalProductos() + self.totalServicios()
-
 
 
     def duracionTotalServicios(self):
@@ -460,14 +435,12 @@ class Practica(models.Model):
         ])
 
 
-
     def factura(self):
         try:
             factura = self.factura_set.get(practica=self)
         except ObjectDoesNotExist:
             factura = None
         return factura
-
 
 
 class Adelanto(models.Model):
@@ -488,10 +461,9 @@ class Adelanto(models.Model):
     turno = models.OneToOneField(
         "GestionDePracticas.Programada",
         null=True,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name="adelanto",
     )
-
 
 
 class PracticaServicio(models.Model):
@@ -551,7 +523,6 @@ class PracticaServicio(models.Model):
 
     def __str__(self):
         return "{} x {}".format(self.servicio.nombre, self.cantidad)
-
 
 
 class PracticaProducto(models.Model):

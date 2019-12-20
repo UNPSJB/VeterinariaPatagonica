@@ -1,7 +1,4 @@
 <div class="row cuadro-contenido resumen">
-
-    <!-- Resumen actualizacion -->
-
     <div class="col-xs-12 col-sm-6 col-md-6 bloque">
         <div class="dato cliente">
             <i class="fa fa-dot-circle-o"></i><b>Cliente:</b> {{ practica.cliente }}
@@ -31,7 +28,7 @@
         </div>
         {% if practica.estado.vencimiento %}
         <div class="dato vigencia">
-            <i class="fa fa-dot-circle-o"></i><b>Vigencia:</b> {{ practica.estado.vencimiento|timeuntil }}
+            <i class="fa fa-dot-circle-o"></i><b>Vigente hasta:</b> {{ practica.estado.vencimiento|date:"d/m/Y" }}
         </div>
         {% endif %}
         {% if practica.estado.duracion %}

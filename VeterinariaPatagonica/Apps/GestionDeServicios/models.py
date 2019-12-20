@@ -4,7 +4,7 @@ from decimal import Decimal
 from VeterinariaPatagonica import tools
 from django.core.validators import MinValueValidator, MaxValueValidator
 from VeterinariaPatagonica.areas import Areas
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 
 class BaseServicioManager(models.Manager):
     def __init__(self, tipo=None):
@@ -17,7 +17,7 @@ class BaseServicioManager(models.Manager):
             qs = qs.filter(tipo=self.tipo)
         return qs
 
-class ServicioQueryset(VeterinariaPatagonicaQuerySet):
+class ServicioQueryset(BajasLogicasQuerySet):
         MAPEO_ORDEN = {
             "orden_nombre": ["nombre"],
             "orden_tipo": ["tipo"],
@@ -66,7 +66,7 @@ class Servicio(models.Model):
     MAX_PRECIO = Decimal(100000.00)
     PRECIO = MAX_ENTERO + MAX_DECIMAL
 
-    
+
 
     tipo = models.CharField(
         help_text="Tipo de Servicio (Consulta-Cirugia)",

@@ -1,6 +1,7 @@
 from os.path import join as pathjoin
 from datetime import timedelta, datetime
 from decimal import Decimal
+from math import ceil
 
 from django.urls import reverse
 from django.db import transaction
@@ -196,14 +197,14 @@ def crearContexto(request, idCreacion, tipoPractica=None):
     }
 
 
-def calcularPrecio(detalles, tipoDeAtencion=None):
-
-    ajuste = 0
-    precioServicios = sum([ detalle.precioTotal() for detalle in detalles["servicios"] ])
+def calcularPrecio(detalles, porcentajeRecargo=0):
+    recargo = 0
     precioProductos = sum([ detalle.precioTotal() for detalle in detalles["productos"] ])
-    if tipoDeAtencion is not None:
-        ajuste = (precioProductos + precioServicios) * tipoDeAtencion / Decimal(100)
-    return precioProductos + precioServicios + ajuste
+    precioServicios = sum([ detalle.precioTotal() for detalle in detalles["servicios"] ])
+    precio = precioProductos + precioServicios
+    if porcentajeRecargo > 0:
+        recargo = precio * porcentajeRecargo / Decimal(100)
+    return precio + recargo
 
 
 def calcularDuracion(servicios):
@@ -227,9 +228,18 @@ def buscarProductos(servicios):
                 "El servicio con id %d no existe o se encuentra deshabilitado" % detalleServicio["servicio"]
             )
         cantidadServicio = detalleServicio['cantidad']
-
         for detalleProducto in servicio.servicio_productos.all():
-            if not detalleProducto.producto.baja:
+            if detalleProducto.producto.baja:
+                raise VeterinariaPatagonicaError(
+                    "Error",
+                    "El producto %s (%d) del servicio %s (%d)  se encuentra deshabilitado" % (
+                        detalleProducto.producto.nombre,
+                        detalleProducto.producto.id,
+                        servicio.nombre,
+                        servicio.id,
+                    )
+                )
+            else:
                 producto = detalleProducto.producto.id
                 cantidadProducto = detalleProducto.cantidad
 
@@ -338,8 +348,6 @@ def persistir(usuario, practica, detalles, accion, argumentos):
     try:
         practica.hacer(usuario, accion, **argumentos)
     except:
-        PracticaProducto.objects.filter(practica=practica.id).delete()
-        PracticaServicio.objects.filter(practica=practica.id).delete()
         practica.delete()
         raise
     return practica
@@ -443,28 +451,28 @@ def formPresupuestar(*args, vigencia=config("vigencia"), **kwargs):
 def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None, **kwargs):
 
     adelanto = int(float(precio) * config("adelanto"))
-
-    rango = timedelta(minutes=duracion*20)
+    delta = timedelta(minutes=duracion)
+    ahora = datetime.now().replace(second=0, microsecond=0)
+    inicio = ahora + timedelta(minutes=10)
+    finalizacion = inicio + delta
     busquedas = 100
-    inicio = datetime.now().replace(second=0, microsecond=0)
-    finalizacion = inicio + rango
 
     cuando = None
     while (cuando is None) and busquedas:
-        horarios = Programada.horariosDisponibles(inicio, finalizacion, minimo=timedelta(minutes=duracion))
+        horarios = Programada.horariosDisponibles(inicio, finalizacion, minimo=delta)
         if len(horarios):
             cuando = horarios[0][0]
         else:
-            finalizacion = finalizacion + rango
-            inicio = inicio + rango
+            finalizacion = finalizacion + delta
+            inicio = inicio + delta
             busquedas -= 1
 
     if cuando is None:
-        cuando = datetime.now().replace(second=0, microsecond=0)
+        cuando = ahora + timedelta(minutes=10)
 
     initial = {
         "desde" : cuando,
-        "hasta" : cuando + timedelta(minutes=duracion),
+        "hasta" : cuando + delta,
         "duracion" : duracion,
         "adelanto" : adelanto,
     }
@@ -472,8 +480,7 @@ def formProgramar(*args, precio=0.0, duracion=config("duracion"), practica=None,
     if ("initial" in kwargs) and (kwargs["initial"] is not None):
         initial.update(kwargs["initial"])
     kwargs["initial"] = initial
-
-    return ProgramadaForm(*args, precio=precio, practica=practica, **kwargs)
+    return ProgramadaForm(*args, precio=precio, practica=practica, minimo=datetime.now(), **kwargs)
 
 
 def formReprogramar(*args, practica=None, **kwargs):
@@ -483,9 +490,10 @@ def formReprogramar(*args, practica=None, **kwargs):
         cuando = estado.inicio
         duracion = estado.duracion()
     else:
-        cuando = datetime.now().replace(minute=0,second=0,microsecond=0) + timedelta(hours=1)
-        duracion = config("duracion")
-
+        raise VeterinariaPatagonicaError(
+            "Error",
+            "No se puede crear el formulario de reprogramacion sin una practica"
+        )
     initial = {
         "desde" : cuando,
         "hasta" : cuando + timedelta(minutes=duracion),
@@ -495,26 +503,35 @@ def formReprogramar(*args, practica=None, **kwargs):
     if not "initial" in kwargs:
         kwargs["initial"] = {}
     kwargs["initial"].update(initial)
-
-    return ReprogramadaForm(*args, practica=practica, **kwargs)
+    return ReprogramadaForm(*args, practica=practica, minimo=datetime.now(), **kwargs)
 
 
 def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
 
+    minimo = None
     finalizacion = None
     inicio = None
 
     if practica is not None:
         estado = practica.estado()
+        if isinstance(estado, Estado):
+            minimo = practica.estado().cotaInicio()
         if isinstance(estado, Programada):
             finalizacion = estado.finalizacion
             inicio = estado.inicio
             duracion = estado.duracion()
-
     if finalizacion is None:
-        finalizacion = datetime.now()
+        finalizacion = datetime.now().replace(second=0, microsecond=0)+timedelta(minutes=1)
     if inicio is None:
         inicio = finalizacion - timedelta(minutes=duracion)
+    if minimo is not None and inicio < minimo:
+        inicio = minimo.replace(second=0, microsecond=0)+timedelta(minutes=1)
+        if inicio >= finalizacion:
+            duracion = 1
+            finalizacion = inicio + timedelta(minutes=1)
+        else:
+            duracion = ceil((finalizacion - inicio).seconds / 60)
+            finalizacion = inicio + timedelta(minutes=duracion)
 
     initial = {
         "desde" : inicio,
@@ -525,8 +542,8 @@ def formRealizar(*args, practica=None, duracion=config("duracion"), **kwargs):
     if not "initial" in kwargs:
         kwargs["initial"] = {}
     kwargs["initial"].update(initial)
-
-    return RealizadaForm(*args, practica=practica, **kwargs)
+    ahora = datetime.now().replace(second=0, microsecond=0)+timedelta(minutes=1)
+    return RealizadaForm(*args, practica=practica, minimo=minimo, maximo=ahora, **kwargs)
 
 
 def itemReporte(usuario, seccion, area):

@@ -37,9 +37,7 @@ def verificarHabilitados(practica):
 class EstadoManager(models.Manager):
 
     def inicializar(self, usuario):
-
         if hasattr(self, "instance") and (not self.instance is None):
-
             if self.get_queryset().count() == 0:
                 creada = Creada(
                     usuario=usuario,
@@ -52,9 +50,7 @@ class EstadoManager(models.Manager):
             raise VeterinariaPatagonicaError(descripcion="La practica a inicializar no es accesible desde el model manager")
 
     def inicial(self):
-
         if hasattr(self, "instance") and (not self.instance is None):
-
             queryset = self.get_queryset()
             if queryset.count() != 0:
                 return queryset.get(tipo=Creada.TIPO)
@@ -63,13 +59,9 @@ class EstadoManager(models.Manager):
         else:
             raise VeterinariaPatagonicaError(descripcion="La practica a inicializar no es accesible desde el model manager")
 
-
     def realizacion(self):
-
         if hasattr(self, "instance") and (not self.instance is None):
-
             queryset = self.get_queryset()
-
             if queryset.count() > 0:
                 return queryset.get(tipo=Realizada.TIPO).related()
             else:
@@ -152,8 +144,6 @@ class Estado(models.Model):
 
     usuario = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="practica_estados",
-        related_query_name="practica_estado",
         null=True,
         blank=True,
         on_delete=models.SET_NULL
@@ -189,17 +179,62 @@ class Estado(models.Model):
         return self.__class__ != Estado and self or getattr(self, self.get_tipo_display())
 
     def esUltimo(self):
-        return (self.practica.estado().id == self.related().id)
+        retorno = None
+        actual = self.practica.estado()
+        if actual:
+            retorno = actual.id == self.related().id
+        return retorno
+
+    def esPrimero(self):
+        retorno = None
+        inicial = self.practica.estados.inicial()
+        if inicial:
+            retorno = inicial.id == self.related().id
+        return retorno
 
     def siguienteEstado(self):
-        if self.esUltimo():
-            return None
-        siguiente = Estado.objects.filter(practica=self.practica, id__gt=self.pk).first()
-        return siguiente.related()
+        retorno = Estado.objects.filter(
+            practica=self.practica,
+            id__gt=self.id
+        ).order_by("id").first()
+        if retorno is not None:
+            retorno = retorno.related()
+        return retorno
 
     def anteriorEstado(self):
-        anterior = Estado.objects.filter(practica=self.practica, id__lt=self.pk).last()
-        return anterior.related()
+        retorno = Estado.objects.filter(
+            practica=self.practica,
+            id__lt=self.id
+        ).order_by("id").last()
+        if retorno is not None:
+            retorno = retorno.related()
+        return retorno
+
+
+    def fuePresupuestada(self):
+        estados = self.practica.estados
+        presupuestos = estados.filter(tipo=Presupuestada.TIPO)
+        if presupuestos.count():
+            return True
+        return False
+
+    def fueProgramada(self):
+        estados = self.practica.estados
+        turnos = estados.filter(tipo=Programada.TIPO)
+        if turnos.count():
+            return True
+        return False
+
+    def cotaInicio(self):
+        retorno = None
+        turnos = Programada.objects.filter(practica_id=self.practica.id).order_by("-id")
+        if turnos.count():
+            retorno = turnos[0].inicio
+        else:
+            presupuestos = Presupuestada.objects.filter(practica_id=self.practica.id).order_by("id")
+            if presupuestos.count():
+                retorno = presupuestos[0].marca
+        return retorno
 
     def nombre(self):
         return str(self).lower()
@@ -229,7 +264,6 @@ class EstadoRealizable(Estado):
     class Meta:
         abstract = True
 
-
     def realizar(self, usuario, inicio, finalizacion, condicionPreviaMascota="", resultados=""):
 
         if self.practica.mascota is None:
@@ -238,25 +272,48 @@ class EstadoRealizable(Estado):
                 "La practica no tiene mascota"
             )
 
+        if not self.practica.practica_servicios.count():
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La practica no tiene servicios"
+            )
+
+        if not self.practica.practica_productos.count():
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La practica no tiene productos"
+            )
+
+        fijarPrecios = self.fuePresupuestada()
         servicios = [
             RealizadaServicio(
                 servicio=detalle.servicio,
                 cantidad=detalle.cantidad,
-                precio=detalle.precio,
+                precio=detalle.precio if fijarPrecios else None,
             ) for detalle in self.practica.practica_servicios.all()
         ]
-
         productos = [
             RealizadaProducto(
                 producto=detalle.producto,
                 cantidad=detalle.cantidad,
-                precio=detalle.precio,
+                precio=detalle.precio if fijarPrecios else None,
             ) for detalle in self.practica.practica_productos.all()
         ]
 
         actualizacionStock = {
             detalle.producto.id : -detalle.cantidad for detalle in productos
         }
+
+        cota = self.cotaInicio()
+        if (cota is not None) and (inicio < cota):
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La %s no puede tener inicio menor a las %s del %s" % (
+                    self.practica.nombreTipo(),
+                    cota.strftime("%H:%M"),
+                    cota.strftime("%d/%m/%Y"),
+                )
+            )
 
         try:
             with transaction.atomic():
@@ -273,7 +330,6 @@ class EstadoRealizable(Estado):
                 realizada.realizada_productos.set(productos, bulk=False)
                 verificarHabilitados(self.practica)
                 Producto.objects.actualizarStock(actualizacionStock)
-                realizada.completarPrecio()
         except dbError as excepcion:
             raise VeterinariaPatagonicaError(
                 "Error en base de datos",
@@ -301,8 +357,18 @@ class EstadoProgramable(Estado):
                 "La practica no tiene mascota"
             )
 
+        ahora = datetime.now()
         try:
             with transaction.atomic():
+                if inicio < ahora:
+                    raise VeterinariaPatagonicaError(
+                        "Error",
+                        "La fecha y hora de programación de la %s no puede ser menor a las %s del %s" % (
+                            self.practica.nombreTipo(),
+                            ahora.strftime("%H:%M"),
+                            ahora.strftime("%d/%m/%Y"),
+                        )
+                    )
                 programada = Programada(
                     usuario=usuario,
                     practica=self.practica,
@@ -318,6 +384,7 @@ class EstadoProgramable(Estado):
                 self.practica.adelanto = adelanto
                 self.practica.save(force_update=True)
                 verificarHabilitados(self.practica)
+
         except dbError as excepcion:
             raise VeterinariaPatagonicaError(
                 "Error en base de datos",
@@ -547,7 +614,16 @@ class Programada(EstadoCancelable, EstadoRealizable):
     )
 
     def reprogramar(self, usuario, inicio, finalizacion, motivoReprogramacion=""):
-
+        ahora = datetime.now()
+        if inicio < ahora:
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "La fecha y hora de programación de la %s no puede ser menor a las %s del %s" % (
+                    self.practica.nombreTipo(),
+                    ahora.strftime("%H:%M"),
+                    ahora.strftime("%d/%m/%Y"),
+                )
+            )
         programada = Programada(
             usuario=usuario,
             practica=self.practica,
@@ -673,6 +749,22 @@ class Presupuestada(EstadoRealizable, EstadoProgramable):
             return set()
         return super().accionesPosibles()
 
+    def programar(self, *args, **kwargs):
+        if self.haExpirado():
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "El presupuesto no se puede programar, ya ha expirado"
+            )
+        super().programar(*args, **kwargs)
+
+    def realizar(self, *args, **kwargs):
+        if self.haExpirado():
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "El presupuesto no se puede realizar, ya ha expirado"
+            )
+        super().realizar(*args, **kwargs)
+
 
 class Realizada(Estado):
     TIPO = 5
@@ -784,11 +876,31 @@ class Realizada(Estado):
     )
 
     def facturar(self, usuario):
-        facturada = Facturada(
-            usuario=usuario,
-            practica=self.practica
-        )
-        facturada.save(force_insert=True)
+        if self.practica.precio is not None:
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "No se puede facturar la %s, ya tiene precio" % self.practica.nombreTipo()
+            )
+        try:
+            with transaction.atomic():
+                if not self.fuePresupuestada():
+                    for detalle in self.realizada_servicios.all():
+                        detalle.precio = detalle.servicio.precioManoDeObra
+                        detalle.save()
+                    for detalle in self.realizada_productos.all():
+                        detalle.precio = detalle.producto.precioDeCompra
+                        detalle.save()
+                facturada = Facturada(
+                    usuario=usuario,
+                    practica=self.practica
+                )
+                facturada.save(force_insert=True)
+                self.completarPrecio()
+        except dbError as error:
+            raise VeterinariaPatagonicaError(
+                "Error",
+                "Ocurrio un error al intentar guardar los datos, la %s no pudo ser facturada" % self.practica.nombreTipo()
+            )
         return facturada
 
     def duracion(self):
@@ -831,12 +943,24 @@ class Realizada(Estado):
         practica.precio = self.total()
         practica.save(force_update=True)
 
+    def serviciosFijos(self):
+        x = self.practica.practica_servicios.count()
+        return self.realizada_servicios.all()[0:x]
+
+    def productosFijos(self):
+        x = self.practica.practica_productos.count()
+        return self.realizada_productos.all()[0:x]
+
+    def accionesPosibles(self):
+        retorno = super().accionesPosibles()
+        if self.fuePresupuestada():
+            retorno -= set( [Practica.Acciones.modificar] )
+        return retorno
+
 
 class RealizadaServicio(models.Model):
 
     class Meta:
-        unique_together = ("realizada", "servicio")
-        index_together = ["realizada", "servicio"]
         default_permissions = ()
 
     realizada = models.ForeignKey(
@@ -858,6 +982,8 @@ class RealizadaServicio(models.Model):
     )
 
     precio = models.DecimalField(
+        null=True,
+        blank=True,
         max_digits=Practica.MAX_DIGITOS,
         decimal_places=Practica.MAX_DECIMALES,
         validators = [
@@ -872,23 +998,17 @@ class RealizadaServicio(models.Model):
         blank=True
     )
 
-    def save(self, *args, **kwargs):
-
-        if (not "commit" in kwargs) or (kwargs["commit"]):
-            if (self.precio is None) and (not self.servicio is None):
-                self.precio = self.servicio.precioManoDeObra
-
-        super().save(*args, **kwargs)
-
     def precioTotal(self):
-        return self.cantidad * self.precio
+        if self.precio is not None:
+            precio = self.precio
+        else:
+            precio = self.servicio.precioManoDeObra
+        return self.cantidad * precio
 
 
 class RealizadaProducto(models.Model):
 
     class Meta:
-        unique_together = ("realizada", "producto")
-        index_together = ["realizada", "producto"]
         default_permissions = ()
 
     realizada = models.ForeignKey(
@@ -910,6 +1030,8 @@ class RealizadaProducto(models.Model):
     )
 
     precio = models.DecimalField(
+        null=True,
+        blank=True,
         max_digits=Practica.MAX_DIGITOS,
         decimal_places=Practica.MAX_DECIMALES,
         validators = [
@@ -921,15 +1043,11 @@ class RealizadaProducto(models.Model):
     )
 
     def precioTotal(self):
-        return self.cantidad * self.precio
-
-    def save(self, *args, **kwargs):
-
-        if (not "commit" in kwargs) or (kwargs["commit"]):
-            if (self.precio is None) and (not self.producto is None):
-                self.precio = self.producto.precioPorUnidad
-
-        super().save(*args, **kwargs)
+        if self.precio is not None:
+            precio = self.precio
+        else:
+            precio = self.producto.precioDeCompra
+        return self.cantidad * precio
 
 
 class Cancelada(Estado):

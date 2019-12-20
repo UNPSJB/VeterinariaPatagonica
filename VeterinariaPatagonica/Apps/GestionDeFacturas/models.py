@@ -19,23 +19,7 @@ MAX_DIGITOS_AJUSTES = 5
 MAX_DECIMALES_AJUSTES = 2
 
 
-
 class ListadosQuerySet(models.QuerySet):
-
-    def listado(self, campos=[], cabeceras=[], funciones=[]):
-        retorno = ""
-        for i in range(len(campos)):
-            cabecera = cabeceras[i]
-            retorno = retorno + cabecera + ","
-        retorno = retorno + "\n"
-        for obj in self:
-            for i in range(len(campos)):
-                campo = campos[i]
-                valor = getattr(obj, campo)
-                funcion = funciones[i]
-                retorno = retorno + funcion(valor) + ","
-            retorno = retorno + "\n"
-        return retorno
 
     MAPEO_ORDEN = {
         "id" : ["id"],
@@ -79,7 +63,6 @@ class ListadosQuerySet(models.QuerySet):
 ListadoManager = models.Manager.from_queryset(ListadosQuerySet)
 
 
-#[TODO]: Agregar descuentos de cliente al calcular importes
 class Factura(models.Model):
 
     class Meta:
@@ -177,17 +160,7 @@ class Factura(models.Model):
         null = True,
         blank = True
     )
-    #baja = models.BooleanField(default=False)
-    # total = models.IntegerField(
-    #     help_text="Importe total de la Factura.",
-    #     unique=False,
-    #     null=False,
-    #     default=0,
-    #     blank=False,
-    #     error_messages={
-    #         'blank': "El importe es obligatorio"
-    #     }
-    # )
+
     total = models.DecimalField(
             blank=False,
             null = False,
@@ -200,17 +173,23 @@ class Factura(models.Model):
             ]
     )
 
+    def importeDescuentoServicio(self):
+        descuento = self.cliente.descuentoServicio
+        importe = self.practica.precio if self.practica else Decimal(0.0)
+        importeDescuento = importe * descuento / Decimal(100.0)
+        return -importeDescuento
 
-
+    def importeDescuentoProducto(self):
+        descuento = self.cliente.descuentoProducto
+        importe = sum(detalle.subtotal for detalle in self.detalles_producto.all())
+        importeDescuento = importe * descuento / Decimal(100.0)
+        return -importeDescuento
 
     def calcularTotal(self, detalles=[], descuento=0, recargo=0, practica=None):
         importe = Decimal(0)
         importeDetalles = Decimal(0)
         importePractica = Decimal(0)
-        print("------------------------")
-        print("Descuento de producto: ",self.cliente.descuentoProducto)
-        print("Descuento de servicio: ",self.cliente.descuentoServicio)
-        #Obtengo los valores de los descuentos del cliente.
+
         if(self.cliente):
             descuentoServicio = self.cliente.descuentoServicio
             descuentoProducto = self.cliente.descuentoProducto
@@ -218,33 +197,25 @@ class Factura(models.Model):
             descuentoServicio = 0
             descuentoProducto = 0
 
-        #Obtengo el valor de la práctica con el descuento del cliente aplicado.
         if practica is not None:
-            if descuentoServicio > 0 :
-                importePractica = practica.precio + ((practica.precio * descuentoServicio) /100)
-            else:
-                importePractica = practica.precio
+            importePractica = practica.estados.realizacion().total()
+            if descuentoServicio > 0:
+                importePractica -= importePractica * descuentoServicio / Decimal(100.0)
 
-
-        # if practica is not None:
-        #     importe += practica.precio
         for detalle in detalles:
             importeDetalles += detalle.subtotal
-        print("Subtotal = ",importeDetalles)
-        #Obtengo el valor de los productos con el descuento del cliente aplicado.
-        if descuentoProducto>0:
-            importeDetalles = importeDetalles - ((importeDetalles*descuentoProducto)/100)
-        
-        if (importeDetalles>0 or importePractica>0):
-            importe = importeDetalles + importePractica
+        if importeDetalles > 0 and descuentoProducto > 0:
+            importeDetalles -= importeDetalles * descuentoProducto / Decimal(100.0)
+        importe = importeDetalles + importePractica
         if (descuento != recargo):
-            importe += importe * (recargo-descuento) / 100
+            importe += importe * (recargo - descuento) / Decimal(100.0)
         return importe
 
     def totalAdeudado(self):
         importeAdelanto = 0
-        if self.practica.adelanto:
-            importeAdelanto = min(self.total, self.practica.adelanto.importe)
+        if self.practica is not None:
+            if self.practica.adelanto is not None:
+                importeAdelanto = min(self.total, self.practica.adelanto.importe)
         return self.total - importeAdelanto
 
     def importeDescuento(self):
@@ -280,124 +251,6 @@ class Factura(models.Model):
         cadena = 'Tipo de Factura: {0}, Cliente: {1} Total: {2}.'
         return cadena.format(self.tipo, self.cliente, self.total)
 
-    # def precioTotal(self, detalles):
-
-    #     productos = Decimal("0")
-    #     adelanto = Decimal("0")
-    #     if not self.practica == None:
-    #         practica = self.practica.precio
-
-    #         if self.practica.adelanto:
-    #             adelanto = self.practica.adelanto.importe
-    #         if (self.descuento!=0):
-    #             descuentoPractica = (practica*self.descuento)/100
-    #             practica = practica-descuentoPractica
-
-    #             if (self.recargo!=0):
-    #                 recargoPractica = practica/self.recargo
-    #                 practica = practica+recargoPractica
-    #     else:
-    #         practica = 0
-    #     for detalle in detalles:
-    #         productos += detalle.subtotal
-
-    #     total = practica + productos - adelanto
-    #     self.total = total
-    #     # if self.tipo == "C":
-    #     #     iva = round((total*21)/100)
-    #     #     self.total = total-iva
-    #     self.save()
-
-    #     return self.total
-
-    # def calcular_subtotales(self, detalles):
-
-    #     totalGuardado = self.total
-    #     self.total = Decimal("0")
-    #     # self.save()
-    #     for detalle in detalles:
-    #         detalle.factura = self
-    #         detalle.save()
-    #         self.total += detalle.subtotal
-    #     # self.save()
-
-    # def calcular_iva(self):
-    #     iva = round((self.total*21)/100)
-    #     return iva
-
-    # def restar_iva(self):
-    #     iva = Factura.calcular_iva(self)
-    #     nuevoTotal = self.total - iva
-    #     return nuevoTotal
-
-
-    # def sumar_total_adelanto(self):
-    #     if self.practica.adelanto:
-    #         adelanto = self.practica.adelanto.importe
-    #     else:
-    #         adelanto = 0
-    #     if self.tipo == "C":
-    #         total = Factura.restar_iva(self)
-    #     else:
-    #         total = self.total
-
-    #     valorFinal = total + adelanto # '+ adelanto'?
-    #     return valorFinal
-
-
-
-    # '''def  __unicode__(self):
-    #     return self.total'''
-
-    # """def importeVentas(self):
-    #     return sum([
-    #         detalle.subtotal for detalle in self.detalles_producto.all()
-    #     ])
-
-    # def importeServicios(self):
-    #     return self.practica.estados.realizacion().total()
-
-    # def ajusteDescuento(self):
-    #     importe = self.importeVentas() + self.importeServicios()
-    #     return -( importe * self.descuento / Decimal(100) )
-
-    # def ajusteRecargo(self):
-    #     importe = self.importeVentas() + self.importeServicios()
-    #     return importe * self.recargo / Decimal(100)
-
-    # def importe(self):
-    #     importe = self.importeVentas() + self.importeServicios()
-    #     recargo = importe * self.recargo / Decimal(100)
-    #     descuento = -(importe * self.descuento / Decimal(100))
-    #     return importe + recargo + descuento
-
-
-    # def obtener_adelanto(self):
-    #     adelanto = self.practica.adelanto.importe
-    #     return adelanto"""
-
-    # """def calcular_descuento_practica(self):
-    #     if not self.practica == None:
-    #         practica = self.practica.precio
-
-    #         if (self.descuento!=0):
-    #             descuentoPractica = (practica*self.descuento)/100
-    #             return descuentoPractica
-    #         else:
-    #             return 0
-    #     else:
-    #         return 0
-
-    # def calcular_recargo_practica(self):
-    #     if not self.practica == None:
-    #         practica = self.practica.precio
-    #         if (self.recargo!=0):
-    #             recargoPractica = (practica*self.recargo)/100
-    #             return recargoPractica
-    #         else:
-    #             return 0
-    #     else:
-    #         return 0"""
 
 class DetalleFactura(models.Model):
 
@@ -421,7 +274,6 @@ class DetalleFactura(models.Model):
     producto = models.ForeignKey(
         proModel.Producto,
         on_delete=models.CASCADE,
-        #help_text="Ingrese Producto",
         unique=False,
         null=False,
         blank=False,
@@ -430,18 +282,17 @@ class DetalleFactura(models.Model):
             'blank': "Debe ingresar al menos un producto"
         }
     )
+
     cantidad = models.PositiveIntegerField()
 
     subtotal = models.DecimalField(
         null= True,
-        #help_text="Ingrese precio del producto",
         max_digits= MAXDIGITO,
         decimal_places= MAXDECIMAL,
     )
 
     def  __unicode__(self):
         return self.subtotal
-
 
     def precioPorUnidad(self):
         return self.subtotal / Decimal(self.cantidad)
@@ -450,17 +301,3 @@ class DetalleFactura(models.Model):
         if (not "commit" in kwargs) or kwargs["commit"]:
             self.subtotal = self.cantidad * self.producto.precioPorUnidad
         super().save(*args, **kwargs)
-
-    # """def precio(self):
-    #     if self.cantidad != 0:
-    #         return self.subtotal // self.cantidad"""
-
-    # """def save(self, *args, **kwargs):
-
-    #     if (not "commit" in kwargs) or (kwargs["commit"]):
-    #         if (self.subtotal is None):
-    #             precio = self.producto.precioPorUnidad
-    #             self.subtotal = precio * self.cantidad
-
-
-    #     super().save(*args, **kwargs)"""

@@ -8,16 +8,17 @@ from django.core.exceptions import PermissionDenied
 from django.core.validators import MinValueValidator
 from django.db import transaction
 from django.db.models import Sum, Q
-from django.db.utils import Error as ErrorBD
+from django.db.utils import Error as dbError
 
 from VeterinariaPatagonica.forms import ExportarForm
 from VeterinariaPatagonica.tools import GestorListadoQuerySet, guardarWorkbook
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from Apps.GestionDePracticas import permisos
 from Apps.GestionDeClientes.models import Cliente
+from Apps.GestionDePagos.models import Pago
 from Apps.GestionDePracticas.models.practica import Practica
 from Apps.GestionDePracticas.gestionDePracticas import pathVer
-from .models import Factura
+from .models import Factura, DetalleFactura
 from .forms import *
 
 from openpyxl import Workbook
@@ -168,31 +169,76 @@ def listarXlsx(nombre, resultados, visibles, encabezados=None):
             celda = hoja.cell(fila, columna, resultado.total)
             columna += 1
         if visibles[3]:
-            importe = resultado.pago.importeTotal if resultado.estaPaga() else None
+            importe = None
+            if resultado.estaPaga():
+                importe = resultado.practica.precio
             celda = hoja.cell(fila, columna, importe)
             columna += 1
         if visibles[4]:
-            importe = resultado.practica.precio or None
-            celda = hoja.cell(fila, columna, filamporte)
+            importe = resultado.importe_ventas or 0
+            celda = hoja.cell(fila, columna, importe)
             columna += 1
         if visibles[5]:
-            importe = resultado.importe_ventas or 0
-            celda = hoja.cell(fila, columna, filamporte)
-            columna += 1
-        if visibles[6]:
             cliente = resultado.cliente
             tostr = "%s: %s %s" % (cliente.dniCuit, cliente.apellidos, cliente.nombres)
             celda = hoja.cell(fila, columna, tostr)
             columna += 1
-        if visibles[7]:
+        if visibles[6]:
             celda = hoja.cell(fila, columna, resultado.fecha)
             columna += 1
-        if visibles[8]:
-            fecha = resultado.pago.fecha or None
+        if visibles[7]:
+            fecha = None
+            if resultado.estaPaga():
+                fecha = resultado.pago.fecha
             celda = hoja.cell(fila, columna, fecha)
             columna += 1
         fila += 1
     return guardarWorkbook(libro)
+
+
+def crearFactura(form, usuario):
+    if not form.is_valid():
+        raise VeterinariaPatagonicaError("No se pudieron guardar los datos de la facturación, los datos del formulario no eran validos.")
+    try:
+        with transaction.atomic():
+            factura = form.factura()
+            factura.save(force_insert=True)
+            productosFactura = form.productosFactura()
+            if len(productosFactura)>0:
+                factura.detalles_producto.set(productosFactura, bulk=False)
+    except dbError as error:
+        raise VeterinariaPatagonicaError({
+            "titulo":"Error al guardar datos",
+            "descripcion":"No se pudo guardar la factura en la base de datos."
+        })
+
+    practica = factura.practica
+    if practica is not None:
+        try:
+            practica.hacer(usuario, Practica.Acciones.facturar.name)
+        except:
+            factura.delete()
+            raise
+
+    if factura.totalAdeudado() == 0:
+        pago = Pago(factura=factura)
+        try:
+            pago.save(force_insert=True)
+        except dbError as error:
+            raise VeterinariaPatagonicaError({
+                "titulo":"Error al guardar datos",
+                "descripcion":"No se pudo guardar la factura en la base de datos."
+            })
+    return factura
+
+
+def buscarPractica(id):
+    practica = None
+    try:
+        practica = Practica.objects.get(id=id)
+    except Practica.DoesNotExist:
+        raise VeterinariaPatagonicaError("Error", "Práctica no encontrada")
+    return practica
 
 
 def facturarPractica(request, id):
@@ -203,50 +249,32 @@ def facturarPractica(request, id):
     if not request.user.has_perm("GestionDeFacturas.factura_crear"):
         raise PermissionDenied()
 
+    context = { "errores" : [], "accion" : None }
+
     try:
-        practica = Practica.objects.get(id=id)
+        practica = buscarPractica(id)
         verificarFacturacion(request.user, practica)
-    except VeterinariaPatagonicaError as excepcion:
-        context = {
-            "errores" : [excepcion.error()],
-            "accion" : None ,
-            "menu" : menuCrear(request.user, practica)
-        }
+    except VeterinariaPatagonicaError as error:
+        context["errores"].append(error)
     else:
-        context = {
-            "facturacion" : {
-                "practica" : practicaRealizadaSelectLabel(practica),
-                "cliente" : clienteSelectLabel(practica.cliente)
-            },
-            "errores" : [],
-            "accion" : "Guardar",
-            "menu" : menuCrear(request.user, practica)
+        context["accion"] = "Guardar"
+        context["menu"] = menuCrear(request.user, practica)
+        context["facturacion"] = {
+            "practica" : practicaRealizadaSelectLabel(practica),
+            "cliente" : clienteSelectLabel(practica.cliente)
         }
 
         if request.method == "POST":
             acciones = AccionesFacturacionForm(request.POST)
             formset = ProductosFormSet(request.POST, prefix="producto")
-            form = FacturarPracticaForm(request.POST, practica=practica, formsetProductos=formset)
+            form = FacturarPracticaForm(practica, request.POST, formsetProductos=formset)
 
-            if form.is_valid() and formset.is_valid():
-
+            if form.is_valid():
                 if acciones.accion()=="guardar":
-                    detalles = formset.productos()
-                    actualizacion = {
-                        detalle.producto.id : -detalle.cantidad for detalle in detalles
-                    }
                     try:
-                        with transaction.atomic():
-                            Producto.objects.actualizarStock(actualizacion)
-                            factura = form.crearFactura()
-                            practica.hacer(request.user, Practica.Acciones.facturar.name)
+                        factura = crearFactura(form, request.user)
                     except VeterinariaPatagonicaError as error:
                         context["errores"].append(error)
-                    except ErrorBD as error:
-                        context["errores"].append({
-                            "titulo":"Error al guardar datos",
-                            "descripcion":"No se pudo guardar la factura en la base de datos."
-                        })
                     else:
                         return HttpResponseRedirect(
                             reverse("facturas:ver", args=(factura.id,))
@@ -254,7 +282,7 @@ def facturarPractica(request, id):
         else:
             acciones = AccionesFacturacionForm()
             formset = ProductosFormSet(prefix="producto")
-            form = FacturarPracticaForm(practica=practica, formsetProductos=formset)
+            form = FacturarPracticaForm(practica, formsetProductos=formset)
 
         context["form"]     = form
         context['formset']  = formset
@@ -262,6 +290,7 @@ def facturarPractica(request, id):
 
     template = loader.get_template("OtraGestionDeFacturas/facturarPractica.html")
     return HttpResponse(template.render(context, request))
+
 
 def facturar(request):
 
@@ -283,7 +312,7 @@ def facturar(request):
         formset = ProductosFormSet(request.POST, prefix="producto")
         form = FacturarForm(request.POST, formsetProductos=formset)
 
-        if form.is_valid() and formset.is_valid():
+        if form.is_valid():
             factura = form.factura()
             productos = form.productosFactura()
             practica = factura.practica
@@ -295,23 +324,10 @@ def facturar(request):
                 context["errores"].append(error)
             else:
                 if acciones.accion()=="guardar":
-                    detalles = formset.productos()
-                    actualizacion = {
-                        detalle.producto.id : -detalle.cantidad for detalle in detalles
-                    }
                     try:
-                        with transaction.atomic():
-                            Producto.objects.actualizarStock(actualizacion)
-                            factura = form.crearFactura()
-                            if practica is not None:
-                                practica.hacer(request.user, Practica.Acciones.facturar.name)
+                        factura = crearFactura(form, request.user)
                     except VeterinariaPatagonicaError as error:
                         context["errores"].append(error)
-                    except ErrorBD as error:
-                        context["errores"].append({
-                            "titulo":"Error al guardar datos",
-                            "descripcion":"No se pudo guardar la factura en la base de datos."
-                        })
                     else:
                         return HttpResponseRedirect(
                             reverse("facturas:ver", args=(factura.id,))
@@ -328,6 +344,7 @@ def facturar(request):
     template = loader.get_template("OtraGestionDeFacturas/facturar.html")
     return HttpResponse(template.render(context, request))
 
+
 def listar(request):
 
     if isinstance(request.user, AnonymousUser):
@@ -343,7 +360,6 @@ def listar(request):
             ["id", "Número"],
             ["tipo", "Tipo"],
             ["total", "Importe"],
-            ["pago", "Importe cobrado"],
             ["precioPractica", "Precio de practica"],
             ["importeVentas", "Importe por ventas"],
             ["cliente", "Cliente"],
@@ -354,12 +370,11 @@ def listar(request):
             "seleccion" : (
                 "tipo",
                 "total",
-                "pago",
                 "cliente",
                 "fecha",
             ),
             "paginacion" : {
-                "cantidad" : 12,
+                "cantidad" : 10,
             },
             "orden" : (
                 ("fecha", False),
@@ -442,7 +457,6 @@ def exportar(request, formato=None):
             ["id", "Número"],
             ["tipo", "Tipo"],
             ["total", "Importe"],
-            ["pago", "Importe cobrado"],
             ["precioPractica", "Precio de practica"],
             ["importeVentas", "Importe por ventas"],
             ["cliente", "Cliente"],
@@ -453,7 +467,6 @@ def exportar(request, formato=None):
             "seleccion" : (
                 "tipo",
                 "total",
-                "pago",
                 "cliente",
                 "fecha",
             ),
@@ -495,217 +508,3 @@ def exportar(request, formato=None):
         retorno = HttpResponse(contenido, content_type="application/ms-excel")
         retorno["Content-Disposition"] = "attachment; filename=%s.xlsx" % nombre
     return retorno
-
-def ayudaContextualCosto(request):
-# Redireccionamos la ayuda contextual
-    template = loader.get_template('GestionDeFacturas/ayudaGestiondeCostos.html')
-    contexto = {
-        'usuario': request.user,
-    }
-    return HttpResponse(template.render(contexto, request))
-
-# Create your views here.
-
-# from django.shortcuts import render
-# from django.template import loader
-# from django.http import Http404, HttpResponse, HttpResponseRedirect
-# from django.core.exceptions import ObjectDoesNotExist
-# from django.contrib.auth.decorators import login_required, permission_required
-# from .models import Factura
-# from .forms import FacturaForm, DetalleFacturaBaseFormSet, DetalleFactura, DetalleFacturaForm, FacturaFormFactory
-# from django.forms import modelformset_factory
-# from VeterinariaPatagonica import tools
-# from dal import autocomplete
-# from django.db.models import Q
-# from Apps.GestionDeClientes.models import Cliente
-# from Apps.GestionDePracticas.models import Practica
-# from Apps.GestionDeProductos.models import Producto
-# from django.urls import reverse
-# from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
-# from decimal import Decimal
-# from django.utils import timezone
-# from django.db import transaction
-# from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
-
-
-
-
-# def facturas(request):
-
-#     context = {}#Defino el contexto.
-#     template = loader.get_template('GestionDeFacturas/GestionDeFacturas.html')#Cargo el template desde la carpeta templates/GestionDeFacturas.
-#     return HttpResponse(template.render(context, request))#Devuelvo la url con el template armado.
-
-# @login_required(redirect_field_name='proxima')
-# @permission_required('GestionDeFacturas.add_Factura', raise_exception=True)
-# def modificar(request, id = None):
-#     factura = Factura.objects.get(id=id) if id is not None else None
-#     context = {'usuario': request.user}
-#     form = FacturaForm(instance=factura)
-#     DetalleFacturaFormset = modelformset_factory(
-#         DetalleFactura,
-#         DetalleFacturaForm,
-#         min_num=1,
-#         extra=0,
-#         can_delete=True,
-#         formset=DetalleFacturaBaseFormSet)
-#     if request.method == 'POST':
-#         form = FacturaForm(request.POST, instance=factura)
-#         formset = DetalleFacturaFormset(request.POST)
-#         if form.is_valid() and formset.is_valid():
-#             factura = form.save()
-#             instances = formset.save(commit=False)
-#             factura.calcular_subtotales(instances)
-#             factura.precioTotal(instances)
-#             for obj in formset.deleted_objects:#Bucle for que elimina los form que tienen tildado el checkbox "eliminar"
-#                 obj.delete()
-#             for detalle in instances:
-#                 detalle.factura = factura
-#                 detalle.save()
-#             if factura.practica :
-#                 if factura.practica.esPosible(Practica.Acciones.facturar):#Transiciona la practica seleccionada a facturada.
-#                     factura.practica.hacer(request.user, Practica.Acciones.facturar.name)
-#             return HttpResponseRedirect("/GestionDeFacturas/ver/{}".format(factura.id))
-
-#         context['formulario'] = form
-#         context['formset'] = formset
-#     else:
-#         context['formulario'] = form
-#         qs = DetalleFactura.objects.none() if factura is None else factura.detalleFactura.all()#si ponemos "productos" no pincha. pero el modificar no muestra los items previamente agregados.
-#         context["formset"] = DetalleFacturaFormset(queryset=qs)
-#     template = loader.get_template('GestionDeFacturas/formulario.html')
-#     return HttpResponse(template.render(context, request))
-
-# @login_required(redirect_field_name='proxima')
-# @permission_required('GestionDeFacturas.add_Factura', raise_exception=True)
-# def crearFacturaPractica(request, id):
-#     practica = Practica.objects.get(id=id)
-#     context = {'usuario': request.user}
-#     Form = FacturaFormFactory(instance=practica)
-#     DetalleFacturaFormset = modelformset_factory(
-#         DetalleFactura,
-#         fields=("producto", "cantidad"), min_num=1,
-#         formset=DetalleFacturaBaseFormSet)
-#     if request.method == 'POST':
-#         pass
-#     context["practica"] = practica
-#     context["form"] = Form(initial={})
-#     context['formset'] = DetalleFacturaFormset(initial=practica.practicaproducto_set.values())
-#     template = loader.get_template('GestionDeFacturas/formulario.html')
-#     return HttpResponse(template.render(context, request))
-
-
-# @login_required(redirect_field_name='proxima')
-# @permission_required('GestionDeFacturas.delete_Factura', raise_exception=True)
-# def eliminar(request, id):
-#     try:
-#         factura = Factura.objects.get(id=id)
-#     except ObjectDoesNotExist:
-#         raise Http404()
-#     if request.method == 'POST':
-#         factura.delete()
-#         return HttpResponseRedirect( "/GestionDeFacturas/listar" )
-#     else:
-#         template = loader.get_template('GestionDeFacturas/eliminar.html')
-#         context = {
-#             'usuario' : request.user,
-#             'id' : id
-#         }
-#         return HttpResponse( template.render( context, request) )
-
-# def ver(request, id):  #, irAPagar=1
-# #[TODO] ACA PINCHA. no arma el render.
-# #    import ipdb
-# #    ipdb.set_trace()
-#     try:
-#         factura = Factura.objects.get(id=id)
-#     except ObjectDoesNotExist:
-#         raise Http404("No encontrado", "El factura con id={} no existe.".format(id))
-
-#     template = loader.get_template('GestionDeFacturas/ver.html')
-#     contexto = {
-#         'factura': factura,
-#         'usuario': request.user
-#     }
-#     return HttpResponse(template.render(contexto, request))
-
-
-
-#     '''if irAPagar:
-
-#         return HttpResponseRedirect(reverse('pagos:pagoCrearConFactura', kwargs={'factura_id': factura.id}))'''
-
-
-
-
-# def listar(request):
-#     facturasQuery = Factura.objects.all()
-#     facturasQuery = facturasQuery.filter(tools.paramsToFilter(request.GET, Factura))
-#     template = loader.get_template('GestionDeFacturas/listar.html')
-
-#     paginator = Paginator(facturasQuery, 3)
-#     page = request.GET.get('page')
-
-#     try:
-#         facturas = paginator.page(page)
-#     except PageNotAnInteger:
-#         # If page is not an integer, deliver first page.
-#         facturas = paginator.page(1)
-#     except EmptyPage:
-#         # If page is out of range (e.g. 9999), deliver last page of results.
-#         facturas = paginator.page(paginator.num_pages)
-
-#     contexto = {
-#         'facturasQuery' : facturasQuery,
-#         'usuario' : request.user,
-#         'facturas': facturas,
-#     }
-
-#     return  HttpResponse(template.render(contexto, request))
-
-
-
-################################################################################
-
-
-
-# def verPractica(request, id):
-#     factura = Factura.objects.get(id=id) if id is not None else None
-#     practica = [{
-#     "practica" : factura.practica,
-#     "precio" : factura.practica.precio
-#     #[TODO] agregar senia.
-#     }]
-#     return JsonResponse({'practica' : practica})
-
-
-# class clienteAutocomplete(autocomplete.Select2QuerySetView):
-
-#     def get_queryset(self):
-#         # Don't forget to filter out results depending on the visitor !
-
-#         qs = Cliente.objects.all()
-
-#         if self.q:
-#             qs = qs.filter(Q(apellidos__icontains=self.q) |Q(nombres__icontains=self.q) | Q(dniCuit__icontains=self.q))
-
-#         return qs
-
-# class productoAutocomplete(autocomplete.Select2QuerySetView):
-
-#     def get_results(self, context):
-#         """Return data for the 'results' key of the response."""
-#         results = super().get_results(context)
-#         for index, result in enumerate(context['object_list']):
-#             results[index]["precio"] = result.precioPorUnidad
-#         return results
-
-#     def get_queryset(self):
-#         # Don't forget to filter out results depending on the visitor !
-#         qs = Producto.objects.all()
-
-#         if self.q:
-#            qs = qs.filter(Q(descripcion__icontains=self.q) | Q(nombre__icontains=self.q) | Q(marca__icontains=self.q))
-
-#         return qs

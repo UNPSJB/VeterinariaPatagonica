@@ -1,5 +1,9 @@
 {% extends 'GestionDePracticas/GestionDePracticas.html' %}
 {% load static %}
+{% load l10n %}
+{%  block paginaEstilos %}
+{{ block.super }}
+{%  endblock %}
 {% block titulo %}
 Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
 {% endblock %}
@@ -40,16 +44,16 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
         {% if perfiles.datos.despues %}
         <div class="row">
             {% if perfiles.datos.antes %}
-            <div class="col-xs-12 col-sm-12 col-md-6 grafico" id="grafico-perfil-tda-antes">
-                <canvas></canvas>
-                <div class="leyenda">Desde el día {{ perfiles.fecha|date:"d/m/Y" }}</div>
-            </div>
-            {% endif %}
-            <div class="col-xs-12 col-sm-12 col-md-6 grafico" id="grafico-perfil-tda-despues">
-                <canvas></canvas>
+            <div class="col-xs-12 col-sm-12 col-md-6 grafico">
+                <canvas id="grafico-perfil-tda-antes"></canvas>
                 <div class="leyenda">Hasta el día {{ perfiles.fecha|date:"d/m/Y" }}</div>
             </div>
-            <div class="col-xs-12 referencias">
+            <div class="col-xs-12 col-sm-12 col-md-6 grafico">
+            {% else %}
+            <div class="col-xs-12 col-sm-12 col-md-12 grafico">
+            {% endif %}
+                <canvas id="grafico-perfil-tda-despues"></canvas>
+                <div class="leyenda">Desde el día {{ perfiles.fecha|date:"d/m/Y" }}</div>
             </div>
         </div>
         {% else %}
@@ -62,8 +66,8 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
         </h5>
         {% if realizacionesPorDia.datos %}
         <div class="row">
-            <div class="col-xs-12 grafico" id="grafico-realizaciones">
-                <canvas></canvas>
+            <div class="col-xs-12 grafico">
+                <canvas id="grafico-realizaciones"></canvas>
             </div>
         </div>
         {% else %}
@@ -74,8 +78,8 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
         <h5>Prácticas actualizadas según estado (últimos {{ porcentajesActualizacion.dias }} días)</h5>
         {% if porcentajesActualizacion.datos %}
         <div class="row">
-            <div class="col-xs-12 grafico" id="grafico-actualizaciones">
-                <canvas class="{{ tipo }}"></canvas>
+            <div class="col-xs-12 grafico">
+                <canvas id="grafico-actualizaciones" class="{{ tipo }}"></canvas>
             </div>
         </div>
         {% else %}
@@ -88,11 +92,11 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
         </h5>
         {% if tiposDeAtencion.habilitados == 0 and tiposDeAtencion.deshabilitados == 0 %}
         <p>
-            No se han creado prácticas desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}.
+            No se han facturado prácticas desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}.
         </p>
         {% else %}
         {% if tiposDeAtencion.deshabilitados %}
-            Hay registradas {{ tiposDeAtencion.deshabilitados }} prácticas con tipos de atención deshabilitados creadas desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}
+            Hay registradas {{ tiposDeAtencion.deshabilitados }} prácticas con tipos de atención deshabilitados facturadas desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}
         {% endif %}
         {% if tiposDeAtencion.habilitados %}
             {% if tiposDeAtencion.raros %}
@@ -106,15 +110,13 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
             {% if tiposDeAtencion.normales %}
             {% if tiposDeAtencion.datos.normales.cantidad > 1 %}
             <div class="row">
-                <div class="col-xs-12 grafico" id="grafico-tda-normales">
+                <div class="col-xs-12 grafico">
                 {% if tiposDeAtencion.datos.normales.cantidad >= 5 %}
-                    <canvas class="radar"></canvas>
+                    <canvas id="grafico-tda-normales" class="radar"></canvas>
                 {% else %}
-                    <canvas class="barras"></canvas>
+                    <canvas id="grafico-tda-normales" class="barras"></canvas>
                 {% endif %}
                     <div class="leyenda">Tipos de atención</div>
-                </div>
-                <div class="col-xs-12 referencias">
                 </div>
             </div>
             {% endif %}
@@ -148,15 +150,13 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
             {% if tiposDeAtencion.raros %}
             {% if tiposDeAtencion.datos.raros.cantidad > 1 %}
             <div class="row">
-                <div class="col-xs-12 grafico" id="grafico-tda-raros">
+                <div class="col-xs-12 grafico">
                 {% if tiposDeAtencion.datos.raros.cantidad >= 5 %}
-                    <canvas class="radar"></canvas>
+                    <canvas id="grafico-tda-raros" class="radar"></canvas>
                 {% else %}
-                    <canvas class="barras"></canvas>
+                    <canvas id="grafico-tda-raros" class="barras"></canvas>
                 {% endif %}
                     <div class="leyenda">Otros tipos de atención</div>
-                </div>
-                <div class="col-xs-12 referencias">
                 </div>
             </div>
             {% endif %}
@@ -218,10 +218,257 @@ Reporte de {{ tipo }}s al {{ hoy|date:"d/m/Y" }}
             {% endif %}
         {% else %}
         <p>
-            No se han creado prácticas con ninguno de los tipos de atención habilitados desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}.
+            No se han facturado prácticas con ninguno de los tipos de atención habilitados desde el día {{ tiposDeAtencion.fecha|date:"d/m/Y" }}.
         </p>
         {% endif %}
     {% endif %}
     </div>
 </div>
+{% endblock %}
+{% block paginaJavascript %}
+{{ block.super }}
+<script src="{% static 'vendor/chartjs/Chart.js' %}"></script>
+<script type="text/javascript">
+{% localize off %}
+{% for nombre, datos in perfiles.datos.items %}
+{% if datos %}
+    var dataset_perfiles_{{ nombre }} = [{% for dato in datos.data %}{{ dato }}*100, {% endfor %}];
+    var config_perfiles_{{ nombre }} = {
+        type: 'pie',
+        data: {
+            datasets: [
+                {
+                    data: dataset_perfiles_{{ nombre }},
+                    backgroundColor: [{% for color in datos.colores %}"{{ color }}", {% endfor %}],
+                },
+            ],
+            labels: [{% for label in datos.categorias %}"{{ label }}", {% endfor %}],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                animateScale: false,
+                animateRotate: false,
+            },
+            legend: {
+                position: "bottom",
+                labels: {
+                    fontSize: 14,
+                },
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(item){
+                        return "% " + dataset_perfiles_{{ nombre }}[item["index"]].toFixed(2);
+                    },
+                },
+                bodyFontSize: 14,
+            },
+        },
+    };
+{% endif %}
+{% endfor %}
+{% if realizacionesPorDia.datos %}
+    var dataset_realizaciones = [{% for dato in realizacionesPorDia.datos.data.0 %}{x:{{ dato.0 }}, y:{{ dato.1 }}}, {% endfor %}];
+    var config_realizaciones = {
+        type: 'line',
+        data: {
+            datasets: [
+                {
+                    data: dataset_realizaciones,
+                    label: "Realizaciones por día",
+                    lineTension: 0,
+                    borderWidth: 2,
+                    borderColor: "{{ realizacionesPorDia.datos.colores.0 }}",
+                    pointBackgroundColor: "{{ realizacionesPorDia.datos.colores.0 }}",
+                    pointRadius: 4,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: "bottom",
+                labels: {
+                    fontSize: 14,
+                },
+            },
+            tooltips: {
+                callbacks: {
+                    title: function(item){
+                        var i = item[0]["index"];
+                        var dias = dataset_realizaciones[i]["x"];
+                        dias = (dias < 0)? -dias : dias;
+                        return "Hace "+dias+" días";
+                    },
+                    label: function(item){
+                        var realizaciones = dataset_realizaciones[item["index"]]["y"];
+                        return "Realizaciones: "+realizaciones;
+                    },
+                },
+                bodyFontSize: 14,
+            },
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom',
+                    ticks: {
+                        callback: function(value, index, values) {
+                            value = (value < 0)? -value : value;
+                            return "Hace "+value+" días";
+                        }
+                    },
+                }]
+            }
+        }
+    };
+{% endif %}
+{% if porcentajesActualizacion.datos %}
+    var config_actualizaciones = {
+        type: 'bar',
+        data: {
+            labels: [{% for label in porcentajesActualizacion.datos.labels %}"{{ label }}", {% endfor %}],
+            datasets: [
+                {
+                    data: {{ porcentajesActualizacion.datos.data.0 }},
+                    label: "Porcentajes de actualización",
+                    borderColor: "{{ porcentajesActualizacion.datos.colores.0 }}",
+                    backgroundColor: "{{ porcentajesActualizacion.datos.colores.0 }}",
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: "bottom",
+                labels: {
+                    fontSize: 14,
+                },
+            },
+            tooltips: {
+                callbacks: {
+                    title: function(item){
+                        var categoria = item[0]["xLabel"];
+                        return categoria;
+                    },
+                    label: function(item){
+                        var porcentaje = item["yLabel"];
+                        return "% " + porcentaje.toFixed(2);
+                    },
+                },
+                bodyFontSize: 14,
+            },
+            scales: {
+                xAxes: [{
+                    stacked: false,
+                }],
+                yAxes: [{
+                    stacked: false,
+                    ticks: {
+                        min:0,
+                        max:100,
+                        stepSize:10,
+                    },
+                }],
+            }
+        }
+    };
+    {% endif %}
+{% for nombre, datos in tiposDeAtencion.datos.items %}
+{% if datos and datos.cantidad > 1 %}
+    var config_tda_{{ nombre }} = {
+        type: 'bar',
+        data: {
+            labels: [{% for label in datos.labels %}"{{ label }}", {% endfor %}],
+            datasets: [
+                {
+                    data: {{ datos.data.0 }},
+                    label: "{{ datos.categorias.0 }}",
+                    borderColor: "{{ datos.colores.0 }}",
+                    backgroundColor: "{{ datos.colores.0 }}",
+                },
+                {
+                    data: {{ datos.data.1 }},
+                    label: "{{ datos.categorias.1 }}",
+                    borderColor: "{{ datos.colores.1 }}",
+                    backgroundColor: "{{ datos.colores.1 }}",
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: {
+                position: "bottom",
+                labels: {
+                    fontSize: 14,
+                },
+            },
+            tooltips: {
+                callbacks: {
+                    title: function(item){
+                        var categoria = item[0]["xLabel"];
+                        return categoria;
+                    },
+                    label: function(item){
+                        var i = item["datasetIndex"];
+                        var porcentaje = item["yLabel"];
+                        var label = config_tda_{{ nombre }}["data"]["datasets"][i]["label"];
+                        return label + " %" + porcentaje.toFixed(2);
+                    },
+                },
+                bodyFontSize: 14,
+            },
+            scales: {
+                xAxes: [{
+                    stacked: false,
+                }],
+                yAxes: [{
+                    stacked: false,
+                }],
+            }
+        }
+    };
+{% if datos.cantidad >= 5 %}
+    config_tda_{{ nombre }}["type"] = "radar";
+    config_tda_{{ nombre }}["options"]["scales"] = {};
+    config_tda_{{ nombre }}["data"]["datasets"][0]["lineTension"] = 0;
+    config_tda_{{ nombre }}["data"]["datasets"][0]["pointRadius"] = 4;
+    config_tda_{{ nombre }}["data"]["datasets"][0]["fill"] = false;
+    config_tda_{{ nombre }}["data"]["datasets"][1]["lineTension"] = 0;
+    config_tda_{{ nombre }}["data"]["datasets"][1]["pointRadius"] = 4;
+    config_tda_{{ nombre }}["data"]["datasets"][1]["fill"] = false;
+{% endif %}
+{% endif %}
+{% endfor %}
+    onload = function() {
+        var ctx;
+{% if perfiles.datos.antes %}
+        ctx = document.getElementById("grafico-perfil-tda-antes").getContext("2d");
+        var chart_perfiles_antes = new Chart(ctx, config_perfiles_antes);
+{% endif %}
+{% if perfiles.datos.despues %}
+        ctx = document.getElementById("grafico-perfil-tda-despues").getContext("2d");
+        var chart_perfiles_despues = new Chart(ctx, config_perfiles_despues);
+{% endif %}
+{% if realizacionesPorDia.datos %}
+        ctx = document.getElementById("grafico-realizaciones").getContext("2d");
+        var chart_realizaciones = new Chart(ctx, config_realizaciones);
+{% endif %}
+{% if porcentajesActualizacion.datos %}
+        ctx = document.getElementById("grafico-actualizaciones").getContext("2d");
+        var chart_actualizaciones = new Chart(ctx, config_actualizaciones);
+{% endif %}
+{% for nombre, datos in tiposDeAtencion.datos.items %}
+{% if datos and datos.cantidad > 1 %}
+        ctx = document.getElementById("grafico-tda-{{ nombre }}").getContext("2d");
+        var chart_tda_{{ nombre }} = new Chart(ctx, config_tda_{{ nombre }});
+{% endif %}
+{% endfor %}
+    };
+{% endlocalize %}
+</script>
 {% endblock %}

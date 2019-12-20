@@ -266,22 +266,29 @@ class BaseFormSet(forms.BaseFormSet):
         if not item.is_valid():
             return None
         ocurrencias = []
-        valores = tuple( item.cleaned_data[field] for field in self.id_fields )
+        valores = self._datosId(item.cleaned_data)
         for i in range(len(self.forms)):
             item = self.forms[i]
             if not item.is_valid() or i in self._ignorar_forms:
                 continue
-            iesimo = tuple( item.cleaned_data[field] for field in self.id_fields )
+            iesimo = self._datosId(item.cleaned_data)
             if iesimo == valores:
                 ocurrencias.append(i)
         return ocurrencias
+
+    def _datosId(self, cleaned_data):
+        return tuple(cleaned_data[field] for field in self.id_fields)
 
     def _vacios(self, i):
         vacios=[]
         form = self.forms[i]
         for field in self.id_fields:
-            if (not field in form.cleaned_data) or (not form.cleaned_data[field]):
+            if field not in form.cleaned_data:
                 vacios.append(field)
+            else:
+                vacio = form.cleaned_data[field] in form.fields[field].empty_values
+                if vacio:
+                    vacios.append(field)
         return vacios
 
     def _validarIdentidades(self):
@@ -293,7 +300,7 @@ class BaseFormSet(forms.BaseFormSet):
                 self._ignorar_forms.append(i)
                 if not self.ignorar_incompletos:
                     errores.append(forms.ValidationError(
-                        "%s de la fila %d son obligatorios" % (", ".join(vacios).capitalize(), i+1),
+                        "%s de la fila %d: sin completar" % (", ".join(vacios).capitalize(), i+1),
                     ))
         return errores
 
@@ -312,14 +319,11 @@ class BaseFormSet(forms.BaseFormSet):
 
     def clean(self):
         retorno = super().clean()
-
         errores = []
         errores.extend( self._validarIdentidades() )
         errores.extend( self._validarOcurrencias() )
-
         if len(errores) > 0:
             raise forms.ValidationError(errores)
-
         return retorno
 
     def completos(self):
@@ -337,6 +341,28 @@ class BaseFormSet(forms.BaseFormSet):
             })
         return forms
 
+    def equivale(self, datos):
+        retorno = None
+        if self.is_valid():
+            datosCompletos = self.completos()
+            if len(datos) != len(datosCompletos):
+                retorno = False
+            else:
+                idsCompletos = [self._datosId(completo) for completo in datosCompletos]
+                retorno = True
+                for dato in datos:
+                    id = self._datosId(dato)
+                    try:
+                        i = idsCompletos.index(id)
+                    except ValueError:
+                        retorno = False
+                    else:
+                        if datosCompletos[i] != dato:
+                            retorno = False
+                    if not retorno:
+                        break
+        return retorno
+
 
 class QuerysetFormSet(BaseFormSet):
 
@@ -347,9 +373,10 @@ class QuerysetFormSet(BaseFormSet):
         self.para_eliminar = None
         self.para_actualizar = None
         self.para_conservar = None
+        self._instancias = None
         if "initial" in kwargs:
             del(kwargs["initial"])
-        if data is None and queryset is not None:
+        if queryset is not None:
             initial = queryset.values(*self.fields)
         else:
             initial = None
@@ -378,18 +405,12 @@ class QuerysetFormSet(BaseFormSet):
         return ret
 
     def _clasificar(self):
-
-        if len(self._ignorar_forms):
-            return
-
         enviados = self.instancias()
         todos = [ x for x in self.queryset.all() ]
-
         eliminados  = []
         agregados   = []
         modificados = []
         conservados = []
-
         for obj in todos:
             i = self._ubicar(enviados, obj)
             if i == -1:
@@ -401,14 +422,17 @@ class QuerysetFormSet(BaseFormSet):
                     conservados.append(obj)
                 del(enviados[i])
         agregados.extend(enviados)
-
-        self.para_agregar = tuple(agregados)
-        self.para_eliminar = tuple(eliminados)
-        self.para_actualizar = tuple(modificados)
-        self.para_conservar = tuple(conservados)
+        self.para_agregar = agregados
+        self.para_eliminar = eliminados
+        self.para_actualizar = modificados
+        self.para_conservar = conservados
 
     def instancias(self):
-        return [ form.instance for form in self.forms ]
+        retorno = []
+        for i in range(len(self.forms)):
+            if i not in self._ignorar_forms:
+                retorno.append(self.forms[i].instance)
+        return retorno
 
     def clean(self):
         retorno = super().clean()
@@ -463,9 +487,18 @@ class DesdeHastaForm(BaseForm):
         },
     )
 
-    def __init__(self, *args, unidadDuracion="minutes", **kwargs):
+    def __init__(self, *args, unidadDuracion="minutes", minimo=None, maximo=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.unidadDuracion = unidadDuracion
+        self.minimo = minimo
+        if self.minimo is not None:
+            if self.minimo.second + self.minimo.microsecond > 0:
+                self.minimo = self.minimo.replace(second=0, microsecond=0)+timedelta(minutes=1)
+        self.maximo = maximo
+        if self.maximo is not None:
+            self.maximo = self.maximo.replace(second=0, microsecond=0)
+            if self.minimo is not None and self.maximo < self.minimo:
+                self.maximo = self.minimo
 
     duracion = forms.IntegerField(
         required=False,
@@ -531,4 +564,26 @@ class DesdeHastaForm(BaseForm):
                         None,
                         forms.ValidationError("La fecha y hora de inicio debe ser anterior a la fecha y hora de finalización.", code="lapso_incoherente")
                     )
+            if self.minimo is not None and retorno["desde"] < self.minimo:
+                self.add_error(
+                    "desde",
+                    forms.ValidationError(
+                        "La fecha y hora de inicio no puede ser menor a las %s del %s." % (
+                            self.minimo.strftime("%H:%M"),
+                            self.minimo.strftime("%d/%m/%Y"),
+                        ),
+                        code="inicio_menor_minimo"
+                    )
+                )
+            if self.maximo is not None and retorno["hasta"] > self.maximo:
+                self.add_error(
+                    "hasta",
+                    forms.ValidationError(
+                        "La fecha y hora de finalizacion no puede ser mayor a las %s del %s." % (
+                            self.maximo.strftime("%H:%M"),
+                            self.maximo.strftime("%d/%m/%Y"),
+                        ),
+                        code="finalizacion_mayor_maximo"
+                    )
+                )
         return retorno

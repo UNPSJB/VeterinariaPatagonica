@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator, MinValueValidator, MaxValueVa
 from VeterinariaPatagonica import tools
 from decimal import Decimal
 from django.db.models import Q
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 
 # Create your models here.
 
@@ -19,7 +19,7 @@ class ClienteBaseManager(models.Manager):
             qs = qs.filter(tipo=self.tipo)
         return qs
 
-class ClienteQueryset(VeterinariaPatagonicaQuerySet):
+class ClienteQueryset(BajasLogicasQuerySet):
 
     MAPEO_ORDEN = {
         "orden_dniCuit" : ["dniCuit"],
@@ -98,7 +98,7 @@ class Cliente (models.Model):
     DEFAULT = Decimal(0)
     DESCUENTO = DESC_PARTE_ENTERA + PARTE_DECIMAL
 
-    
+
     CC_PARTE_ENTERA = 4
     CC_MIN_PRECIO = Decimal(0)
     CC_MAX_PRECIO = Decimal(3000.00)
