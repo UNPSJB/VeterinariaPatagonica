@@ -69,12 +69,12 @@ def menuListar(usuario, habilitados):
 
         menu[0].append( (reverse("rubros:rubroVerHabilitados"), "Listar rubros habilitados") )
         menu[1].append( (reverse("rubros:rubrosListadoExcel"), "Exportar rubros deshabilitados"))
-        menu[2].append( (reverse("rubros:rubrosListadoPDF"), "Imprimir rubros deshabilitados"))
+        #menu[2].append( (reverse("rubros:rubrosListadoPDF"), "Imprimir rubros deshabilitados"))
 
     if habilitados and usuario.has_perm("GestionDeRubros.rubro_ver_no_habilitados"):
         menu[0].append( (reverse("rubros:rubroVerDeshabilitados"), "Listar rubros deshabilitados") )
         menu[1].append( (reverse("rubros:rubrosListadoExcel"), "Exportar rubros habilitados") )
-        menu[2].append( (reverse("rubros:rubrosListadoPDF"), "Imprimir rubros habilitados") )
+        #menu[2].append( (reverse("rubros:rubrosListadoPDF"), "Imprimir rubros habilitados") )
 
     if usuario.has_perm("GestionDeRubros.rubro_crear"):
         menu[3].append( (reverse("rubros:rubroCrear"), "Crear Rubro") )
