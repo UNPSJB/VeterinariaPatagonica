@@ -37,7 +37,7 @@ def ProductoFormFactory(producto=None, rubro=None):
                 'marca': 'Marca:',
                 'stock': 'Stock:',
                 'formaDePresentacion':'Forma de Presentación:',
-                'precioPorUnidad':'Precio por Unidad:',
+                'precioPorUnidad':'Precio de Venta:',
                 'precioDeCompra' : 'Precio de Compra:',
                 'rubro':'Rubro:',
                 'descripcion':'Descripción:',

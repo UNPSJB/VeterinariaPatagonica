@@ -21,3 +21,6 @@ python manage.py loaddata ./Apps/GestionDePracticas/fixtures/GestionDePracticas.
 
 echo "Load Gestion de Facturas"
 python manage.py loaddata ./Apps/GestionDeFacturas/fixtures/GestionDeFacturas.json
+
+python manage.py loaddata ./fixtures/auth.json
+python manage.py loaddata ./Apps/Usuarios/fixtures/Usuarios.json

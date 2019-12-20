@@ -82,7 +82,7 @@ def menuListar(usuario, habilitados):
         menu[0].append( (reverse("clientes:clienteVerDeshabilitados"), "Listar clientes deshabilitados") )
         menu[1].append( (reverse("clientes:clientesListadoEXCEL"), "Exportar clientes habilitados") )
         menu[2].append( (reverse("clientes:clientesListadoPDF"), "Imprimir clientes habilitados") )
-        menu[3].append( (reverse("clientes:reportes"), "Reportes de Clientes"))
+        menu[3].append( (reverse("clientes:reporteTipo"), "Reportes de Clientes"))
 
     if usuario.has_perm("GestionDeClientes.cliente_crear"):
 
@@ -175,8 +175,10 @@ def deshabilitar(request, id):
 
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El cliente tiene practicas realizadas")
-    practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
-    
+
+    #practicas = Practica.objects.enEstado(Facturada).filter(cliente=cliente).filter(estado__facturada__pago__isnull=True).count()
+    practicas = Factura.objects.filter(practica__cliente=cliente, pago=None).count()
+
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El cliente tiene practicas facturadas sin pagar")
 
@@ -455,6 +457,7 @@ def reportes(request):
 
 def reporteTipo(request):
 
+    hoy = datetime.now().date()
     #Obtengo clientes segun el tipo
     clientesEspecial = Factura.objects.filter(Q(cliente__tipoDeCliente__icontains='E'))
     cantidadEspecial = clientesEspecial.count()
@@ -479,6 +482,7 @@ def reporteTipo(request):
         "cantidad" : facturasCount,
         "cantidadC": cantidadComun,
         "cantidadE": cantidadEspecial,
+        'hoy': hoy
         }
     #return JsonResponse(data)
     return HttpResponse(template.render(context, request))
@@ -488,12 +492,14 @@ def reporteTopCliente(request):
 
     totales = []
     diccionarioClientesTop={}
+    diccionarioGastosTop={}
     jason = []
     data = []
     clientesConFacturas = []
 
     gastos = []
     clientesG = []
+    mayor= 10000
     #Obtengo los clientes que gastaron mas de 500
     clientes = Cliente.objects.all()
     for cliente in clientes:
@@ -507,32 +513,14 @@ def reporteTopCliente(request):
                 totales.append(totalDeFacturas["total__sum"])
                 diccionarioClientesTop={
                     'clientedni': cliente.dniCuit,
-                    'clientenombre': cliente.nombres,
-                    'clienteapellido': cliente.apellidos,
-                    'gasto': totalDeFacturas["total__sum"]}
-                jason.append(diccionarioClientesTop)
+                    'gasto': float( totalDeFacturas["total__sum"])
+                    }
+                gasto= diccionarioClientesTop["gasto"]
+                if gasto > mayor:
+                    jason.append(diccionarioClientesTop)
 
-    mayor= 500
-    for top in jason:
-        gasto= top["gasto"]
-        if gasto > mayor:
-            data.append(top)
 
-    for numero in data:
-        gasto = numero["gasto"]
-        gasto = int(gasto)
-        gastos.append(gasto)
 
-    for cliente in data:
-        cli = cliente["clientedni"]
-        #cli = (cli)
-        clientesG.append(cli)
-
-    print("aHDG",gastos)
-    print("CLIIIEN",clientesG)
-
-    labels= ["Lu", "Benja"]
-    datas = [22, 26]
     template = loader.get_template('GestionDeClientes/reporte.html')
     context = {
         "tt": totales,
@@ -540,12 +528,10 @@ def reporteTopCliente(request):
         "otra": clientesConFacturas,
         "data": data,
         "gastos": gastos,
-        "clientes": clientesG,
-        "labels" : labels,
-        "datas": datas,
         }
-    #return HttpResponse(json.dumps(data), content_type='application/json; utf-8')
-    return HttpResponse(template.render(context, request))
+    #return JsonResponse(jason, safe=False)
+    return HttpResponse(json.dumps(jason), content_type='application/json; utf-8')
+    #return HttpResponse(template.render(context, request))
 
 def get_data (request, *args, **kwargs):
     data = {
