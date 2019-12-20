@@ -72,9 +72,6 @@ Ver factura
                             <td>{{ factura.practica.precio|floatformat:2 }}</td>
                         </tr>
                         {% endwith %}
-                        {% endif %}
-
-
                         {% if factura.cliente.tipoDeCliente == "E" %}
                         <tr class="breve">
                             <td colspan="3">
@@ -83,8 +80,7 @@ Ver factura
                             <td>{{ factura.importeDescuentoServicio|floatformat:2 }}</td>
                         </tr>
                         {% endif %}
-
-
+                        {% endif %}
                         {% for detalle in factura.detalles_producto.all %}
                         <tr>
                             <td>{{ detalle.cantidad }}</td>
@@ -102,9 +98,7 @@ Ver factura
                         </tr>
                         {% endfor %}
 
-
-
-                        {% if factura.cliente.tipoDeCliente == "E" %}
+                        {% if factura.cliente.tipoDeCliente == "E" and factura.detalles_producto.count %}
                         <tr class="breve">
                             <td colspan="3">
                                 Descuento en productos (cliente especial) %{{ factura.cliente.descuentoProducto|floatformat:2 }}
@@ -112,7 +106,7 @@ Ver factura
                             <td>{{ factura.importeDescuentoProducto|floatformat:2 }}</td>
                         </tr>
                         {% endif %}
-
+                        
 
                         {% if factura.descuento != 0 %}
                         <tr class="breve">
@@ -128,19 +122,6 @@ Ver factura
                                 Recargo del %{{ factura.recargo|floatformat:2 }}
                             </td>
                             <td>{{ factura.importeRecargo|floatformat:2 }}</td>
-                        </tr>
-                        {% endif %}
-                        {% if factura.cliente.descuentoProducto %}
-                        <tr class="breve">
-                            <td colspan="3">Descuento en productos</td>
-                            <td>{{ factura.cliente.descuentoProducto|floatformat:2 }}%</td>
-                        </tr>
-                        {% endif %}
-                        {% if factura.cliente.descuentoServicio %}
-                        <tr class="breve">
-                            <td colspan="3">Descuento en servicios</td>
-                            <td>{{ factura.cliente.descuentoServicio|floatformat:2 }}%</td>
-                            <td>{{factura.importeProductosConDescuento}}</td>
                         </tr>
                         {% endif %}
                         {% if factura.tipo == "A" %}

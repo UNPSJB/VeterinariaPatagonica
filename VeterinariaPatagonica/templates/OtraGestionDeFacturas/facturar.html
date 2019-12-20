@@ -17,18 +17,6 @@ Facturar
     {% if accion %}
     {% with factura=form.factura %}
         <form id="form-facturar" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
-          <div class="cuadro">
-            <table>
-              <b>Porcentajes de descuento propios del cliente: ({{factura.cliente}}) </b>
-              <li> Descuento en productos: {{factura.cliente.descuentoProducto}}%</li>
-
-              <li> Descuento en servicios: {{factura.cliente.descuentoServicio}}%</li>
-            </table>
-          </div>
-
-<<<<<<< HEAD
-
-=======
             {% if factura.total is not None %}
             <div class="cuadro">
                 <div class="row cuadro-contenido resumen">
@@ -45,11 +33,6 @@ Facturar
                     </div>
                     {% endif %}
                     <div class="col-xs-12 col-sm-6 col-md-6 bloque">
-                        <div class="dato importe">
-                            <i class="fa fa-dot-circle-o"></i><b>Importe:</b> $<span class="valor">{{ factura.total|floatformat:2 }}</span>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
                     {% if factura.practica.adelanto %}
                         <div class="dato adelanto">
                             <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> $<span class="valor">{{ factura.practica.adelanto.importe|floatformat:2 }}</span>
@@ -59,7 +42,6 @@ Facturar
                 </div>
             </div>
             {% endif %}
->>>>>>> 2efa3b06c67ec95a53b43bda7ee5d9eb0e5157b1
             {% csrf_token %}
             <div id="form-facturar-errores">
                 {% if form.errors or formset.total_error_count %}
@@ -142,13 +124,3 @@ Facturar
         }
     </script>
 {% endblock %}
-
-
-
-
-
-
-
-
-
-
