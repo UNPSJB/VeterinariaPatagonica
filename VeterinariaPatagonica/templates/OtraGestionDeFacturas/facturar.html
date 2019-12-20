@@ -16,23 +16,15 @@ Facturar
     {% if accion %}
     {% with factura=form.factura %}
         <form id="form-facturar" class="form-horizontal formulario" action="{{ request.path }}" method="POST" onsubmit="validar(event);">
+          <div class="cuadro">
+            <table>
+              <b>Porcentajes de descuento propios del cliente: ({{factura.cliente}}) </b>
+              <li> Descuento en productos: {{factura.cliente.descuentoProducto}}%</li>
 
-            <div class="cuadro">
-                <div class="row cuadro-contenido resumen">
-                    <div class="col-xs-12 col-sm-6 col-md-6 bloque">
-                        <div class="dato importe">
-                            <i class="fa fa-dot-circle-o"></i><b>Importe:</b> $<span class="valor">{{ factura.total|floatformat:2 }}</span>
-                        </div>
-                    </div>
-                    <div class="col-xs-8 col-sm-6 col-md-6 bloque">
-                    {% if factura.practica.adelanto %}
-                        <div class="dato adelanto">
-                            <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> $<span class="valor">{{ factura.practica.adelanto.importe|floatformat:2 }}</span>
-                        </div>
-                    {% endif %}
-                    </div>
-                </div>
-            </div>
+              <li> Descuento en servicios: {{factura.cliente.descuentoServicio}}%</li>
+            </table>
+          </div>
+
 
             {% csrf_token %}
             <div id="form-facturar-errores">
@@ -59,6 +51,23 @@ Facturar
                         {% include "snippets/formset.html" with titulo="" %}
                     </div>
                 </div>
+            </div>
+            <div class="cuadro">
+
+              <div class="row cuadro-contenido resumen">
+                  <div class="col-xs-12 col-sm-6 col-md-6 bloque">
+                      <div class="dato importe">
+                        <i class="fa fa-dot-circle-o"></i> <big> <b>Importe estimado:</b> </big> $<span class="valor">{{ factura.total|floatformat:2 }}</span>
+                      </div>
+                  </div>
+                  <div class="col-xs-8 col-sm-6 col-md-6 bloque">
+                  {% if factura.practica.adelanto %}
+                      <div class="dato adelanto">
+                          <i class="fa fa-dot-circle-o"></i><b>Adelanto:</b> $<span class="valor">{{ factura.practica.adelanto.importe|floatformat:2 }}</span>
+                      </div>
+                  {% endif %}
+                  </div>
+              </div>
             </div>
             {% include "snippets/form.html" with form=acciones accion=None %}
         </form>

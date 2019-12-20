@@ -223,7 +223,7 @@ def deshabilitar(request, id):
 
     if practicas > 0:
         raise VeterinariaPatagonicaError("Error","El producto se encuentra en practicas presupuestadas")'''
-    
+
 
     producto.baja = True
     producto.save()
@@ -328,7 +328,7 @@ def ListadoProductosExcel(request):
 
 ##
 #
-# REPORTE DE PRODUCTOS VENDIDOS POR DIA 
+# REPORTE DE PRODUCTOS VENDIDOS POR DIA
 #
 ##
 from reportlab.lib.pagesizes import A4
@@ -338,17 +338,23 @@ from reportlab.graphics.shapes import Drawing
 from Apps.GestionDeFacturas.models import Factura, DetalleFactura
 from Apps.GestionDePagos.models import Pago
 
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.graphics import renderPDF
 
 
 def reporteProductosVendidos(request):
     print('GET')
     response = HttpResponse(content_type='application/pdf')
-    #response['Content-Disposition'] = 'attachment; filename = productos-vendidos.pdf' 
+    #response['Content-Disposition'] = 'attachment; filename = productos-vendidos.pdf'
     buffer = BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=A4)
-    pdf.setTitle('Reporte productos vendidos')
+    pdf.setTitle('Reporte de los ingresos reales(facturas pagadas) por mes:')
     cabeceraReporte(pdf)
-    graficoLineal(pdf)    
+    dibujo = graficoLineal(pdf)
+    x=20
+    y=330
+    renderPDF.draw(dibujo, pdf, x, y)
     pdf.showPage()
     pdf.save()
     pdf = buffer.getvalue()
@@ -356,7 +362,7 @@ def reporteProductosVendidos(request):
     response.write(pdf)
     return response
 
-#obtener los productos pagados de las facturas 
+#obtener los productos pagados de las facturas
 def obtenerQuerysetPagos():
     pagosPorMes =[0,0,0,0,0,0,0,0,0,0,0,0]
     pagos = Pago.objects.all()
@@ -366,34 +372,37 @@ def obtenerQuerysetPagos():
     return pagosPorMes
 
 def graficoLineal (pdf):
+
     querysetPagos = obtenerQuerysetPagos()
     print(querysetPagos)
-    drawing = Drawing(400, 200)
+    drawing = Drawing(400, 250)
+
     data = [(querysetPagos)]
     pdf = HorizontalLineChart()
     pdf.x = 50
     pdf.y = 50
-    pdf.height = 125
-    pdf.width = 300
+    pdf.height = 300
+    pdf.width = 500
     pdf.data = data
     pdf.joinedLines = 1
-    catNames = 'Jan Feb Mar Apr May Jun Jul Aug'.split(' ')
+    catNames = 'Ene Feb Marzo Abril Mayo Junio Julio Agosto Sep Nov Dic'.split(' ')
     pdf.categoryAxis.categoryNames = catNames
     pdf.categoryAxis.labels.boxAnchor = 'n'
     #pdf.lineLabels.fontName = 'FreeSans'
     mayor = 0
     for pago in querysetPagos:
         if (pago>mayor):
-            mayor = pago 
-
+            mayor = pago
+    mayor2 = max(querysetPagos)
     pdf.valueAxis.valueMin = 0
-    pdf.valueAxis.valueMax = pago
-    pdf.valueAxis.valueStep = 5000
+    pdf.valueAxis.valueMax = mayor2
+    pdf.valueAxis.valueStep = mayor/10
     pdf.lineLabelFormat = '%2.0f'
     pdf.lines[0].strokeWidth = 2
     pdf.lines[1].strokeWidth = 1.5
     drawing.add(pdf)
-    drawing.save(formats=['pdf'], outDir='.', fnRoot='test')
+    #drawing.save(formats=['pdf'], outDir='.', fnRoot='Reporte_Cobros_por_mes')
+    return drawing
 
 def ListadoProductosPDF(request):
     print("GET")

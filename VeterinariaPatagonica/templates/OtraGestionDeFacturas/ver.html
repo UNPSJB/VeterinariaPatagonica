@@ -105,6 +105,19 @@ Ver factura
                             <td>{{ factura.importeRecargo|floatformat:2 }}</td>
                         </tr>
                         {% endif %}
+                        {% if factura.cliente.descuentoProducto %}
+                        <tr class="breve">
+                            <td colspan="3">Descuento en productos</td>
+                            <td>{{ factura.cliente.descuentoProducto|floatformat:2 }}%</td>
+                        </tr>
+                        {% endif %}
+                        {% if factura.cliente.descuentoServicio %}
+                        <tr class="breve">
+                            <td colspan="3">Descuento en servicios</td>
+                            <td>{{ factura.cliente.descuentoServicio|floatformat:2 }}%</td>
+                            <td>{{factura.importeProductosConDescuento}}</td>
+                        </tr>
+                        {% endif %}
                         {% if factura.tipo == "A" %}
                         <tr class="breve">
                             <td colspan="3">Importe neto</td>
@@ -123,10 +136,6 @@ Ver factura
                 </table>
             </div>
         </div>
-    </div>
-    <div id="id-pago" class=" pull-right">
-      <br>
-      <a  id ="factura-pagar" class="btn btn-sm btn-default" href="{% url 'pagos:crear' id=factura.id %}"> <big>Pagar</big> </a>
     </div>
 </div>
 <script type="text/javascript">

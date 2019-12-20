@@ -217,24 +217,19 @@ class Factura(models.Model):
         else:
             descuentoServicio = 0
             descuentoProducto = 0
-
         #Obtengo el valor de la práctica con el descuento del cliente aplicado.
         if practica is not None:
             if descuentoServicio > 0 :
-                importePractica = practica.precio + ((practica.precio * descuentoServicio) /100)
+                importePractica = practica.precio - ((practica.precio * descuentoServicio) /100)
             else:
                 importePractica = practica.precio
-
-
-        # if practica is not None:
-        #     importe += practica.precio
         for detalle in detalles:
             importeDetalles += detalle.subtotal
         print("Subtotal = ",importeDetalles)
         #Obtengo el valor de los productos con el descuento del cliente aplicado.
         if descuentoProducto>0:
             importeDetalles = importeDetalles - ((importeDetalles*descuentoProducto)/100)
-        
+
         if (importeDetalles>0 or importePractica>0):
             importe = importeDetalles + importePractica
         if (descuento != recargo):
@@ -275,6 +270,25 @@ class Factura(models.Model):
 
     def estaPaga(self):
         return Pago.objects.filter(factura=self).exists()
+
+
+    def importeProductosConDescuento(self):
+        # importeDetalles = Decimal(0)
+        # detalles = self.detalles_producto.all()
+        # if(self.cliente):
+        #     descuentoProducto = self.cliente.descuentoProducto
+        # else:
+        #     descuentoProducto = 0
+        # for detalle in detalles:
+        #     importeDetalles += detalle.subtotal
+        # if descuentoProducto>0:
+        #     importeDetalles = importeDetalles - ((importeDetalles*descuentoProducto)/100)
+        #
+        # auxCadena=('%.2f' % importeDetalles).rstrip('0').rstrip('.')
+        # valorDevuelto = int(auxCadena)
+
+        # return auxCadena
+        return 0
 
     def __str__(self):
         cadena = 'Tipo de Factura: {0}, Cliente: {1} Total: {2}.'
