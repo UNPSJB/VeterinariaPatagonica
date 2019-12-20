@@ -1,15 +1,15 @@
 <a id="estado"></a>
 <h3 class="titulo">Presupuesto</h3>
 <div class="contenedor">
-<p><b>Dias de mantenimiento del presupuesto:</b> {{ estado.diasMantenimiento }}</p>
-<p><b>Validez:</b> desde el {{ estado.marca|date:"d/m/y" }} hasta el {{ estado.vencimiento|date:"d/m/y" }}</p>
+<p><b>Dias de mantenimiento:</b> {{ estado.diasMantenimiento }}</p>
+<p><b>Fecha de emisión:</b> {{ estado.marca|date:"d/m/y" }}</p>
 <p><b>Estado:</b>
-{% if estado.diasVigencia %}
-    {{ estado.vencimiento|timeuntil }} de vigencia
-{% elif estado.haExpirado %}
+{% if estado.haExpirado %}
     Expirado
 {% elif estado.fueConfirmado %}
     Confirmado
+{% else %}
+    Vence el dia {{ estado.vencimiento|date:"d/m/Y" }}
 {% endif %}
 </p>
 </div>

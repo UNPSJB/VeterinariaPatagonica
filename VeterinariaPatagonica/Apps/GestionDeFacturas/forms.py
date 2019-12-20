@@ -37,7 +37,7 @@ class ClienteModelChoiceField(forms.ModelChoiceField):
         return clienteSelectLabel(obj)
 
 
-class FacturarPracticaForm(forms.Form):
+class FacturarBaseForm(forms.Form):
 
     tipo = forms.CharField(
         help_text="Debe elegir el tipo de facturación a realizar: A, B o C.",
@@ -82,23 +82,32 @@ class FacturarPracticaForm(forms.Form):
         validators=[MinValueValidator(0, "El porcentaje de descuento debe ser mayor que cero")]
     )
 
-    def __init__(self, *args, practica=None, formsetProductos=None, **kwargs):
+    def __init__(self, *args, formsetProductos=None, **kwargs):
         super().__init__(*args, **kwargs)
-        self.practica = practica
         self.formsetProductos = formsetProductos
         self.productos = None
         self.instancia = None
+        self.datos = {}
+
+    def is_valid(self):
+        retorno = super().is_valid()
+        if self.formsetProductos is not None:
+            retorno &= self.formsetProductos.is_valid()
+        return retorno
+
+    def productosFactura(self):
+        if self.productos is None:
+            if self.formsetProductos is not None:
+                self.productos = self.formsetProductos.productos()
+            else:
+                self.productos = ()
+        return self.productos
 
     def factura(self):
         if self.instancia is None:
-            datos = {}
-            if self.practica is not None:
-                datos["total"] = self.practica.estados.realizacion().total()
-                datos["cliente"] = self.practica.cliente
-                datos["practica"] = self.practica
             if self.is_valid():
-                datos.update(self.cleaned_data)
-            self.instancia = Factura(**datos)
+                self.datos.update(self.cleaned_data)
+            self.instancia = Factura(**self.datos)
             self.instancia.total = self.instancia.calcularTotal(
                 detalles=self.productosFactura(),
                 practica=self.instancia.practica,
@@ -107,35 +116,8 @@ class FacturarPracticaForm(forms.Form):
             )
         return self.instancia
 
-    def productosFactura(self):
-        if self.productos is None:
-            self.productos = self.formsetProductos.productos()
-        return self.productos
 
-    def clean(self):
-        retorno = super().clean()
-        if self.is_valid() and self.formsetProductos.is_valid():
-            practica = self.factura().practica
-            productos = self.productosFactura()
-            if (practica is None) and (not productos):
-                self.add_error(
-                    None,
-                    forms.ValidationError("La facturacion no puede completarse sin practica ni productos.")
-                )
-        return retorno
-
-    def crearFactura(self):
-        if not (self.is_valid() and self.formsetProductos.is_valid()):
-            raise VeterinariaPatagonicaError("No se pudieron guardar los datos de la facturación, los datos del formulario no eran validos.")
-        factura = self.factura()
-        factura.save(force_insert=True)
-        productosFactura = self.productosFactura()
-        if len(productosFactura)>0:
-            factura.detalles_producto.set(productosFactura, bulk=False)
-        return factura
-
-class FacturarForm(FacturarPracticaForm):
-
+class FacturarForm(FacturarBaseForm):
 
     cliente = ClienteModelChoiceField(
         queryset=Cliente.objects.habilitados(),
@@ -161,21 +143,95 @@ class FacturarForm(FacturarPracticaForm):
         ),
     )
 
-    def __init__(self, *args, practica=None, field_order=["cliente", "practica"], **kwargs):
+    def __init__(self, *args, field_order=["cliente", "practica"], **kwargs):
         super().__init__(*args, field_order=field_order, **kwargs)
 
     def clean(self):
         retorno = super().clean()
-        if ("cliente" in retorno) and ("practica" in retorno):
-            practica = retorno["practica"]
-            if (practica is not None):
-                cliente = retorno["cliente"]
-                if practica.cliente.id != cliente.id:
-                    self.add_error(
-                        "practica",
-                        forms.ValidationError("La práctica debe haber sido realizada a nombre del cliente.")
+        practica = retorno["practica"] if "practica" in retorno else None
+        if "fecha" in retorno:
+            maxima = datetime.now().date()
+            if retorno["fecha"] > maxima:
+                self.add_error(
+                    "fecha",
+                    forms.ValidationError(
+                        "La fecha de facturación no puede ser mayor al dia %s" % (
+                            maxima.strftime("%d/%m/%Y")
+                        )
                     )
+                )
+            elif practica is not None:
+                minima = practica.estados.realizacion().finalizacion.date()
+                if retorno["fecha"] < minima:
+                    self.add_error(
+                        "fecha",
+                        forms.ValidationError(
+                            "La fecha de facturación no puede ser anterior al %s dia en que se realizo la %s" % (
+                                minima.strftime("%d/%m/%Y"),
+                                practica.nombreTipo()
+                            )
+                        )
+                    )
+        if "cliente" in retorno and practica is not None:
+            cliente = retorno["cliente"]
+            if practica.cliente.id != cliente.id:
+                self.add_error(
+                    "practica",
+                    forms.ValidationError("La práctica debe haber sido realizada a nombre del cliente.")
+                )
+        if not self.errors:
+            productos = self.productosFactura()
+            if (practica is None) and (not productos):
+                self.add_error(
+                    None,
+                    forms.ValidationError("La facturacion no puede completarse sin practica ni productos.")
+                )
         return retorno
+
+
+class FacturarPracticaForm(FacturarBaseForm):
+
+    def __init__(self, practica, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.practica = practica
+        if practica is not None:
+            self.datos["practica"] = practica
+            self.datos["cliente"] = practica.cliente
+
+    def clean(self):
+        retorno = super(FacturarBaseForm, self).clean()
+        if "fecha" in retorno:
+            maxima = datetime.now().date()
+            if retorno["fecha"] > maxima:
+                self.add_error(
+                    "fecha",
+                    forms.ValidationError(
+                        "La fecha de facturación no puede ser mayor al dia %s" % (
+                            maxima.strftime("%d/%m/%Y")
+                        )
+                    )
+                )
+            elif self.practica is not None:
+                minima = self.practica.estados.realizacion().finalizacion.date()
+                if retorno["fecha"] < minima:
+                    self.add_error(
+                        "fecha",
+                        forms.ValidationError(
+                            "La fecha de facturación no puede ser anterior al %s dia en que se realizo la %s" % (
+                                minima.strftime("%d/%m/%Y"),
+                                self.practica.nombreTipo()
+                            )
+                        )
+                    )
+        if not self.errors:
+            productos = self.productosFactura()
+            if (self.practica is None) and (not productos):
+                self.add_error(
+                    None,
+                    forms.ValidationError("La facturacion no puede completarse sin practica ni productos.")
+                )
+        return retorno
+
 
 class FacturaProductoForm(forms.Form):
 
@@ -199,19 +255,19 @@ class FacturaProductoForm(forms.Form):
         queryset=Producto.objects.habilitados(),
         widget=ModelSelect2(
             url=reverse_lazy(
-                "autocomplete:producto",
-                args=("productos",)
+                "autocomplete:producto"
             )
         )
     )
 
+
 class ProductosFormSet(BaseFormSet):
-    min_num = 0
+    min_num = 1
     max_num = 1000
     absolute_max = 2000
     validate_min = False
     validate_max = False
-    extra=1
+    extra=0
     form=FacturaProductoForm
     id_fields=["producto"]
     ignorar_incompletos = True
@@ -230,8 +286,8 @@ class ProductosFormSet(BaseFormSet):
                     ))
         return detalles
 
-class FiltradoFacturaForm(BaseForm):
 
+class FiltradoFacturaForm(BaseForm):
 
     tipo = forms.ChoiceField(
         required=False,
@@ -333,273 +389,3 @@ class AccionesFacturacionForm(forms.Form):
         else:
             retorno = ""
         return retorno
-
-
-# from .models import Factura, DetalleFactura, MAXDIGITO, MAXDECIMAL
-# from django import forms
-# from dal import autocomplete
-# from Apps.GestionDePracticas.models.practica import Practica
-# from Apps.GestionDePracticas.models.estado import Realizada
-
-# from django.core.validators import MinValueValidator
-# from Apps.GestionDeProductos.models import Producto
-# from VeterinariaPatagonica.forms import BaseFormSet
-
-# DATE_INPUT_FMTS = ("%d/%m/%y", "%d/%m/%Y")
-
-# TIPO_CHOICES = (
-#     ("A", "Factura tipo A"),
-#     ("B", "Factura tipo B"),
-#     ("C", "Factura tipo C"),
-# )
-
-# def FacturaFormFactory(practica):
-#     class FacturaForm(forms.ModelForm):
-#         class Meta:
-#             model = Factura
-#             fields = {'tipo', 'cliente', 'fecha','descuento','recargo', 'practica', 'total'}
-
-#             labels = {
-#                 'tipo': 'Tipo:',
-#                 'cliente': 'Cliente:',
-#                 'fecha': 'Fecha:',
-#                 'descuento' : 'Descuento:',
-#                 'recargo' : 'Recargo:',
-#                 'practica': 'Práctica:',
-#                 'total': 'Total:',
-#             }
-
-#             error_messages = {
-#                 'tipo': {
-#                     'max_length': ("Nombre demasiado largo"),
-#                 }
-#             }
-
-#             widgets = {
-
-#                 'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
-#                 'total': Factura.precioTotal(Factura),
-#             }
-
-
-
-#         def clean(self):
-#             cleaned_data = super().clean()
-#             return cleaned_data
-
-#         def __init__(self, *args, **kwargs):
-
-#             super().__init__(*args, **kwargs)
-
-#             # [TODO] Averiguar una mejor manera de hacer esto:
-#             for field in self.fields.values():
-#                 if not isinstance(field.widget, forms.CheckboxInput):
-#                     field.widget.attrs.update({
-#                         'class': 'form-control'
-#                     })
-
-
-#         field_order = [
-#             'tipo',
-#             'cliente',
-#             'fecha',
-#             'descuento',
-#             'recargo',
-#             'practica',
-#             'total',
-#         ]
-#     return FacturaForm
-
-# class FacturaForm(forms.ModelForm):
-#     class Meta:
-#         model = Factura
-#         fields = [
-#             'tipo',
-#             'cliente',
-#             'fecha',
-#             'descuento',
-#             'recargo',
-#             'practica',
-#             'total'
-#         ]
-
-#         labels = {
-#             'tipo':'Tipo:',
-#             'cliente' : 'Cliente:',
-#             'fecha' : 'Fecha:',
-#             'descuento' : 'Descuento:',
-#             'recargo' : 'Recargo:',
-#             'practica': 'Práctica:',
-#             'total': 'Total:'
-#         }
-
-#         error_messages = {
-#             'tipo' : {
-#                 'max_length': ("Nombre demasiado largo"),
-#             }
-#         }
-
-#         widgets = {
-#             'cliente': autocomplete.ModelSelect2(url='/GestionDeFacturas/clienteAutocomplete'),
-#             #'total': Factura.calcular_subtotales(Factura, DetalleFactura)
-#         }
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         return cleaned_data
-
-#     def __init__(self, *args, **kwargs):
-
-#         super().__init__(*args, **kwargs)
-
-#         # [TODO] Averiguar una mejor manera de hacer esto:
-#         for field in self.fields.values():
-#             if not isinstance(field.widget, forms.CheckboxInput):
-#                 field.widget.attrs.update({
-#                     'class': 'form-control'
-#                 })
-#         self.fields["practica"].queryset = Practica.objects.enEstado(Realizada)
-
-#     field_order=[
-#             'tipo',
-#             'cliente',
-#             'fecha',
-#     ]
-
-# class DetalleFacturaForm(forms.ModelForm):
-#     class Meta:
-#         model = DetalleFactura
-#         fields= [
-#             #'factura',
-#             'producto',
-#             'cantidad',
-#             #'subtotal',
-#         ]
-
-#         widgets = {
-#             'producto': autocomplete.ModelSelect2(url='/GestionDeFacturas/productoAutocomplete'),
-
-#         }
-#         #widgets = {
-#         #    'subtotal' : forms.NumberInput(attrs={'disabled': '', 'value': 0.0}),
-#         #}
-
-# class DetalleFacturaBaseFormSet(forms.BaseModelFormSet):
-#     def clean(self):
-#         ret = super().clean()
-#         productos = [form.cleaned_data for form in self if form.cleaned_data]#Obtengo los productos puestos en el formulario (No toma las tuplas vacias).
-#         producto_ids = [d["producto"].pk for d in productos if not d["DELETE"]]#Obtengo los Ids de los productos que no estén marcados como "eliminados"(El Checkbox "eliminar").
-#         if len(producto_ids) != len(set(producto_ids)):#Verifico si hay productos repetidos.
-#             raise forms.ValidationError("Hay productos repetidos.")
-#         return ret
-
-#     def save(self, commit=True):
-#         return super().save(commit=commit)
-
-
-# class FacturarPracticaForm(forms.ModelForm):
-
-#     class Meta:
-#         model = Factura
-
-#         fields = [
-#             "tipo",
-#             "fecha",
-#             "recargo",
-#             "descuento",
-#         ]
-
-#         error_messages = {
-#         }
-
-#         widgets = {
-#             "fecha" : forms.DateInput(format=DATE_INPUT_FMTS[0]),
-#             "tipo"  : forms.Select(choices=TIPO_CHOICES)
-#         }
-
-#     field_order=[
-#         "tipo",
-#         "fecha",
-#         "recargo",
-#         "descuento",
-#     ]
-
-#     def clean(self):
-#         cleaned_data = super().clean()
-#         return cleaned_data
-
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields["tipo"].widget.attrs.update({ "class" : "form-control" })
-
-#         self.fields["fecha"].widget.attrs.update({ "class" : "form-control" })
-#         self.fields["fecha"].input_formats = DATE_INPUT_FMTS
-
-#         self.fields["recargo"].label = "Porcentaje de recargo"
-#         self.fields["recargo"].widget.attrs.update({ "class" : "form-control" })
-#         self.fields["recargo"].validators.clear()
-#         self.fields["recargo"].validators.append(
-#             MinValueValidator(0, "El porcentaje de recargo debe ser mayor que cero")
-#         )
-
-#         self.fields["descuento"].label = "Porcentaje de descuento"
-#         self.fields["descuento"].widget.attrs.update({ "class" : "form-control" })
-#         self.fields["descuento"].validators.clear()
-#         self.fields["descuento"].validators.append(
-#             MinValueValidator(0, "El porcentaje de descuento debe ser mayor que cero")
-#         )
-
-
-
-# class ProductoChoiceField(forms.ModelChoiceField):
-#     def label_from_instance(self, obj):
-#         return obj.describir()
-
-
-
-# class FacturaProductoForm(forms.Form):
-
-#     cantidad =  forms.IntegerField(
-#         required=False,
-#         min_value=0,
-#         widget=forms.TextInput(
-#             attrs={'class': 'form-control'}
-#         ),
-#         error_messages={
-#             "required" : "La cantidad es obligatoria",
-#             "invalid" : "La cantidad debe ser un numero entero",
-#             "min_value" : "La cantidad debe ser mayor o igual que cero",
-#         }
-#     )
-
-#     producto = ProductoChoiceField(
-#         required=False,
-#         queryset=Producto.objects.habilitados().filter(precioPorUnidad__gt=0).order_by("precioPorUnidad", "nombre"),
-#         widget=forms.Select(
-#             attrs={'class': 'form-control'}
-#         )
-#     )
-
-#     def clean(self):
-#         data = super().clean()
-
-#         if ("producto" in data and data["producto"]) and (not data["cantidad"]):
-#             data["cantidad"] = 0
-
-#         self.cleaned_data = data
-#         return self.cleaned_data
-
-
-
-# class FacturaProductoFormSet(BaseFormSet):
-#     min_num = 0
-#     max_num = 1000
-#     absolute_max = 2000
-#     validate_min = False
-#     validate_max = False
-#     extra=1
-#     form=FacturaProductoForm
-#     id_fields=["producto"]
-#     ignorar_incompletos = True
-
-

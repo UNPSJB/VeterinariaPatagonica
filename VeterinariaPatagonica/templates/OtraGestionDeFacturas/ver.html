@@ -24,7 +24,7 @@ Ver factura
                 <li><b>Nombre:</b> {{ factura.cliente.apellidos }} {{ factura.cliente.nombres }} (cliente {{ factura.cliente.get_tipoDeCliente_display|lower }})</li>
                 <li><b>Dirección:</b> {{ factura.cliente.direccion }}, {{ factura.cliente.localidad }}</li>
             </ul>
-            <p id="id_paga"><b>Paga:</b> {{ factura.pago|yesno }}</p>
+            <p><b>Paga:</b> {{ factura.pago|yesno }}</p>
         </div>
         <div class="col-xs-12 col-sm-4 col-md-6">
             {% if factura.pago and perms.GestionDePagos.pago_ver %}
@@ -33,7 +33,7 @@ Ver factura
                 <div class="cuadro-contenido">
                     <p><b>Identificador:</b> {{ factura.pago.id }}</p>
                     <p><b>Fecha de emisión:</b> {{ factura.pago.fecha|date:"d/m/y" }}</p>
-                    <p><b>Importe:</b> ${{ factura.pago.importeTotal|floatformat:2 }}</p>
+                    <p><b>Importe:</b> ${{ factura.total|floatformat:2 }}</p>
                 </div>
             </div>
             {% endif %}
@@ -72,6 +72,14 @@ Ver factura
                             <td>{{ factura.practica.precio|floatformat:2 }}</td>
                         </tr>
                         {% endwith %}
+                        {% if factura.cliente.tipoDeCliente == "E" %}
+                        <tr class="breve">
+                            <td colspan="3">
+                                Descuento en servicios (cliente especial) %{{ factura.cliente.descuentoServicio|floatformat:2 }}
+                            </td>
+                            <td>{{ factura.importeDescuentoServicio|floatformat:2 }}</td>
+                        </tr>
+                        {% endif %}
                         {% endif %}
                         {% for detalle in factura.detalles_producto.all %}
                         <tr>
@@ -89,6 +97,17 @@ Ver factura
                             <td>{{ detalle.subtotal|floatformat:2 }}</td>
                         </tr>
                         {% endfor %}
+
+                        {% if factura.cliente.tipoDeCliente == "E" and factura.detalles_producto.count %}
+                        <tr class="breve">
+                            <td colspan="3">
+                                Descuento en productos (cliente especial) %{{ factura.cliente.descuentoProducto|floatformat:2 }}
+                            </td>
+                            <td>{{ factura.importeDescuentoProducto|floatformat:2 }}</td>
+                        </tr>
+                        {% endif %}
+                        
+
                         {% if factura.descuento != 0 %}
                         <tr class="breve">
                             <td colspan="3">
@@ -124,24 +143,5 @@ Ver factura
             </div>
         </div>
     </div>
-    <div id="id-pago" class=" pull-right">
-      <br>
-      <a  id ="factura-pagar" class="btn btn-sm btn-default" href="{% url 'pagos:crear' id=factura.id %}"> <big>Pagar</big> </a>
-    </div>
 </div>
-<script type="text/javascript">
-console.log("------------------------------------");
-let $textPaga = document.querySelector(`#id_paga`);
-let arrayTexto = $textPaga.textContent.split(": ");
-
-let valorBooleano = arrayTexto[1];
-if (valorBooleano == "si"){
-  let $botonPago = $("#id-pago");
-  $botonPago.hide();
-  // $botonPagar.hide();
-
-}
-  // var divPagada = $(`.id_paga`);
-  // console.log(divPagada.context.textContent);
-</script>
 {% endblock %}

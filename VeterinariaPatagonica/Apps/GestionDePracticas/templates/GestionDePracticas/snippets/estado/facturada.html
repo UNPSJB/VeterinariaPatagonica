@@ -1,5 +1,5 @@
 <a id="estado"></a>
-<h3 class="titulo">Facturacion</h3>
+<h3 class="titulo">Facturación</h3>
 <div class="contenedor">
 {% with factura=practica.factura %}
     {% if factura.pago and perms.GestionDeFacturas.factura_ver_pagas or not factura.pago and perms.GestionDeFacturas.factura_ver_no_pagas %}
@@ -10,7 +10,7 @@
         <p><b>Factura número:</b> {{ factura.id }}</p>
     {% endif %}
     <p><b>Factura tipo:</b> {{ factura.tipo|capfirst }}</p>
-    <p><b>Fecha:</b> {{ factura.fecha|date:"d/m/y" }}</p>
+    <p><b>Fecha de facturación:</b> {{ factura.fecha|date:"d/m/y" }}</p>
     <p>
         <b>Cliente:</b>
         {% if not practica.cliente.baja and perms.GestionDeClientes.cliente_ver_habilitados %}
@@ -21,64 +21,11 @@
             {{ practica.cliente }}
         {% endif %}
     </p>
-    <p><b>Importe:</b> {{ factura.total|floatformat:2 }}</p>
-    <p><b>Paga:</b> {% if factura.pago %}si{% else %}no{% endif %}</p>
-
-    <table class="table-bordered table-responsive detalles">
-        <colgroup>
-            <col class="cantidad">
-            <col class="descripcion">
-            <col class="precio">
-            <col class="importe">
-        </colgroup>
-        <thead>
-            <tr>
-                <th>Cantidad</th>
-                <th>Item</th>
-                <th>Precio</th>
-                <th>Importe</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>1</td>
-                <td>Atencion medica</td>
-                <td>{{ practica.estados.realizacion.total|floatformat:2 }}</td>
-                <td>{{ practica.estados.realizacion.total|floatformat:2 }}</td>
-            </tr>
-            {% for detalle in factura.detalles_producto.all %}
-            <tr>
-                <td>{{ detalle.cantidad }}</td>
-                <td>
-                {% if not detalle.producto.baja and perms.GestionDeProductos.producto_ver_habilitados %}
-                    <a href="{% url "productos:productoVer" detalle.producto.id %}">
-                        {{ detalle.producto.nombre }}
-                    </a>
-                {% else %}
-                    {{ detalle.producto.nombre }}
-                {% endif %}
-                </td>
-                <td>{{ detalle.precioPorUnidad|floatformat:2 }}</td>
-                <td>{{ detalle.subtotal|floatformat:2 }}</td>
-            </tr>
-            {% endfor %}
-            {% if factura.recargo %}
-                <tr class="breve">
-                    <td colspan="3">Recargos (%{{ factura.recargo|floatformat:2 }})</td>
-                    <td>{{ factura.ajusteRecargo|floatformat:2 }}</td>
-                </tr>
-            {% endif %}
-            {% if factura.descuento %}
-            <tr class="breve">
-                <td colspan="3">Descuentos (%{{ factura.descuento|floatformat:2 }})</td>
-                <td>{{ factura.ajusteDescuento|floatformat:2 }}</td>
-            </tr>
-            {% endif %}
-            <tr class="breve">
-                <td colspan="3">Total</td>
-                <td>{{ factura.importe|floatformat:2 }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <p><b>Importe facturado:</b> ${{ factura.total|floatformat:2 }}</p>
+    {% if factura.pago %}
+    <p><b>Fecha de cobro:</b> {{ factura.pago.fecha|date:"d/m/Y" }}
+    {% else %}
+    <p><b>Importe adeudado:</b> ${{ factura.totalAdeudado|floatformat:2 }}</p>
+    {% endif %}</p>
 {% endwith %}
 </div>

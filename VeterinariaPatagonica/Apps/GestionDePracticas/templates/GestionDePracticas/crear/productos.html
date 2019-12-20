@@ -5,10 +5,10 @@
     {{ block.super }}
 {% endblock %}
 {% block titulo %}
-Modificar productos de {{ tipo }}
+Creando {{ tipo }}: modificar productos
 {% endblock %}
 {% block practica-titulo %}
-Modificar productos de {{ tipo }}
+Creando {{ tipo }}: modificar productos
 {% endblock %}
 {% block practica-contenido %}
 <div class="contenedor">
@@ -52,7 +52,7 @@ Modificar productos de {{ tipo }}
                         {% if formset.total_error_count %}
                             <div class="col-sm-12">
                                 <div class="errores">
-                                    <strong>Por favor revise los siguientes errores:</strong>
+                                    <b>Por favor revise los siguientes errores:</b>
                                     <ul>
                                         {% include 'snippets/formsetErrores.html' %}
                                     </ul>

@@ -8,7 +8,7 @@ from django.db.models import Q
 from VeterinariaPatagonica.errores import VeterinariaPatagonicaError
 from django.core.exceptions import ValidationError
 from django.db.models import F
-from VeterinariaPatagonica.tools import VeterinariaPatagonicaQuerySet
+from VeterinariaPatagonica.tools import BajasLogicasQuerySet
 
 # Create your models here.
 
@@ -23,7 +23,7 @@ class BaseProductoManager(models.Manager):
             qs = qs.filter(tipo=self.tipo)
         return qs
 
-class ProductoQueryset(VeterinariaPatagonicaQuerySet):
+class ProductoQueryset(BajasLogicasQuerySet):
     MAPEO_ORDEN = {
         "orden_nombre": ["nombre"],
         "orden_marca": ["marca"],
@@ -42,8 +42,9 @@ class ProductoQueryset(VeterinariaPatagonicaQuerySet):
             if producto.stock < 0:
                 raise VeterinariaPatagonicaError(
                     "Error al actualizar stock",
-                    "Stock insuficiente del producto %s '%d'" % (producto.nombre, producto.id)
+                    "Stock insuficiente del producto %s (%d)" % (producto.nombre, producto.id)
                 )
+
             producto.full_clean()
             producto.save()
 

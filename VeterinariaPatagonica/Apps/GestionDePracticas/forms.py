@@ -8,7 +8,7 @@ from VeterinariaPatagonica.areas import Areas
 from VeterinariaPatagonica.widgets import SubmitButtons
 from VeterinariaPatagonica.viewsAutocomplete import (
     servicioSelectLabelActiva,
-    productoSelectLabelActiva,
+    insumoSelectLabelActiva,
     tipoDeAtencionSelectLabelActiva,
     clienteSelectLabel,
     mascotaSelectLabel
@@ -36,7 +36,7 @@ class ServicioModelChoiceField(forms.ModelChoiceField):
 
 class ProductoModelChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
-        return productoSelectLabelActiva(obj)
+        return insumoSelectLabelActiva(obj)
 
 
 
@@ -257,7 +257,10 @@ class ReprogramadaForm(DesdeHastaForm, ActualizarPracticaBaseForm):
 
     def clean(self):
         retorno = super().clean()
-        if not self.has_error(NON_FIELD_ERRORS, "lapso_incoherente"):
+        errores  = self.has_error(NON_FIELD_ERRORS, "lapso_incoherente")
+        errores |= self.has_error("desde")
+        errores |= self.has_error("hasta")
+        if not errores:
             nuevoDesde = retorno["desde"]
             nuevoHasta = retorno["hasta"]
             anteriorDesde = self.initial["desde"]
@@ -428,7 +431,7 @@ class PracticaProductoForm(forms.Form):
         queryset=Producto.objects.habilitados(),
         widget=ModelSelect2(
             url=reverse_lazy(
-                "autocomplete:producto"
+                "autocomplete:insumo"
             ),
             attrs={
                 "data-allow-clear": "false",
@@ -441,19 +444,15 @@ class PracticaProductoForm(forms.Form):
     )
 
     def clean(self):
-        if hasattr(self, "cleaned_data"):
-            if "producto" in self.cleaned_data:
-                producto=self.cleaned_data["producto"]
-                if isinstance(producto, Producto):
-                    self.cleaned_data["producto"] = producto.id
-            return self.cleaned_data
-
+        retorno = super().clean()
+        if not self.errors:
+            retorno["producto"] = retorno["producto"].id
+        return retorno
 
 
 class PracticaProductoFormSet(BaseFormSet):
     form=PracticaProductoForm
     id_fields=["producto"]
-
 
 
 class PracticaServicioForm(forms.Form):
@@ -594,6 +593,8 @@ class PracticaRealizadaServicioForm(forms.ModelForm):
 
 class PracticaRealizadaServicioFormSet(QuerysetFormSet):
 
+    extra = 0
+    ignorar_incompletos = True
     id_fields = [ "servicio" ]
     form = PracticaRealizadaServicioForm
 
@@ -622,6 +623,45 @@ class PracticaRealizadaServicioFormSet(QuerysetFormSet):
         return retorno
 
 
+class TurnoRealizadoServicioForm(PracticaRealizadaServicioForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["servicio"].required = False
+        self.fields["cantidad"].required = False
+        self.fields["servicio"].widget.attrs["data-allow-clear"] = "true"
+
+
+class TurnoRealizadoServicioFormSet(QuerysetFormSet):
+
+    min_num = 0
+    extra = 1
+    ignorar_incompletos = True
+    id_fields = [ "servicio" ]
+    form = TurnoRealizadoServicioForm
+
+    def __init__(self, *args, instancia=None, **kwargs):
+        self.instancia = instancia
+        i = instancia.practica.practica_servicios.count()
+        queryset = self.instancia.realizada_servicios.all()[i:]
+        super().__init__(*args, queryset=queryset, **kwargs)
+
+    def clean(self):
+        retorno = super().clean()
+        if self.total_error_count() == 0:
+            for instancia in self.para_agregar:
+                if instancia.cantidad is None:
+                    self.para_agregar.remove(instancia)
+                else:
+                    instancia.realizada = self.instancia
+            for instancia in self.para_actualizar:
+                if instancia.cantidad is None:
+                    self.para_actualizar.remove(instancia)
+                else:
+                    instancia.realizada = self.instancia
+        return retorno
+
+
 class PracticaRealizadaProductoForm(forms.ModelForm):
 
     class Meta:
@@ -629,7 +669,7 @@ class PracticaRealizadaProductoForm(forms.ModelForm):
         fields = ["cantidad", "producto"]
         widgets = {
             "producto" : ModelSelect2(
-                url=reverse_lazy("autocomplete:producto"),
+                url=reverse_lazy("autocomplete:insumo"),
                 attrs={
                     "data-allow-clear": "false",
                 }
@@ -663,9 +703,10 @@ class PracticaRealizadaProductoForm(forms.ModelForm):
         )
 
 
-
 class PracticaRealizadaProductoFormSet(QuerysetFormSet):
 
+    extra = 0
+    ignorar_incompletos = True
     id_fields = [ "producto" ]
     form = PracticaRealizadaProductoForm
 
@@ -679,11 +720,11 @@ class PracticaRealizadaProductoFormSet(QuerysetFormSet):
         if self.total_error_count() == 0:
             for instancia in self.para_agregar:
                 instancia.realizada = self.instancia
-                instancia.precio = instancia.producto.precioDeCompra
         return retorno
 
     def save(self, *args, **kwargs):
 
+        #[TODO]: Revisar
         actualizacionStock = {}
 
         cantidadesAnteriores = RealizadaProducto.objects.filter(
@@ -707,6 +748,43 @@ class PracticaRealizadaProductoFormSet(QuerysetFormSet):
         super().save(*args, **kwargs)
 
 
+class TurnoRealizadoProductoForm(PracticaRealizadaProductoForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["producto"].required = False
+        self.fields["cantidad"].required = False
+        self.fields["producto"].widget.attrs["data-allow-clear"] = "true"
+
+
+class TurnoRealizadoProductoFormSet(QuerysetFormSet):
+
+    min_num = 0
+    extra = 1
+    ignorar_incompletos = True
+    id_fields = [ "producto" ]
+    form = TurnoRealizadoProductoForm
+
+    def __init__(self, *args, instancia=None, **kwargs):
+        self.instancia = instancia
+        i = instancia.practica.practica_productos.count()
+        queryset = self.instancia.realizada_productos.all()[i:]
+        super().__init__(*args, queryset=queryset, **kwargs)
+
+    def clean(self):
+        retorno = super().clean()
+        if self.total_error_count() == 0:
+            for instancia in self.para_agregar:
+                if instancia.cantidad is None:
+                    self.para_agregar.remove(instancia)
+                else:
+                    instancia.realizada = self.instancia
+            for instancia in self.para_actualizar:
+                if instancia.cantidad is None:
+                    self.para_actualizar.remove(instancia)
+                else:
+                    instancia.realizada = self.instancia
+        return retorno
 
 
 class CreacionForm(forms.Form):
@@ -920,20 +998,20 @@ class FiltradoTurnosForm(BaseForm):
 class FiltradoReportesForm(BaseForm):
 
     PERFILES_CHOICES = [
-        ["7", "Última semana"],
-        ["14", "Dos últimas semanas"],
+        ["7", "Últimos 7 días"],
+        ["14", "Últimos 14 días"],
     ]
     REALIZACIONES_CHOICES = [
-        ["30", "Último mes"],
-        ["60", "Último bimestre"],
+        ["30", "Últimos 30 días"],
+        ["60", "Últimos 60 días"],
     ]
     ACTUALIZACIONES_CHOICES = [
-        ["30", "Último mes"],
-        ["60", "Último bimestre"],
+        ["30", "Últimos 30 días"],
+        ["60", "Últimos 60 días"],
     ]
     TIPOSDEATENCION_CHOICES = [
-        ["90", "Último trimestre"],
-        ["180", "Último semestre"],
+        ["90", "Últimos 90 días"],
+        ["180", "Últimos 180 días"],
     ]
 
     perfiles = forms.ChoiceField(

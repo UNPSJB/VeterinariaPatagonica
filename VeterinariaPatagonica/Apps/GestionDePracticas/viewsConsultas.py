@@ -26,13 +26,22 @@ def contextoCreacion(request, idCreacion):
     )
 
 
-def contextoModificacion(practica, accion=None):
+def contextoModificacion(practica=None, accion=None):
     return {
         "tipo" : Areas.C.nombre(),
         "practica" : practica,
         "accion" : accion,
         "errores" : [],
     }
+
+
+def buscarConsulta(id):
+    consulta = None
+    try:
+        consulta = Practica.consultas.get(id=id)
+    except Practica.DoesNotExist:
+        raise VeterinariaPatagonicaError("Error", "Consulta no encontrada")
+    return consulta
 
 
 def listar(request):
@@ -71,7 +80,6 @@ def listar(request):
                 "cliente",
                 "marcacreacion",
                 "marcaultimaactualizacion",
-                "atendidapor",
             ),
             "orden" : (
                 ("marcaultimaactualizacion", False),
@@ -168,6 +176,7 @@ def exportar(request, formato=None):
     if accion == "":
         template = loader.get_template(plantilla("exportar", "consultas"))
         context = {
+            "tipo" : Areas.C.nombre(),
             "formato" : formato,
             "gestor" : gestor,
             "exportar" : exportar,
@@ -196,13 +205,14 @@ def ver(request, id):
     if isinstance(usuario, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
+    practica = buscarConsulta(id)
+
     acciones = Practica.Acciones.ver_informacion_general
-    practica = Practica.consultas.get(id=id)
     if not permisos.paraPractica(usuario, acciones, practica):
         raise PermissionDenied()
+
     estados = practica.estados.all()
     tope = estados.count()
-
     try:
         n = int( request.GET["estado"] )
     except (ValueError, KeyError):
@@ -215,6 +225,7 @@ def ver(request, id):
         estado = None
 
     context = {
+        "tipo" : Areas.C.nombre(),
         "practica" : practica,
         "estado" : estado,
         "menu" : menuAcciones(usuario, Practica.Acciones.ver_informacion_general, practica),
@@ -316,15 +327,15 @@ def modificar(request, idCreacion):
                     guardar(request.session, idCreacion, "initialPractica", initialPractica)
 
                 if formsetServicios.has_changed():
-                    servicios = formsetServicios.cleaned_data
+                    initialServicios = formsetServicios.cleaned_data
                     try:
-                        productos = buscarProductos(servicios)
+                        initialProductos = buscarProductos(initialServicios)
                     except VeterinariaPatagonicaError as error:
                         context["errores"].append(error)
                         accion = None
                     else:
-                        guardar(request.session, idCreacion, "initialServicios", servicios)
-                        guardar(request.session, idCreacion, "initialProductos", productos)
+                        guardar(request.session, idCreacion, "initialServicios", initialServicios)
+                        guardar(request.session, idCreacion, "initialProductos", initialProductos)
 
                 if accion:
                     return HttpResponseRedirect(pathInicializar(Areas.C.nombre(), accion, idCreacion))
@@ -363,34 +374,34 @@ def modificarProductos(request, idCreacion):
     else:
 
         try:
-            productosInitial = obtener(request.session, context["id"], "initialProductos")
+            initialProductos = obtener(request.session, context["id"], "initialProductos")
         except VeterinariaPatagonicaError as error:
             context["errores"].append(error)
-            productosInitial = ()
+            initialProductos = ()
         acciones = accionesIniciales(request.user, Areas.C)
 
         if request.method == "POST":
 
-            formset = PracticaProductoFormSet(request.POST, initial=productosInitial, prefix="producto")
+            formset = PracticaProductoFormSet(request.POST, initial=initialProductos, prefix="producto")
             formCreacion = CreacionForm(acciones, request.POST)
 
             if formset.is_valid() and formCreacion.is_valid():
-                if formset.has_changed():
+                if not formset.equivale(initialProductos):
                     guardar(request.session, context["id"], "initialProductos", formset.cleaned_data)
 
                 accion = formCreacion.accion()
                 if accion:
                     return HttpResponseRedirect(pathInicializar(context["tipo"], accion, context["id"]))
-        else:
 
-            formset = PracticaProductoFormSet(initial=productosInitial, prefix="producto")
+        else:
+            formset = PracticaProductoFormSet(initial=initialProductos, prefix="producto")
             formCreacion = CreacionForm(acciones)
 
         practica = obtenerPractica(request, idCreacion)
         detalles = obtenerDetalles(request, idCreacion)
         context["practica"] = practica
         context["detalles"] = detalles
-        context["precio"]   = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
+        context["precio"]   = calcularPrecio(detalles, context["practica"].tipoDeAtencion.recargo)
         context["duracion"] = calcularDuracion(detalles["servicios"])
         context["acciones"] = formCreacion
 
@@ -466,8 +477,8 @@ def crearRealizada(request, idCreacion):
         try:
             practica = obtenerPractica(request, idCreacion)
             verificarCreacion(practica, Practica.Acciones.realizar.name)
-            detalles = obtenerDetalles(request, idCreacion)
 
+            detalles = obtenerDetalles(request, idCreacion)
             precio = calcularPrecio(detalles, practica.tipoDeAtencion.recargo)
             duracion = calcularDuracion(detalles["servicios"])
 
@@ -521,17 +532,11 @@ def realizar(request, id):
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
-    context = { "tipo" : Areas.C.nombre(), "errores" : [] }
-
+    context = contextoModificacion()
     try:
-        practica = Practica.consultas.get(id=id)
+        practica = buscarConsulta(id)
         verificarPractica(practica)
         verificarAccion(practica, Practica.Acciones.realizar)
-    except Practica.DoesNotExist as error:
-        context["errores"].append(errorAccion(
-            Practica.Acciones.realizar,
-            "Consulta no encontrada"
-        ))
     except VeterinariaPatagonicaError as error:
         context["errores"].append(error)
     else:
@@ -539,10 +544,9 @@ def realizar(request, id):
         if not permisos.paraPractica(request.user, Practica.Acciones.realizar, practica):
             raise PermissionDenied()
 
-        context = contextoModificacion(practica, "Guardar")
         duracion = calcularDuracion(practica.practica_servicios.all())
-
         if request.method == "POST":
+
             form = formRealizar(request.POST, practica=practica, duracion=duracion)
 
             if form.is_valid():
@@ -575,16 +579,11 @@ def modificarRealizacion(request, id):
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
-    context = { "tipo" : Areas.C.nombre(), "accion" : None, "errores" : [] }
-
+    context = contextoModificacion()
     try:
-        practica = Practica.quirurgicas.get(id=id)
+        practica = buscarConsulta(id)
         verificarEstado(practica, [Realizada])
-    except Practica.DoesNotExist as error:
-        context["errores"].append(errorAccion(
-            Practica.Acciones.modificar,
-            "Consulta no encontrada"
-        ))
+        verificarAccion(practica, Practica.Acciones.modificar)
     except VeterinariaPatagonicaError as error:
         context["errores"].append(error)
     else:
@@ -592,9 +591,7 @@ def modificarRealizacion(request, id):
         if not permisos.paraPractica(request.user, Practica.Acciones.modificar, practica):
             raise PermissionDenied()
 
-        context["accion"] = "Guardar"
         realizada = practica.estado()
-
         if request.method == "POST":
 
             servicios = PracticaRealizadaServicioFormSet(request.POST, instancia=realizada, prefix="servicio_realizado")
@@ -606,12 +603,13 @@ def modificarRealizacion(request, id):
                     with transaction.atomic():
                         servicios.save()
                         productos.save()
-                        realizada.completarPrecio()
                 except dbError as error:
-                    context["errores"] = [errorAccion(
-                        Practica.Acciones.modificar_realizacion,
-                        "Error al guardar datos"
-                    )]
+                    context["errores"].append(
+                        errorAccion(
+                            Practica.Acciones.modificar_realizacion,
+                            "Error al guardar datos"
+                        )
+                    )
                 else:
                     return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.id))
 
@@ -622,6 +620,8 @@ def modificarRealizacion(request, id):
         context["menu"] = menuAcciones(request.user, Practica.Acciones.modificar, practica)
         context["servicios"] = servicios
         context["productos"] = productos
+        context["realizada"] = realizada
+        context["accion"]  = "Guardar"
 
     template = loader.get_template(plantilla("modificar", "realizacion"))
     return HttpResponse(template.render(context, request))
@@ -632,15 +632,10 @@ def modificarInformacionClinica(request, id):
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
-    context = { "tipo" : Areas.C.nombre(), "accion" : None, "errores" : [] }
+    context = contextoModificacion()
     try:
-        practica = Practica.quirurgicas.get(id=id)
+        practica = buscarConsulta(id)
         verificarEstado(practica, [Realizada])
-    except Practica.DoesNotExist as error:
-        context["errores"].append(errorAccion(
-            Practica.Acciones.modificar_informacion_clinica,
-            "Consulta no encontrada"
-        ))
     except VeterinariaPatagonicaError as error:
         context["errores"].append(error)
     else:
@@ -648,10 +643,10 @@ def modificarInformacionClinica(request, id):
         if not permisos.paraPractica(request.user, Practica.Acciones.modificar_informacion_clinica, practica):
             raise PermissionDenied()
 
-        context["accion"] = "Guardar"
         realizada = practica.estado()
 
         if request.method == "POST":
+
             generales = ObservacionesGeneralesForm(request.POST, instance=realizada, prefix="observaciones_generales")
             servicios = ObservacionesServiciosFormSet(request.POST, instance=realizada)
 
@@ -660,10 +655,12 @@ def modificarInformacionClinica(request, id):
                     generales.save()
                     servicios.save()
                 except dbError as error:
-                    context["errores"] = [errorAccion(
-                        Practica.Acciones.modificar_informacion_clinica,
-                        "Error al guardar datos"
-                    )]
+                    context["errores"].append(
+                        errorAccion(
+                            Practica.Acciones.modificar_informacion_clinica,
+                            "Error al guardar datos"
+                        )
+                    )
                 else:
                     return HttpResponseRedirect(pathVer(Areas.C.nombre(), practica.id))
 
@@ -674,6 +671,7 @@ def modificarInformacionClinica(request, id):
         context["menu"] = menuAcciones(request.user, Practica.Acciones.modificar_informacion_clinica, practica)
         context["generales"] = generales
         context["servicios"] = servicios
+        context["accion"] = "Guardar"
 
     template = loader.get_template(plantilla("modificar", "informacionClinica"))
     return HttpResponse(template.render(context, request))
@@ -684,16 +682,10 @@ def verInformacionClinica(request, id):
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
 
-    context = { "tipo" : Areas.C.nombre(), "accion" : None, "errores" : [] }
-
+    context = contextoModificacion()
     try:
-        practica = Practica.quirurgicas.get(id=id)
+        practica = buscarConsulta(id)
         verificarEstado(practica, [Realizada, Facturada])
-    except Practica.DoesNotExist as error:
-        context["errores"].append(errorAccion(
-            Practica.Acciones.ver_informacion_clinica,
-            "Consulta no encontrada"
-        ))
     except VeterinariaPatagonicaError as error:
         context["errores"].append(error)
     else:
@@ -701,11 +693,9 @@ def verInformacionClinica(request, id):
         if not permisos.paraPractica(request.user, Practica.Acciones.ver_informacion_clinica, practica):
             raise PermissionDenied()
 
-        realizada = practica.estados.realizacion()
-
         context["accion"] = "Guardar"
-        context["practica"] = practica,
-        context["realizada"] = realizada,
+        context["practica"] = practica
+        context["realizada"] = practica.estados.realizacion()
         context["menu"] = menuAcciones(request.user, Practica.Acciones.ver_informacion_clinica, practica)
 
     template = loader.get_template(plantilla("ver", "informacionClinica"))
@@ -754,14 +744,14 @@ def reporte(request):
 
     return retorno
 
-def ayudaContextualConsulta(request):
+
+def ayuda(request):
 
     if isinstance(request.user, AnonymousUser):
         return HttpResponseRedirect("%s?proxima=%s" % (config("login_url"), request.path))
-        
-    template = loader.get_template('GestionDePracticas/ayudaContextualConsultas.html')
-    contexto = {
-        'usuario': request.user,
-    }
 
-    return HttpResponse(template.render(contexto, request))
+    if not request.user.has_module_perms("GestionDePracticas"):
+        raise PermissionDenied()
+
+    template = loader.get_template(plantilla("ayuda", "consultas"))
+    return HttpResponse(template.render({}, request))

@@ -13,27 +13,27 @@ from dal import autocomplete
 from openpyxl.writer.excel import ExcelWriter
 
 
-class VeterinariaPatagonicaQuerySet(models.QuerySet):
+# class VeterinariaPatagonicaQuerySet(models.QuerySet):
 
-    def get(self, **kwargs):
-        try:
-            object = super().get(**kwargs)
-        except ObjectDoesNotExist:
-            raise VeterinariaPatagonicaError(
-                titulo="Objeto '%s' no encontrado" % self.model.__name__,
-                descripcion="El objeto solicitado no fue encontrado",
-            )
-        return object
+#     def get(self, **kwargs):
+#         try:
+#             object = super().get(**kwargs)
+#         except ObjectDoesNotExist:
+#             raise VeterinariaPatagonicaError(
+#                 titulo="Objeto '%s' no encontrado" % self.model.__name__,
+#                 descripcion="El objeto solicitado no fue encontrado",
+#             )
+#         return object
 
-    def habilitados(self):
-        return self.filter(baja=False)
+#     def habilitados(self):
+#         return self.filter(baja=False)
 
-    def deshabilitados(self):
-        return self.filter(baja=True)
+#     def deshabilitados(self):
+#         return self.filter(baja=True)
 
 
 #Esta clase sirve para gestionar las bajas
-class BajasLogicasQuerySet(VeterinariaPatagonicaQuerySet):
+class BajasLogicasQuerySet(models.QuerySet):
     def habilitados(self):
         return self.filter(baja=False)
 

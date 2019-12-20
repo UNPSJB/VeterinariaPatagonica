@@ -1,4 +1,4 @@
-{% extends "GestionDePracticas/listar/consultas.html" %}
+{% extends "../listar/consultas.html" %}
 
 {% block titulo %}
 Exportar listado de consultas en formato {{ formato }}
@@ -15,7 +15,7 @@ Exportar listado de consultas en formato {{ formato }}
 </div>
 {% endfor %}
 <div class="col-xs-4 col-sm-3 col-md-2 form-group pull-right submit">
-    <button class="btn btn-sm btn-default" value="" type="submit">Actualizar</button>
+    <button class="btn btn-sm btn-default" value="actualizar" type="submit">Actualizar</button>
 </div>
 {% if gestor.paginar %}
 {{ gestor.paginacion.pagina_actual }}

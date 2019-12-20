@@ -25,7 +25,7 @@ urlpatterns = [
     path("autocomplete/", include(([
         path("servicio/<str:area>/", viewsAutocomplete.ServicioAutocomplete.as_view(), name="servicio"),
         path("servicio/", viewsAutocomplete.ServicioAutocomplete.as_view(), name="servicio"),
-        path("producto/<str:tipo>/", viewsAutocomplete.ProductoAutocomplete.as_view(), name="producto"),
+        path("insumo/", viewsAutocomplete.InsumoAutocomplete.as_view(), name="insumo"),
         path("producto/", viewsAutocomplete.ProductoAutocomplete.as_view(), name="producto"),
         path("tipoDeAtencion/", viewsAutocomplete.TipoDeAtencionAutocomplete.as_view(), name="tipoDeAtencion"),
         path("cliente/", viewsAutocomplete.ClienteAutocomplete.as_view(), name="cliente"),

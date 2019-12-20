@@ -1,5 +1,5 @@
 <a id="estado"></a>
-<h3 class="titulo">Realizacion</h3>
+<h3 class="titulo">Realización</h3>
 <div class="contenedor">
 <p><b>Inicio:</b> {{ estado.inicio|date:"d/m/y" }} a las {{ estado.inicio|date:"H:i" }}hs.</p>
 <p><b>Finalizacion:</b> {{ estado.finalizacion|date:"d/m/y" }} a las {{ estado.finalizacion|date:"H:i" }}hs.</p>
@@ -34,7 +34,11 @@
                 {{ detalle.servicio.nombre }}
             {% endif %}
             </td>
+            {% if detalle.precio is None %}
+            <td>{{ detalle.servicio.precioManoDeObra|floatformat:2 }}</td>
+            {% else %}
             <td>{{ detalle.precio|floatformat:2 }}</td>
+            {% endif %}
             <td>{{ detalle.precioTotal|floatformat:2 }}</td>
         </tr>
         {% endfor %}
@@ -85,7 +89,11 @@
                 {{ detalle.producto.nombre }}
             {% endif %}
             </td>
+            {% if detalle.precio is None %}
+            <td>{{ detalle.producto.precioDeCompra|floatformat:2 }}</td>
+            {% else %}
             <td>{{ detalle.precio|floatformat:2 }}</td>
+            {% endif %}
             <td>{{ detalle.precioTotal|floatformat:2 }}</td>
         </tr>
         {% endfor %}
