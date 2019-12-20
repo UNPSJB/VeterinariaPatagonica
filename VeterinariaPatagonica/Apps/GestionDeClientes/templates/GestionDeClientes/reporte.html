@@ -6,57 +6,31 @@ Reportes Clientes
 
 {% block contenido %}
 
-<p>Fcaturas de ciente!</p>
-    {% for field in otra %}                       
-    <p> {{ field }}</p>
-    {% endfor %}
-<p>Totales</p>
-    {% for field in tt %}                       
-    <p> {{ field }}</p>
-    {% endfor %}
-<p>DICCIONARIO</p>
-    {% for field in diccionario %}
-    <p> {{ field }}</p>                       
-    <p> {{ field.clientedni }}</p>
-    <p> {{ field.clienteapellido }}</p>
-    <p> {{ field.clientenombre }}</p>
-    <p> {{ field.gasto }}</p>
-    {% endfor %}
-<p>CLIENTES QUE GASTARON MAS 500</p>
-    {% for field in data %}
-    <p> {{ field }}</p>                       
-    <p> {{ field.clientedni }}</p>
-    <p> {{ field.clienteapellido }}</p>
-    <p> {{ field.clientenombre }}</p>
-    <p> {{ field.gasto }}</p>
-    {% endfor %}
-
     <script src="{% static 'js/Chart.js' %}"></script>
     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
-    <canvas id="myChart" width="150" height="150"></canvas>
+    
+    <div id="div-canvas" width="150" height="150">
+        <canvas id="myChart" width="150" height="150"></canvas>
+    </div>
+    
 
     <script>
         let miCanvas = document.getElementById("myChart").getContext("2d");
 
-        var data = "{{data}}"
-        var totales = "{{data.clientedni}}"
-        var lis = "{{list}}"
-
         var gastos = "{{ gastos }}"
-        var clientes = "{{ clientes }}"
+        var clientes = "{{ diccionario }}"
 
         console.log("Hola")
-        console.log(gastos)
         console.log(clientes)
-        console.log(data)
 
         /*for ( var i=0; i<gastos.length;i++){
             console.log("Hola", i)
-        }
+        }*/
 
-        for ( var i=0; i<clientes.length;i++){
+        /*for ( var i=0; i<clientes.length;i++){
             console.log("Chau", i)
         }*/
+
 
         var chart = new Chart(miCanvas, {
             type: "bar",

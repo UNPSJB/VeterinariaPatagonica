@@ -1,27 +1,27 @@
 {% extends 'GestionDeClientes/GestionDeClientes.html' %}
 {% load static %}
 {% block tituloSeccion %}
-Reportes de Tipos de Clientes
+Reportes de Tipos de Clientes al {{ hoy|date:"d/m/Y" }}
 {% endblock %}
 
 
 {% block contenido %}
-<p>total de facturas: {{cantidad}}</p>
-    {% for field in facturas %}                       
-    <p> {{ field }}</p>
-    {% endfor %}
-<p>Clientes que compraron y son comunes</p>
-    {% for field in comun %}                       
-    <p> {{ field }}</p>
-    {% endfor %}
-<p>Clientes que compraron y son especiales</p>
-    {% for field in especial %}                       
-    <p> {{ field }}</p>
-    {% endfor %}
 
     <script src="{% static 'js/Chart.js' %}"></script>
     <script src="{% static 'vendor/jquery/js/jquery.js' %}"></script>
-    <canvas id="myChart" width="250" height="250"></canvas>
+
+    <div>
+        <p>
+            Este grafico permite saber a que tipos de clientes se les facturo mas
+             a lo largo de todo el sistema
+        </p>
+    </div>
+
+    <div id="tipo-canvas" style="width:250; height: 250;">
+        <canvas id="myChart" width="250" height="250"></canvas>
+    </div>
+
+
 
     <script>
         let miCanvas = document.getElementById("myChart").getContext("2d");
@@ -45,6 +45,18 @@ Reportes de Tipos de Clientes
         }
 
         )
+        $(function() {
+        let mychart = $("#myChart");
+        mychart.height(500);
+        mychart.width(500);
+        console.log("El alto del grafico es:",mychart.height());
+        console.log("El ancho del grafico es: ",mychart.width());
+        
+        });
+        
+        
+
     </script>
+
 
 {% endblock contenido %}
